@@ -79,7 +79,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
 
 Now it's time to load census data. We choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CenussMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 regions_string='{"CMA":[{"id":"59933"}]}'
 
