@@ -82,7 +82,7 @@ As an example we choose the "occupied dwellings by structural type of dwelling" 
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 regions_string='{"CMA":[{"id":"59933"}]}'
 
-geos <- census_mapper(year=2016,level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE, force_download = TRUE)
+geos <- census_mapper(year=2016,level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE, force_download = FALSE)
 
 ```
 
