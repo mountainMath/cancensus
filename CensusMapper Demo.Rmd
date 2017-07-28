@@ -23,7 +23,7 @@ library(digest)
 library(sf)
 library(jsonlite)
 
-census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
+census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE,force_download=FALSE) {
   
   base_url="https://CensusMapper.ca/api/v1/"
  # load data variables
@@ -38,7 +38,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
   dir.create('data_cache', showWarnings = FALSE)
   data_file=paste('data_cache/CM_data_',data_hash,'.csv.gz',sep='')
   data_base_url=paste0(base_url,'data.csv')
-  if (!file.exists(data_file)) {
+  if (force_download || !file.exists(data_file)) {
     final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
     download.file(paste(data_base_url,final_data_param_string,sep='?'),data_file)
   }
@@ -54,12 +54,12 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
       ,sep='&')
     geo_hash=digest(geo_param_string,algo='md5')
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
-    if (!file.exists(geo_file)) {
+    if (force_download || !file.exists(geo_file)) {
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
       gz_file=paste(geo_file,'gz',sep='.')
       download.file(paste(geo_base_url,final_geo_param_string,sep='?'),gz_file)
-      system(paste("gunzip",gz_file,sep=' '))
+      R.utils::gunzip(gz_file)
     }
     
     #geos=read_sf(geo_file)
@@ -82,7 +82,7 @@ As an example we choose the "occupied dwellings by structural type of dwelling" 
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 regions_string='{"CMA":[{"id":"59933"}]}'
 
-geos <- census_mapper(year=2016,level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE)
+geos <- census_mapper(year=2016,level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE, force_download = TRUE)
 
 ```
 
