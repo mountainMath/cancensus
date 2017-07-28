@@ -1,0 +1,135 @@
+---
+title: "CensusMapper import playground"
+output: html_notebook
+---
+
+We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API.
+
+To work with the CensusMapper API we need to specify our API key. We load the API key in the environment variable "CM_API_KEY", which we assume was set prior to running the script. We could also specify it directly in the code, but than we have to be careful not to expose our API key when sharing our code.
+
+```{r API Key, echo=TRUE}
+# set environment variable via 
+# Sys.setenv(CM_API_KEY='<your API key>')
+
+api_key=Sys.getenv('CM_API_KEY')
+```
+
+
+
+This first chunk defines a convenience function to load census data from CensusMapper.
+
+```{r CensusMapper Convenience Function, include=FALSE}
+
+library(digest)
+library(sf)
+library(jsonlite)
+
+census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
+  
+  base_url="https://CensusMapper.ca/api/v1/"
+ # load data variables
+  vectors_string=toJSON(vectors)
+  data_param_string=paste(
+    paste('filter_regions',regions,sep='='),
+    paste('vectors',vectors_string,sep='='),
+    paste('level',level,sep='='),
+    paste('year',year,sep='=')
+    ,sep='&')
+  data_hash=digest(param_string,algo='md5')
+  data_file=paste('CM_data_',data_hash,'.csv.gz',sep='')
+  data_base_url=paste0(base_url,'data.csv')
+  if (!file.exists(data_file)) {
+    final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
+    download.file(paste(data_base_url,final_data_param_string,sep='?'),data_file)
+  }
+  dat <- read.csv(gzfile(data_file), na.strings = 'x', colClasses=c("GeoUID"="character"))
+  for (var in names(dat)[grepl("v_", names(dat))]) {dat[,var]=as.numeric(as.character(dat[,var]))}
+
+  
+  if (geo) {
+    geo_param_string=paste(
+      paste('filter_regions',regions_string,sep='='),
+      paste('level',level,sep='='),
+      paste('year',year,sep='=')
+      ,sep='&')
+    geo_hash=digest(param_string,algo='md5')
+    geo_file=paste('CM_geo_',geo_hash,'.geojson',sep='')
+    if (!file.exists(geo_file)) {
+      final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
+      geo_base_url=paste0(base_url,'geo.geojson')
+      gz_file=paste(geo_file,'gz',sep='.')
+      download.file(paste(geo_base_url,final_geo_param_string,sep='?'),gz_file)
+      system(paste("gunzip",gz_file,sep=' '))
+    }
+    
+    #geos=read_sf(geo_file)
+    geos=read_sf(geo_file)
+    
+    result <- merge(geos, dat, by.x="id", by.y="GeoUID")
+    
+  } else {
+    result=dat
+  }
+  return(result)
+}
+
+```
+
+
+Now it's time to load census data. We choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CenussMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
+
+```{r, echo=TRUE}
+vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
+regions_string='{"CMA":[{"id":"59933"}]}'
+
+geos <- census_mapper(year=2016,level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE)
+
+```
+
+Compute some values for mapping
+
+```{r, echo=TRUE}
+geos$sd <- geos$v_CA16_409..Single.detached.house / geos$v_CA16_408..Occupied.private.dwellings.by.structural.type.of.dwelling.data
+#geos$sd[geos$v_CA16_409..Single.detached.house=='x']<-NA
+```
+
+
+Now we can use that data for analysis or mapping.
+
+
+```{r, echo=TRUE}
+library(tmap)
+tm_shape(geos) +
+  tm_polygons("sd", style="quantile", title="Single Detached Homes")
+```
+
+Or using the ggplot library.
+
+```{r, echo=TRUE}
+
+# requires dev build of tiverse/ggplot2, install using devtools and install_github('tidyverse/ggplot2') if needed
+library(sf)
+library(tidyverse)
+library(viridis)
+library(rvest)
+
+
+ggplot(geos) +
+  geom_sf(aes(fill = sd)) +
+  scale_fill_viridis("%SD") +
+  ggtitle("Proportion of Dwelling Units that are Single Detached") +
+  theme_bw()
+```
+
+
+Or we can explore the data through non-map based means, for example how the proportion of single detached and duplex dwelling relate. Duplex dwellings are in most cases suited single family homes. We can explore how the relationship between single family homes and duplexes depend on the municipal regulations allowing for secondary suites.
+
+```{r}
+geos$duplex <- geos$v_CA16_414..Apartment.or.flat.in.a.duplex/ geos$v_CA16_408..Occupied.private.dwellings.by.structural.type.of.dwelling.data
+
+geos$color_code <- ifelse(geos$Region.Name == "Vancouver", 'red', ifelse(geos$Region.Name == "Burnaby", 'blue', ifelse(geos$Region.Name == "Surrey", 'green', 'grey')))
+
+plot(geos$sd, geos$duplex, xlab="Single Detached", ylab="Duplex", col=geos$color_code)
+```
+
+
