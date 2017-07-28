@@ -3,7 +3,7 @@ title: "CensusMapper import playground"
 output: html_notebook
 ---
 
-We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API.
+We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API. The code for this notbook can be found on [GitHub](https://github.com/mountainMath/r-censusmapper).
 
 To work with the CensusMapper API we need to specify our API key. We load the API key in the environment variable "CM_API_KEY", which we assume was set prior to running the script. We could also specify it directly in the code, but than we have to be careful not to expose our API key when sharing our code.
 
@@ -15,8 +15,7 @@ api_key=Sys.getenv('CM_API_KEY')
 ```
 
 
-
-This first chunk defines a convenience function to load census data from CensusMapper.
+To tie into the CensusMapper API we utilize the "census_mapper" convenience function to load census data from CensusMapper.
 
 ```{r CensusMapper Convenience Function, include=FALSE}
 
@@ -77,7 +76,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
 ```
 
 
-Now it's time to load census data. We choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CenussMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
+As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CenussMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
