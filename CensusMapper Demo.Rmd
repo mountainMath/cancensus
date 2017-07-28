@@ -34,7 +34,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
     paste('level',level,sep='='),
     paste('year',year,sep='=')
     ,sep='&')
-  data_hash=digest(param_string,algo='md5')
+  data_hash=digest(data_param_string,algo='md5')
   dir.create('data_cache', showWarnings = FALSE)
   data_file=paste('data_cache/CM_data_',data_hash,'.csv.gz',sep='')
   data_base_url=paste0(base_url,'data.csv')
@@ -52,7 +52,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
       paste('level',level,sep='='),
       paste('year',year,sep='=')
       ,sep='&')
-    geo_hash=digest(param_string,algo='md5')
+    geo_hash=digest(geo_param_string,algo='md5')
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
     if (!file.exists(geo_file)) {
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
@@ -76,7 +76,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
 ```
 
 
-As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CenussMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
+As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CencusMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
