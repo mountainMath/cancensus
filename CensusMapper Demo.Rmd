@@ -36,7 +36,8 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
     paste('year',year,sep='=')
     ,sep='&')
   data_hash=digest(param_string,algo='md5')
-  data_file=paste('CM_data_',data_hash,'.csv.gz',sep='')
+  dir.create('data_cache', showWarnings = FALSE)
+  data_file=paste('data_cache/CM_data_',data_hash,'.csv.gz',sep='')
   data_base_url=paste0(base_url,'data.csv')
   if (!file.exists(data_file)) {
     final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
@@ -53,7 +54,7 @@ census_mapper <- function (year, level, regions, vectors,api_key, geo=FALSE) {
       paste('year',year,sep='=')
       ,sep='&')
     geo_hash=digest(param_string,algo='md5')
-    geo_file=paste('CM_geo_',geo_hash,'.geojson',sep='')
+    geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
     if (!file.exists(geo_file)) {
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
