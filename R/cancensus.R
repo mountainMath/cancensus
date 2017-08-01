@@ -15,7 +15,7 @@
 #' @param regions A json hash describing the geographic regions.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo If set to TRUE, the function will also return the geographic data.
-#' @param format Choose whether you want to use the sf or sp spatial format. Using sf will return a dataframe with a field for sf geometry, while using sp will return a SpatialPolygonsDataFrame object. Assumes sf as default but can be overwritten by selecting format = "sp". 
+#' @param format Choose whether you want to use the sf or sp spatial format. Using sf will return a dataframe with a field for sf geometry, while using sp will return a SpatialPolygonsDataFrame object. Assumes sf as default but can be overwritten by selecting format = "sp".
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @keywords canada census data api
 #' @export
@@ -42,7 +42,12 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
-      GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress());
+      response <- GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress())
+      if (status_code(response)==401) {
+        # Unauthorized
+        file.remove(data_file)
+        stop(paste(content(response,as="text"),"Download of Census Data failed.", sep=' '))
+      }
     }
     # read the data file and transform to proper data types
     dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region.Name"="factor"),stringsAsFactors=F)
@@ -66,7 +71,12 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
-      GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
+      response <- GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
+      if (status_code(response)==401) {
+        # Unauthorized
+        file.remove(geo_file)
+        stop(paste(content(response,as="text"),"Download of Census Geographies failed.", sep=' '))
+      }
     }
     # read the geo file and transform to proper data types
     if(format == "sf") {
@@ -115,7 +125,7 @@ cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
 #' @param regions A json hash describing the geographic regions.
-#' @param format Choose whether you want to use the sf or sp spatial format. Assumes sf as default but can be overwritten by selecting format = "sp". 
+#' @param format Choose whether you want to use the sf or sp spatial format. Assumes sf as default but can be overwritten by selecting format = "sp".
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @keywords canada census data api
 #' @export

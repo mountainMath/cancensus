@@ -5,7 +5,7 @@
 \title{CensusMapper API access}
 \usage{
 cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
-  use_cache = TRUE)
+  format = "sf", use_cache = TRUE)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -17,6 +17,8 @@ cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
 \item{geo}{If set to TRUE, the function will also return the geographic data.}
+
+\item{format}{Choose whether you want to use the sf or sp spatial format. Using sf will return a dataframe with a field for sf geometry, while using sp will return a SpatialPolygonsDataFrame object. Assumes sf as default but can be overwritten by selecting format = "sp".}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 }

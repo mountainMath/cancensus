@@ -2,9 +2,9 @@
 % Please edit documentation in R/cancensus.R
 \name{cancensus.load_geo}
 \alias{cancensus.load_geo}
-\title{Convenience function to load only census data and no geographies.}
+\title{Convenience function to load only census geography without data.}
 \usage{
-cancensus.load_geo(dataset, level, regions, use_cache = TRUE)
+cancensus.load_geo(dataset, level, regions, format, use_cache = TRUE)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -13,12 +13,12 @@ cancensus.load_geo(dataset, level, regions, use_cache = TRUE)
 
 \item{regions}{A json hash describing the geographic regions.}
 
-\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
+\item{format}{Choose whether you want to use the sf or sp spatial format. Assumes sf as default but can be overwritten by selecting format = "sp".}
 
-\item{geo}{If set to TRUE, the function will also return the geographic data.}
+\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 }
 \description{
-Convenience function to load only census data and no geographies.
+Convenience function to load only census geography without data.
 }
 \examples{
 census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}', level='CSD')
