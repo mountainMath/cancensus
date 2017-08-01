@@ -4,7 +4,7 @@
 \alias{cancensus.load}
 \title{CensusMapper API access}
 \usage{
-cancensus.load(dataset, level, regions, vectors = c(), geo = FALSE,
+cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
   use_cache = TRUE)
 }
 \arguments{
@@ -28,7 +28,7 @@ Got to https://censusmapper.ca/api to select variables and geographic regions
 you want to download data for
 
 An API key is required to use this function. Either set the API key on censusmapper
-censusmapper.api_key='<your API key>'
+api_key='<your API key>'
 or as environment variable
 sys.setenv(CM_API_KEY='<your API key>')
 }
