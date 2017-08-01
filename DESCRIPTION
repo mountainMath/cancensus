@@ -1,0 +1,18 @@
+Package: cancensus
+Type: Package
+Title: CensusMapper API Interface to Canada Census
+Version: 0.1.0
+Author: Jens von Bergmann
+Maintainer: <jens@mountainmath.cat>
+Description: The package provides convenient access to StatCan census data via CensusMapper APIs.
+    CensusMapper provides a graphical interface to select variables and geographic regions at
+    https://censusmapper.ca/api
+    An API key is required to access the data.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Depends: dplyr (>= 0.7.2), readr (>= 1.1.1), httr (>= 1.2.1), jsonlite (>= 1.5), sf(>= 0.5-2), digest (>= 0.6.12)
+RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
