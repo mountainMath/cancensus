@@ -58,7 +58,7 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
     if (force_download || !file.exists(geo_file)) {
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
-      GET(paste(geo_base_url,final_data_param_string,sep='?'),write_disk(geo_file));
+      GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file));
       #download.file(paste(geo_base_url,final_geo_param_string,sep='?'),geo_file)
     }
     geos=read_sf(geo_file)
