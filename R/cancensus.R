@@ -116,5 +116,5 @@ cancensus.load_geo <- function (dataset, level, regions, use_cache=TRUE) {
 #' @examples
 #'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
-  Sys.setenv('CM_API_KEY')
+  Sys.setenv(CM_API_KEY=api_key)
 }
