@@ -1,4 +1,4 @@
-# r-censusmapper
+# cancensus
 R wrapper for calling CensusMapper APIs
 
 This package provides a wrapper function for CensusMapper API calls from R to query specific census data and geographies for use in R.
@@ -7,8 +7,7 @@ The CensusMapper API is still in beta, the use of the CensusMapper API requires 
 
 To install the package
 ```
-library(devtools)
-install_github("mountainmath/r-censusmapper")
+devtools::install_github("mountainmath/cancensus")
 ```
 
 To use the functionality you have to first set the CensusMapper API key
@@ -25,11 +24,16 @@ census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vecto
 Then use the data for analysis or visualization, for example
 
 ```
-census_data$sd <- census_data$v_CA16_409..Single.detached.house / census_data$v_CA16_408..Occupied.private.dwellings.by.structural.type.of.dwelling.data
+census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data` 
 
+# or, equivalently using dplyr
+census_data2 <- census_data %>% 
+  mutate(sd = `v_CA16_409: Single-detached house`/`v_CA16_408: Occupied private dwellings by structural type of dwelling data`)
+
+# install.package("tmap")
 library(tmap)
 tm_shape(census_data) +
   tm_polygons("sd", style="quantile", title="Single Detached Homes")
 ```
 
-An mroe complete example of how to use this package can be viewed [on the CensusMapper](https://censusmapper.ca/r-censusmapper-demo.html).
+A more complete example of how to use this package can be viewed [on the CensusMapper](https://censusmapper.ca/r-censusmapper-demo.html).
