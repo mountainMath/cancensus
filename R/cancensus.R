@@ -6,7 +6,7 @@
 #' you want to download data for
 #'
 #' An API key is required to use this function. Either set the API key on censusmapper
-#' censusmapper.api_key='<your API key>'
+#' api_key='<your API key>'
 #' or as environment variable
 #' sys.setenv(CM_API_KEY='<your API key>')
 #'
@@ -40,7 +40,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_
     data_base_url=paste0(base_url,'data.csv')
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) stop('No API key set. Either set the key on the censusmapper object\ncensumapper.api_key=<your censusmappper API key>\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
-      final_data_param_string=paste(data_param_string,paste('api_key',censusmapper.api_key,sep='='),sep='&')
+      final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
       GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress());
     }
     # read the data file and transform to proper data types
@@ -63,7 +63,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) stop('No API key set. Either set the key on the censusmapper object\ncensumapper.api_key=<your censusmappper API key>\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
-      final_geo_param_string=paste(geo_param_string,paste('api_key',censusmapper.api_key,sep='='),sep='&')
+      final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
       GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
     }
