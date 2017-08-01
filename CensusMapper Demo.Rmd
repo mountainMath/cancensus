@@ -23,11 +23,13 @@ library(digest)
 library(sf)
 library(jsonlite)
 library(httr)
+library(dplyr)
+library(readr)
 
-census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,force_download=FALSE) {
+census_geodata <- function (dataset, level, regions, vectors,api_key, geo=FALSE,force_download=FALSE) {
   
   base_url="https://CensusMapper.ca/api/v1/"
- # load data variables
+  # load data variables
   vectors_string=toJSON(vectors)
   data_param_string=paste(
     paste('regions',regions,sep='='),
@@ -43,9 +45,11 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
     final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
     GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file),progress());
   }
-  dat <- read.csv(data_file, na.strings = 'x', colClasses=c("GeoUID"="character"))
-  suppressWarnings(for (var in names(dat)[grepl("v_", names(dat))]) {dat[,var]=as.numeric(as.character(dat[,var]))})
-
+  dat <- read_csv(data_file, na = c("x","F")) %>%
+    mutate(GeoUID = as.character(GeoUID),
+           Type = as.factor(Type),
+           `Region Name` = as.factor(`Region Name`))
+  
   
   if (geo) {
     geo_param_string=paste(
@@ -62,8 +66,8 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
       #download.file(paste(geo_base_url,final_geo_param_string,sep='?'),geo_file)
     }
     geos=read_sf(geo_file)
-    
-    result <- merge(geos, dat, by.x="id", by.y="GeoUID")
+    geos$id <- as.character(geos$id)
+    result <- inner_join(geos, dat, by = c("id" ="GeoUID"))
     
   } else {
     result=dat
@@ -71,16 +75,68 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
   return(result)
 }
 
+# Other functions
+census_geo <- function(dataset, level, regions,api_key,force_download=FALSE) {
+  base_url="https://CensusMapper.ca/api/v1/"
+  geo_param_string=paste(
+    paste('regions',regions_string,sep='='),
+    paste('level',level,sep='='),
+    paste('dataset',dataset,sep='=')
+    ,sep='&')
+  geo_hash=digest(geo_param_string,algo='md5')
+  geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
+  if (force_download || !file.exists(geo_file)) {
+    final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
+    geo_base_url=paste0(base_url,'geo.geojson')
+    GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file));
+    #download.file(paste(geo_base_url,final_geo_param_string,sep='?'),geo_file)
+  }
+  geos=read_sf(geo_file)
+  return(geos)
+}
+census_data <- function(dataset, level, regions, vectors,api_key,force_download=FALSE) {
+  
+  base_url="https://CensusMapper.ca/api/v1/"
+  # load data variables
+  vectors_string=toJSON(vectors)
+  data_param_string=paste(
+    paste('regions',regions,sep='='),
+    paste('vectors',vectors_string,sep='='),
+    paste('level',level,sep='='),
+    paste('dataset',dataset,sep='=')
+    ,sep='&')
+  data_hash=digest(data_param_string,algo='md5')
+  dir.create('data_cache', showWarnings = FALSE)
+  data_file=paste('data_cache/CM_data_',data_hash,'.csv',sep='')
+  data_base_url=paste0(base_url,'data.csv')
+  if (force_download || !file.exists(data_file)) {
+    final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
+    GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file),progress());
+  }
+  dat <- read_csv(data_file, na = c("x","F")) %>%
+    mutate(GeoUID = as.character(GeoUID),
+           Type = as.factor(Type),
+           `Region Name` = as.factor(`Region Name`))
+  return(dat)
+}
+
 ```
 
 
-As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CencusMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
+As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CensusMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
 
 ```{r, echo=TRUE, message=TRUE, warning=TRUE}
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 regions_string='{"CMA":["59933"]}'
 
-geos <- census_mapper(dataset='CA16',level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE, force_download = FALSE)
+# Tests
+geodata_test <- census_geodata(dataset='CA16',level='CT',regions=regions_string,vectors=vectors,api_key=api_key,geo=TRUE, force_download = FALSE)
+data_test <- census_data(dataset='CA16',level='CT',regions=regions_string,vectors=vectors,api_key=api_key)
+geo_test <- census_geo(dataset='CA16',level='CT',regions=regions_string,api_key=api_key)
+
+# Checking which rows have NA
+# which(is.na(data_test), arr.ind=TRUE)
+# This does not account for the 78 observation discrepancy - only 12 rows contain NA. 
 
 ```
 
