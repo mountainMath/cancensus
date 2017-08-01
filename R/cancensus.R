@@ -20,7 +20,7 @@
 #' @export
 #' @examples
 #' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
-cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_cache=TRUE) {
+cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE,use_cache=TRUE) {
   api_key=Sys.getenv('CM_API_KEY')
   have_api_key=nchar(api_key)>1
 
@@ -39,7 +39,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_
     data_file=paste('data_cache/CM_data_',data_hash,'.csv',sep='')
     data_base_url=paste0(base_url,'data.csv')
     if (!use_cache || !file.exists(data_file)) {
-      if (!have_api_key) stop('No API key set. Either set the key on the censusmapper object\ncensumapper.api_key=<your censusmappper API key>\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
+      if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
       GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress());
     }
@@ -62,7 +62,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_
     geo_hash=digest(geo_param_string,algo='md5')
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
     if (!use_cache || !file.exists(geo_file)) {
-      if (!have_api_key) stop('No API key set. Either set the key on the censusmapper object\ncensumapper.api_key=<your censusmappper API key>\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
+      if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
       GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));

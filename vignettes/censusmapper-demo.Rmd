@@ -29,7 +29,7 @@ vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA
 #set the regions we are intereseted in
 regions_string='{"CMA":["59933"]}'
 #load the data
-census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions_string,vectors=vectors,geo=TRUE)
+census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions_string,vectors=vectors)
 ```
 
 ## Mapping
