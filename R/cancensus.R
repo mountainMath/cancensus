@@ -22,7 +22,7 @@
 #' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo=FALSE,use_cache=TRUE) {
   api_key=Sys.getenv('CM_API_KEY')
-  have_api_key=length(api_key)>1
+  have_api_key=nchar(api_key)>1
 
   base_url="https://CensusMapper.ca/api/v1/"
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
