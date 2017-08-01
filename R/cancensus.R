@@ -118,7 +118,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
 #' @examples
 #' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache=TRUE) {
-  return(cancensus.load(dataset, level, regions, vectors=c(), geo=FALSE, use_cache=TRUE))
+  return(cancensus.load(dataset, level, regions, vectors, geo=FALSE, use_cache=TRUE))
 }
 
 #' Convenience function to load only census geography without data.
