@@ -11,7 +11,7 @@ Description: The package provides convenient access to StatCan census data via C
 License: MIT
 Encoding: UTF-8
 LazyData: true
-Depends: dplyr (>= 0.7.2), readr (>= 1.1.1), httr (>= 1.2.1), jsonlite (>= 1.5), sf(>= 0.5-3), digest (>= 0.6.12)
+Depends: readr (>= 1.1.1), httr (>= 1.2.1), jsonlite (>= 1.5), sf(>= 0.5-3), digest (>= 0.6.12)
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown
