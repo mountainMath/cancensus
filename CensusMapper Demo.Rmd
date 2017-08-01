@@ -44,7 +44,7 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
     GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file),progress());
   }
   dat <- read.csv(data_file, na.strings = 'x', colClasses=c("GeoUID"="character"))
-  for (var in names(dat)[grepl("v_", names(dat))]) {dat[,var]=as.numeric(as.character(dat[,var]))}
+  suppressWarnings(for (var in names(dat)[grepl("v_", names(dat))]) {dat[,var]=as.numeric(as.character(dat[,var]))})
 
   
   if (geo) {
