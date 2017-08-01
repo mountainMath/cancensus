@@ -3,3 +3,4 @@
 export(cancensus.load)
 export(cancensus.load_data)
 export(cancensus.load_geo)
+export(cancensus.set_api_key)

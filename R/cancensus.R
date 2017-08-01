@@ -113,6 +113,7 @@ cancensus.load_geo <- function (dataset, level, regions, use_cache=TRUE) {
 
 #' Convenience function to set the api key for the current session.
 #' @param api_key Your CensusMapper API key.
+#' @export
 #' @examples
 #'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
