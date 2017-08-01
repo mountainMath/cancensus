@@ -37,7 +37,7 @@ census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions_string,v
 We compute a the percentage of single detached dwellings out of all occupied dwelling units and map it.
 
 ```{r, echo=TRUE}
-census_data$sd <- census_data$v_CA16_409..Single.detached.house / census_data$v_CA16_408..Occupied.private.dwellings.by.structural.type.of.dwelling.data
+census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
 
 library(tmap)
 tm_shape(census_data) +
@@ -66,9 +66,9 @@ ggplot(census_data) +
 Or we can explore the data through non-map based means, for example how the proportion of single detached and duplex dwelling relate. Duplex dwellings are in most cases suited single family homes. We can explore how the relationship between single family homes and duplexes depend on the municipal regulations allowing for secondary suites.
 
 ```{r}
-census_data$duplex <- census_data$v_CA16_414..Apartment.or.flat.in.a.duplex/ census_data$v_CA16_408..Occupied.private.dwellings.by.structural.type.of.dwelling.data
+census_data$duplex <- census_data$`v_CA16_414: Apartment or flat in a duplex`/ census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
 
-census_data$color_code <- ifelse(census_data$Region.Name == "Vancouver", 'red', ifelse(census_data$Region.Name == "Burnaby", 'blue', ifelse(census_data$Region.Name == "Surrey", 'green', 'grey')))
+census_data$color_code <- ifelse(census_data$`Region Name` == "Vancouver", 'red', ifelse(census_data$`Region Name` == "Burnaby", 'blue', ifelse(census_data$`Region Name` == "Surrey", 'green', 'grey')))
 
 plot(census_data$sd, census_data$duplex, xlab="Single Detached", ylab="Duplex", col=census_data$color_code)
 ```
