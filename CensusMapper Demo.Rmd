@@ -49,9 +49,9 @@ census_mapper <- function (dataset, level, regions, vectors,api_key, geo=FALSE,f
   
   if (geo) {
     geo_param_string=paste(
-      paste('filter_regions',regions_string,sep='='),
+      paste('regions',regions_string,sep='='),
       paste('level',level,sep='='),
-      paste('year',year,sep='=')
+      paste('dataset',dataset,sep='=')
       ,sep='&')
     geo_hash=digest(geo_param_string,algo='md5')
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
