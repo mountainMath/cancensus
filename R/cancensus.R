@@ -50,7 +50,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       }
     }
     # read the data file and transform to proper data types
-    dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region.Name"="factor"),stringsAsFactors=F)
+    dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
 #    dat <- read_csv(data_file, na = c("x","F")) %>%
 #      mutate(GeoUID = as.character(GeoUID),
 #             Type = as.factor(Type),
@@ -96,9 +96,14 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
     }
 
     if (exists("dat")) {
-      result <- merge(geos, dat, by.x="id", by.y="GeoUID")
+      if(format == "sf") {
+      result <- inner_join(geos, dat, by = c("id" = "GeoUID"))
+      } else {
+        result <- merge(geos, dat, by.x = "id", by.y = "GeoUID")
+      }
     } else {
       result=geos;
+      
     }
   } else {
     result=dat
