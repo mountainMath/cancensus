@@ -45,8 +45,9 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       response <- GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress())
       if (status_code(response)==401) {
         # Unauthorized
+        message=paste(content(response,as="text"),"Download of Census Data failed.", sep=' ')
         file.remove(data_file)
-        stop(paste(content(response,as="text"),"Download of Census Data failed.", sep=' '))
+        stop(message)
       }
     }
     # read the data file and transform to proper data types
@@ -74,8 +75,9 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       response <- GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
       if (status_code(response)==401) {
         # Unauthorized
+        message=paste(content(response,as="text"),"Download of Census Geographies failed.", sep=' ')
         file.remove(geo_file)
-        stop(paste(content(response,as="text"),"Download of Census Geographies failed.", sep=' '))
+        stop(message)
       }
     }
     # read the geo file and transform to proper data types
@@ -103,7 +105,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       }
     } else {
       result=geos;
-      
+
     }
   } else {
     result=dat
