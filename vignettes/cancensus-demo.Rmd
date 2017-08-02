@@ -1,0 +1,76 @@
+---
+title: "CensusMapper Demo"
+author: "Jens von Bergmann"
+date: "2017-07-31"
+output: html_notebook
+#output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API. The code for this notbook can be found on [GitHub](https://github.com/mountainMath/cancensus).
+
+To work with the CensusMapper API we need to specify our API key. We load the API key in the environment variable "CM_API_KEY", which we assume was set prior to running the script. We could also specify it directly in the code, but than we have to be careful not to expose our API key when sharing our code.
+
+```{r API Key, echo=TRUE}
+library(cancensus)
+# set environment variable via 
+# Sys.setenv(CM_API_KEY='<your API key>')
+# or
+# cancensus.set_api_key('<your API key>')
+```
+
+To tie into the CensusMapper API we utilize the "censusmapper" library. As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CensusMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
+
+```{r, echo=TRUE, message=TRUE, warning=TRUE}
+#set the data vectors we are interested in
+vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
+#set the regions we are intereseted in
+regions_string='{"CMA":["59933"]}'
+#load the data
+census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions_string,vectors=vectors)
+```
+
+## Mapping
+
+We compute a the percentage of single detached dwellings out of all occupied dwelling units and map it.
+
+```{r, echo=TRUE}
+census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
+
+library(tmap)
+tm_shape(census_data) +
+  tm_polygons("sd", style="quantile", title="Single Detached Homes")
+```
+
+Or using the ggplot library.
+
+```{r, echo=TRUE}
+
+# requires dev build of tiverse/ggplot2, install using devtools and install_github('tidyverse/ggplot2') if needed
+library(sf)
+library(tidyverse)
+library(viridis)
+library(rvest)
+
+
+ggplot(census_data) +
+  geom_sf(aes(fill = sd)) +
+  scale_fill_viridis("%SD") +
+  ggtitle("Proportion of Dwelling Units that are Single Detached") +
+  theme_bw()
+```
+
+
+Or we can explore the data through non-map based means, for example how the proportion of single detached and duplex dwelling relate. Duplex dwellings are in most cases suited single family homes. We can explore how the relationship between single family homes and duplexes depend on the municipal regulations allowing for secondary suites.
+
+```{r}
+census_data$duplex <- census_data$`v_CA16_414: Apartment or flat in a duplex`/ census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
+
+census_data$color_code <- ifelse(census_data$`Region Name` == "Vancouver", 'red', ifelse(census_data$`Region Name` == "Burnaby", 'blue', ifelse(census_data$`Region Name` == "Surrey", 'green', 'grey')))
+
+plot(census_data$sd, census_data$duplex, xlab="Single Detached", ylab="Duplex", col=census_data$color_code)
+```
+

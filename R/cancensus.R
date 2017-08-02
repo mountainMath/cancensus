@@ -43,12 +43,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
       response <- GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress())
-      if (status_code(response)==401) {
-        # Unauthorized
-        message=paste(content(response,as="text"),"Download of Census Data failed.", sep=' ')
-        file.remove(data_file)
-        stop(message)
-      }
+      cancensus.handle_status_code(response,data_file)
     }
     # read the data file and transform to proper data types
     dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
@@ -73,12 +68,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
       response <- GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
-      if (status_code(response)==401) {
-        # Unauthorized
-        message=paste(content(response,as="text"),"Download of Census Geographies failed.", sep=' ')
-        file.remove(geo_file)
-        stop(message)
-      }
+      cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
     if(format == "sf") {
@@ -149,4 +139,25 @@ cancensus.load_geo <- function (dataset, level, regions, format, use_cache=TRUE)
 #'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
   Sys.setenv(CM_API_KEY=api_key)
+}
+
+#' Internal function to handle unfavourable http responses
+cancensus.handle_status_code <- function(response,path){
+  if (status_code(response)!=200) {
+    message=content(response,as="text")
+    file.remove(path)
+    if (status_code(response)==401) {
+      # Problem with API key
+      stop(paste("Download of Census Data failed.",
+                 "Please ensure that your API key is valid and has a large enough quota left.",
+                 message, sep=' '))
+    } else if (status_code(response)==500) {
+      stop(paste("Download of Census Data failed.",
+                 "The request triggered a server error, the CensusMapper maintainers have been notified and will fix this as soon as possible.",
+                 message, sep=' '))
+    } else {
+      stop(paste("Download of Census Data failed.",
+                 message, sep=' '))
+    }
+  }
 }

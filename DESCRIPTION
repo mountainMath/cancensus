@@ -2,8 +2,9 @@ Package: cancensus
 Type: Package
 Title: CensusMapper API Interface to Canada Census
 Version: 0.1.0
-Author: Jens von Bergmann
-Maintainer: <jens@mountainmath.ca>
+Authors@R: c(
+    person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
+    person("Dimitri", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"))
 Description: The package provides convenient access to StatCan census data via CensusMapper APIs.
     CensusMapper provides a graphical interface to select variables and geographic regions at
     https://censusmapper.ca/api
