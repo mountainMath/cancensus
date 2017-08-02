@@ -1,0 +1,75 @@
+---
+title: "Working with cancensus"
+author: "Dmitry Shkolnik"
+date: "8/1/2017"
+output:
+  html_document: default
+  html_notebook: default
+vignette: |
+  %\VignetteIndexEntry{Vignette Title} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setting up your cancensus environment
+
+```{r, message=FALSE}
+# install_github("mountainmath/cancensus")
+library(cancensus)
+# cancensus.set_api_key('your_key')
+```
+## Downloading Census Data
+
+The `cancensus.load` function takes JSON parameters for selecting appropriate census year, the region grouping, the region ids, and a vector of Census variables. 
+
+In order to make this easier, Censusmapper has an [API query playground](https://censusmapper.ca/api/) (requires free account) where you can search for and select specific variables for any given geography within the Canadian census environment. The API playground will generate prepopulated R code for downloading your data, as in the example below: 
+
+```{r, message=FALSE}
+census_data <- cancensus.load(dataset='CA11', regions='{"CSD":["5915022","5915025","5915015","5915011","5915004","5915029","5915046","5915055","5915034"]}', vectors=c("v_CA11N_2221","v_CA11N_2224","v_CA11N_2227","v_CA11N_2218"), level='CSD')
+```
+The data loading functions in **cancensus** are designed to return tidy data frames with matching spatial data. By default, cancensus.load returns geographic data using the sf class, but users can request sp class geographic data by adding the parameter `format="sp"` to `cancensus.load`. For more detail about parameters and options, see `?cancensus.load`. 
+
+## Working with Census data
+
+Because **cancensus** returns tidy data, working with the resulting Census data is straightforward. The following examples rely on `dplyr`-based approaches for manipulating data, but the same tasks can be accomplished in base R and many other approaches. 
+
+```{r, message=FALSE}
+# install.packages("dplyr")
+# install.packages("tidyr")
+library(dplyr)
+library(tidyr)
+commutes <- census_data %>% 
+  group_by(name) %>%
+  mutate(share57 = `v_CA11N_2221: Between 5 and 6:59 a.m.` / `v_CA11N_2218: Total employed population aged 15 years and over by time leaving for work`,
+         share79 = `v_CA11N_2224: Between 7 and 9:00 a.m.` / `v_CA11N_2218: Total employed population aged 15 years and over by time leaving for work`,
+         share9p = `v_CA11N_2227: Anytime after 9:00 a.m.` / `v_CA11N_2218: Total employed population aged 15 years and over by time leaving for work`) %>%
+  gather(key = start, value = share, share57:share9p)
+```
+
+## Visualizing Census data (except maps)
+
+```{r, message=FALSE}
+library(ggplot2)
+
+ggplot(commutes, aes(x = start, y = share)) + geom_bar(stat = "identity") + facet_wrap(~name) + theme_minimal() + scale_x_discrete("",labels = c("share57" = "5-7am", "share79" = "7-9am","share9p" = "After 9am")) + scale_y_continuous("Share of all commuters")+ ggtitle("Share of Commutes by Start Time", subtitle = "2011 NHS, Selected Census Subdivisions")
+```
+
+## Mapping Census Data
+
+```{r, message=FALSE}
+# Requires latest version of ggplot2 to effortless plot sf objects and viridis for colour scales.
+# devtools::install_github("tidyverse/ggplot2")
+# install.package("viridis")
+library(ggplot2)
+library(viridis)
+
+ggplot(commutes) +
+  geom_sf(aes(fill = share)) +
+  scale_fill_viridis("Share of commuters") +
+  ggtitle("Commutes by start-time") +
+  theme_minimal() + facet_grid(~start) +
+  theme(axis.text = element_blank(), 
+axis.title = element_blank(), axis.ticks = element_blank()) 
+```
