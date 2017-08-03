@@ -89,7 +89,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       if(format == "sf") {
       result <- dplyr::inner_join(geos, dat, by = c("id" = "GeoUID"))
       } else {
-        result <- merge(geos, dat, by.x = "id", by.y = "GeoUID")
+        result <- sp::merge(geos, dat, by.x = "id", by.y = "GeoUID")
       }
     } else {
       result=geos;
