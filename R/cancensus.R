@@ -29,20 +29,20 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
   # load data variables
   if (length(vectors)>0) {
-    vectors_string=toJSON(vectors)
+    vectors_string=jsonlite::toJSON(vectors)
     data_param_string=paste(
       paste('regions',regions,sep='='),
       paste('vectors',vectors_string,sep='='),
       paste('level',level,sep='='),
       paste('dataset',dataset,sep='=')
       ,sep='&')
-    data_hash=digest(data_param_string,algo='md5')
+    data_hash=digest::digest(data_param_string,algo='md5')
     data_file=paste('data_cache/CM_data_',data_hash,'.csv',sep='')
     data_base_url=paste0(base_url,'data.csv')
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
-      response <- GET(paste(data_base_url,final_data_param_string,sep='?'),write_disk(data_file,overwrite = TRUE),progress())
+      response <- httr::GET(paste(data_base_url,final_data_param_string,sep='?'),httr::write_disk(data_file,overwrite = TRUE),httr::progress())
       cancensus.handle_status_code(response,data_file)
     }
     # read the data file and transform to proper data types
@@ -61,35 +61,33 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       paste('level',level,sep='='),
       paste('dataset',dataset,sep='=')
       ,sep='&')
-    geo_hash=digest(geo_param_string,algo='md5')
+    geo_hash=digest::digest(geo_param_string,algo='md5')
     geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
       final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
       geo_base_url=paste0(base_url,'geo.geojson')
-      response <- GET(paste(geo_base_url,final_geo_param_string,sep='?'),write_disk(geo_file,overwrite = TRUE));
+      response <- httr::GET(paste(geo_base_url,final_geo_param_string,sep='?'),httr::write_disk(geo_file,overwrite = TRUE));
       cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
     if(format == "sf") {
-      geos=read_sf(geo_file)
+      geos=sf::read_sf(geo_file)
       geos$id <- as.character(geos$id)
     } else {
       if ("rgdal" %in% installed.packages()) {
-        library(rgdal)
-        geos=readOGR(geo_file, "OGRGeoJSON")
+        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
         geos@data$id <- as.character(geos@data$id)
       } else {
         install.packages("rgdal")
-        library(rgdal)
-        geos=readOGR(geo_file, "OGRGeoJSON")
+        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
         geos@data$id <- as.character(geos@data$id)
       }
     }
 
     if (exists("dat")) {
       if(format == "sf") {
-      result <- inner_join(geos, dat, by = c("id" = "GeoUID"))
+      result <- dplyr::inner_join(geos, dat, by = c("id" = "GeoUID"))
       } else {
         result <- merge(geos, dat, by.x = "id", by.y = "GeoUID")
       }
@@ -143,15 +141,15 @@ cancensus.set_api_key <- function(api_key){
 
 #' Internal function to handle unfavourable http responses
 cancensus.handle_status_code <- function(response,path){
-  if (status_code(response)!=200) {
+  if (httr::status_code(response)!=200) {
     message=content(response,as="text")
     file.remove(path)
-    if (status_code(response)==401) {
+    if (httr::status_code(response)==401) {
       # Problem with API key
       stop(paste("Download of Census Data failed.",
                  "Please ensure that your API key is valid and has a large enough quota left.",
                  message, sep=' '))
-    } else if (status_code(response)==500) {
+    } else if (httr::status_code(response)==500) {
       stop(paste("Download of Census Data failed.",
                  "The request triggered a server error, the CensusMapper maintainers have been notified and will fix this as soon as possible.",
                  message, sep=' '))
