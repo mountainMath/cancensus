@@ -8,7 +8,6 @@ The CensusMapper API is still in beta, the use of the CensusMapper API requires 
 
 ## Installing the package
 ```
-library(devtools)
 devtools::install_github("mountainmath/cancensus")
 ```
 
@@ -37,10 +36,13 @@ census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$
 census_data2 <- census_data %>% 
   mutate(sd = `v_CA16_409: Single-detached house`/`v_CA16_408: Occupied private dwellings by structural type of dwelling data`)
 
+# Making maps: tmap
 # install.package("tmap")
 library(tmap)
 tm_shape(census_data) +
   tm_polygons("sd", style="quantile", title="Single Detached Homes")
+  
+# Many other ways of visualizing spatial data 
 ```
 
 ## Examples
