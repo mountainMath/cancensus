@@ -5,7 +5,7 @@
 \title{Convenience function to load only census data and no geographies.}
 \usage{
 cancensus.load_data(dataset, level, regions, vectors = c(),
-  use_cache = TRUE)
+  use_cache = TRUE, api_key = getOption("cancensus.api_key"))
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}

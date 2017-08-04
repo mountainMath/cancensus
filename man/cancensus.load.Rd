@@ -5,7 +5,8 @@
 \title{CensusMapper API access}
 \usage{
 cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
-  format = "sf", use_cache = TRUE)
+  format = "sf", use_cache = TRUE,
+  api_key = getOption("cancensus.api_key"))
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}

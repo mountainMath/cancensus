@@ -4,7 +4,8 @@
 \alias{cancensus.load_geo}
 \title{Convenience function to load only census geography without data.}
 \usage{
-cancensus.load_geo(dataset, level, regions, format, use_cache = TRUE)
+cancensus.load_geo(dataset, level, regions, format, use_cache = TRUE,
+  api_key = getOption("cancensus.api_key"))
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}

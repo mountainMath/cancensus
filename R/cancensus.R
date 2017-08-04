@@ -48,7 +48,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
     # read the data file and transform to proper data types
     if (requireNamespace("readr", quietly = TRUE)) {
       # Use readr::read_csv if it's available.
-      dat <- readr::read_csv(data_file, na = c("x","F"))
+      dat <- readr::read_csv(data_file, na = c("x","F"), col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
       dat$GeoUID <- as.character(dat$GeoUID)
       dat$Type <- as.factor(dat$Type)
       dat$`Region Name` <- as.factor(dat$`Region Name`)
