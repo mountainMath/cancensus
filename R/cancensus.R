@@ -143,6 +143,29 @@ cancensus.set_api_key <- function(api_key){
   options(cancensus.api_key = api_key)
 }
 
+#' Query the CensusMapper API for available datasets.
+#'
+#' @return
+#'
+#' A data frame with a column \code{dataset} containing the code for the
+#' dataset, and a column \code{description} describing it.
+#'
+#' @export
+list_datasets <- function() {
+  response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
+                        httr::accept_json())
+  if (httr::status_code(response) == 200) {
+    result <- jsonlite::fromJSON(httr::content(response, type = "text",
+                                               encoding = "UTF-8"))
+    class(result) <- c("tbl_df", "tbl", "data.frame")
+    result
+  } else {
+    stop("API query for available data sets failed with error: ",
+         httr::content(response, as = "text"),
+         "(", httr::status_code(response),  ")")
+  }
+}
+
 #' Internal function to handle unfavourable http responses
 cancensus.handle_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
