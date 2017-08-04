@@ -21,9 +21,9 @@
 #' @export
 #' @examples
 #' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
-cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, format = "sf", use_cache=TRUE) {
-  api_key=Sys.getenv('CM_API_KEY')
-  have_api_key=nchar(api_key)>1
+cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, format = "sf", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+  api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+  have_api_key <- !is.null(api_key)
 
   base_url="https://CensusMapper.ca/api/v1/"
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
@@ -112,8 +112,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
 #' @export
 #' @examples
 #' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
-cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache=TRUE) {
-  return(cancensus.load(dataset, level, regions, vectors, geo=FALSE, use_cache=TRUE))
+cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+  return(cancensus.load(dataset, level, regions, vectors, geo=FALSE, use_cache=use_cache, api_key=api_key))
 }
 
 #' Convenience function to load only census geography without data.
@@ -126,8 +126,8 @@ cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache
 #' @export
 #' @examples
 #' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}', level='CSD')
-cancensus.load_geo <- function (dataset, level, regions, format, use_cache=TRUE) {
-  return(cancensus.load(dataset, level, regions, geo=TRUE, format = "sf", use_cache=TRUE))
+cancensus.load_geo <- function (dataset, level, regions, format, use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+  return(cancensus.load(dataset, level, regions, geo=TRUE, format = "sf", use_cache=use_cache, api_key=api_key))
 }
 
 #' Convenience function to set the api key for the current session.
@@ -136,7 +136,7 @@ cancensus.load_geo <- function (dataset, level, regions, format, use_cache=TRUE)
 #' @examples
 #'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
-  Sys.setenv(CM_API_KEY=api_key)
+  options(cancensus.api_key = api_key)
 }
 
 #' Internal function to handle unfavourable http responses
@@ -157,5 +157,12 @@ cancensus.handle_status_code <- function(response,path){
       stop(paste("Download of Census Data failed.",
                  message, sep=' '))
     }
+  }
+}
+
+.onLoad <- function(libname, pkgname) {
+  if (!"cancensus.api_key" %in% names(options())) {
+    # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
+    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
   }
 }
