@@ -42,7 +42,7 @@ sp@data <- sp@data %>%
 
 #categories to map and their colors
 categories=c("Cantonese","Mandarin","Punjabi","Farsi","Tagalog","Korean","Spanish")
-colors <- c("#ffff66", "#ff3300","#66ff33","#00ffff","#0066ff","#ff66ff","#9900cc")
+colors <- c("#ffff66", "#ff3300","#66ff33","#00ffff","#0066ff","#ff66ff","#6600cc")
 
 # 1 dot = <scale> number of people
 scale=25
@@ -113,8 +113,8 @@ dot_density <- function(geo_data,categories,colors,scale,base_geo_data,title,att
     geom_point(data = dots.final, aes(x, y, colour = Category),size=0.1,alpha=0.7) +
     scale_colour_manual(complete_title,values = colors) +
     theme_map() +
-    theme(plot.background = element_rect(fill = "#eeeeee"), legend.position = "top") +
-    guides(colour = guide_legend(override.aes = list(size=2))) +
+    theme(legend.title=element_text(size=18),legend.text=element_text(size=18),plot.background = element_rect(fill = "#eeeeee"), legend.position = "top") +
+    guides(colour = guide_legend(override.aes = list(size=3))) +
     labs(color = "label",caption=complete_attribution) +
     coord_map()
   
