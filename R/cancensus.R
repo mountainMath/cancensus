@@ -46,11 +46,15 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       cancensus.handle_status_code(response,data_file)
     }
     # read the data file and transform to proper data types
-    dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
-#    dat <- read_csv(data_file, na = c("x","F")) %>%
-#      mutate(GeoUID = as.character(GeoUID),
-#             Type = as.factor(Type),
-#             `Region Name` = as.factor(`Region Name`))
+    if (requireNamespace("readr", quietly = TRUE)) {
+      # Use readr::read_csv if it's available.
+      dat <- readr::read_csv(data_file, na = c("x","F"))
+      dat$GeoUID <- as.character(dat$GeoUID)
+      dat$Type <- as.factor(dat$Type)
+      dat$`Region Name` <- as.factor(dat$`Region Name`)
+    } else {
+      dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+    }
   } else if (!geo) {
     stop('Neither vectors nor geo data specified, nothing to do.')
   }
