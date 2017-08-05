@@ -122,26 +122,28 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 
 #' Convenience function to load only census data and no geographies.
 #'
+#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
 #' @inheritParams cancensus.load
 #'
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
-cancensus.load_data <- function (dataset, level, regions, vectors, labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
-  return(cancensus.load(dataset, level, regions, vectors, geo_format=NA, labels=labels, use_cache=use_cache, api_key=api_key))
+cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
+  return(cancensus.load(dataset, level, regions, vectors, geo_format = NA, ...))
 }
 
 #' Convenience function to load only census geography without data.
 #'
+#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
 #' @inheritParams cancensus.load
 #'
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}', level='CSD')
-cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
-  return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, labels=labels, use_cache=use_cache, api_key=api_key))
+cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
+  return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
 
 #' Convenience function to set the api key for the current session.
