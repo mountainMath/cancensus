@@ -22,7 +22,7 @@ Load data we want to use for dot density map, use the [CensusMapper API tool](ht
 sp <- cancensus.load(format='sp',dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_2066","v_CA16_2060","v_CA16_1916","v_CA16_1727","v_CA16_1937","v_CA16_1958","v_CA16_1973"), level='DA')
 ```
 
-For plotting, we also want to plot the aministrative as a base layer for better orientation
+For plotting, we also want to plot the administrative boundaries as a base layer for better orientation.
 ```{r}
 # load data for background polygons (geograhic data only)
 base_geom <- cancensus.load(format='sp', dataset='CA16', regions='{"CMA":["59933"]}',  level='CSD')
@@ -30,22 +30,13 @@ base_geom <- cancensus.load(format='sp', dataset='CA16', regions='{"CMA":["59933
 
 Next we neet to prepare the data for mapping, we rename the variables and set the colours
 ```{r}
-sp@data <- sp@data %>% 
-  rename(Cantonese="v_CA16_2060: Cantonese",
-         Mandarin="v_CA16_2066: Mandarin",
-         Punjabi="v_CA16_1916: Punjabi (Panjabi)",
-         Farsi="v_CA16_1937: Persian (Farsi)",
-         Korean="v_CA16_1973: Korean",
-         Tagalog="v_CA16_1727: Tagalog (Pilipino, Filipino)",
-         Spanish="v_CA16_1958: Spanish"
-         ) 
 
 #categories to map and their colors
 categories=c("Cantonese","Mandarin","Punjabi","Farsi","Tagalog","Korean","Spanish")
 colors <- c("#ffff66", "#ff3300","#66ff33","#00ffff","#0066ff","#ff66ff","#6600cc")
 
-# 1 dot = <scale> number of people
-scale=25
+# rename columns for better readability
+for (i in 1:length(categories)) {x=categories[i]; colnames(sp@data)[grep(x,colnames(sp@data))]<-x}
 ```
 
 
