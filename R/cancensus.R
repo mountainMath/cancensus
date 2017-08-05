@@ -112,7 +112,10 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
    census_labels <- dplyr::as_data_frame(do.call(rbind, census_labels))
    names(census_labels) <- c("Vector", "Detail")
    attributes(result)$census_labels <- census_labels
-   if(labels == "short") names(result@data) <- gsub(":.*","",names(result@data))
+   if(labels == "short") {
+     if (format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+     else {names(result) <- gsub(":.*","",names(result))}
+   }
   }
   return(result)
 }
@@ -182,7 +185,7 @@ list_datasets <- function() {
 #'
 #' @return
 #'
-#' A data frame with a column \code{variable} containing the truncated 
+#' A data frame with a column \code{variable} containing the truncated
 #' variable name, and a column \code{label} describing it.
 #'
 #' @export
