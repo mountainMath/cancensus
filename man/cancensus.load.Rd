@@ -19,6 +19,7 @@ cancensus.load(dataset, level, regions, vectors = c(), geo_format = "sf",
 
 \item{geo_format}{One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.}
 
+\item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 }
@@ -36,6 +37,9 @@ sys.setenv(CM_API_KEY='<your API key>')
 }
 \examples{
 census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
+census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
+# Get details for truncated variables
+cancensus.labels(census_data)
 }
 \keyword{api}
 \keyword{canada}
