@@ -109,8 +109,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
   if (length(vectors)>0) {
    census_labels <- names(result)[grep("^v_", names(result))]
    census_labels <- strsplit(census_labels, ": ")
-   census_labels <- as_data_frame(do.call(rbind, census_labels))
-   names(census_labels) <- c("Census Variable", "Detail")
+   census_labels <- dplyr::as_data_frame(do.call(rbind, census_labels))
+   names(census_labels) <- c("Vector", "Detail")
    attributes(result)$census_labels <- census_labels
    if(labels == "short") names(result@data) <- gsub(":.*","",names(result@data))
   }
