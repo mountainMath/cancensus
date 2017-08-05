@@ -29,6 +29,15 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
 
+  # Check that we can read the requested geo format.
+  if (format == "sf" && !requireNamespace("sf", quietly = TRUE)) {
+    stop("the `sf` package is required to return 'sf' objects.")
+  } else if (format == "sp" && !requireNamespace("rgeos", quietly = TRUE)) {
+    stop("the `rgdal` package is required to return 'sp' objects")
+  } else if (!format %in% c("sf", "sp")) {
+    stop("the `format` parameter must be one of 'sf' or 'sp'")
+  }
+
   base_url="https://CensusMapper.ca/api/v1/"
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
   # load data variables
@@ -79,18 +88,12 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
-    if(format == "sf") {
-      geos=sf::read_sf(geo_file)
+    if (format == "sf") {
+      geos <- sf::read_sf(geo_file)
       geos$id <- as.character(geos$id)
-    } else {
-      if ("rgdal" %in% installed.packages()) {
-        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
-        geos@data$id <- as.character(geos@data$id)
-      } else {
-        install.packages("rgdal")
-        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
-        geos@data$id <- as.character(geos@data$id)
-      }
+    } else { # format == "sp"
+      geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
+      geos@data$id <- as.character(geos@data$id)
     }
 
     if (exists("dat")) {
