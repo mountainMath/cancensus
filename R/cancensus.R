@@ -186,11 +186,12 @@ list_datasets <- function() {
 #' variable name, and a column \code{label} describing it.
 #'
 #' @export
-cancensus.labels <-   if("census_labels" %in% names(attributes(dat))) {
-  attributes(dat)$census_labels
-} else {
-  warning("Data does not have variables to labels. No Census variables selected as vectors. See ?cancensus.load() for more information. ")
-}
+cancensus.labels <-  function(dat) {
+  if("census_labels" %in% names(attributes(dat))) {
+    attributes(dat)$census_labels
+  } else {
+    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?cancensus.load() for more information. ")}
+  }
 
 
 #' Internal function to handle unfavourable http responses
