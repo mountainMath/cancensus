@@ -4,8 +4,7 @@
 \alias{cancensus.load_data}
 \title{Convenience function to load only census data and no geographies.}
 \usage{
-cancensus.load_data(dataset, level, regions, vectors = c(),
-  use_cache = TRUE, api_key = getOption("cancensus.api_key"))
+cancensus.load_data(dataset, level, regions, vectors, ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -16,9 +15,7 @@ cancensus.load_data(dataset, level, regions, vectors = c(),
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
-\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
-
-\item{geo}{If set to TRUE, the function will also return the geographic data.}
+\item{...}{Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.}
 }
 \description{
 Convenience function to load only census data and no geographies.

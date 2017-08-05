@@ -14,9 +14,8 @@
 #' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
 #' @param regions A json hash describing the geographic regions.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
-#' @param geo If set to TRUE, the function will also return the geographic data.
-#' @param format Choose whether you want to use the sf or sp spatial format. Using sf will return a dataframe with a field for sf geometry, while using sp will return a SpatialPolygonsDataFrame object. Assumes sf as default but can be overwritten by selecting format = "sp".
-#' @param labels Set to "detail" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
+#' @param geo_format One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.
+#' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @keywords canada census data api
 #' @export
@@ -25,9 +24,19 @@
 #' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
 #' # Get details for truncated variables
 #' cancensus.labels(census_data)
-cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
+
+  # Check that we can read the requested geo format.
+  if (is.na(geo_format)) { # This is ok.
+  } else if (geo_format == "sf" && !requireNamespace("sf", quietly = TRUE)) {
+    stop("the `sf` package is required to return 'sf' objects.")
+  } else if (geo_format == "sp" && !requireNamespace("rgeos", quietly = TRUE)) {
+    stop("the `rgdal` package is required to return 'sp' objects")
+  } else if (!geo_format %in% c("sf", "sp")) {
+    stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
+  }
 
   base_url="https://CensusMapper.ca/api/v1/"
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
@@ -59,11 +68,11 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
     } else {
       dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
     }
-  } else if (!geo) {
+  } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
   }
 
-  if (geo) {
+  if (!is.na(geo_format)) {
     geo_param_string=paste(
       paste('regions',regions,sep='='),
       paste('level',level,sep='='),
@@ -79,24 +88,18 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
       cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
-    if(format == "sf") {
-      geos=sf::read_sf(geo_file)
+    if (geo_format == "sf") {
+      geos <- sf::read_sf(geo_file)
       geos$id <- as.character(geos$id)
-    } else {
-      if ("rgdal" %in% installed.packages()) {
-        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
-        geos@data$id <- as.character(geos@data$id)
-      } else {
-        install.packages("rgdal")
-        geos=rgdal::readOGR(geo_file, "OGRGeoJSON")
-        geos@data$id <- as.character(geos@data$id)
-      }
+    } else { # geo_format == "sp"
+      geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
+      geos@data$id <- as.character(geos@data$id)
     }
 
     if (exists("dat")) {
-      if(format == "sf") {
+      if (geo_format == "sf") {
       result <- dplyr::inner_join(geos, dat, by = c("id" = "GeoUID"))
-      } else {
+      } else { # geo_format == "sp"
         result <- sp::merge(geos, dat, by.x = "id", by.y = "GeoUID")
       }
     } else {
@@ -118,32 +121,29 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo=TRUE, form
 }
 
 #' Convenience function to load only census data and no geographies.
-#' @param dataset A CensusMapper dataset identifier.
-#' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
-#' @param regions A json hash describing the geographic regions.
-#' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
-#' @param geo If set to TRUE, the function will also return the geographic data.
-#' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#'
+#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
+#' @inheritParams cancensus.load
+#'
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
-cancensus.load_data <- function (dataset, level, regions, vectors=c(), use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
-  return(cancensus.load(dataset, level, regions, vectors, geo=FALSE, use_cache=use_cache, api_key=api_key))
+cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
+  return(cancensus.load(dataset, level, regions, vectors, geo_format = NA, ...))
 }
 
 #' Convenience function to load only census geography without data.
-#' @param dataset A CensusMapper dataset identifier.
-#' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
-#' @param regions A json hash describing the geographic regions.
-#' @param format Choose whether you want to use the sf or sp spatial format. Assumes sf as default but can be overwritten by selecting format = "sp".
-#' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#'
+#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
+#' @inheritParams cancensus.load
+#'
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}', level='CSD')
-cancensus.load_geo <- function (dataset, level, regions, format, use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
-  return(cancensus.load(dataset, level, regions, geo=TRUE, format = "sf", use_cache=use_cache, api_key=api_key))
+cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
+  return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
 
 #' Convenience function to set the api key for the current session.

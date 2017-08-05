@@ -4,8 +4,7 @@
 \alias{cancensus.load_geo}
 \title{Convenience function to load only census geography without data.}
 \usage{
-cancensus.load_geo(dataset, level, regions, format, use_cache = TRUE,
-  api_key = getOption("cancensus.api_key"))
+cancensus.load_geo(dataset, level, regions, geo_format = "sf", ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -14,9 +13,9 @@ cancensus.load_geo(dataset, level, regions, format, use_cache = TRUE,
 
 \item{regions}{A json hash describing the geographic regions.}
 
-\item{format}{Choose whether you want to use the sf or sp spatial format. Assumes sf as default but can be overwritten by selecting format = "sp".}
+\item{geo_format}{One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.}
 
-\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
+\item{...}{Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.}
 }
 \description{
 Convenience function to load only census geography without data.

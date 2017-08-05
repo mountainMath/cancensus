@@ -4,8 +4,8 @@
 \alias{cancensus.load}
 \title{CensusMapper API access}
 \usage{
-cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
-  format = "sf", use_cache = TRUE,
+cancensus.load(dataset, level, regions, vectors = c(), geo_format = "sf",
+  labels = "detailed", use_cache = TRUE,
   api_key = getOption("cancensus.api_key"))
 }
 \arguments{
@@ -17,9 +17,9 @@ cancensus.load(dataset, level, regions, vectors = c(), geo = TRUE,
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
-\item{geo}{If set to TRUE, the function will also return the geographic data.}
+\item{geo_format}{One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.}
 
-\item{format}{Choose whether you want to use the sf or sp spatial format. Using sf will return a dataframe with a field for sf geometry, while using sp will return a SpatialPolygonsDataFrame object. Assumes sf as default but can be overwritten by selecting format = "sp".}
+\item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 }
@@ -37,6 +37,9 @@ sys.setenv(CM_API_KEY='<your API key>')
 }
 \examples{
 census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
+census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
+# Get details for truncated variables
+cancensus.labels(census_data)
 }
 \keyword{api}
 \keyword{canada}
