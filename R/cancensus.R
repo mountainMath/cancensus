@@ -27,6 +27,7 @@
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
+  result <- NULL
 
   # Check that we can read the requested geo format.
   if (is.na(geo_format)) { # This is ok.
@@ -58,12 +59,12 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
     # read the data file and transform to proper data types
     if (requireNamespace("readr", quietly = TRUE)) {
       # Use readr::read_csv if it's available.
-      dat <- readr::read_csv(data_file, na = c("x","F"), col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
-      dat$GeoUID <- as.character(dat$GeoUID)
-      dat$Type <- as.factor(dat$Type)
-      dat$`Region Name` <- as.factor(dat$`Region Name`)
+      result <- readr::read_csv(data_file, na = c("x","F"), col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
+      result$GeoUID <- as.character(result$GeoUID)
+      result$Type <- as.factor(result$Type)
+      result$`Region Name` <- as.factor(result$`Region Name`)
     } else {
-      dat <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+      result <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
     }
   } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
@@ -83,27 +84,25 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
-    if (geo_format == "sf") {
+    result <- if (geo_format == "sf") {
       geos <- sf::read_sf(geo_file)
       geos$id <- as.character(geos$id)
+      if (!is.null(result)) {
+        dplyr::inner_join(geos, result, by = c("id" = "GeoUID"))
+      } else {
+        geos
+      }
     } else { # geo_format == "sp"
       geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
       geos@data$id <- as.character(geos@data$id)
-    }
-
-    if (exists("dat")) {
-      if (geo_format == "sf") {
-      result <- dplyr::inner_join(geos, dat, by = c("id" = "GeoUID"))
-      } else { # geo_format == "sp"
-        result <- sp::merge(geos, dat, by.x = "id", by.y = "GeoUID")
+      if (!is.null(result)) {
+        sp::merge(geos, result, by.x = "id", by.y = "GeoUID")
+      } else {
+        geos
       }
-    } else {
-      result=geos;
-
     }
-  } else {
-    result=dat
   }
+
   if (length(vectors)>0) {
    census_labels <- names(result)[grep("^v_", names(result))]
    census_labels <- strsplit(census_labels, ": ")
