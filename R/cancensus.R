@@ -42,20 +42,17 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
   # load data variables
   if (length(vectors)>0) {
-    vectors_string=jsonlite::toJSON(vectors)
-    data_param_string=paste(
-      paste('regions',regions,sep='='),
-      paste('vectors',vectors_string,sep='='),
-      paste('level',level,sep='='),
-      paste('dataset',dataset,sep='=')
-      ,sep='&')
-    data_hash=digest::digest(data_param_string,algo='md5')
-    data_file=paste('data_cache/CM_data_',data_hash,'.csv',sep='')
-    data_base_url=paste0(base_url,'data.csv')
+    param_string <- paste0("regions=", regions,
+                           # Convert vectors to a JSON list.
+                           "&vectors=", jsonlite::toJSON(vectors),
+                           "&level=", level, "&dataset=", dataset)
+    data_file <- paste0("data_cache/CM_data_",
+                        digest::digest(param_string, algo = "md5"), ".csv")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
-      final_data_param_string=paste(data_param_string,paste('api_key',api_key,sep='='),sep='&')
-      response <- httr::GET(paste(data_base_url,final_data_param_string,sep='?'),httr::write_disk(data_file,overwrite = TRUE),httr::progress())
+      url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
+      response <- httr::GET(url, httr::write_disk(data_file, overwrite = TRUE),
+                            httr::progress())
       cancensus.handle_status_code(response,data_file)
     }
     # read the data file and transform to proper data types
@@ -73,18 +70,16 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   }
 
   if (!is.na(geo_format)) {
-    geo_param_string=paste(
-      paste('regions',regions,sep='='),
-      paste('level',level,sep='='),
-      paste('dataset',dataset,sep='=')
-      ,sep='&')
-    geo_hash=digest::digest(geo_param_string,algo='md5')
-    geo_file=paste('data_cache/CM_geo_',geo_hash,'.geojson',sep='')
+    param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
+                           dataset)
+    geo_file <- paste0("data_cache/CM_geo_",
+                       digest::digest(param_string, algo = "md5"), ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
-      final_geo_param_string=paste(geo_param_string,paste('api_key',api_key,sep='='),sep='&')
-      geo_base_url=paste0(base_url,'geo.geojson')
-      response <- httr::GET(paste(geo_base_url,final_geo_param_string,sep='?'),httr::write_disk(geo_file,overwrite = TRUE));
+      url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
+                    api_key)
+      response <- httr::GET(url, httr::write_disk(geo_file, overwrite = TRUE),
+                            httr::progress())
       cancensus.handle_status_code(response,geo_file)
     }
     # read the geo file and transform to proper data types
