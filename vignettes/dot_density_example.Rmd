@@ -14,18 +14,18 @@ First we install cancensus, grab the newest version just in case. Don't forget t
 #library(devtools)
 #devtools::install_github('mountainmath/cancensus')
 library(cancensus)
-#cancensus.set_api_key('your api key')
+# api_key='<your API key>'
 ```
 
 Load data we want to use for dot density map, use the [CensusMapper API tool](https://censusmapper.ca/api) to select variabes and regions, and we add the `format='sp'` option to read the data in `sp` format.
 ```{r}
-sp <- cancensus.load(format='sp',dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_2066","v_CA16_2060","v_CA16_1916","v_CA16_1727","v_CA16_1937","v_CA16_1958","v_CA16_1973"), level='DA')
+sp <- cancensus.load(geo_format='sp',dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_2066","v_CA16_2060","v_CA16_1916","v_CA16_1727","v_CA16_1937","v_CA16_1958","v_CA16_1973"), level='DA')
 ```
 
 For plotting, we also want to plot the administrative boundaries as a base layer for better orientation.
 ```{r}
 # load data for background polygons (geograhic data only)
-base_geom <- cancensus.load(format='sp', dataset='CA16', regions='{"CMA":["59933"]}',  level='CSD')
+base_geom <- cancensus.load(geo_format ='sp', dataset='CA16', regions='{"CMA":["59933"]}',  level='CSD')
 ```
 
 Next we neet to prepare the data for mapping, we rename the variables and set the colours

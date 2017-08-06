@@ -116,7 +116,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
    names(census_labels) <- c("Vector", "Detail")
    attributes(result)$census_labels <- census_labels
    if(labels == "short") {
-     if (format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+     if (geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
      else {names(result) <- gsub(":.*","",names(result))}
    }
   }
