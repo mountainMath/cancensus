@@ -13,7 +13,7 @@ cancensus.load(dataset, level, regions, vectors = c(), geo_format = "sf",
 
 \item{level}{A geographic aggregation level for downloading data, e.g. CSD, CT, DA.}
 
-\item{regions}{A json hash describing the geographic regions.}
+\item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
@@ -36,8 +36,8 @@ or as environment variable
 sys.setenv(CM_API_KEY='<your API key>')
 }
 \examples{
-census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
-census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
 # Get details for truncated variables
 cancensus.labels(census_data)
 }

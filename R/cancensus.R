@@ -12,7 +12,7 @@
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
-#' @param regions A json hash describing the geographic regions.
+#' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
@@ -20,14 +20,20 @@
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
-#' census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
 #' # Get details for truncated variables
 #' cancensus.labels(census_data)
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
   result <- NULL
+
+  # Turn the region list into a valid JSON dictionary.
+  if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
+    stop("regions must be composed of valid census aggregation levels.")
+  }
+  regions <- jsonlite::toJSON(regions)
 
   # Check that we can read the requested geo format.
   if (is.na(geo_format)) { # This is ok.
@@ -142,6 +148,10 @@ cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
 cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
   return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
+
+# This is the set of valid census aggregation levels, also used in the named
+# elements of the `regions` parameter.
+VALID_LEVELS <- c("PR", "CMA", "CD", "CSD", "CT", "DA")
 
 #' Convenience function to set the api key for the current session.
 #' @param api_key Your CensusMapper API key.

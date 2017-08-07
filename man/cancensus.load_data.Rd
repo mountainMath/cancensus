@@ -11,7 +11,7 @@ cancensus.load_data(dataset, level, regions, vectors, ...)
 
 \item{level}{A geographic aggregation level for downloading data, e.g. CSD, CT, DA.}
 
-\item{regions}{A json hash describing the geographic regions.}
+\item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
