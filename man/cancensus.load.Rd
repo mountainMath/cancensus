@@ -11,7 +11,7 @@ cancensus.load(dataset, level, regions, vectors = c(), geo_format = "sf",
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
 
-\item{level}{A geographic aggregation level for downloading data, e.g. CSD, CT, DA.}
+\item{level}{The census aggregation level to retrieve. One of \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
 
 \item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 

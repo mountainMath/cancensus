@@ -11,7 +11,7 @@
 #' sys.setenv(CM_API_KEY='<your API key>')
 #'
 #' @param dataset A CensusMapper dataset identifier.
-#' @param level A geographic aggregation level for downloading data, e.g. CSD, CT, DA.
+#' @param level The census aggregation level to retrieve. One of \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.
@@ -34,6 +34,11 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
     stop("regions must be composed of valid census aggregation levels.")
   }
   regions <- jsonlite::toJSON(regions)
+
+  # Check if the aggregation level is valid.
+  if (!level %in% VALID_LEVELS) {
+    stop("the `level` parameter must be one of 'PR', 'CMA', 'CD', 'CSD', 'CT', or 'DA'")
+  }
 
   # Check that we can read the requested geo format.
   if (is.na(geo_format)) { # This is ok.
