@@ -33,7 +33,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   if (is.na(geo_format)) { # This is ok.
   } else if (geo_format == "sf" && !requireNamespace("sf", quietly = TRUE)) {
     stop("the `sf` package is required to return 'sf' objects.")
-  } else if (geo_format == "sp" && !requireNamespace("rgeos", quietly = TRUE)) {
+  } else if (geo_format == "sp" && !requireNamespace("rgdal", quietly = TRUE)) {
     stop("the `rgdal` package is required to return 'sp' objects")
   } else if (!geo_format %in% c("sf", "sp")) {
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
