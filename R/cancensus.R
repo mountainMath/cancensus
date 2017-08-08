@@ -30,10 +30,14 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   result <- NULL
 
   # Turn the region list into a valid JSON dictionary.
-  if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
+  if (is.character(regions)) {
+    warning(paste("passing `regions` as a character vector is depreciated, and",
+                  "will be removed in future versions"))
+  } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
     stop("regions must be composed of valid census aggregation levels.")
+  } else {
+    regions <- jsonlite::toJSON(regions)
   }
-  regions <- jsonlite::toJSON(regions)
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
