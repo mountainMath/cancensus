@@ -5,6 +5,7 @@ This package provides a wrapper function for CensusMapper API calls from R to qu
 
 The CensusMapper API is still in beta, the use of the CensusMapper API requires API keys, which can be obtained from [CensusMapper](https://CensusMapper.ca) by emailing Jens.
 
+**Cancensus is currently in early beta and parts of the code may be subject to change.** 
 
 ## Installing the package
 ```
@@ -46,6 +47,11 @@ tm_shape(census_data) +
   
 # Many other ways of visualizing spatial data 
 ```
+## To-do
+
+* Provide more information about available datasets, Census variables, and geography directly through the **cancensus** package.
+* Expand vignettes and provide additional examples
+* Submit to CRAN
 
 ## Examples
 
