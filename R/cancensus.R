@@ -70,6 +70,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       response <- httr::GET(url, httr::write_disk(data_file, overwrite = TRUE),
                             httr::progress())
       cancensus.handle_status_code(response,data_file)
+    } else {
+      message("Reading vectors data from local cache.")
     }
     # read the data file and transform to proper data types
     if (requireNamespace("readr", quietly = TRUE)) {
@@ -97,6 +99,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       response <- httr::GET(url, httr::write_disk(geo_file, overwrite = TRUE),
                             httr::progress())
       cancensus.handle_status_code(response,geo_file)
+    } else {
+      message("Reading geo data from local cache.")
     }
     # read the geo file and transform to proper data types
     result <- if (geo_format == "sf") {
