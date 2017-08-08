@@ -50,7 +50,10 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
     data_file <- paste0("data_cache/CM_data_",
                         digest::digest(param_string, algo = "md5"), ".csv")
     if (!use_cache || !file.exists(data_file)) {
-      if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
+      if (!have_api_key) {
+        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
+                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+      }
       url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
       response <- httr::GET(url, httr::write_disk(data_file, overwrite = TRUE),
                             httr::progress())
@@ -76,7 +79,10 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
     geo_file <- paste0("data_cache/CM_geo_",
                        digest::digest(param_string, algo = "md5"), ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
-      if (!have_api_key) stop('No API key set. Either set the key via\ncancensus.set_api_key(\'<your censusmappper API key>\')\n or as an environment variable \nSys.setenv(CM_API_KEY=\'<your API key>\')')
+      if (!have_api_key) {
+        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
+                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+      }
       url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
                     api_key)
       response <- httr::GET(url, httr::write_disk(geo_file, overwrite = TRUE),
@@ -149,6 +155,10 @@ cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...)
 #' @examples
 #'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
+  warning(paste0("cancensus.set_api_key() is depreciated, and will be removed ",
+                 "in future versions. Use options(cancensus.api_key = \"",
+                 api_key, "\") or Sys.setenv(CM_API_KEY = \"", api_key,
+                 "\") instead."))
   options(cancensus.api_key = api_key)
 }
 
