@@ -22,11 +22,11 @@
 #' @examples
 #' # Load data without associated geographical spatial data
 #' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = NA)
-#' # Load data with associated geographical spatial data using the sf standard 
+#' # Load data with associated geographical spatial data using the sf standard
 #' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
 #' # Load data with geography and truncated variable names
 #' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels="short")
-#' # 
+#' #
 #' # Get details for truncated variables
 #' cancensus.labels(census_data)
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
@@ -175,7 +175,7 @@ cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...)
 
 # This is the set of valid census aggregation levels, also used in the named
 # elements of the `regions` parameter.
-VALID_LEVELS <- c("PR", "CMA", "CD", "CSD", "CT", "DA")
+VALID_LEVELS <- c("C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
 #' Convenience function to set the api key for the current session.
 #' @param api_key Your CensusMapper API key.

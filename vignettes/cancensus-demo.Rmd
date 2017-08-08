@@ -19,7 +19,7 @@ library(cancensus)
 # set environment variable via 
 # Sys.setenv(CM_API_KEY='<your API key>')
 # or
-# cancensus.set_api_key('<your API key>')
+# options(cancensus.api_key)='<your API key>'
 ```
 
 To tie into the CensusMapper API we utilize the "censusmapper" library. As an example we choose the "occupied dwellings by structural type of dwelling" data from 2016, CT level, for the Vancouver CMA. The CensusMapper convenience function expects the year (2016), aggregation level (CT), geographies (CMA 59993), and CensusMapper internal variable names as input. We also need to speficy the CensusMapper API key for access. Lastly we may specify the "geo" flag, if it is set to TRUE we will also load the spatial data.
@@ -28,9 +28,9 @@ To tie into the CensusMapper API we utilize the "censusmapper" library. As an ex
 #set the data vectors we are interested in
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 #set the regions we are intereseted in
-regions_string='{"CMA":["59933"]}'
+regions=list(CMA="59933")
 #load the data
-census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions_string,vectors=vectors)
+census_data <- cancensus.load(dataset='CA16',level='CT',regions=regions,vectors=vectors)
 ```
 
 ## Mapping

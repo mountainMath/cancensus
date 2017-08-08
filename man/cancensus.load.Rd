@@ -36,8 +36,13 @@ or as environment variable
 sys.setenv(CM_API_KEY='<your API key>')
 }
 \examples{
-census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE)
-census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo=TRUE, labels="short")
+# Load data without associated geographical spatial data
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = NA)
+# Load data with associated geographical spatial data using the sf standard
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+# Load data with geography and truncated variable names
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels="short")
+#
 # Get details for truncated variables
 cancensus.labels(census_data)
 }
