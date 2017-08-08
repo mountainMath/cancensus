@@ -23,7 +23,9 @@ You can obtain a free API key by signing up for a CensusMapper account and go to
 ## Pick regions and variables
 Go to the [CensusMapper API call generator](https://censusmapper.ca/api) to select regions and variables and generate code for the API call, for example
 ```
-census_data <- cancensus.load(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_414"), level='CT')
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+
+# Additional options can viewed in documentation by entering ?cancensus.load() in your R console
 ```
 
 ## Analyze and Visualize
