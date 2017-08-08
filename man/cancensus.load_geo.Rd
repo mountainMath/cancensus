@@ -9,9 +9,9 @@ cancensus.load_geo(dataset, level, regions, geo_format = "sf", ...)
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
 
-\item{level}{A geographic aggregation level for downloading data, e.g. CSD, CT, DA.}
+\item{level}{The census aggregation level to retrieve. One of \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
 
-\item{regions}{A json hash describing the geographic regions.}
+\item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
 \item{geo_format}{One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.}
 
