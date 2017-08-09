@@ -11,7 +11,9 @@ Description: The package provides convenient access to StatCan census data via C
     An API key is required to access the data.
 License: MIT
 Encoding: UTF-8
-LazyData: true
+LazyData: yes
+ByteCompile: yes
+NeedsCompilation: no
 Imports: digest (>= 0.1),
     dplyr (>= 0.7.2),
     httr (>= 1.0.0),
@@ -23,3 +25,5 @@ Suggests: knitr,
     rgdal,
     sf
 VignetteBuilder: knitr
+URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
+BugReports: https://github.com/mountainMath/cancensus/issues
