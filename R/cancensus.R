@@ -17,16 +17,25 @@
 #' @param geo_format One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' # Load data without associated geographical spatial data
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = NA)
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = NA)
+#'
 #' # Load data with associated geographical spatial data using the sf standard
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = "sf")
+#'
 #' # Load data with geography and truncated variable names
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels="short")
-#' #
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = "sf", labels="short")
+#'
 #' # Get details for truncated variables
 #' cancensus.labels(census_data)
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
@@ -155,7 +164,9 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+#' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}',
+#'                                    vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                                    level='CSD')
 cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
   return(cancensus.load(dataset, level, regions, vectors, geo_format = NA, ...))
 }
@@ -168,7 +179,8 @@ cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}', level='CSD', geo_format = "sf")
+#' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}',
+#'                                   level='CSD', geo_format = "sf")
 cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
   return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
@@ -215,21 +227,24 @@ list_datasets <- function() {
 
 #' Return Census variable names and labels as a tidy data frame
 #'
+#' @param x A data frame, \code{sp} or \code{sf} object returned from
+#'   \code{cancensus.load} or similar.
+#'
 #' @return
 #'
 #' A data frame with a column \code{variable} containing the truncated
 #' variable name, and a column \code{label} describing it.
 #'
 #' @export
-cancensus.labels <-  function(dat) {
-  if("census_labels" %in% names(attributes(dat))) {
-    attributes(dat)$census_labels
+cancensus.labels <-  function(x) {
+  if("census_labels" %in% names(attributes(x))) {
+    attributes(x)$census_labels
   } else {
     warning("Data does not have variables to labels. No Census variables selected as vectors. See ?cancensus.load() for more information. ")}
   }
 
 
-#' Internal function to handle unfavourable http responses
+# Internal function to handle unfavourable http responses
 cancensus.handle_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
     message=httr::content(response,as="text")

@@ -4,7 +4,11 @@
 \alias{cancensus.labels}
 \title{Return Census variable names and labels as a tidy data frame}
 \usage{
-cancensus.labels(dat)
+cancensus.labels(x)
+}
+\arguments{
+\item{x}{A data frame, \code{sp} or \code{sf} object returned from
+\code{cancensus.load} or similar.}
 }
 \value{
 A data frame with a column \code{variable} containing the truncated
