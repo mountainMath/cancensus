@@ -45,7 +45,8 @@ To make the map we have defined a convenience function to handle the dot-density
 # a couple of libraries we will need for the dot-density map
 library(maptools)
 library(rgeos)
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(rgdal)
 library(ggthemes)
 

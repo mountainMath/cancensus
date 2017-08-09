@@ -21,7 +21,8 @@ cancensus.load_geo(dataset, level, regions, geo_format = "sf", ...)
 Convenience function to load only census geography without data.
 }
 \examples{
-census_data <- cancensus.load_geo(dataset='CA16', regions=list(CMA="59933"), level='CSD', geo_format = "sf")
+census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}',
+                                  level='CSD', geo_format = "sf")
 }
 \keyword{api}
 \keyword{canada}

@@ -17,16 +17,25 @@
 #' @param geo_format One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #' @keywords canada census data api
 #' @export
 #' @examples
 #' # Load data without associated geographical spatial data
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = NA)
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = NA)
+#'
 #' # Load data with associated geographical spatial data using the sf standard
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = "sf")
+#'
 #' # Load data with geography and truncated variable names
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels="short")
-#' #
+#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                               level='CSD', geo_format = "sf", labels="short")
+#'
 #' # Get details for truncated variables
 #' cancensus.labels(census_data)
 cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
@@ -89,7 +98,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       result$Type <- as.factor(result$Type)
       result$`Region Name` <- as.factor(result$`Region Name`)
     } else {
-      result <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+      result <- utils::read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
     }
   } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
@@ -114,19 +123,87 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       message("Reading geo data from local cache.")
     }
     # read the geo file and transform to proper data types
+
+    #transform and rename
+    transform_geo <- function(g){
+      as_character=c("id","rpid","rgid","ruid","rguid")
+      as_numeric=c("a")
+      as_factor=c("t")
+      as_integer=c("pop","dw","hh","pop2")
+
+      g <- g %>%
+        mutate_at(intersect(names(g),as_numeric),funs(as.numeric))  %>%
+        mutate_at(intersect(names(g),as_integer),funs(as.integer))  %>%
+        mutate_at(intersect(names(g),as_factor),funs(as.factor))  %>%
+        mutate_at(intersect(names(g),as_character),funs(as.character))
+
+      #change names
+      #standar table
+      name_change <- tibble(
+        old=c("id","a" ,"t" ,"dw","hh","pop","pop2"),
+        new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)")
+        )
+      #geo uid name changes
+      if (level=='DB') {
+        name_change <- name_change %>% rbind(
+          c('rpid','DA_UID'),
+          c('rgid','CSD_UID'),
+          c('ruid','CT_UID'),
+          c('rguid',new='CMA_UID'))
+      }
+      if (level=='DA') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CSD_UID'),
+          c('rgid','CD_UID'),
+          c('ruid','CT_UID'),
+          c('rguid','CMA_UID'))
+      }
+      if (level=='CT') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CMA_UID'),
+          c('rgid','PR_UID'),
+          c('ruid','CSD_UID'),
+          c('rguid',new='CD_UID'))
+      }
+      if (level=='CSD') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CSD_UID'),
+          c('rgid','PR_UID'),
+          c('ruid','CMA_UID'))
+      }
+      if (level=='CD') {
+        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+      }
+      if (level=='CMA') {
+        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+      }
+      if (level=='PR') {
+        name_change <- name_change %>% rbind(c('rpid','C_UID'))
+      }
+      old_names <- names(g)
+      for (x in intersect(old_names,name_change$old)) {
+        old_names[old_names==x]<-name_change$new[name_change$old==x]
+      }
+      names(g)<-old_names
+      #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
+
+      return(g)
+    }
     result <- if (geo_format == "sf") {
-      geos <- sf::read_sf(geo_file)
-      geos$id <- as.character(geos$id)
+      geos <- sf::read_sf(geo_file) %>% transform_geo
       if (!is.null(result)) {
-        dplyr::inner_join(geos, result, by = c("id" = "GeoUID"))
+        geos %>%
+          #select(-Population,-Dwellings,-Households,-Type)  %>%
+          dplyr::inner_join(result %>% select(-Population,-Dwellings,-Households,-Type), by = "GeoUID")
       } else {
         geos
       }
     } else { # geo_format == "sp"
       geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
-      geos@data$id <- as.character(geos@data$id)
+      geos@data <- geos@data %>% transform_geo
       if (!is.null(result)) {
-        sp::merge(geos, result, by.x = "id", by.y = "GeoUID")
+        geos@data <- geos@data %>% select(-Population,-Dwellings,-Households,-Type)
+        sp::merge(geos, result, by = "GeoUID")
       } else {
         geos
       }
@@ -155,7 +232,9 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_data(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+#' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}',
+#'                                    vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                                    level='CSD')
 cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
   return(cancensus.load(dataset, level, regions, vectors, geo_format = NA, ...))
 }
@@ -168,7 +247,8 @@ cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_geo(dataset='CA16', regions=list(CMA="59933"), level='CSD', geo_format = "sf")
+#' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}',
+#'                                   level='CSD', geo_format = "sf")
 cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
   return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
@@ -215,24 +295,27 @@ cancensus.list_datasets <- function() {
 
 #' Return Census variable names and labels as a tidy data frame
 #'
+#' @param x A data frame, \code{sp} or \code{sf} object returned from
+#'   \code{cancensus.load} or similar.
+#'
 #' @return
 #'
 #' A data frame with a column \code{variable} containing the truncated
 #' variable name, and a column \code{label} describing it.
 #'
 #' @export
-cancensus.labels <-  function(dat) {
-  if("census_labels" %in% names(attributes(dat))) {
-    attributes(dat)$census_labels
+cancensus.labels <-  function(x) {
+  if("census_labels" %in% names(attributes(x))) {
+    attributes(x)$census_labels
   } else {
     warning("Data does not have variables to labels. No Census variables selected as vectors. See ?cancensus.load() for more information. ")}
   }
 
 
-#' Internal function to handle unfavourable http responses
+# Internal function to handle unfavourable http responses
 cancensus.handle_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
-    message=content(response,as="text")
+    message=httr::content(response,as="text")
     file.remove(path)
     if (httr::status_code(response)==401) {
       # Problem with API key
@@ -256,3 +339,4 @@ cancensus.handle_status_code <- function(response,path){
     options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
   }
 }
+

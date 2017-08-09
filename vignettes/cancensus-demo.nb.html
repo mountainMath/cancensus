@@ -225,29 +225,13 @@ tm_shape(census_data) +
 <p>Or using the ggplot library.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZXF1aXJlcyBkZXYgYnVpbGQgb2YgdGl2ZXJzZS9nZ3Bsb3QyLCBpbnN0YWxsIHVzaW5nIGRldnRvb2xzIGFuZCBpbnN0YWxsX2dpdGh1YigndGlkeXZlcnNlL2dncGxvdDInKSBpZiBuZWVkZWRcbmxpYnJhcnkoc2YpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkodmlyaWRpcylcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZXF1aXJlcyBkZXYgYnVpbGQgb2YgdGl2ZXJzZS9nZ3Bsb3QyLCBpbnN0YWxsIHVzaW5nIGRldnRvb2xzIGFuZCBpbnN0YWxsX2dpdGh1YigndGlkeXZlcnNlL2dncGxvdDInKSBpZiBuZWVkZWRcbmxpYnJhcnkoc2YpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkodmlyaWRpcylcbmxpYnJhcnkocnZlc3QpXG5nZ3Bsb3QoY2Vuc3VzX2RhdGEpICtcbiAgZ2VvbV9zZihhZXMoZmlsbCA9IHNkKSkgK1xuICBzY2FsZV9maWxsX3ZpcmlkaXMoXCIlU0RcIikgK1xuICBnZ3RpdGxlKFwiUHJvcG9ydGlvbiBvZiBEd2VsbGluZyBVbml0cyB0aGF0IGFyZSBTaW5nbGUgRGV0YWNoZWRcIikgK1xuICB0aGVtZV9idygpXG5gYGAifQ== -->
 <pre class="r"><code># requires dev build of tiverse/ggplot2, install using devtools and install_github('tidyverse/ggplot2') if needed
 library(sf)
 library(tidyverse)
-library(viridis)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiB2aXJpZGlzTGl0ZVxuIn0= -->
-<pre><code>Loading required package: viridisLite</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShydmVzdClcbmBgYCJ9 -->
-<pre class="r"><code>library(rvest)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiB4bWwyXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhydmVzdOKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnJlYWRy4oCZOlxuXG4gICAgZ3Vlc3NfZW5jb2RpbmdcbiJ9 -->
-<pre><code>Loading required package: xml2
-
-Attaching package: ‘rvest’
-
-The following object is masked from ‘package:readr’:
-
-    guess_encoding</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGNlbnN1c19kYXRhKSArXG4gIGdlb21fc2YoYWVzKGZpbGwgPSBzZCkpICtcbiAgc2NhbGVfZmlsbF92aXJpZGlzKFwiJVNEXCIpICtcbiAgZ2d0aXRsZShcIlByb3BvcnRpb24gb2YgRHdlbGxpbmcgVW5pdHMgdGhhdCBhcmUgU2luZ2xlIERldGFjaGVkXCIpICtcbiAgdGhlbWVfYncoKVxuYGBgIn0= -->
-<pre class="r"><code>ggplot(census_data) +
+library(viridis)
+library(rvest)
+ggplot(census_data) +
   geom_sf(aes(fill = sd)) +
   scale_fill_viridis(&quot;%SD&quot;) +
   ggtitle(&quot;Proportion of Dwelling Units that are Single Detached&quot;) +
