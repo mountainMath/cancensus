@@ -9,7 +9,7 @@ cancensus.load_data(dataset, level, regions, vectors, ...)
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
 
-\item{level}{The census aggregation level to retrieve. One of \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
+\item{level}{The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
 
 \item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
@@ -21,7 +21,7 @@ cancensus.load_data(dataset, level, regions, vectors, ...)
 Convenience function to load only census data and no geographies.
 }
 \examples{
-census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}', vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+census_data <- cancensus.load_data(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 }
 \keyword{api}
 \keyword{canada}
