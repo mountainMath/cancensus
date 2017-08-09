@@ -26,7 +26,8 @@ Suggests: knitr,
     rgdal,
     sf,
     sp,
-    tidyr
+    tidyr,
+    tmap
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
 BugReports: https://github.com/mountainMath/cancensus/issues

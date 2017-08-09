@@ -48,17 +48,15 @@ tm_shape(census_data) +
 Or using the ggplot library.
 
 ```{r, echo=TRUE}
-
-# requires dev build of tiverse/ggplot2, install using devtools and install_github('tidyverse/ggplot2') if needed
 library(sf)
-library(tidyverse)
-library(viridis)
-library(rvest)
-
+# Use the latest version of ggplot2 to effortlessly plot sf
+# objects and for the viridis colour scales:
+# devtools::install_github("tidyverse/ggplot2")
+library(ggplot2)
 
 ggplot(census_data) +
   geom_sf(aes(fill = sd)) +
-  scale_fill_viridis("%SD") +
+  scale_fill_viridis_c("%SD") +
   ggtitle("Proportion of Dwelling Units that are Single Detached") +
   theme_bw()
 ```
