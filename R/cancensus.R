@@ -114,19 +114,87 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       message("Reading geo data from local cache.")
     }
     # read the geo file and transform to proper data types
+
+    #transform and rename
+    transform_geo <- function(g){
+      as_character=c("id","rpid","rgid","ruid","rguid")
+      as_numeric=c("a")
+      as_factor=c("t")
+      as_integer=c("pop","dw","hh","pop2")
+
+      g <- g %>%
+        mutate_at(intersect(names(g),as_numeric),funs(as.numeric))  %>%
+        mutate_at(intersect(names(g),as_integer),funs(as.integer))  %>%
+        mutate_at(intersect(names(g),as_factor),funs(as.factor))  %>%
+        mutate_at(intersect(names(g),as_character),funs(as.character))
+
+      #change names
+      #standar table
+      name_change <- tibble(
+        old=c("id","a" ,"t" ,"dw","hh","pop","pop2"),
+        new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)")
+        )
+      #geo uid name changes
+      if (level=='DB') {
+        name_change <- name_change %>% rbind(
+          c('rpid','DA_UID'),
+          c('rgid','CSD_UID'),
+          c('ruid','CT_UID'),
+          c('rguid',new='CMA_UID'))
+      }
+      if (level=='DA') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CSD_UID'),
+          c('rgid','CD_UID'),
+          c('ruid','CT_UID'),
+          c('rguid','CMA_UID'))
+      }
+      if (level=='CT') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CMA_UID'),
+          c('rgid','PR_UID'),
+          c('ruid','CSD_UID'),
+          c('rguid',new='CD_UID'))
+      }
+      if (level=='CSD') {
+        name_change <- name_change %>% rbind(
+          c('rpid','CSD_UID'),
+          c('rgid','PR_UID'),
+          c('ruid','CMA_UID'))
+      }
+      if (level=='CD') {
+        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+      }
+      if (level=='CMA') {
+        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+      }
+      if (level=='PR') {
+        name_change <- name_change %>% rbind(c('rpid','C_UID'))
+      }
+      old_names <- names(g)
+      for (x in intersect(old_names,name_change$old)) {
+        old_names[old_names==x]<-name_change$new[name_change$old==x]
+      }
+      names(g)<-old_names
+      #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
+
+      return(g)
+    }
     result <- if (geo_format == "sf") {
-      geos <- sf::read_sf(geo_file)
-      geos$id <- as.character(geos$id)
+      geos <- sf::read_sf(geo_file) %>% transform_geo
       if (!is.null(result)) {
-        dplyr::inner_join(geos, result, by = c("id" = "GeoUID"))
+        geos %>%
+          #select(-Population,-Dwellings,-Households,-Type)  %>%
+          dplyr::inner_join(result %>% select(-Population,-Dwellings,-Households,-Type), by = "GeoUID")
       } else {
         geos
       }
     } else { # geo_format == "sp"
       geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
-      geos@data$id <- as.character(geos@data$id)
+      geos@data <- geos@data %>% transform_geo
       if (!is.null(result)) {
-        sp::merge(geos, result, by.x = "id", by.y = "GeoUID")
+        geos@data <- geos@data %>% select(-Population,-Dwellings,-Households,-Type)
+        sp::merge(geos, result, by = "GeoUID")
       } else {
         geos
       }
@@ -198,7 +266,7 @@ cancensus.set_api_key <- function(api_key){
 #' dataset, and a column \code{description} describing it.
 #'
 #' @export
-list_datasets <- function() {
+cancensus.list_datasets <- function() {
   response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
                         httr::accept_json())
   if (httr::status_code(response) == 200) {
@@ -256,3 +324,4 @@ cancensus.handle_status_code <- function(response,path){
     options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
   }
 }
+
