@@ -21,7 +21,7 @@ cancensus.load_data(dataset, level, regions, vectors, ...)
 Convenience function to load only census data and no geographies.
 }
 \examples{
-census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}',
+census_data <- cancensus.load_data(dataset='CA16', regions=list(CMA:"59933"),
                                    vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                                    level='CSD')
 }

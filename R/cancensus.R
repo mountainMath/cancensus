@@ -232,7 +232,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_data(dataset='CA16', regions='{"CMA":["59933"]}',
+#' census_data <- cancensus.load_data(dataset='CA16', regions=list(CMA:"59933"),
 #'                                    vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                                    level='CSD')
 cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
@@ -247,7 +247,7 @@ cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
 #' @keywords canada census data api
 #' @export
 #' @examples
-#' census_data <- cancensus.load_geo(dataset='CA16', regions='{"CMA":["59933"]}',
+#' census_data <- cancensus.load_geo(dataset='CA16', regions=list(CMA="59933"),
 #'                                   level='CSD', geo_format = "sf")
 cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
   return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
