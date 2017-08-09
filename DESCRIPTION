@@ -9,7 +9,7 @@ Description: The package provides convenient access to StatCan census data via C
     CensusMapper provides a graphical interface to select variables and geographic regions at
     https://censusmapper.ca/api
     An API key is required to access the data.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: yes
 ByteCompile: yes
