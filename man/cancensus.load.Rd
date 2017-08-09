@@ -22,6 +22,8 @@ cancensus.load(dataset, level, regions, vectors = c(), geo_format = "sf",
 \item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
+
+\item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
 }
 \description{
 This function allows convenient access to the CensusMapper API
@@ -37,12 +39,20 @@ sys.setenv(CM_API_KEY='<your API key>')
 }
 \examples{
 # Load data without associated geographical spatial data
-census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = NA)
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                              level='CSD', geo_format = NA)
+
 # Load data with associated geographical spatial data using the sf standard
-census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                              level='CSD', geo_format = "sf")
+
 # Load data with geography and truncated variable names
-census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels="short")
-#
+census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
+                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                              level='CSD', geo_format = "sf", labels="short")
+
 # Get details for truncated variables
 cancensus.labels(census_data)
 }
