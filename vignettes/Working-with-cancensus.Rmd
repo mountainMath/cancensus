@@ -36,10 +36,9 @@ The data loading functions in **cancensus** are designed to return tidy data fra
 Because **cancensus** returns tidy data, working with the resulting Census data is straightforward. The following examples rely on `dplyr`-based approaches for manipulating data, but the same tasks can be accomplished in base R and many other approaches. 
 
 ```{r, message=FALSE}
-# install.packages("dplyr")
-# install.packages("tidyr")
 library(dplyr)
 library(tidyr)
+
 commutes <- census_data %>% 
   group_by(name) %>%
   mutate(share57 = `v_CA11N_2221: Between 5 and 6:59 a.m.` / `v_CA11N_2218: Total employed population aged 15 years and over by time leaving for work`,
@@ -59,15 +58,14 @@ ggplot(commutes, aes(x = start, y = share)) + geom_bar(stat = "identity") + face
 ## Mapping Census Data
 
 ```{r, message=FALSE}
-# Requires latest version of ggplot2 to effortless plot sf objects and viridis for colour scales.
+# Use the latest version of ggplot2 to effortlessly plot sf
+# objects and for the viridis colour scales:
 # devtools::install_github("tidyverse/ggplot2")
-# install.package("viridis")
 library(ggplot2)
-library(viridis)
 
 ggplot(commutes) +
   geom_sf(aes(fill = share)) +
-  scale_fill_viridis("Share of commuters") +
+  scale_fill_viridis_c("Share of commuters") +
   ggtitle("Commutes by start-time") +
   theme_minimal() + facet_grid(~start) +
   theme(axis.text = element_blank(), 

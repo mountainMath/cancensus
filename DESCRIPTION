@@ -20,11 +20,13 @@ Imports: digest (>= 0.1),
     jsonlite (>= 1.0)
 RoxygenNote: 6.0.1
 Suggests: knitr,
+    ggplot2 (>= 2.2.1.9000),
     rmarkdown,
     readr,
     rgdal,
     sf,
-    sp
+    sp,
+    tidyr
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
 BugReports: https://github.com/mountainMath/cancensus/issues
