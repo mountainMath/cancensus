@@ -23,7 +23,8 @@ Suggests: knitr,
     rmarkdown,
     readr,
     rgdal,
-    sf
+    sf,
+    sp
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
 BugReports: https://github.com/mountainMath/cancensus/issues

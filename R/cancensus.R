@@ -89,7 +89,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       result$Type <- as.factor(result$Type)
       result$`Region Name` <- as.factor(result$`Region Name`)
     } else {
-      result <- read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+      result <- utils::read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
     }
   } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
@@ -232,7 +232,7 @@ cancensus.labels <-  function(dat) {
 #' Internal function to handle unfavourable http responses
 cancensus.handle_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
-    message=content(response,as="text")
+    message=httr::content(response,as="text")
     file.remove(path)
     if (httr::status_code(response)==401) {
       # Problem with API key
