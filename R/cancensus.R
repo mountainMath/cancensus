@@ -126,22 +126,23 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 
     #transform and rename
     transform_geo <- function(g){
-      as_character=c("id","rpid","rgid","ruid","rguid")
-      as_numeric=c("a")
+      as_character=c("id","rpid","rgid","ruid","rguid","q")
+      as_numeric=c("a","nrr")
       as_factor=c("t")
       as_integer=c("pop","dw","hh","pop2")
+      as_character=append(append(as_character,as_numeric),as_integer)
 
       g <- g %>%
+        mutate_at(intersect(names(g),as_character),funs(as.character)) %>%
         mutate_at(intersect(names(g),as_numeric),funs(as.numeric))  %>%
         mutate_at(intersect(names(g),as_integer),funs(as.integer))  %>%
-        mutate_at(intersect(names(g),as_factor),funs(as.factor))  %>%
-        mutate_at(intersect(names(g),as_character),funs(as.character))
+        mutate_at(intersect(names(g),as_factor),funs(as.factor))
 
       #change names
       #standar table
       name_change <- tibble(
-        old=c("id","a" ,"t" ,"dw","hh","pop","pop2"),
-        new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)")
+        old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
+        new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
         )
       #geo uid name changes
       if (level=='DB') {
