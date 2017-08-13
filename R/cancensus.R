@@ -150,7 +150,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
           c('rpid','DA_UID'),
           c('rgid','CSD_UID'),
           c('ruid','CT_UID'),
-          c('rguid',new='CMA_UID'))
+          c('rguid','CMA_UID'))
       }
       if (level=='DA') {
         name_change <- name_change %>% rbind(
@@ -164,7 +164,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
           c('rpid','CMA_UID'),
           c('rgid','PR_UID'),
           c('ruid','CSD_UID'),
-          c('rguid',new='CD_UID'))
+          c('rguid','CD_UID'))
       }
       if (level=='CSD') {
         name_change <- name_change %>% rbind(
