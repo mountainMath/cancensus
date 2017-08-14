@@ -328,17 +328,18 @@ cancensus.list_vectors <- function(dataset) {
     dplyr::select(vector, type, label, units, parent_vector = parent) %>%
     dplyr::mutate(
       units = recode(.$units, 
-                         `1` = "number",
-                         `2` = "percentage ratio (0.0-1.0)",
-                         `3` = "currency",
-                         `4` = "ratio",
-                         `5` = "percentage (0-100)")) %>%
+                         `1` = "Number",
+                         `2` = "Percentage ratio (0.0-1.0)",
+                         `3` = "Currency",
+                         `4` = "Ratio",
+                         `5` = "Percentage (0-100)")) %>%
     dplyr::mutate(
-      add = recode(.$add,
-                         `1` = "Additive",
-                         `2` = "Averages",
-                         `3` = "Medians",
-                         `0` = "Not additive"))
+      add = case_when(.$add == "1" ~ "Additive",
+                      .$add == "0" ~ "Not additive",
+                      grepl("^2.",.$add) ~  paste0("Average of ",gsub("^2.","",.$add)),
+                      grepl("^3.",.$add) ~  paste0("Median  of ",gsub("^2.","",.$add))
+                      )
+      )
   # Feel free to recode to more meaningful names above
 }
 
