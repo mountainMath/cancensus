@@ -294,6 +294,40 @@ cancensus.list_datasets <- function() {
   }
 }
 
+#' Query the CensusMapper API for available vectors for a given dataset.
+#'
+#' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#'
+#' @export
+#'
+#' @importFrom dplyr %>%
+cancensus.list_vectors <- function(dataset) {
+  # TODO: Validate dataset?
+  result <- NULL
+  response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
+                               dataset, ".csv"))
+  if (httr::status_code(response) == 200 &&
+        !requireNamespace("readr", quietly = TRUE)) {
+    result <- utils::read.csv(httr::content(response, type = "text",
+                                            encoding = "UTF-8"),
+                              stringsAsFactors = FALSE)
+    class(result) <- c("tbl_df", "tbl", "data.frame")
+  } else if (httr::status_code(response) == 200) {
+    # Use `readr`, if available.
+    result <- readr::read_csv(httr::content(response, type = "text",
+                                            encoding = "UTF-8"))
+  } else {
+    stop("API query for available vectors failed with error: ",
+         httr::content(response, as = "text"),
+         "(", httr::status_code(response),  ")")
+  }
+  result %>%
+    dplyr::mutate(type = factor(type),
+                  units = factor(units)) %>%
+    dplyr::select(vector, type, label, units, parent_vector = parent)
+}
+
 #' Return Census variable names and labels as a tidy data frame
 #'
 #' @param x A data frame, \code{sp} or \code{sf} object returned from
