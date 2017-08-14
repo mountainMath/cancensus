@@ -325,7 +325,21 @@ cancensus.list_vectors <- function(dataset) {
   result %>%
     dplyr::mutate(type = factor(type),
                   units = factor(units)) %>%
-    dplyr::select(vector, type, label, units, parent_vector = parent)
+    dplyr::select(vector, type, label, units, parent_vector = parent) %>%
+    dplyr::mutate(
+      units = recode(.$units, 
+                         `1` = "number",
+                         `2` = "percentage ratio (0.0-1.0)",
+                         `3` = "currency",
+                         `4` = "ratio",
+                         `5` = "percentage (0-100)")) %>%
+    dplyr::mutate(
+      add = recode(.$add,
+                         `1` = "Additive",
+                         `2` = "Averages",
+                         `3` = "Medians",
+                         `0` = "Not additive"))
+  # Feel free to recode to more meaningful names above
 }
 
 #' Return Census variable names and labels as a tidy data frame
