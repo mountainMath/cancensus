@@ -4,11 +4,13 @@
 \alias{cancensus.list_vectors}
 \title{Query the CensusMapper API for available vectors for a given dataset.}
 \usage{
-cancensus.list_vectors(dataset)
+cancensus.list_vectors(dataset, use_cache = TRUE)
 }
 \arguments{
 \item{dataset}{The dataset to query for available vectors, e.g.
 \code{"CA16"}.}
+
+\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 }
 \description{
 Query the CensusMapper API for available vectors for a given dataset.
