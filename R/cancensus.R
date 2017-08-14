@@ -218,7 +218,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
    names(census_labels) <- c("Vector", "Detail")
    attributes(result)$census_labels <- census_labels
    if(labels == "short") {
-     if (geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+     if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
      else {names(result) <- gsub(":.*","",names(result))}
    }
   }
@@ -313,6 +313,8 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
     response <- httr::GET(url, httr::write_disk(vector_file, overwrite = TRUE),
                           httr::progress())
     cancensus.handle_status_code(response,vector_file)
+  } else {
+    message("Reading vector information from local cache.")
   }
   if  (!requireNamespace("readr", quietly = TRUE)) {
     result <- utils::read.csv(vector_file, encoding = "UTF-8",stringsAsFactors = FALSE)
