@@ -343,6 +343,77 @@ cancensus.list_vectors <- function(dataset) {
   # Feel free to recode to more meaningful names above
 }
 
+
+#' Query the CensusMapper API for vectors with descriptions matching a searchterm.
+#'
+#' @param searchterm The term to search for e.g. \code{"Ojibway"}. 
+#' Search terms are case insensitive. If unable to find a given search term, 
+#' this function will suggest the correct spelling to use when possible. 
+#' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#'
+#' @export
+#' 
+#' @examples
+#' cancensus.set_vectors('Ojibway', 'CA16')
+#'
+#' # This will return a warning that no match was found, but will suggest similar terms.
+#' cancensus.set_vectors('Ojibwe', 'CA16')
+cancensus.search_vectors <- function(searchterm, dataset) {
+  #to do: add caching of vector list here
+  veclist <- cancensus.list_vectors(dataset)
+  sublist <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
+  result <- sublist
+  # This part below is extremely inelegant and I look forward to someone adjusting it. 
+  # Depth was tested on language for CA16 and CA11, as it looks like language has the most deeply nested variables. 
+  if (any(!is.na(sublist$parent_vector))) {
+    parlist <- veclist[match(sublist$parent_vector, veclist$vector),]
+    result$parent1 <- parlist$label
+    if (any(!is.na(parlist$parent_vector))) {
+      par2list <- veclist[match(parlist$parent_vector, veclist$vector),]
+      result$parent2 <- par2list$label
+      if (any(!is.na(par2list$parent_vector))) {
+        par3list <- veclist[match(par2list$parent_vector, veclist$vector),]
+        result$parent3 <- par3list$label
+        if (any(!is.na(par3list$parent_vector))) {
+          par4list <- veclist[match(par3list$parent_vector, veclist$vector),]
+          result$parent4 <- par4list$label
+          if (any(!is.na(par4list$parent_vector))) {
+            par5list <- veclist[match(par4list$parent_vector, veclist$vector),]
+            result$parent5 <- par5list$label
+            if (any(!is.na(par5list$parent_vector))) {
+              par6list <- veclist[match(par5list$parent_vector, veclist$vector),]
+              result$parent6 <- par6list$label
+              if (any(!is.na(par6list$parent_vector))) {
+                par7list <- veclist[match(par6list$parent_vector, veclist$vector),]
+                result$parent7 <- par7list$label
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  # Check if searchterm returned anything
+  if (length(rownames(result)) > 0 ) return(result)
+  # If nothing matches, throw a warning and suggested alternatives. 
+  # If no suggested alternatives because the typo is too egregious, throw an error. 
+  else {
+    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity. 
+    # Default is set to 0.1 - can expand this to be more tolerant still. 
+    hintlist <- as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
+    names(hintlist) <- "Similarly named objects"
+    # 
+    if (length(hintlist) > 0) {
+    warning("No results found. Please use accurate spelling. See above for list of variables with similar named terms.")
+    print(hintlist)
+    } else {
+      stop("No results found.")
+    }
+  }
+}
+
+
 #' Return Census variable names and labels as a tidy data frame
 #'
 #' @param x A data frame, \code{sp} or \code{sf} object returned from
