@@ -2,7 +2,9 @@
 
 export(cancensus.labels)
 export(cancensus.list_datasets)
+export(cancensus.list_vectors)
 export(cancensus.load)
 export(cancensus.load_data)
 export(cancensus.load_geo)
 export(cancensus.set_api_key)
+importFrom(dplyr,"%>%")
