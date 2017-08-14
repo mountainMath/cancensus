@@ -2,6 +2,7 @@
 
 export(cancensus.labels)
 export(cancensus.list_datasets)
+export(cancensus.list_regions)
 export(cancensus.list_vectors)
 export(cancensus.search_vectors)
 export(cancensus.load)
