@@ -4,11 +4,11 @@ Title: CensusMapper API Interface to Canada Census
 Version: 0.1.0
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
-    person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"))
+    person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
+    person("Aaron","Jacobs", email = "atheriel@gmail.com", role = "aut"))
 Description: The package provides convenient access to StatCan census data via CensusMapper APIs.
-    CensusMapper provides a graphical interface to select variables and geographic regions at
+    An API key is required to access the data. API keys are available with free registration to CensusMapper at
     https://censusmapper.ca/api
-    An API key is required to access the data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: yes
@@ -29,8 +29,7 @@ Suggests: knitr,
     rgeos,
     sf,
     sp,
-    tidyr,
-    tmap
+    tidyr
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
 BugReports: https://github.com/mountainMath/cancensus/issues
