@@ -424,33 +424,54 @@ cancensus.search_vectors <- function(searchterm, dataset) {
 #'
 #' @param dataset The dataset to query for available regions, e.g.
 #'   \code{"CA16"}.
+#' @param use_cache If set to TRUE (the default) data will be read from a local
+#'   cache, if available. If set to FALSE, query the API for the data, and
+#'   refresh the local cache with the result.
+#'
+#' @return
+#'
+#' Returns a data frame with the following columns:
+#'
+#' \describe{
+#'   \item{\code{region}}{The region identifier.}
+#'
+#'   \item{\code{name}}{The name of that region.}
+#'
+#'   \item{\code{level}}{The census aggregation level of that region.}
+#'
+#'   \item{\code{pop}}{The population of that region.}
+#'
+#'   \item{\code{municipal_status}}{Additional identifiers to distinguish the
+#'     municipal status of census subdivisions.}
+#' }
 #'
 #' @export
 #'
 #' @importFrom dplyr %>%
-cancensus.list_regions <- function(dataset) {
+cancensus.list_regions <- function(dataset, use_cache = TRUE) {
   # TODO: Validate dataset?
-  result <- NULL
-  response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
-                               "/place_names.csv"))
-  if (httr::status_code(response) == 200 &&
-        !requireNamespace("readr", quietly = TRUE)) {
-    result <- utils::read.csv(httr::content(response, type = "text",
-                                            encoding = "UTF-8"),
-                              stringsAsFactors = FALSE)
-    class(result) <- c("tbl_df", "tbl", "data.frame")
-  } else if (httr::status_code(response) == 200) {
-    # Use `readr`, if available.
-    result <- readr::read_csv(httr::content(response, type = "text",
-                                            encoding = "UTF-8"))
+  cache_dir <- system.file("cache/", package = "cancensus")
+  cache_file <- paste0(cache_dir, dataset, "_regions.rda")
+  if (!use_cache || !file.exists(cache_file)) {
+    message("Querying CensusMapper API for regions data...")
+    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
+                                 "/place_names.csv"))
+    cancensus.handle_status_code(response,  cache_file)
+    content <- httr::content(response, type = "text", encoding = "UTF-8")
+    result <- if (!requireNamespace("readr", quietly = TRUE)) {
+      dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
+    } else {
+      readr::read_csv(content)
+    }
+    result <- dplyr::select(result, region = geo_uid, name, level = type,
+                            pop = population, municipal_status = flag)
+    save(result, file = cache_file)
+    result
   } else {
-    stop("API query for available regions failed with error: ",
-         httr::content(response, as = "text"),
-         "(", httr::status_code(response),  ")")
+    message("Reading regions list from local cache.")
+    load(file = cache_file)
+    result
   }
-  result %>%
-    dplyr::select(region, name, level, pop = population,
-                  municipal_status = flag)
 }
 
 #' Return Census variable names and labels as a tidy data frame
