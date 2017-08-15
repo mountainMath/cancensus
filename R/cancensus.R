@@ -218,7 +218,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
    names(census_labels) <- c("Vector", "Detail")
    attributes(result)$census_labels <- census_labels
    if(labels == "short") {
-     if (geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+     if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
      else {names(result) <- gsub(":.*","",names(result))}
    }
   }
@@ -298,36 +298,36 @@ cancensus.list_datasets <- function() {
 #'
 #' @param dataset The dataset to query for available vectors, e.g.
 #'   \code{"CA16"}.
+#' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #'
 #' @export
 #'
 #' @importFrom dplyr %>%
-cancensus.list_vectors <- function(dataset) {
+cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
   # TODO: Validate dataset?
   result <- NULL
-  response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
-                               dataset, ".csv"))
-  if (httr::status_code(response) == 200 &&
-        !requireNamespace("readr", quietly = TRUE)) {
-    result <- utils::read.csv(httr::content(response, type = "text",
-                                            encoding = "UTF-8"),
-                              stringsAsFactors = FALSE)
-    class(result) <- c("tbl_df", "tbl", "data.frame")
-  } else if (httr::status_code(response) == 200) {
-    # Use `readr`, if available.
-    result <- readr::read_csv(httr::content(response, type = "text",
-                                            encoding = "UTF-8"))
+  dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
+  vector_file=paste0("data_cache/vector_list_",dataset,".csv")
+  if (!use_cache || !file.exists(vector_file)) {
+    url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset, ".csv")
+    response <- httr::GET(url, httr::write_disk(vector_file, overwrite = TRUE),
+                          httr::progress())
+    cancensus.handle_status_code(response,vector_file)
   } else {
-    stop("API query for available vectors failed with error: ",
-         httr::content(response, as = "text"),
-         "(", httr::status_code(response),  ")")
+    message("Reading vector information from local cache.")
+  }
+  if  (!requireNamespace("readr", quietly = TRUE)) {
+    result <- utils::read.csv(vector_file, encoding = "UTF-8",stringsAsFactors = FALSE)
+    class(result) <- c("tbl_df", "tbl", "data.frame")
+  } else {
+    result <- readr::read_csv(vector_file)
   }
   result %>%
     dplyr::mutate(type = factor(type),
                   units = factor(units)) %>%
-    dplyr::select(vector, type, label, units, parent_vector = parent) %>%
+    dplyr::select(vector, type, label, units, parent_vector = parent, add) %>%
     dplyr::mutate(
-      units = recode(.$units, 
+      units = recode(.$units,
                          `1` = "Number",
                          `2` = "Percentage ratio (0.0-1.0)",
                          `3` = "Currency",
