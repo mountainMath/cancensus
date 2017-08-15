@@ -351,17 +351,16 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
   # Feel free to recode to more meaningful names above
 }
 
-
 #' Query the CensusMapper API for vectors with descriptions matching a searchterm.
 #'
-#' @param searchterm The term to search for e.g. \code{"Ojibway"}. 
-#' Search terms are case insensitive. If unable to find a given search term, 
-#' this function will suggest the correct spelling to use when possible. 
+#' @param searchterm The term to search for e.g. \code{"Ojibway"}.
+#' Search terms are case insensitive. If unable to find a given search term,
+#' this function will suggest the correct spelling to use when possible.
 #' @param dataset The dataset to query for available vectors, e.g.
 #'   \code{"CA16"}.
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' cancensus.set_vectors('Ojibway', 'CA16')
 #'
@@ -372,7 +371,7 @@ cancensus.search_vectors <- function(searchterm, dataset) {
   veclist <- cancensus.list_vectors(dataset)
   sublist <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
   result <- sublist
-  # This part below is extremely inelegant and I look forward to someone adjusting it. 
+  # This part below is extremely inelegant and I look forward to someone adjusting it.
   # Depth was tested on language for CA16 and CA11, as it looks like language has the most deeply nested variables. 
   if (any(!is.na(sublist$parent_vector))) {
     parlist <- veclist[match(sublist$parent_vector, veclist$vector),]
@@ -404,14 +403,14 @@ cancensus.search_vectors <- function(searchterm, dataset) {
   }
   # Check if searchterm returned anything
   if (length(rownames(result)) > 0 ) return(result)
-  # If nothing matches, throw a warning and suggested alternatives. 
-  # If no suggested alternatives because the typo is too egregious, throw an error. 
+  # If nothing matches, throw a warning and suggested alternatives.
+  # If no suggested alternatives because the typo is too egregious, throw an error.
   else {
-    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity. 
-    # Default is set to 0.1 - can expand this to be more tolerant still. 
+    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
+    # Default is set to 0.1 - can expand this to be more tolerant still.
     hintlist <- as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
     names(hintlist) <- "Similarly named objects"
-    # 
+    #
     if (length(hintlist) > 0) {
     warning("No results found. Please use accurate spelling. See above for list of variables with similar named terms.")
     print(hintlist)
@@ -421,6 +420,59 @@ cancensus.search_vectors <- function(searchterm, dataset) {
   }
 }
 
+#' Query the CensusMapper API for available regions in a given dataset.
+#'
+#' @param dataset The dataset to query for available regions, e.g.
+#'   \code{"CA16"}.
+#' @param use_cache If set to TRUE (the default) data will be read from a local
+#'   cache, if available. If set to FALSE, query the API for the data, and
+#'   refresh the local cache with the result.
+#'
+#' @return
+#'
+#' Returns a data frame with the following columns:
+#'
+#' \describe{
+#'   \item{\code{region}}{The region identifier.}
+#'
+#'   \item{\code{name}}{The name of that region.}
+#'
+#'   \item{\code{level}}{The census aggregation level of that region.}
+#'
+#'   \item{\code{pop}}{The population of that region.}
+#'
+#'   \item{\code{municipal_status}}{Additional identifiers to distinguish the
+#'     municipal status of census subdivisions.}
+#' }
+#'
+#' @export
+#'
+#' @importFrom dplyr %>%
+cancensus.list_regions <- function(dataset, use_cache = TRUE) {
+  # TODO: Validate dataset?
+  cache_dir <- system.file("cache/", package = "cancensus")
+  cache_file <- paste0(cache_dir, dataset, "_regions.rda")
+  if (!use_cache || !file.exists(cache_file)) {
+    message("Querying CensusMapper API for regions data...")
+    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
+                                 "/place_names.csv"))
+    cancensus.handle_status_code(response,  cache_file)
+    content <- httr::content(response, type = "text", encoding = "UTF-8")
+    result <- if (!requireNamespace("readr", quietly = TRUE)) {
+      dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
+    } else {
+      readr::read_csv(content)
+    }
+    result <- dplyr::select(result, region = geo_uid, name, level = type,
+                            pop = population, municipal_status = flag)
+    save(result, file = cache_file)
+    result
+  } else {
+    message("Reading regions list from local cache.")
+    load(file = cache_file)
+    result
+  }
+}
 
 #' Return Census variable names and labels as a tidy data frame
 #'
