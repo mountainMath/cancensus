@@ -258,11 +258,8 @@ cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...)
 # elements of the `regions` parameter.
 VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
-#' Convenience function to set the api key for the current session.
-#' @param api_key Your CensusMapper API key.
+# Depreciated method for setting the API key. Still exported for now.
 #' @export
-#' @examples
-#'cancensus.set_api_key('CensusMapper_2e24662e6dde22b46d5a316e81bebddf')
 cancensus.set_api_key <- function(api_key){
   warning(paste0("cancensus.set_api_key() is depreciated, and will be removed ",
                  "in future versions. Use options(cancensus.api_key = \"",
