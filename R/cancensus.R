@@ -273,24 +273,35 @@ cancensus.set_api_key <- function(api_key){
 
 #' Query the CensusMapper API for available datasets.
 #'
+#' @param use_cache If set to TRUE (the default) data will be read from a local
+#'   cache, if available. If set to FALSE, query the API for the data, and
+#'   refresh the local cache with the result.
+#'
 #' @return
 #'
 #' A data frame with a column \code{dataset} containing the code for the
 #' dataset, and a column \code{description} describing it.
 #'
 #' @export
-cancensus.list_datasets <- function() {
-  response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
-                        httr::accept_json())
-  if (httr::status_code(response) == 200) {
-    result <- jsonlite::fromJSON(httr::content(response, type = "text",
-                                               encoding = "UTF-8"))
-    class(result) <- c("tbl_df", "tbl", "data.frame")
+#'
+#' @importFrom dplyr %>%
+cancensus.list_datasets <- function(use_cache = TRUE) {
+  cache_dir <- system.file("cache/", package = "cancensus")
+  cache_file <- paste0(cache_dir, "datasets.rda")
+  if (!use_cache || !file.exists(cache_file)) {
+    message("Querying CensusMapper API for available datasets...")
+    response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
+                          httr::accept_json())
+    cancensus.handle_status_code(response, cache_file)
+    result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
+      jsonlite::fromJSON() %>%
+      dplyr::as_data_frame()
+    save(result, file = cache_file)
     result
   } else {
-    stop("API query for available data sets failed with error: ",
-         httr::content(response, as = "text"),
-         "(", httr::status_code(response),  ")")
+    message("Reading dataset list from local cache.")
+    load(file = cache_file)
+    result
   }
 }
 
