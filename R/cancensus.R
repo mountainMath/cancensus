@@ -144,7 +144,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
 
       #change names
       #standar table
-      name_change <- tibble::tibble(
+      name_change <- dplyr::data_frame(
         old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
         new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
         )
