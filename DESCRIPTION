@@ -29,6 +29,7 @@ Suggests: knitr,
     rgeos,
     sf,
     sp,
+    tibble,
     tidyr,
     tmap
 VignetteBuilder: knitr

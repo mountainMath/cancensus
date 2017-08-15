@@ -133,14 +133,18 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       as_character=append(append(as_character,as_numeric),as_integer)
 
       g <- g %>%
-        mutate_at(intersect(names(g),as_character),funs(as.character)) %>%
-        mutate_at(intersect(names(g),as_numeric),funs(as.numeric))  %>%
-        mutate_at(intersect(names(g),as_integer),funs(as.integer))  %>%
-        mutate_at(intersect(names(g),as_factor),funs(as.factor))
+        dplyr::mutate_at(dplyr::intersect(names(g), as_character),
+                         dplyr::funs(as.character)) %>%
+        dplyr::mutate_at(dplyr::intersect(names(g), as_numeric),
+                         dplyr::funs(as.numeric))  %>%
+        dplyr::mutate_at(dplyr::intersect(names(g), as_integer),
+                         dplyr::funs(as.integer))  %>%
+        dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
+                         dplyr::funs(as.factor))
 
       #change names
       #standar table
-      name_change <- tibble(
+      name_change <- tibble::tibble(
         old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
         new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
         )
@@ -193,9 +197,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
     result <- if (geo_format == "sf") {
       geos <- sf::read_sf(geo_file) %>% transform_geo
       if (!is.null(result)) {
-        geos %>%
-          #select(-Population,-Dwellings,-Households,-Type)  %>%
-          dplyr::inner_join(result %>% select(-Population,-Dwellings,-Households,-Type), by = "GeoUID")
+        dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
+          dplyr::inner_join(geos, by = "GeoUID")
       } else {
         geos
       }
@@ -203,7 +206,8 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
       geos@data <- geos@data %>% transform_geo
       if (!is.null(result)) {
-        geos@data <- geos@data %>% select(-Population,-Dwellings,-Households,-Type)
+        geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
+                                   -Households, -Type)
         sp::merge(geos, result, by = "GeoUID")
       } else {
         geos
@@ -322,25 +326,21 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
   } else {
     result <- readr::read_csv(vector_file)
   }
-  result %>%
-    dplyr::mutate(type = factor(type),
-                  units = factor(units)) %>%
-    dplyr::select(vector, type, label, units, parent_vector = parent, add) %>%
-    dplyr::mutate(
-      units = recode(.$units,
-                         `1` = "Number",
-                         `2` = "Percentage ratio (0.0-1.0)",
-                         `3` = "Currency",
-                         `4` = "Ratio",
-                         `5` = "Percentage (0-100)")) %>%
-    dplyr::mutate(
-      add = case_when(.$add == "1" ~ "Additive",
-                      .$add == "0" ~ "Not additive",
-                      grepl("^2.",.$add) ~  paste0("Average of ",gsub("^2.","",.$add)),
-                      grepl("^3.",.$add) ~  paste0("Median  of ",gsub("^2.","",.$add))
-                      )
-      )
-  # Feel free to recode to more meaningful names above
+  dplyr::mutate(
+      result, type = factor(type),
+      units = factor(units, levels = as.character(1:5),
+                     labels = c("Number", "Percentage ratio (0.0-1.0)",
+                                "Currency", "Ratio", "Percentage (0-100)")),
+      aggregation = dplyr::case_when(
+        add == "1" ~ "Additive",
+        add == "0" ~ "Not additive",
+        grepl("^2.", add) ~ gsub(".", ", ", gsub("^2.", "Average of ", add),
+                                 fixed = TRUE),
+        grepl("^3.", add) ~ gsub(".", ", ", gsub("^3.", "Median of ", add),
+                                 fixed = TRUE)
+      )) %>%
+    dplyr::select(vector, type, label, units, parent_vector = parent,
+                  aggregation)
 }
 
 #' Return Census variable names and labels as a tidy data frame
