@@ -1,7 +1,7 @@
 ---
 title: "Bar Graph Demo"
 author: "Jens von Bergmann"
-date: "2017-07-31"
+date: "2017-08-15"
 output: html_notebook
 #output: rmarkdown::html_vignette
 vignette: >
@@ -63,15 +63,14 @@ census_data <- cancensus.load(dataset='CA16', regions=regions, vectors=vectors, 
 
 # labels and colors
 categories=cancensus.labels(census_data)
+# shorten label names
 categories$Detail[grepl(" in a building that has ",categories$Detail)] <- gsub(" in a building that has ",", ",categories$Detail[grepl(" in a building that has ",categories$Detail)])
+#set colors
 categories$Color=c('yellow','darkblue','lightgreen','red','orange','lightblue','purple','maroon')
-
 
 # convert to percentages
 census_data %>% select(categories$Vector) %>% rowSums(na.rm=TRUE) -> census_data$total
-for (v in categories$Vector) {
-  census_data[[v]]=census_data[[v]]/census_data$total * 100
-}
+for (v in categories$Vector) {census_data[[v]]=census_data[[v]]/census_data$total * 100}
 
 #sort categories by percentages in data across CMAs
 sorted_vectors=names(sort(colSums(census_data[,categories$Vector],na.rm=TRUE)))
