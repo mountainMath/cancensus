@@ -310,31 +310,30 @@ cancensus.list_datasets <- function(use_cache = TRUE) {
 #'
 #' @param dataset The dataset to query for available vectors, e.g.
 #'   \code{"CA16"}.
-#' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#' @param use_cache If set to TRUE (the default) data will be read from a local
+#'   cache, if available. If set to FALSE, query the API for the data, and
+#'   refresh the local cache with the result.
 #'
 #' @export
 #'
 #' @importFrom dplyr %>%
 cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
   # TODO: Validate dataset?
-  result <- NULL
-  dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
-  vector_file=paste0("data_cache/vector_list_",dataset,".csv")
-  if (!use_cache || !file.exists(vector_file)) {
-    url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset, ".csv")
-    response <- httr::GET(url, httr::write_disk(vector_file, overwrite = TRUE),
+  cache_dir <- system.file("cache/", package = "cancensus")
+  cache_file <- paste0(cache_dir, dataset, "_vectors.rda")
+  if (!use_cache || !file.exists(cache_file)) {
+    message("Querying CensusMapper API for vectors data...")
+    response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
+                                 dataset, ".csv"),
                           httr::progress())
-    cancensus.handle_status_code(response,vector_file)
-  } else {
-    message("Reading vector information from local cache.")
-  }
-  if  (!requireNamespace("readr", quietly = TRUE)) {
-    result <- utils::read.csv(vector_file, encoding = "UTF-8",stringsAsFactors = FALSE)
-    class(result) <- c("tbl_df", "tbl", "data.frame")
-  } else {
-    result <- readr::read_csv(vector_file)
-  }
-  dplyr::mutate(
+    cancensus.handle_status_code(response, NULL)
+    content <- httr::content(response, type = "text", encoding = "UTF-8")
+    result <- if (!requireNamespace("readr", quietly = TRUE)) {
+      dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
+    } else {
+      readr::read_csv(content)
+    }
+    result <- dplyr::mutate(
       result, type = factor(type),
       units = factor(units, levels = as.character(1:5),
                      labels = c("Number", "Percentage ratio (0.0-1.0)",
@@ -347,8 +346,15 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
         grepl("^3.", add) ~ gsub(".", ", ", gsub("^3.", "Median of ", add),
                                  fixed = TRUE)
       )) %>%
-    dplyr::select(vector, type, label, units, parent_vector = parent,
-                  aggregation)
+      dplyr::select(vector, type, label, units, parent_vector = parent,
+                    aggregation)
+    save(result, file = cache_file)
+    result
+  } else {
+    message("Reading vector information from local cache.")
+    load(file = cache_file)
+    result
+  }
 }
 
 #' Query the CensusMapper API for vectors with descriptions matching a searchterm.
