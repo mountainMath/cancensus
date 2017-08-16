@@ -297,11 +297,18 @@ cancensus.list_datasets <- function(use_cache = TRUE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_data_frame()
+    attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
   } else {
     message("Reading dataset list from local cache.")
     load(file = cache_file)
+    last_updated <- attr(result, "last_updated")
+    if (is.null(last_updated) ||
+          difftime(Sys.time(), last_updated, units = "days") > 1) {
+      warning(paste("Cached dataset list may be out of date. Set `use_cache =",
+                    "FALSE` to update it."))
+    }
     result
   }
 }
@@ -348,11 +355,18 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
       )) %>%
       dplyr::select(vector, type, label, units, parent_vector = parent,
                     aggregation)
+    attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
   } else {
     message("Reading vector information from local cache.")
     load(file = cache_file)
+    last_updated <- attr(result, "last_updated")
+    if (is.null(last_updated) ||
+          difftime(Sys.time(), last_updated, units = "days") > 1) {
+      warning(paste("Cached vectors list may be out of date. Set `use_cache =",
+                    "FALSE` to update it."))
+    }
     result
   }
 }
@@ -455,7 +469,6 @@ cancensus.search_vectors <- function(searchterm, dataset) {
 #'
 #' @importFrom dplyr %>%
 cancensus.list_regions <- function(dataset, use_cache = TRUE) {
-  # TODO: Validate dataset?
   cache_dir <- system.file("cache/", package = "cancensus")
   cache_file <- paste0(cache_dir, dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -471,11 +484,18 @@ cancensus.list_regions <- function(dataset, use_cache = TRUE) {
     }
     result <- dplyr::select(result, region = geo_uid, name, level = type,
                             pop = population, municipal_status = flag)
+    attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
   } else {
     message("Reading regions list from local cache.")
     load(file = cache_file)
+    last_updated <- attr(result, "last_updated")
+    if (is.null(last_updated) ||
+          difftime(Sys.time(), last_updated, units = "days") > 1) {
+      warning(paste("Cached regions list may be out of date. Set `use_cache =",
+                    "FALSE` to update it."))
+    }
     result
   }
 }
