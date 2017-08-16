@@ -474,6 +474,45 @@ cancensus.list_regions <- function(dataset, use_cache = TRUE) {
   }
 }
 
+#' Convert a (suitably filtered) data frame from
+#' \code{\link{cancensus.list_regions}} to a list suitable for passing to
+#' \code{\link{cancensus.load}}.
+#'
+#' @param tbl A data frame, suitably filtered, as returned by
+#'   \code{\link{cancensus.list_regions}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' library(dplyr, warn.conflicts = FALSE)
+#'
+#' # Query the CensusMapper API for the total occupied dwellings
+#' # of 20 random Census Subdivisions, in Census 2016.
+#' regions <- cancensus.list_regions("CA16") %>%
+#'   dplyr::filter(level == "CSD") %>%
+#'   dplyr::sample_n(20) %>%
+#'   cancensus.as_region_list()
+#'
+#' occupied <- cancensus.load_data("CA16", regions = regions,
+#'                                 vectors = c("v_CA16_408"),
+#'                                 level = "Regions")
+#'
+cancensus.as_region_list <- function(tbl) {
+  # This isn't bulletproof validation, but it should deter some misuse.
+  if (!all(c("level", "region") %in% names(tbl))) {
+    stop(paste("`as_region_list()` can only handle data frames",
+               "returned by `list_regions()`."))
+  }
+  nested <- dplyr::group_by(tbl, level) %>%
+    # Use the dark magic of list columns...
+    dplyr::summarise(regions = list(region))
+
+  regions <- nested$regions
+  names(regions) <- nested$level
+  regions
+}
+
 #' Return Census variable names and labels as a tidy data frame
 #'
 #' @param x A data frame, \code{sp} or \code{sf} object returned from
