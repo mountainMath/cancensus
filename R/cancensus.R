@@ -293,7 +293,7 @@ cancensus.list_datasets <- function(use_cache = TRUE) {
     message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
                           httr::accept_json())
-    cancensus.handle_status_code(response, cache_file)
+    cancensus.handle_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_data_frame()
@@ -456,7 +456,7 @@ cancensus.list_regions <- function(dataset, use_cache = TRUE) {
     message("Querying CensusMapper API for regions data...")
     response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
                                  "/place_names.csv"))
-    cancensus.handle_status_code(response,  cache_file)
+    cancensus.handle_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
       dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
@@ -497,7 +497,9 @@ cancensus.labels <-  function(x) {
 cancensus.handle_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
     message=httr::content(response,as="text")
-    file.remove(path)
+    if (!is.null(path)) {
+      file.remove(path)
+    }
     if (httr::status_code(response)==401) {
       # Problem with API key
       stop(paste("Download of Census Data failed.",
