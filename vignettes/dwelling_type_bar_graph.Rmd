@@ -1,13 +1,12 @@
 ---
 title: "Bar Graph Demo"
 author: "Jens von Bergmann"
-date: "2017-08-15"
-output: html_notebook
-#output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+date: '2017-08-17'
+output:
+  html_document: default
+  html_notebook: default
+vignette: |
+  %\VignetteIndexEntry{Vignette Title} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
 
 We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API. The code for this notbook can be found on [GitHub](https://github.com/mountainMath/cancensus).
@@ -17,13 +16,14 @@ This example demonstrates how to dynamically discover regions and vectors and pr
 ```{r API Key, echo=TRUE, warning=FALSE}
 library(cancensus)
 # set your API key
-# options(cancensus.api_key)='<your API key>'
+# options(cancensus.api_key='your_api_key')
 
 # use 2016 data
-dataset='CA16'
+dataset <- 'CA16'
 ```
 
 ### Dynamically Select Regions
+
 We select the top 6 CMAs by population.
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # grab 6 largest CMAs
@@ -35,60 +35,65 @@ regions=list(CMA=cma_list)
 ```
 
 ### Dynamically Select Vectors
-We query the vectors for the *structural type of dwelling* variables grab all non-summary variables.
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# get the base vector
-dwellings <- cancensus.search_vectors("structural type of dwelling",dataset)
-# get all dependent vectors
-n=0
-while (n<length(dwellings)) {
-  n=nrow(dwellings)
-  dwellings <- bind_rows(list(dwellings,cancensus.list_vectors(dataset) %>% filter(parent_vector %in%  (dwellings %>% pull(vector))))) %>% distinct(vector, .keep_all = TRUE)
-}
-# filter out so we are only left with leaves
-dwellings <- dwellings %>% filter(! vector %in%  (dwellings %>% pull(parent_vector)))
 
-#set vectors
-vectors=dwellings %>% pull(vector)
+We query the vectors for the *structural type of dwelling* variables and grab all non-summary variables.
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+
+# Search for all Census vectors containing the term "dwellings"
+dwellings <- cancensus.search_vectors("structural type of dwelling",dataset)
+
+# Select all dependent variables
+dwellings <- cancensus.list_vectors(dataset) %>% filter(parent_vector == dwellings$vector)
+
+# Append all leaves of dependent variables
+dwellings <- rbind(dwellings, cancensus.list_vectors(dataset) %>% filter(parent_vector %in% dwellings$vector))
+
+# Keep only leaves
+dwellings <- dwellings %>% filter(!vector %in% parent_vector)
+
+# Extract string of vectors we want 
+vectors <- dwellings %>% pull(vector)
+
 ```
 
 
 ### Get the census data
-Next we grab the census data, set colors and order the categories we want to graph based on the data.
+
+Next we grab the census data using the vectors we've selected. 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # get data for these CMAs
 census_data <- cancensus.load(dataset='CA16', regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
 
+# get labels using the built in function cancensus.labels()
 
-# labels and colors
-categories=cancensus.labels(census_data)
-# shorten label names
-categories$Detail[grepl(" in a building that has ",categories$Detail)] <- gsub(" in a building that has ",", ",categories$Detail[grepl(" in a building that has ",categories$Detail)])
-#set colors
-categories$Color=c('yellow','darkblue','lightgreen','red','orange','lightblue','purple','maroon')
+categories <- cancensus.labels(census_data)
 
-# convert to percentages
-census_data %>% select(categories$Vector) %>% rowSums(na.rm=TRUE) -> census_data$total
-for (v in categories$Vector) {census_data[[v]]=census_data[[v]]/census_data$total * 100}
+# shorten label names where appropriate
+categories$Detail <- gsub(" in a building that has ",", ",categories$Detail)
 
-#sort categories by percentages in data across CMAs
-sorted_vectors=names(sort(colSums(census_data[,categories$Vector],na.rm=TRUE)))
-categories <- categories[order(match(categories$Vector,sorted_vectors)),]
+# Rename census variables with the more detailed names above
+names(census_data)[grep("v_", names(census_data))] <- categories$Detail
+
 ```
 
 
 ### Graph
-All that's left to do is graph the data.
-```{r, fig.width=5}
-# set variable name without space to avoid hiccups.
-census_data$name=census_data[["Region Name"]]
+
+All that's left to do is graph the data. In this instance, we're putting together a stacked bar chart that shows us a quick comparison of dwelling type across selected Census Metropolitan Areas. 
+
+```{r, fig.width=10}
+
+# We want to use ggplot to plot this, and ggplot requires data in a long format. Reshape and gather data using tidyr::gather
+plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, `Single-detached house`:`Other single-attached house`)
 
 library(ggplot2)
-plot_data <- reshape2::melt(census_data %>% select(c(c("name"),categories$Vector)),id.vars = "name")
-ggplot(plot_data,aes(name,y=value)) +
-  scale_fill_manual("Dwelling Type",labels = categories$Detail, values=categories$Color) + 
-  geom_bar(aes(fill=variable),stat="identity") + 
-  labs(x="6 largest CMAs", y="Share of occupied dwelling units (%)", title="Occupied Private Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca")
-```
+library(scales)
 
+ggplot(plot_data, aes(x = `Region Name`, y = Count, group = `Dwelling Type`, fill = `Dwelling Type`)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_y_continuous(labels = percent) + 
+  labs(x = "6 largest CMAs", y = "Share of occupied dwelling units (%)", title="Occupied Private Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca") +
+  scale_fill_brewer(palette = "Paired") +
+  theme_bw()
+```
