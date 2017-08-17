@@ -10,7 +10,9 @@ cancensus.list_vectors(dataset, use_cache = TRUE)
 \item{dataset}{The dataset to query for available vectors, e.g.
 \code{"CA16"}.}
 
-\item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
+\item{use_cache}{If set to TRUE (the default) data will be read from a local
+cache, if available. If set to FALSE, query the API for the data, and
+refresh the local cache with the result.}
 }
 \description{
 Query the CensusMapper API for available vectors for a given dataset.
