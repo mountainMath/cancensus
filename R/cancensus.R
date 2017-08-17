@@ -371,6 +371,31 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
   }
 }
 
+#' Add hierarchichal context to a (sub-)list of census variables returned by
+#' \code{cancensus.list_vectors} or \code{cancensus.seach_vectors}.
+#'
+#' @param vector_list The list of vectors to be used
+#' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#'
+#' @export
+#'
+#' @examples
+#' cancensus.add_description(vector_list, 'CA16')
+cancensus.add_description <- function(vector_list,dataset){
+  vector_list$description <- vector_list$label
+  list <- vector_list
+  while (any(!is.na(list$parent_vector))) {
+    parent_list=cancensus.list_vectors(dataset) %>% filter(vector %in% list$parent_vector)
+    vector_list$description[!is.na(list$parent_vector)] <-
+      paste(parent_list$label,vector_list$description[!is.na(list$parent_vector)],sep=", ")
+    list=parent_list
+  }
+  veclist <- cancensus.list_vectors(dataset)
+
+  return(vector_list)
+}
+
 #' Query the CensusMapper API for vectors with descriptions matching a searchterm.
 #'
 #' @param searchterm The term to search for e.g. \code{"Ojibway"}.
@@ -392,7 +417,7 @@ cancensus.search_vectors <- function(searchterm, dataset) {
   sublist <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
   result <- sublist
   # This part below is extremely inelegant and I look forward to someone adjusting it.
-  # Depth was tested on language for CA16 and CA11, as it looks like language has the most deeply nested variables. 
+  # Depth was tested on language for CA16 and CA11, as it looks like language has the most deeply nested variables.
   if (any(!is.na(sublist$parent_vector))) {
     parlist <- veclist[match(sublist$parent_vector, veclist$vector),]
     result$parent1 <- parlist$label
