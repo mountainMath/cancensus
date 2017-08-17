@@ -30,8 +30,7 @@ We select the top 6 CMAs by population.
 cma_list <- cancensus.list_regions(dataset) %>% 
   filter(level=='CMA') %>% 
   top_n(6, pop) %>%
-  pull(region)
-regions=list(CMA=cma_list)
+  cancensus.as_region_list
 ```
 
 ### Dynamically Select Vectors
@@ -85,7 +84,7 @@ All that's left to do is graph the data. In this instance, we're putting togethe
 ```{r, fig.width=10}
 
 # We want to use ggplot to plot this, and ggplot requires data in a long format. Reshape and gather data using tidyr::gather
-plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, `Single-detached house`:`Other single-attached house`)
+plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, categories$Detail)
 
 library(ggplot2)
 library(scales)
