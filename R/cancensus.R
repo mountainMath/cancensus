@@ -354,6 +354,17 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
       )) %>%
       dplyr::select(vector, type, label, units, parent_vector = parent,
                     aggregation)
+
+    # traverse hierarchy to add description field to variables
+    result$description <- result$label
+    list <- result
+    while (any(!is.na(list$parent_vector))) {
+      parent_list=cancensus.list_vectors(dataset) %>% filter(vector %in% list$parent_vector)
+      result$description[!is.na(list$parent_vector)] <-
+        paste(parent_list$label,result$description[!is.na(list$parent_vector)],sep=", ")
+      list=parent_list
+    }
+
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -370,12 +381,76 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
   }
 }
 
+#' List all parent variables from vector hierarchichal based on a (sub-)list of census
+#' variables returned by
+#' \code{list_census_vectors} or \code{search_census_vectors}.
+#'
+#' @param vector_list The list of vectors to be used
+#' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#'
+#' @export
+#'
+#' @examples
+#' add_parent_census_vectors(vector_list, 'CA16')
+parent_census_vectors <- function(base_list,dataset){
+  n=0
+  vector_list <- list_census_vectors(dataset) %>%
+    filter(vector %in% base_list$parent_vector) %>%
+    distinct(vector, .keep_all = TRUE)
+  while (n!=nrow(vector_list)) {
+    n=nrow(vector_list)
+    new_list <- list_census_vectors(dataset) %>%
+      filter(vector %in% vector_list$parent_vector)
+    vector_list <- vector_list %>% rbind(new_list) %>%
+      distinct(vector, .keep_all = TRUE)
+  }
+  return(vector_list)
+}
+
+#' List all child variables from vector hierarchichal based on a (sub-)list of census
+#' variables returned by
+#' \code{list_census_vectors} or \code{search_census_vectors}.
+#'
+#' @param vector_list The list of vectors to be used
+#' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
+#' i.e. vectors that don't have children
+#'
+#' @export
+#'
+#' @examples
+#' add_parent_census_vectors(vector_list, 'CA16')
+child_census_vectors <- function(base_list,dataset, leaves_only=FALSE){
+  n=0
+  vector_list <- list_census_vectors(dataset) %>%
+    filter(parent_vector %in% base_list$vector) %>%
+    distinct(vector, .keep_all = TRUE)
+  while (n!=nrow(vector_list)) {
+    n=nrow(vector_list)
+    new_list <- list_census_vectors(dataset) %>%
+      filter(parent_vector %in% vector_list$vector)
+    vector_list <- vector_list %>% rbind(new_list) %>%
+      distinct(vector, .keep_all = TRUE)
+  }
+  # only keep leaves if leaves_only==TRUE
+  if (leaves_only) {
+    vector_list <- vector_list %>%
+    filter(!(vector %in% list_census_vectors(dataset)$parent_vector))
+  }
+  return(vector_list)
+}
+
 #' Query the CensusMapper API for vectors with descriptions matching a searchterm.
 #'
 #' @param searchterm The term to search for e.g. \code{"Ojibway"}.
 #' Search terms are case insensitive. If unable to find a given search term,
 #' this function will suggest the correct spelling to use when possible.
 #' @param dataset The dataset to query for available vectors, e.g.
+#'   \code{"CA16"}.
+#' @param type One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
+#' If specified, only return variables of specified `type`.
 #'   \code{"CA16"}.
 #'
 #' @export
@@ -384,42 +459,17 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
 #' search_census_vectors('Ojibway', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar terms.
-#' search_census_vectors('Ojibwe', 'CA16')
-search_census_vectors <- function(searchterm, dataset) {
+#' search_census_vectors('Ojibwe', 'CA16', 'Total')
+search_census_vectors <- function(searchterm, dataset, type=NA) {
   #to do: add caching of vector list here
   veclist <- list_census_vectors(dataset)
-  sublist <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
-  result <- sublist
-  # This part below is extremely inelegant and I look forward to someone adjusting it.
-  # Depth was tested on language for CA16 and CA11, as it looks like language has the most deeply nested variables. 
-  if (any(!is.na(sublist$parent_vector))) {
-    parlist <- veclist[match(sublist$parent_vector, veclist$vector),]
-    result$parent1 <- parlist$label
-    if (any(!is.na(parlist$parent_vector))) {
-      par2list <- veclist[match(parlist$parent_vector, veclist$vector),]
-      result$parent2 <- par2list$label
-      if (any(!is.na(par2list$parent_vector))) {
-        par3list <- veclist[match(par2list$parent_vector, veclist$vector),]
-        result$parent3 <- par3list$label
-        if (any(!is.na(par3list$parent_vector))) {
-          par4list <- veclist[match(par3list$parent_vector, veclist$vector),]
-          result$parent4 <- par4list$label
-          if (any(!is.na(par4list$parent_vector))) {
-            par5list <- veclist[match(par4list$parent_vector, veclist$vector),]
-            result$parent5 <- par5list$label
-            if (any(!is.na(par5list$parent_vector))) {
-              par6list <- veclist[match(par5list$parent_vector, veclist$vector),]
-              result$parent6 <- par6list$label
-              if (any(!is.na(par6list$parent_vector))) {
-                par7list <- veclist[match(par6list$parent_vector, veclist$vector),]
-                result$parent7 <- par7list$label
-              }
-            }
-          }
-        }
-      }
-    }
+  result <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
+
+  # filter by type if needed
+  if (!is.na(type) && length(rownames(result)) > 0) {
+    result <- result[result$type==type,]
   }
+
   # Check if searchterm returned anything
   if (length(rownames(result)) > 0 ) return(result)
   # If nothing matches, throw a warning and suggested alternatives.
