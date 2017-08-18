@@ -1,14 +1,14 @@
-#' CensusMapper API access
+#' Access to Canadian census data through the CensusMapper API
 #'
-#' This function allows convenient access to the CensusMapper API
+#' These function allow convenient access to Canadian census data and boundary
+#' files through the CensusMapper API. An API key is required to retrieve data.
 #'
-#' Got to https://censusmapper.ca/api to select variables and geographic regions
-#' you want to download data for
+#' \code{get_census_data} and \code{get_census_geometry} are convenience
+#' functions that retrive only data or boundary information, respectively.
 #'
-#' An API key is required to use this function. Either set the API key on censusmapper
-#' api_key='<your API key>'
-#' or as environment variable
-#' sys.setenv(CM_API_KEY='<your API key>')
+#' For help selecting regions and vectors, see \code{\link{list_census_regions}}
+#' and \code{\link{list_census_vectors}}, or check out the interactive selection
+#' tool at <https://censusmapper.ca/api>.
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
@@ -18,27 +18,26 @@
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
+#'
 #' @keywords canada census data api
 #' @export
+#'
 #' @examples
-#' # Load data without associated geographical spatial data
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
-#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                               level='CSD', geo_format = NA)
+#' # Query the API for data on dwellings in Vancouver, at the census subdivision
+#' # level, and return the associated boundary files in `sf` format:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', geo_format = "sf")
 #'
-#' # Load data with associated geographical spatial data using the sf standard
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
-#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                               level='CSD', geo_format = "sf")
+#' # Make the same query, but this time drop descriptive vector names:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', geo_format = "sf", labels="short")
 #'
-#' # Load data with geography and truncated variable names
-#' census_data <- cancensus.load(dataset='CA16', regions=list(CMA="59933"),
-#'                               vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                               level='CSD', geo_format = "sf", labels="short")
+#' # Get details for truncated vectors:
+#' census_vectors(census_data)
 #'
-#' # Get details for truncated variables
-#' cancensus.labels(census_data)
-cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf", labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
   result <- NULL
@@ -86,7 +85,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
       url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
       response <- httr::GET(url, httr::write_disk(data_file, overwrite = TRUE),
                             httr::progress())
-      cancensus.handle_status_code(response,data_file)
+      handle_cm_status_code(response,data_file)
     } else {
       message("Reading vectors data from local cache.")
     }
@@ -118,7 +117,7 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
                     api_key)
       response <- httr::GET(url, httr::write_disk(geo_file, overwrite = TRUE),
                             httr::progress())
-      cancensus.handle_status_code(response,geo_file)
+      handle_cm_status_code(response,geo_file)
     } else {
       message("Reading geo data from local cache.")
     }
@@ -216,11 +215,11 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   }
 
   if (length(vectors)>0) {
-   census_labels <- names(result)[grep("^v_", names(result))]
-   census_labels <- strsplit(census_labels, ": ")
-   census_labels <- dplyr::as_data_frame(do.call(rbind, census_labels))
-   names(census_labels) <- c("Vector", "Detail")
-   attributes(result)$census_labels <- census_labels
+   census_vectors <- names(result)[grep("^v_", names(result))]
+   census_vectors <- strsplit(census_vectors, ": ")
+   census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
+   names(census_vectors) <- c("Vector", "Detail")
+   attr(result, "census_vectors") <- census_vectors
    if(labels == "short") {
      if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
      else {names(result) <- gsub(":.*","",names(result))}
@@ -229,33 +228,33 @@ cancensus.load <- function (dataset, level, regions, vectors=c(), geo_format = "
   return(result)
 }
 
-#' Convenience function to load only census data and no geographies.
+#' @param ... Further arguments passed on to
+#'   \code{\link[cancensus]{get_census}}.
 #'
-#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
-#' @inheritParams cancensus.load
-#'
-#' @keywords canada census data api
+#' @rdname get_census
 #' @export
+#'
 #' @examples
-#' census_data <- cancensus.load_data(dataset='CA16', regions=list(CMA:"59933"),
-#'                                    vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                                    level='CSD')
-cancensus.load_data <- function (dataset, level, regions, vectors, ...) {
-  return(cancensus.load(dataset, level, regions, vectors, geo_format = NA, ...))
+#' # Query the API for dwelling data in Vancouver at the census subdivision
+#' # level, but not the associated boundary geometry.
+#' vc_dwellings <- get_census_data(dataset='CA16', regions=list(CMA:"59933"),
+#'                                 vectors=c("v_CA16_408","v_CA16_409",
+#'                                           "v_CA16_410"), level='CSD')
+#'
+get_census_data <- function (dataset, level, regions, vectors, ...) {
+  return(get_census(dataset, level, regions, vectors, geo_format = NA, ...))
 }
 
-#' Convenience function to load only census geography without data.
-#'
-#' @param ... Further arguments passed on to \code{\link[cancensus]{cancensus.load}}.
-#' @inheritParams cancensus.load
-#'
-#' @keywords canada census data api
+#' @rdname get_census
 #' @export
+#'
 #' @examples
-#' census_data <- cancensus.load_geo(dataset='CA16', regions=list(CMA="59933"),
-#'                                   level='CSD', geo_format = "sf")
-cancensus.load_geo <- function (dataset, level, regions, geo_format = "sf", ...) {
-  return(cancensus.load(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
+#' # Query the API for census subdivision boundary geometry within Vancouver.
+#' vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
+#'                                level='CSD', geo_format = "sf")
+#'
+get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...) {
+  return(get_census(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
 
 # This is the set of valid census aggregation levels, also used in the named
@@ -286,14 +285,14 @@ cancensus.set_api_key <- function(api_key){
 #' @export
 #'
 #' @importFrom dplyr %>%
-cancensus.list_datasets <- function(use_cache = TRUE) {
+list_census_datasets <- function(use_cache = TRUE) {
   cache_dir <- system.file("cache/", package = "cancensus")
   cache_file <- paste0(cache_dir, "datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
                           httr::accept_json())
-    cancensus.handle_status_code(response, NULL)
+    handle_cm_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_data_frame()
@@ -324,7 +323,7 @@ cancensus.list_datasets <- function(use_cache = TRUE) {
 #' @export
 #'
 #' @importFrom dplyr %>%
-cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
+list_census_vectors <- function(dataset, use_cache=TRUE) {
   # TODO: Validate dataset?
   cache_dir <- system.file("cache/", package = "cancensus")
   cache_file <- paste0(cache_dir, dataset, "_vectors.rda")
@@ -333,7 +332,7 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
     response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
                                  dataset, ".csv"),
                           httr::progress())
-    cancensus.handle_status_code(response, NULL)
+    handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
       dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
@@ -382,13 +381,13 @@ cancensus.list_vectors <- function(dataset, use_cache=TRUE) {
 #' @export
 #'
 #' @examples
-#' cancensus.set_vectors('Ojibway', 'CA16')
+#' search_census_vectors('Ojibway', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar terms.
-#' cancensus.set_vectors('Ojibwe', 'CA16')
-cancensus.search_vectors <- function(searchterm, dataset) {
+#' search_census_vectors('Ojibwe', 'CA16')
+search_census_vectors <- function(searchterm, dataset) {
   #to do: add caching of vector list here
-  veclist <- cancensus.list_vectors(dataset)
+  veclist <- list_census_vectors(dataset)
   sublist <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
   result <- sublist
   # This part below is extremely inelegant and I look forward to someone adjusting it.
@@ -468,14 +467,14 @@ cancensus.search_vectors <- function(searchterm, dataset) {
 #' @export
 #'
 #' @importFrom dplyr %>%
-cancensus.list_regions <- function(dataset, use_cache = TRUE) {
+list_census_regions <- function(dataset, use_cache = TRUE) {
   cache_dir <- system.file("cache/", package = "cancensus")
   cache_file <- paste0(cache_dir, dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
     message("Querying CensusMapper API for regions data...")
     response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
                                  "/place_names.csv"))
-    cancensus.handle_status_code(response, NULL)
+    handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
       dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
@@ -501,11 +500,11 @@ cancensus.list_regions <- function(dataset, use_cache = TRUE) {
 }
 
 #' Convert a (suitably filtered) data frame from
-#' \code{\link{cancensus.list_regions}} to a list suitable for passing to
-#' \code{\link{cancensus.load}}.
+#' \code{\link{list_census_regions}} to a list suitable for passing to
+#' \code{\link{get_census}}.
 #'
 #' @param tbl A data frame, suitably filtered, as returned by
-#'   \code{\link{cancensus.list_regions}}.
+#'   \code{\link{list_census_regions}}.
 #'
 #' @export
 #'
@@ -515,16 +514,16 @@ cancensus.list_regions <- function(dataset, use_cache = TRUE) {
 #'
 #' # Query the CensusMapper API for the total occupied dwellings
 #' # of 20 random Census Subdivisions, in Census 2016.
-#' regions <- cancensus.list_regions("CA16") %>%
+#' regions <- list_census_regions("CA16") %>%
 #'   dplyr::filter(level == "CSD") %>%
 #'   dplyr::sample_n(20) %>%
-#'   cancensus.as_region_list()
+#'   as_census_region_list()
 #'
-#' occupied <- cancensus.load_data("CA16", regions = regions,
-#'                                 vectors = c("v_CA16_408"),
-#'                                 level = "Regions")
+#' occupied <- get_census_data("CA16", regions = regions,
+#'                             vectors = c("v_CA16_408"),
+#'                             level = "Regions")
 #'
-cancensus.as_region_list <- function(tbl) {
+as_census_region_list <- function(tbl) {
   # This isn't bulletproof validation, but it should deter some misuse.
   if (!all(c("level", "region") %in% names(tbl))) {
     stop(paste("`as_region_list()` can only handle data frames",
@@ -542,7 +541,7 @@ cancensus.as_region_list <- function(tbl) {
 #' Return Census variable names and labels as a tidy data frame
 #'
 #' @param x A data frame, \code{sp} or \code{sf} object returned from
-#'   \code{cancensus.load} or similar.
+#'   \code{get_census} or similar.
 #'
 #' @return
 #'
@@ -550,16 +549,16 @@ cancensus.as_region_list <- function(tbl) {
 #' variable name, and a column \code{label} describing it.
 #'
 #' @export
-cancensus.labels <-  function(x) {
-  if("census_labels" %in% names(attributes(x))) {
-    attributes(x)$census_labels
+census_vectors <-  function(x) {
+  if("census_vectors" %in% names(attributes(x))) {
+    attr(x, "census_vectors")
   } else {
-    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?cancensus.load() for more information. ")}
+    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?get_census() for more information. ")}
   }
 
 
 # Internal function to handle unfavourable http responses
-cancensus.handle_status_code <- function(response,path){
+handle_cm_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
     message=httr::content(response,as="text")
     if (!is.null(path)) {
@@ -587,4 +586,3 @@ cancensus.handle_status_code <- function(response,path){
     options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
   }
 }
-
