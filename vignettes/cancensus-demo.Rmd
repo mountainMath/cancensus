@@ -37,17 +37,11 @@ census_data <- get_census(dataset='CA16',level='CT',regions=regions,vectors=vect
 
 We compute a the percentage of single detached dwellings out of all occupied dwelling units and map it.
 
+
 ```{r, echo=TRUE}
+# compute percentage of single detached
 census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
 
-library(tmap)
-tm_shape(census_data) +
-  tm_polygons("sd", style="quantile", title="Single Detached Homes")
-```
-
-Or using the ggplot library.
-
-```{r, echo=TRUE}
 library(sf)
 # Use the latest version of ggplot2 to effortlessly plot sf
 # objects and for the viridis colour scales:
@@ -62,6 +56,7 @@ ggplot(census_data) +
 ```
 
 
+## Other visualizations
 Or we can explore the data through non-map based means, for example how the proportion of single detached and duplex dwelling relate. Duplex dwellings are in most cases suited single family homes. We can explore how the relationship between single family homes and duplexes depend on the municipal regulations allowing for secondary suites.
 
 ```{r}

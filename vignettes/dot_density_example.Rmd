@@ -14,7 +14,7 @@ First we install cancensus, grab the newest version just in case. Don't forget t
 #library(devtools)
 #devtools::install_github('mountainmath/cancensus')
 library(cancensus)
-# options(cancensus.api_key)='<your API key>'
+# options(cancensus.api_key='<your API key>')
 ```
 
 Load data we want to use for dot density map, use the [CensusMapper API tool](https://censusmapper.ca/api) to select variabes and regions, and we add the `format='sp'` option to read the data in `sp` format.
@@ -115,7 +115,7 @@ dot_density <- function(geo_data,categories,colors,scale,base_geo_data,title,att
 
 All that's left is to call the plot function with our data.
 
-```{r, fig.height=7, fig.width=7}
+```{r, fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
 dot_density(geo_data=sp,categories=categories,colors=colors,scale=25,base_geo_data=base_geom,'Most Common Non-Official Languages at Home',attribution="StatCan Census 2016")
 ```
 
