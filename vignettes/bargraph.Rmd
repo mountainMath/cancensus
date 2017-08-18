@@ -11,7 +11,7 @@ vignette: |
 
 We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API. The code for this notbook can be found on [GitHub](https://github.com/mountainMath/cancensus).
 
-This example demonstrates how to dynamically discover regions and vectors and produce an overview graph based on the data by using the `cancensus.list_regions`, `cancensus.list_vectors` and `cancensus.search_vectors` methods.
+This example demonstrates how to dynamically discover regions and vectors and produce an overview graph based on the data by using the `list_census_regions`, `list_census_vectors` and `search_census_vectors` methods.
 
 ```{r API Key, echo=TRUE, warning=FALSE}
 library(cancensus)
@@ -27,7 +27,7 @@ dataset <- 'CA16'
 We select the top 6 CMAs by population.
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # grab 6 largest CMAs
-cma_list <- cancensus.list_regions(dataset) %>% 
+cma_list <- list_census_regions(dataset) %>% 
   filter(level=='CMA') %>% 
   top_n(6, pop) %>%
   pull(region)
@@ -40,13 +40,13 @@ We query the vectors for the *structural type of dwelling* variables and grab al
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 
 # Search for all Census vectors containing the term "dwellings"
-dwellings <- cancensus.search_vectors("structural type of dwelling",dataset)
+dwellings <- search_census_vectors("structural type of dwelling",dataset)
 
 # Select all dependent variables
-dwellings <- cancensus.list_vectors(dataset) %>% filter(parent_vector == dwellings$vector)
+dwellings <- list_census_vectors(dataset) %>% filter(parent_vector == dwellings$vector)
 
 # Append all leaves of dependent variables
-dwellings <- rbind(dwellings, cancensus.list_vectors(dataset) %>% filter(parent_vector %in% dwellings$vector))
+dwellings <- rbind(dwellings, list_census_vectors(dataset) %>% filter(parent_vector %in% dwellings$vector))
 
 # Keep only leaves
 dwellings <- dwellings %>% filter(!vector %in% parent_vector)
@@ -63,11 +63,11 @@ Next we grab the census data using the vectors we've selected.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # get data for these CMAs
-census_data <- cancensus.load(dataset='CA16', regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
+census_data <- get_census(dataset='CA16', regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
 
-# get labels using the built in function cancensus.labels()
+# get labels using the built in function census_vectors()
 
-categories <- cancensus.labels(census_data)
+categories <- census_labels(census_data)
 
 # shorten label names where appropriate
 categories$Detail <- gsub(" in a building that has ",", ",categories$Detail)
