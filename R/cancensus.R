@@ -359,13 +359,14 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
     result$description <- result$label
     list <- result
     while (any(!is.na(list$parent_vector))) {
-      parent_list=cancensus.list_vectors(dataset) %>% filter(vector %in% list$parent_vector)
+      parent_list=result %>% filter(vector %in% list$parent_vector)
       result$description[!is.na(list$parent_vector)] <-
         paste(parent_list$label,result$description[!is.na(list$parent_vector)],sep=", ")
       list=parent_list
     }
 
     attr(result, "last_updated") <- Sys.time()
+    attributes(result)$dataset=dataset
     save(result, file = cache_file)
     result
   } else {
@@ -377,6 +378,7 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
       warning(paste("Cached vectors list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
+    attributes(result)$dataset=dataset # just in case, catching cached legacy datasets
     result
   }
 }
@@ -386,14 +388,14 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
 #' \code{list_census_vectors} or \code{search_census_vectors}.
 #'
 #' @param vector_list The list of vectors to be used
-#' @param dataset The dataset to query for available vectors, e.g.
-#'   \code{"CA16"}.
 #'
 #' @export
 #'
 #' @examples
-#' add_parent_census_vectors(vector_list, 'CA16')
-parent_census_vectors <- function(base_list,dataset){
+#' parent_census_vectors(vector_list, 'CA16')
+parent_census_vectors <- function(vector_list){
+  base_list <- vector_list
+  dataset=attributes(base_list)$dataset
   n=0
   vector_list <- list_census_vectors(dataset) %>%
     filter(vector %in% base_list$parent_vector) %>%
@@ -405,6 +407,7 @@ parent_census_vectors <- function(base_list,dataset){
     vector_list <- vector_list %>% rbind(new_list) %>%
       distinct(vector, .keep_all = TRUE)
   }
+  attributes(vector_list)$dataset=dataset
   return(vector_list)
 }
 
@@ -413,16 +416,16 @@ parent_census_vectors <- function(base_list,dataset){
 #' \code{list_census_vectors} or \code{search_census_vectors}.
 #'
 #' @param vector_list The list of vectors to be used
-#' @param dataset The dataset to query for available vectors, e.g.
-#'   \code{"CA16"}.
 #' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
 #' i.e. vectors that don't have children
 #'
 #' @export
 #'
 #' @examples
-#' add_parent_census_vectors(vector_list, 'CA16')
-child_census_vectors <- function(base_list,dataset, leaves_only=FALSE){
+#' child_census_vectors(vector_list, 'CA16')
+child_census_vectors <- function(vector_list, leaves_only=FALSE){
+  dataset=attributes(base_list)$dataset
+  base_list <- vector_list
   n=0
   vector_list <- list_census_vectors(dataset) %>%
     filter(parent_vector %in% base_list$vector) %>%
@@ -439,6 +442,7 @@ child_census_vectors <- function(base_list,dataset, leaves_only=FALSE){
     vector_list <- vector_list %>%
     filter(!(vector %in% list_census_vectors(dataset)$parent_vector))
   }
+  attributes(vector_list)$dataset=dataset
   return(vector_list)
 }
 
@@ -471,7 +475,10 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
   }
 
   # Check if searchterm returned anything
-  if (length(rownames(result)) > 0 ) return(result)
+  if (length(rownames(result)) > 0 ) {
+    attributes(result)$dataset=dataset
+    return(result)
+  }
   # If nothing matches, throw a warning and suggested alternatives.
   # If no suggested alternatives because the typo is too egregious, throw an error.
   else {

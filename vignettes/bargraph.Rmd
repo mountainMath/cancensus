@@ -37,22 +37,12 @@ regions <- list_census_regions(dataset) %>%
 
 We query the vectors for the *structural type of dwelling* variables and grab all non-summary variables.
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
-
-# Search for all Census vectors containing the term "dwellings"
-dwellings <- search_census_vectors("structural type of dwelling",dataset)
-
-# Select all dependent variables
-dwellings <- list_census_vectors(dataset) %>% filter(parent_vector == dwellings$vector)
-
-# Append all leaves of dependent variables
-dwellings <- rbind(dwellings, list_census_vectors(dataset) %>% filter(parent_vector %in% dwellings$vector))
-
-# Keep only leaves
-dwellings <- dwellings %>% filter(!vector %in% parent_vector)
-
-# Extract string of vectors we want 
-vectors <- dwellings %>% pull(vector)
-
+# Search for for the Census vector pertaining to "structural type of dwelling",
+# grab all child nodes (leaves only)
+# and extract the vectors
+vectors <- search_census_vectors("structural type of dwelling",dataset) %>%
+  child_census_vectors(TRUE) %>% 
+  pull(vector)
 ```
 
 
@@ -61,11 +51,10 @@ vectors <- dwellings %>% pull(vector)
 Next we grab the census data using the vectors we've selected. 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# get data for these CMAs
-census_data <- get_census(dataset='CA16', regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
+# get data for these CMAs, census variables only (no geographical data)
+census_data <- get_census(dataset=dataset, regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
 
 # get labels using the built in function census_vectors()
-
 categories <- census_vectors(census_data)
 
 # shorten label names where appropriate

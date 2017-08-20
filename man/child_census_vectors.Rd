@@ -6,16 +6,13 @@
 variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.}
 \usage{
-child_census_vectors(base_list, dataset, leaves_only = FALSE)
+child_census_vectors(vector_list, leaves_only = FALSE)
 }
 \arguments{
-\item{dataset}{The dataset to query for available vectors, e.g.
-\code{"CA16"}.}
+\item{vector_list}{The list of vectors to be used}
 
 \item{leaves_only}{Boolean flag to indicate if only leaf vectors should be returned,
 i.e. vectors that don't have children}
-
-\item{vector_list}{The list of vectors to be used}
 }
 \description{
 List all child variables from vector hierarchichal based on a (sub-)list of census
@@ -23,5 +20,5 @@ variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.
 }
 \examples{
-add_parent_census_vectors(vector_list, 'CA16')
+child_census_vectors(vector_list, 'CA16')
 }
