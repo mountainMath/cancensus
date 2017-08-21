@@ -359,14 +359,14 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
     result$description <- result$label
     list <- result
     while (any(!is.na(list$parent_vector))) {
-      parent_list=result %>% filter(vector %in% list$parent_vector)
+      parent_list=result %>% dplyr::filter(vector %in% list$parent_vector)
       result$description[!is.na(list$parent_vector)] <-
         paste(parent_list$label,result$description[!is.na(list$parent_vector)],sep=", ")
       list=parent_list
     }
 
     attr(result, "last_updated") <- Sys.time()
-    attributes(result)$dataset=dataset
+    attr(result, "dataset") <- dataset
     save(result, file = cache_file)
     result
   } else {
@@ -378,7 +378,7 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
       warning(paste("Cached vectors list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
-    attributes(result)$dataset=dataset # just in case, catching cached legacy datasets
+    attr(result, "dataset") <- dataset # just in case, catching cached legacy datasets
     result
   }
 }
@@ -395,19 +395,19 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
 #' parent_census_vectors(vector_list, 'CA16')
 parent_census_vectors <- function(vector_list){
   base_list <- vector_list
-  dataset=attributes(base_list)$dataset
+  dataset <- attr(base_list, "dataset")
   n=0
   vector_list <- list_census_vectors(dataset) %>%
-    filter(vector %in% base_list$parent_vector) %>%
-    distinct(vector, .keep_all = TRUE)
+    dplyr::filter(vector %in% base_list$parent_vector) %>%
+    dplyr::distinct(vector, .keep_all = TRUE)
   while (n!=nrow(vector_list)) {
     n=nrow(vector_list)
     new_list <- list_census_vectors(dataset) %>%
-      filter(vector %in% vector_list$parent_vector)
+      dplyr::filter(vector %in% vector_list$parent_vector)
     vector_list <- vector_list %>% rbind(new_list) %>%
-      distinct(vector, .keep_all = TRUE)
+      dplyr::distinct(vector, .keep_all = TRUE)
   }
-  attributes(vector_list)$dataset=dataset
+  attr(vector_list, "dataset") <- dataset
   return(vector_list)
 }
 
@@ -424,25 +424,25 @@ parent_census_vectors <- function(vector_list){
 #' @examples
 #' child_census_vectors(vector_list, 'CA16')
 child_census_vectors <- function(vector_list, leaves_only=FALSE){
-  dataset=attributes(base_list)$dataset
   base_list <- vector_list
+  dataset <- attr(base_list,'dataset')
   n=0
   vector_list <- list_census_vectors(dataset) %>%
-    filter(parent_vector %in% base_list$vector) %>%
-    distinct(vector, .keep_all = TRUE)
+    dplyr::filter(parent_vector %in% base_list$vector) %>%
+    dplyr::distinct(vector, .keep_all = TRUE)
   while (n!=nrow(vector_list)) {
     n=nrow(vector_list)
     new_list <- list_census_vectors(dataset) %>%
-      filter(parent_vector %in% vector_list$vector)
+      dplyr::filter(parent_vector %in% vector_list$vector)
     vector_list <- vector_list %>% rbind(new_list) %>%
-      distinct(vector, .keep_all = TRUE)
+      dplyr::distinct(vector, .keep_all = TRUE)
   }
   # only keep leaves if leaves_only==TRUE
   if (leaves_only) {
     vector_list <- vector_list %>%
-    filter(!(vector %in% list_census_vectors(dataset)$parent_vector))
+      dplyr::filter(!(vector %in% list_census_vectors(dataset)$parent_vector))
   }
-  attributes(vector_list)$dataset=dataset
+  attr(vector_list, "dataset") <- dataset
   return(vector_list)
 }
 
@@ -455,7 +455,6 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
 #'   \code{"CA16"}.
 #' @param type One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
 #' If specified, only return variables of specified `type`.
-#'   \code{"CA16"}.
 #'
 #' @export
 #'
@@ -476,7 +475,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
 
   # Check if searchterm returned anything
   if (length(rownames(result)) > 0 ) {
-    attributes(result)$dataset=dataset
+    attr(result, "dataset") <- dataset
     return(result)
   }
   # If nothing matches, throw a warning and suggested alternatives.

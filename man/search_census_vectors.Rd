@@ -15,8 +15,7 @@ this function will suggest the correct spelling to use when possible.}
 \code{"CA16"}.}
 
 \item{type}{One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
-If specified, only return variables of specified `type`.
-  \code{"CA16"}.}
+If specified, only return variables of specified `type`.}
 }
 \description{
 Query the CensusMapper API for vectors with descriptions matching a searchterm.
