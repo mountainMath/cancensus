@@ -89,15 +89,17 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
     } else {
       message("Reading vectors data from local cache.")
     }
+    # NA strings
+    na_strings <- c("x","F","...","..")
     # read the data file and transform to proper data types
     if (requireNamespace("readr", quietly = TRUE)) {
       # Use readr::read_csv if it's available.
-      result <- readr::read_csv(data_file, na = c("x","F"), col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
+      result <- readr::read_csv(data_file, na = na_strings, col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
       result$GeoUID <- as.character(result$GeoUID)
       result$Type <- as.factor(result$Type)
       result$`Region Name` <- as.factor(result$`Region Name`)
     } else {
-      result <- utils::read.csv(data_file,  na = c("x","F"), colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+      result <- utils::read.csv(data_file,  na = na_strings, colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
     }
   } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
