@@ -485,7 +485,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
   else {
     # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
     # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
+    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
     names(hintlist) <- "Similarly named objects"
     #
     if (length(hintlist) > 0) {
@@ -599,7 +599,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, use_cache = TRU
   else {
     # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
     # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)))
+    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)))
     names(hintlist) <- "Similar named regions"
     #
     if (length(hintlist) > 0) {
