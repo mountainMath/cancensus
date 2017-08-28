@@ -485,7 +485,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
   else {
     # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
     # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
+    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
     names(hintlist) <- "Similarly named objects"
     #
     if (length(hintlist) > 0) {
@@ -554,6 +554,60 @@ list_census_regions <- function(dataset, use_cache = TRUE) {
                     "FALSE` to update it."))
     }
     result
+  }
+}
+
+#' Query the CensusMapper API for regions with names matching a searchterm.
+#'
+#' @param searchterm The term to search for e.g. \code{"Victoria"}.
+#' Search terms are case insensitive. If unable to find a given search term,
+#' this function will suggest the correct spelling to use when possible.
+#' @param dataset The dataset to query for available regions, e.g.
+#'   \code{"CA16"}.
+#' @param level One of \code{NA}, \code{'C'}, \code{'PR'}, \code{'CMA'}, \code{'CD'}, or \code{'CSD'}.
+#' If specified, only return variables of specified `level`.
+#' @param use_cache Set to default by \cpde{TRUE}. Will check if region list for given dataset was previously
+#' downloaded. If data is potentially out of date, the function may throw a warning
+#' to remind users to set \code{use_cache = TRUE}.
+#'
+#' @export
+#'
+#' @examples
+#' search_census_regions('Victorea', 'CA16')
+#'
+#' # This will return a warning that no match was found, but will suggest similar named regions.
+#' search_census_vectors('Victoria', 'CA16')
+#'
+#' # This will limit region results to only include CMA level regions
+#' search_census_vectors('Victoria', 'CA16', level = "CMA")
+search_census_regions <- function(searchterm, dataset, level=NA, use_cache = TRUE) {
+  reglist <- list_census_regions(dataset, use_cache)
+  result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
+  
+  # filter by type if needed
+  if (!is.na(level) && length(rownames(result)) > 0) {
+    result <- result[result$level==level,]
+  }
+  
+  # Check if searchterm returned anything
+  if (length(rownames(result)) > 0 ) {
+    attr(result, "dataset") <- dataset
+    return(result)
+  }
+  # If nothing matches, throw a warning and suggested alternatives.
+  # If no suggested alternatives because the typo is too egregious, throw an error.
+  else {
+    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
+    # Default is set to 0.1 - can expand this to be more tolerant still.
+    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)))
+    names(hintlist) <- "Similar named regions"
+    #
+    if (length(hintlist) > 0) {
+      warning("No results found. Please use accurate spelling. See above for list of similarly named regions.")
+      print(hintlist)
+    } else {
+      stop("No results found.")
+    }
   }
 }
 
