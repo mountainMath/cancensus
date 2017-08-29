@@ -1,14 +1,17 @@
 Package: cancensus
 Type: Package
-Title: CensusMapper API Interface to Canada Census
+Title: Access to Canadian Census Data Through the 'CensusMapper' API
 Version: 0.1.0
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
-    person("Aaron","Jacobs", email = "atheriel@gmail.com", role = "aut"))
-Description: The package provides convenient access to StatCan census data via CensusMapper APIs.
-    An API key is required to access the data. API keys are available with free registration to CensusMapper at
-    https://censusmapper.ca/api
+    person("Aaron", "Jacobs", email = "atheriel@gmail.com", role = "aut"))
+Description: This package provides convenient and uniform access to to Canadian
+    census data and boundary geometry through the 'CensusMapper' interface. API
+    keys are available with free registration at <https://censusmapper.ca/api>.
+    Census data and boundary geometries are reproduced and distributed on an "as
+    is" basis with the permission of Statistics Canada (Statistics Canada 2006;
+    2011; 2016).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: yes
