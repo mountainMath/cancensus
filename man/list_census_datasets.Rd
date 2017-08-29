@@ -4,12 +4,14 @@
 \alias{list_census_datasets}
 \title{Query the CensusMapper API for available datasets.}
 \usage{
-list_census_datasets(use_cache = TRUE)
+list_census_datasets(use_cache = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{use_cache}{If set to TRUE (the default) data will be read from a local
-cache, if available. If set to FALSE, query the API for the data, and
+\item{use_cache}{If set to TRUE, data will be read from a local cache, if
+available. If set to FALSE (the default), query the API for the data, and
 refresh the local cache with the result.}
+
+\item{quiet}{When TRUE, suppress messages and warnings.}
 }
 \value{
 A data frame with a column \code{dataset} containing the code for the
