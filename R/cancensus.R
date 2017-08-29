@@ -75,30 +75,40 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
                            "&vectors=", jsonlite::toJSON(vectors),
                            "&level=", level, "&dataset=", dataset)
     data_file <- cache_path("CM_data_",
-                            digest::digest(param_string, algo = "md5"), ".csv")
+                            digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
                    "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
       }
       url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
-      response <- httr::GET(url, httr::write_disk(data_file, overwrite = TRUE),
-                            httr::progress())
-      handle_cm_status_code(response,data_file)
+      response <- httr::GET(url, httr::progress())
+      handle_cm_status_code(response, NULL)
+      na_strings <- c("x", "F", "...", "..")
+      # Read the data file and transform to proper data types
+      result <- if (requireNamespace("readr", quietly = TRUE)) {
+        # Use readr::read_csv if it's available.
+        httr::content(response, type = "text", encoding = "UTF-8") %>%
+          readr::read_csv(na = na_strings,
+                          col_types = list(.default = "d", GeoUID = "c",
+                                           Type = "c", "Region Name" = "c")) %>%
+          mutate(Type = as.factor(Type),
+                 `Region Name` = as.factor(`Region Name`))
+      } else {
+        httr::content(response, type = "text", encoding = "UTF-8") %>%
+          utils::read.csv(na = na_strings,
+                          colClasses = c("GeoUID" = "character",
+                                         "Type" = "factor",
+                                         "Region Name" = "factor"),
+                          stringsAsFactors = FALSE, check.names = FALSE) %>%
+          dplyr::as_tibble()
+      }
+      attr(result, "last_updated") <- Sys.time()
+      save(result, file = data_file)
     } else {
       message("Reading vectors data from local cache.")
-    }
-    # NA strings
-    na_strings <- c("x","F","...","..")
-    # read the data file and transform to proper data types
-    if (requireNamespace("readr", quietly = TRUE)) {
-      # Use readr::read_csv if it's available.
-      result <- readr::read_csv(data_file, na = na_strings, col_types = list(.default = "d", GeoUID = "c", Type = 'c', "Region Name" = 'c'))
-      result$GeoUID <- as.character(result$GeoUID)
-      result$Type <- as.factor(result$Type)
-      result$`Region Name` <- as.factor(result$`Region Name`)
-    } else {
-      result <- utils::read.csv(data_file,  na = na_strings, colClasses=c("GeoUID"="character","Type"="factor","Region Name"="factor"),stringsAsFactors=F, check.names = FALSE)
+      # Load `result` object from cache.
+      load(file = data_file)
     }
   } else if (is.na(geo_format)) {
     stop('Neither vectors nor geo data specified, nothing to do.')
@@ -108,8 +118,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
     geo_file <- cache_path("CM_geo_",
-                           digest::digest(param_string, algo = "md5"),
-                           ".geojson")
+                           digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
@@ -117,102 +126,34 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
       }
       url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
                     api_key)
-      response <- httr::GET(url, httr::write_disk(geo_file, overwrite = TRUE),
-                            httr::progress())
-      handle_cm_status_code(response,geo_file)
+      response <- httr::GET(url, httr::progress())
+      handle_cm_status_code(response, NULL)
+      geos <- if (geo_format == "sf") {
+        httr::content(response, type = "text", encoding = "UTF-8") %>%
+          sf::read_sf() %>%
+          transform_geo(level)
+      } else { # geo_format == "sp"
+        geos <- rgdal::readOGR(httr::content(response, type = "text",
+                                             encoding = "UTF-8"), "OGRGeoJSON")
+        geos@data <- transform_geo(geos@data, level)
+      }
+      attr(geos, "last_updated") <- Sys.time()
+      save(geos, file = geo_file)
     } else {
       message("Reading geo data from local cache.")
+      # Load `geos` object from cache.
+      load(file = geo_file)
     }
-    # read the geo file and transform to proper data types
 
-    #transform and rename
-    transform_geo <- function(g){
-      as_character=c("id","rpid","rgid","ruid","rguid","q")
-      as_numeric=c("a","nrr")
-      as_factor=c("t")
-      as_integer=c("pop","dw","hh","pop2")
-      as_character=append(append(as_character,as_numeric),as_integer)
-
-      g <- g %>%
-        dplyr::mutate_at(dplyr::intersect(names(g), as_character),
-                         dplyr::funs(as.character)) %>%
-        dplyr::mutate_at(dplyr::intersect(names(g), as_numeric),
-                         dplyr::funs(as.numeric))  %>%
-        dplyr::mutate_at(dplyr::intersect(names(g), as_integer),
-                         dplyr::funs(as.integer))  %>%
-        dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
-                         dplyr::funs(as.factor))
-
-      #change names
-      #standar table
-      name_change <- dplyr::data_frame(
-        old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
-        new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
-        )
-      #geo uid name changes
-      if (level=='DB') {
-        name_change <- name_change %>% rbind(
-          c('rpid','DA_UID'),
-          c('rgid','CSD_UID'),
-          c('ruid','CT_UID'),
-          c('rguid','CMA_UID'))
-      }
-      if (level=='DA') {
-        name_change <- name_change %>% rbind(
-          c('rpid','CSD_UID'),
-          c('rgid','CD_UID'),
-          c('ruid','CT_UID'),
-          c('rguid','CMA_UID'))
-      }
-      if (level=='CT') {
-        name_change <- name_change %>% rbind(
-          c('rpid','CMA_UID'),
-          c('rgid','PR_UID'),
-          c('ruid','CSD_UID'),
-          c('rguid','CD_UID'))
-      }
-      if (level=='CSD') {
-        name_change <- name_change %>% rbind(
-          c('rpid','CSD_UID'),
-          c('rgid','PR_UID'),
-          c('ruid','CMA_UID'))
-      }
-      if (level=='CD') {
-        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
-      }
-      if (level=='CMA') {
-        name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
-      }
-      if (level=='PR') {
-        name_change <- name_change %>% rbind(c('rpid','C_UID'))
-      }
-      old_names <- names(g)
-      for (x in intersect(old_names,name_change$old)) {
-        old_names[old_names==x]<-name_change$new[name_change$old==x]
-      }
-      names(g)<-old_names
-      #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
-
-      return(g)
-    }
-    result <- if (geo_format == "sf") {
-      geos <- sf::read_sf(geo_file) %>% transform_geo
-      if (!is.null(result)) {
-        dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
-          dplyr::inner_join(geos, by = "GeoUID")
-      } else {
-        geos
-      }
+    result <- if (is.null(result)) {
+      geos
+    } else if (geo_format == "sf") {
+      dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
+        dplyr::inner_join(geos, by = "GeoUID")
     } else { # geo_format == "sp"
-      geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
-      geos@data <- geos@data %>% transform_geo
-      if (!is.null(result)) {
-        geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
-                                   -Households, -Type)
-        sp::merge(geos, result, by = "GeoUID")
-      } else {
-        geos
-      }
+      geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
+                                 -Households, -Type)
+      sp::merge(geos, result, by = "GeoUID")
     }
   }
 
@@ -687,6 +628,78 @@ handle_cm_status_code <- function(response,path){
                  message, sep=' '))
     }
   }
+}
+
+
+# Transform and rename geometry data.
+transform_geo <- function(g, level) {
+  as_character=c("id","rpid","rgid","ruid","rguid","q")
+  as_numeric=c("a","nrr")
+  as_factor=c("t")
+  as_integer=c("pop","dw","hh","pop2")
+  as_character=append(append(as_character,as_numeric),as_integer)
+
+  g <- g %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_character),
+                     dplyr::funs(as.character)) %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_numeric),
+                     dplyr::funs(as.numeric))  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_integer),
+                     dplyr::funs(as.integer))  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
+                     dplyr::funs(as.factor))
+
+  #change names
+  #standar table
+  name_change <- dplyr::data_frame(
+    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
+    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
+  )
+  #geo uid name changes
+  if (level=='DB') {
+    name_change <- name_change %>% rbind(
+      c('rpid','DA_UID'),
+      c('rgid','CSD_UID'),
+      c('ruid','CT_UID'),
+      c('rguid','CMA_UID'))
+  }
+  if (level=='DA') {
+    name_change <- name_change %>% rbind(
+      c('rpid','CSD_UID'),
+      c('rgid','CD_UID'),
+      c('ruid','CT_UID'),
+      c('rguid','CMA_UID'))
+  }
+  if (level=='CT') {
+    name_change <- name_change %>% rbind(
+      c('rpid','CMA_UID'),
+      c('rgid','PR_UID'),
+      c('ruid','CSD_UID'),
+      c('rguid','CD_UID'))
+  }
+  if (level=='CSD') {
+    name_change <- name_change %>% rbind(
+      c('rpid','CSD_UID'),
+      c('rgid','PR_UID'),
+      c('ruid','CMA_UID'))
+  }
+  if (level=='CD') {
+    name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+  }
+  if (level=='CMA') {
+    name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
+  }
+  if (level=='PR') {
+    name_change <- name_change %>% rbind(c('rpid','C_UID'))
+  }
+  old_names <- names(g)
+  for (x in intersect(old_names,name_change$old)) {
+    old_names[old_names==x]<-name_change$new[name_change$old==x]
+  }
+  names(g)<-old_names
+  #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
+
+  return(g)
 }
 
 # Append arguments to the path of the local cache directory.
