@@ -68,15 +68,14 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
   }
 
   base_url="https://CensusMapper.ca/api/v1/"
-  dir.create('data_cache', showWarnings = FALSE) # make sure cache directory exists
   # load data variables
   if (length(vectors)>0) {
     param_string <- paste0("regions=", regions,
                            # Convert vectors to a JSON list.
                            "&vectors=", jsonlite::toJSON(vectors),
                            "&level=", level, "&dataset=", dataset)
-    data_file <- paste0("data_cache/CM_data_",
-                        digest::digest(param_string, algo = "md5"), ".csv")
+    data_file <- cache_path("CM_data_",
+                            digest::digest(param_string, algo = "md5"), ".csv")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
@@ -108,8 +107,9 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
   if (!is.na(geo_format)) {
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
-    geo_file <- paste0("data_cache/CM_geo_",
-                       digest::digest(param_string, algo = "md5"), ".geojson")
+    geo_file <- cache_path("CM_geo_",
+                           digest::digest(param_string, algo = "md5"),
+                           ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
@@ -288,8 +288,7 @@ cancensus.set_api_key <- function(api_key){
 #'
 #' @importFrom dplyr %>%
 list_census_datasets <- function(use_cache = TRUE) {
-  cache_dir <- system.file("cache/", package = "cancensus")
-  cache_file <- paste0(cache_dir, "datasets.rda")
+  cache_file <- cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
@@ -327,8 +326,7 @@ list_census_datasets <- function(use_cache = TRUE) {
 #' @importFrom dplyr %>%
 list_census_vectors <- function(dataset, use_cache=TRUE) {
   # TODO: Validate dataset?
-  cache_dir <- system.file("cache/", package = "cancensus")
-  cache_file <- paste0(cache_dir, dataset, "_vectors.rda")
+  cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
     message("Querying CensusMapper API for vectors data...")
     response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
@@ -526,8 +524,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
 #'
 #' @importFrom dplyr %>%
 list_census_regions <- function(dataset, use_cache = TRUE) {
-  cache_dir <- system.file("cache/", package = "cancensus")
-  cache_file <- paste0(cache_dir, dataset, "_regions.rda")
+  cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
     message("Querying CensusMapper API for regions data...")
     response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
@@ -690,6 +687,15 @@ handle_cm_status_code <- function(response,path){
                  message, sep=' '))
     }
   }
+}
+
+# Append arguments to the path of the local cache directory.
+cache_path <- function(...) {
+  cache_dir <- paste0(system.file(package = "cancensus"), "/cache")
+  if (!file.exists(cache_dir)) {
+    dir.create(cache_dir, showWarnings = FALSE)
+  }
+  paste0(cache_dir, "/", ...)
 }
 
 .onLoad <- function(libname, pkgname) {
