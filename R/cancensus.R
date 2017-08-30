@@ -148,8 +148,9 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
     result <- if (is.null(result)) {
       geos
     } else if (geo_format == "sf") {
+      # the sf object needs to be first in join to retain all spatial information
       dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
-        dplyr::inner_join(geos, by = "GeoUID")
+        dplyr::inner_join(geos, ., by = "GeoUID")
     } else { # geo_format == "sp"
       geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
                                  -Households, -Type)
@@ -525,12 +526,12 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 search_census_regions <- function(searchterm, dataset, level=NA, ...) {
   reglist <- list_census_regions(dataset, ...)
   result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
-  
+
   # filter by type if needed
   if (!is.na(level) && length(rownames(result)) > 0) {
     result <- result[result$level==level,]
   }
-  
+
   # Check if searchterm returned anything
   if (length(rownames(result)) > 0 ) {
     attr(result, "dataset") <- dataset
