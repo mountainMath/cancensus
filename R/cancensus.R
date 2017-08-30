@@ -149,9 +149,8 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = "sf",
       geos
     } else if (geo_format == "sf") {
       # the sf object needs to be first in join to retain all spatial information
-      dplyr::inner_join(geos,
-                        dplyr::select(result, -Population, -Dwellings, -Households, -Type),
-                        by = "GeoUID")
+      dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
+        dplyr::inner_join(geos, ., by = "GeoUID")
     } else { # geo_format == "sp"
       geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
                                  -Households, -Type)
