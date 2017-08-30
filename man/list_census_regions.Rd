@@ -4,15 +4,17 @@
 \alias{list_census_regions}
 \title{Query the CensusMapper API for available regions in a given dataset.}
 \usage{
-list_census_regions(dataset, use_cache = TRUE)
+list_census_regions(dataset, use_cache = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{dataset}{The dataset to query for available regions, e.g.
 \code{"CA16"}.}
 
-\item{use_cache}{If set to TRUE (the default) data will be read from a local
-cache, if available. If set to FALSE, query the API for the data, and
+\item{use_cache}{If set to TRUE, data will be read from a local cache, if
+available. If set to FALSE (the default), query the API for the data, and
 refresh the local cache with the result.}
+
+\item{quiet}{When TRUE, suppress messages and warnings.}
 }
 \value{
 Returns a data frame with the following columns:

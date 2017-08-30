@@ -216,9 +216,10 @@ cancensus.set_api_key <- function(api_key){
 
 #' Query the CensusMapper API for available datasets.
 #'
-#' @param use_cache If set to TRUE (the default) data will be read from a local
-#'   cache, if available. If set to FALSE, query the API for the data, and
+#' @param use_cache If set to TRUE, data will be read from a local cache, if
+#'   available. If set to FALSE (the default), query the API for the data, and
 #'   refresh the local cache with the result.
+#' @param quiet When TRUE, suppress messages and warnings.
 #'
 #' @return
 #'
@@ -228,10 +229,10 @@ cancensus.set_api_key <- function(api_key){
 #' @export
 #'
 #' @importFrom dplyr %>%
-list_census_datasets <- function(use_cache = TRUE) {
+list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    message("Querying CensusMapper API for available datasets...")
+    if (!quiet) message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
                           httr::accept_json())
     handle_cm_status_code(response, NULL)
@@ -242,10 +243,10 @@ list_census_datasets <- function(use_cache = TRUE) {
     save(result, file = cache_file)
     result
   } else {
-    message("Reading dataset list from local cache.")
+    if (!quiet) message("Reading dataset list from local cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (is.null(last_updated) ||
+    if (!quiet && is.null(last_updated) ||
           difftime(Sys.time(), last_updated, units = "days") > 1) {
       warning(paste("Cached dataset list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
@@ -258,18 +259,19 @@ list_census_datasets <- function(use_cache = TRUE) {
 #'
 #' @param dataset The dataset to query for available vectors, e.g.
 #'   \code{"CA16"}.
-#' @param use_cache If set to TRUE (the default) data will be read from a local
-#'   cache, if available. If set to FALSE, query the API for the data, and
+#' @param use_cache If set to TRUE, data will be read from a local cache, if
+#'   available. If set to FALSE (the default), query the API for the data, and
 #'   refresh the local cache with the result.
+#' @param quiet When TRUE, suppress messages and warnings.
 #'
 #' @export
 #'
 #' @importFrom dplyr %>%
-list_census_vectors <- function(dataset, use_cache=TRUE) {
+list_census_vectors <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    message("Querying CensusMapper API for vectors data...")
+    if (!quiet) message("Querying CensusMapper API for vectors data...")
     response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
                                  dataset, ".csv"),
                           httr::progress())
@@ -311,10 +313,10 @@ list_census_vectors <- function(dataset, use_cache=TRUE) {
     save(result, file = cache_file)
     result
   } else {
-    message("Reading vector information from local cache.")
+    if (!quiet) message("Reading vector information from local cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (is.null(last_updated) ||
+    if (!quiet && is.null(last_updated) ||
           difftime(Sys.time(), last_updated, units = "days") > 1) {
       warning(paste("Cached vectors list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
@@ -338,12 +340,13 @@ parent_census_vectors <- function(vector_list){
   base_list <- vector_list
   dataset <- attr(base_list, "dataset")
   n=0
-  vector_list <- list_census_vectors(dataset) %>%
+  vector_list <-
+    list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
     dplyr::filter(vector %in% base_list$parent_vector) %>%
     dplyr::distinct(vector, .keep_all = TRUE)
   while (n!=nrow(vector_list)) {
     n=nrow(vector_list)
-    new_list <- list_census_vectors(dataset) %>%
+    new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
       dplyr::filter(vector %in% vector_list$parent_vector)
     vector_list <- vector_list %>% rbind(new_list) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
@@ -368,12 +371,13 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
   n=0
-  vector_list <- list_census_vectors(dataset) %>%
+  vector_list <-
+    list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
     dplyr::filter(parent_vector %in% base_list$vector) %>%
     dplyr::distinct(vector, .keep_all = TRUE)
   while (n!=nrow(vector_list)) {
     n=nrow(vector_list)
-    new_list <- list_census_vectors(dataset) %>%
+    new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
       dplyr::filter(parent_vector %in% vector_list$vector)
     vector_list <- vector_list %>% rbind(new_list) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
@@ -396,6 +400,7 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
 #'   \code{"CA16"}.
 #' @param type One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
 #' If specified, only return variables of specified `type`.
+#' @param ... Further arguments passed on to \code{\link{list_census_vectors}}.
 #'
 #' @export
 #'
@@ -404,9 +409,9 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
 #'
 #' # This will return a warning that no match was found, but will suggest similar terms.
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
-search_census_vectors <- function(searchterm, dataset, type=NA) {
+search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
   #to do: add caching of vector list here
-  veclist <- list_census_vectors(dataset)
+  veclist <- list_census_vectors(dataset, ...)
   result <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
 
   # filter by type if needed
@@ -440,9 +445,10 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
 #'
 #' @param dataset The dataset to query for available regions, e.g.
 #'   \code{"CA16"}.
-#' @param use_cache If set to TRUE (the default) data will be read from a local
-#'   cache, if available. If set to FALSE, query the API for the data, and
+#' @param use_cache If set to TRUE, data will be read from a local cache, if
+#'   available. If set to FALSE (the default), query the API for the data, and
 #'   refresh the local cache with the result.
+#' @param quiet When TRUE, suppress messages and warnings.
 #'
 #' @return
 #'
@@ -464,10 +470,10 @@ search_census_vectors <- function(searchterm, dataset, type=NA) {
 #' @export
 #'
 #' @importFrom dplyr %>%
-list_census_regions <- function(dataset, use_cache = TRUE) {
+list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    message("Querying CensusMapper API for regions data...")
+    if (!quiet) message("Querying CensusMapper API for regions data...")
     response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
                                  "/place_names.csv"))
     handle_cm_status_code(response, NULL)
@@ -483,10 +489,10 @@ list_census_regions <- function(dataset, use_cache = TRUE) {
     save(result, file = cache_file)
     result
   } else {
-    message("Reading regions list from local cache.")
+    if (!quiet) message("Reading regions list from local cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (is.null(last_updated) ||
+    if (!quiet && is.null(last_updated) ||
           difftime(Sys.time(), last_updated, units = "days") > 1) {
       warning(paste("Cached regions list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
@@ -504,9 +510,7 @@ list_census_regions <- function(dataset, use_cache = TRUE) {
 #'   \code{"CA16"}.
 #' @param level One of \code{NA}, \code{'C'}, \code{'PR'}, \code{'CMA'}, \code{'CD'}, or \code{'CSD'}.
 #' If specified, only return variables of specified `level`.
-#' @param use_cache Set to default by \cpde{TRUE}. Will check if region list for given dataset was previously
-#' downloaded. If data is potentially out of date, the function may throw a warning
-#' to remind users to set \code{use_cache = TRUE}.
+#' @param ... Further arguments passed on to \code{\link{list_census_regions}}.
 #'
 #' @export
 #'
@@ -518,8 +522,8 @@ list_census_regions <- function(dataset, use_cache = TRUE) {
 #'
 #' # This will limit region results to only include CMA level regions
 #' search_census_vectors('Victoria', 'CA16', level = "CMA")
-search_census_regions <- function(searchterm, dataset, level=NA, use_cache = TRUE) {
-  reglist <- list_census_regions(dataset, use_cache)
+search_census_regions <- function(searchterm, dataset, level=NA, ...) {
+  reglist <- list_census_regions(dataset, ...)
   result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
   
   # filter by type if needed

@@ -4,7 +4,7 @@
 \alias{search_census_vectors}
 \title{Query the CensusMapper API for vectors with descriptions matching a searchterm.}
 \usage{
-search_census_vectors(searchterm, dataset, type = NA)
+search_census_vectors(searchterm, dataset, type = NA, ...)
 }
 \arguments{
 \item{searchterm}{The term to search for e.g. \code{"Ojibway"}.
@@ -16,6 +16,8 @@ this function will suggest the correct spelling to use when possible.}
 
 \item{type}{One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
 If specified, only return variables of specified `type`.}
+
+\item{...}{Further arguments passed on to \code{\link{list_census_vectors}}.}
 }
 \description{
 Query the CensusMapper API for vectors with descriptions matching a searchterm.
