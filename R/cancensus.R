@@ -709,7 +709,11 @@ transform_geo <- function(g, level) {
 
 # Append arguments to the path of the local cache directory.
 cache_path <- function(...) {
-  cache_dir <- paste0(system.file(package = "cancensus"), "/cache")
+  cache_dir <- getOption("cancensus.cache_path")
+  if (!is.character(cache_dir)) {
+    stop("Corrupt 'cancensus.cache_path' option. Must be a path.",
+         .call = FALSE)
+  }
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE)
   }
@@ -720,5 +724,11 @@ cache_path <- function(...) {
   if (!"cancensus.api_key" %in% names(options())) {
     # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
     options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
+  }
+
+  if (!"cancensus.cache_path" %in% names(options())) {
+    # Cache internally by default.
+    options(cancensus.cache_path = paste0(system.file(package = "cancensus"),
+                                          "/cache"))
   }
 }
