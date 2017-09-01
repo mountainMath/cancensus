@@ -2,11 +2,11 @@
 title: "Bar Graph Demo"
 author: "Jens von Bergmann"
 date: '2017-08-17'
-output:
-  html_document: default
-  html_notebook: default
-vignette: |
-  %\VignetteIndexEntry{Vignette Title} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 We demonstrate how to import data from the [CensusMapper](https://CensusMapper.ca) API. The code for this notbook can be found on [GitHub](https://github.com/mountainMath/cancensus).
