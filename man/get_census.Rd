@@ -5,6 +5,11 @@
 \alias{get_census_data}
 \alias{get_census_geometry}
 \title{Access to Canadian census data through the CensusMapper API}
+\source{
+Census data and boundary geometries are reproduced and distributed on
+an "as is" basis with the permission of Statistics Canada (Statistics Canada
+2006; 2011; 2016).
+}
 \usage{
 get_census(dataset, level, regions, vectors = c(), geo_format = "sf",
   labels = "detailed", use_cache = TRUE,
