@@ -20,6 +20,11 @@
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #'
 #' @keywords canada census data api
+#'
+#' @source Census data and boundary geometries are reproduced and distributed on
+#' an "as is" basis with the permission of Statistics Canada (Statistics Canada
+#' 2006; 2011; 2016).
+#'
 #' @export
 #'
 #' @examples
