@@ -24,10 +24,43 @@ library(cancensus)
 
 ## Picking regions and variables
 
-Census data contains thousands of different geographic regions as well as thousands of unique variables. An interactive tool is available at [CensusMapper API call generator](https://censusmapper.ca/api) to select regions and variables and generate code for the API call, for example:
+Census data contains thousands of different geographic regions as well as thousands of unique variables. There are several useful functions within **cancensus** to simplify accessing Census metadata, locating regions, and identifying variables.
 
 ```
+# To view available Census datasets
+list_census_datasets()
+
+# To view available named regions at different levels of Census hierarchy for the 2016 Census (for example)
+list_census_regions("CA16")
+
+# To view available Census variables for the 2016 Census
+list_census_vectors("CA16")
+```
+
+As the number of Census regions and variables is significant, and Census naming patterns are not always the most intuitive, there are a few functions to help users narrow down the data to what they need. These functions will try to catch mispelled search terms and prompt the user with correctly-spelled alternatives.
+
+```
+# To search for regions containing a specific term (e.g. "Victoria") in them in the 2016 Census
+search_census_regions("Victoria","CA16")
+
+# To search for variables whose description or label contains a specific term (e.g. "Ojibwe")
+search_census_vectors("Ojibwe","CA16")
+```
+
+There is also an interactive tool that is available at [CensusMapper API call generator](https://censusmapper.ca/api) to visually select regions and variables and generate code for the API call.
+
+## Getting the data
+
+**cancensus** can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, **cancensus** returns tidy tabular data only, but has options to return spatial data objects in either [**sf**](https://github.com/r-spatial/sf) or [**sp**](https://cran.r-project.org/web/packages/sp/sp.pdf) formats. 
+```
+# Return data only
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+
+# Return an sf-class data frame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+
+# Return a SpatialPolygonsDataFrame
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")
 
 # Additional options can viewed in documentation by entering ?get_census() in your R console
 ```
@@ -57,7 +90,6 @@ ggplot(census_data) +
 ```
 ## To-do
 
-* Provide more information about available datasets, Census variables, and geography directly through the **cancensus** package.
 * Expand vignettes and provide additional examples
 * Submit to CRAN
 
