@@ -2,20 +2,17 @@
 % Please edit documentation in R/cancensus.R
 \name{get_census}
 \alias{get_census}
-\alias{get_census_data}
 \alias{get_census_geometry}
 \title{Access to Canadian census data through the CensusMapper API}
 \source{
-Census data and boundary geometries are reproduced and distributed on
+Census data and boundary geographies are reproduced and distributed on
 an "as is" basis with the permission of Statistics Canada (Statistics Canada
 2006; 2011; 2016).
 }
 \usage{
-get_census(dataset, level, regions, vectors = c(), geo_format = "sf",
+get_census(dataset, level, regions, vectors = c(), geo_format = NA,
   labels = "detailed", use_cache = TRUE,
   api_key = getOption("cancensus.api_key"))
-
-get_census_data(dataset, level, regions, vectors, ...)
 
 get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
 }
@@ -28,24 +25,21 @@ get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 
-\item{geo_format}{One of \code{"sf"} to return an \code{\link[sf]{sf}} object (the default; requires the \code{sf} package), \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package), or \code{NA} to append no geographical information to the returned data at all.}
+\item{geo_format}{By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).}
 
 \item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
-
-\item{...}{Further arguments passed on to
-\code{\link[cancensus]{get_census}}.}
 }
 \description{
-These function allow convenient access to Canadian census data and boundary
+This function allows convenient access to Canadian census data and boundary
 files through the CensusMapper API. An API key is required to retrieve data.
 }
 \details{
-\code{get_census_data} and \code{get_census_geometry} are convenience
-functions that retrive only data or boundary information, respectively.
+\code{get_census_geometry} is a convenience function
+that retrives only Census geography boundaries.
 
 For help selecting regions and vectors, see \code{\link{list_census_regions}}
 and \code{\link{list_census_vectors}}, or check out the interactive selection
@@ -53,7 +47,18 @@ tool at <https://censusmapper.ca/api>.
 }
 \examples{
 # Query the API for data on dwellings in Vancouver, at the census subdivision
-# level, and return the associated boundary files in `sf` format:
+# level:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD')
+
+# Query the API for data on dwellings in Vancouver, at the census subdivision
+# level, and return the associated geography files in \\code{sf} format:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD', geo_format = "sf")
+
+# Make the same query, but return geography in \\code{sp} format:
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', geo_format = "sf")
@@ -65,12 +70,6 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 
 # Get details for truncated vectors:
 census_vectors(census_data)
-
-# Query the API for dwelling data in Vancouver at the census subdivision
-# level, but not the associated boundary geometry.
-vc_dwellings <- get_census_data(dataset='CA16', regions=list(CMA:"59933"),
-                                vectors=c("v_CA16_408","v_CA16_409",
-                                          "v_CA16_410"), level='CSD')
 
 # Query the API for census subdivision boundary geometry within Vancouver.
 vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
