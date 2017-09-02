@@ -2,8 +2,7 @@
 title: "CensusMapper Demo"
 author: "Jens von Bergmann"
 date: "2017-07-31"
-output: html_notebook
-#output: rmarkdown::html_vignette
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}

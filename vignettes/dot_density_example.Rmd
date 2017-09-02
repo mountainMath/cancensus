@@ -2,7 +2,7 @@
 title: "Dot-Density Example"
 author: "Jens von Bergmann"
 date: "2017-08-04"
-output: html_notebook
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
