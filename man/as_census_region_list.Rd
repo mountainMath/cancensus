@@ -28,7 +28,7 @@ regions <- list_census_regions("CA16") \%>\%
   dplyr::sample_n(20) \%>\%
   as_census_region_list()
 
-occupied <- get_census_data("CA16", regions = regions,
+occupied <- get_census("CA16", regions = regions,
                             vectors = c("v_CA16_408"),
                             level = "Regions")
 
