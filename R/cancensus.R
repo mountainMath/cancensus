@@ -283,10 +283,14 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    if (!quiet) message("Querying CensusMapper API for vectors data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
-                                 dataset, ".csv"),
-                          httr::progress())
+    url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset,
+                  ".csv")
+    response <- if (!quiet) {
+      message("Querying CensusMapper API for vectors data...")
+      httr::GET(url, httr::progress())
+    } else {
+      httr::GET(url)
+    }
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
