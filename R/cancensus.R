@@ -17,6 +17,7 @@
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #'
 #' @keywords canada census data api
@@ -53,15 +54,16 @@
 #' # Get details for truncated vectors:
 #' census_vectors(census_data)
 #'
-get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, api_key=getOption("cancensus.api_key")) {
+get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
   result <- NULL
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
-    warning(paste("passing `regions` as a character vector is depreciated, and",
-                  "will be removed in future versions"))
+    if (!quiet) warning(paste("passing `regions` as a character vector is",
+                              "depreciated, and will be removed in future",
+                              "versions"))
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
     stop("regions must be composed of valid census aggregation levels.")
   } else {
@@ -98,7 +100,12 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
                    "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
       }
       url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
-      response <- httr::GET(url, httr::progress())
+      response <- if (!quiet) {
+        message("Querying CensusMapper API...")
+        httr::GET(url, httr::progress())
+      } else {
+        httr::GET(url)
+      }
       handle_cm_status_code(response, NULL)
       na_strings <- c("x", "F", "...", "..")
       # Read the data file and transform to proper data types
@@ -122,7 +129,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
     } else {
-      message("Reading vectors data from local cache.")
+      if (!quiet) message("Reading vectors data from local cache.")
       # Load `result` object from cache.
       load(file = data_file)
     }
@@ -142,7 +149,12 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       }
       url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
                     api_key)
-      response <- httr::GET(url, httr::progress())
+      response <- if (!quiet) {
+        message("Querying CensusMapper API...")
+        httr::GET(url, httr::progress())
+      } else {
+        httr::GET(url)
+      }
       handle_cm_status_code(response, NULL)
       geos <- if (geo_format == "sf") {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
@@ -156,7 +168,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       attr(geos, "last_updated") <- Sys.time()
       save(geos, file = geo_file)
     } else {
-      message("Reading geo data from local cache.")
+      if (!quiet) message("Reading geo data from local cache.")
       # Load `geos` object from cache.
       load(file = geo_file)
     }
@@ -271,10 +283,14 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    if (!quiet) message("Querying CensusMapper API for vectors data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/api/v1/vector_info/",
-                                 dataset, ".csv"),
-                          httr::progress())
+    url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset,
+                  ".csv")
+    response <- if (!quiet) {
+      message("Querying CensusMapper API for vectors data...")
+      httr::GET(url, httr::progress())
+    } else {
+      httr::GET(url)
+    }
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {

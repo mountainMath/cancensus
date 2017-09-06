@@ -11,7 +11,7 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 }
 \usage{
 get_census(dataset, level, regions, vectors = c(), geo_format = NA,
-  labels = "detailed", use_cache = TRUE,
+  labels = "detailed", use_cache = TRUE, quiet = FALSE,
   api_key = getOption("cancensus.api_key"))
 
 get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
@@ -30,6 +30,8 @@ get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
 \item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use cancensensus.labels() to return variable label information.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
+
+\item{quiet}{When TRUE, suppress messages and warnings.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
 }
