@@ -27,7 +27,7 @@ The `get_census` function takes JSON parameters for selecting appropriate census
 In order to make this easier, Censusmapper has an [API query playground](https://censusmapper.ca/api/) (requires free account) where you can search for and select specific variables for any given geography within the Canadian census environment. The API playground will generate prepopulated R code for downloading your data, as in the example below: 
 
 ```{r, message=FALSE}
-census_data <- get_census(dataset='CA11', regions=list(CSD=c("5915022","5915025","5915015","5915011","5915004","5915029","5915046","5915055","5915034")), vectors=c("v_CA11N_2221","v_CA11N_2224","v_CA11N_2227","v_CA11N_2218"), level='CSD')
+census_data <- get_census(dataset='CA11', regions=list(CSD=c("5915022","5915025","5915015","5915011","5915004","5915029","5915046","5915055","5915034")), vectors=c("v_CA11N_2221","v_CA11N_2224","v_CA11N_2227","v_CA11N_2218"), level='CSD', geo_format = 'sf')
 ```
 The data loading functions in **cancensus** are designed to return tidy data frames with matching spatial data. By default, get_census returns geographic data using the sf class, but users can request sp class geographic data by adding the parameter `format="sp"` to `get_census`. For more detail about parameters and options, see `?get_census`. 
 

@@ -40,7 +40,7 @@
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CSD', geo_format = "sf")
-#' 
+#'
 #' # Make the same query, but return geography in \code{sp} format:
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -164,6 +164,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
         geos <- rgdal::readOGR(httr::content(response, type = "text",
                                              encoding = "UTF-8"), "OGRGeoJSON")
         geos@data <- transform_geo(geos@data, level)
+        geos
       }
       attr(geos, "last_updated") <- Sys.time()
       save(geos, file = geo_file)
