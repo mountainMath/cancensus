@@ -159,8 +159,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       geos <- if (geo_format == "sf") {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           sf::read_sf() %>%
-          transform_geo(level) %>%
-          sf::st_sf()
+          transform_geo(level)
       } else { # geo_format == "sp"
         geos <- rgdal::readOGR(httr::content(response, type = "text",
                                              encoding = "UTF-8"), "OGRGeoJSON")
@@ -173,18 +172,6 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       if (!quiet) message("Reading geo data from local cache.")
       # Load `geos` object from cache.
       load(file = geo_file)
-      # Handle cases where the cached geo information is in a different format
-      # than the one requested. `isS4` is probably a reliable way of finding
-      # "sp" objects.
-      if (isS4(geos) && methods::is(geos, "Spatial") && geo_format == "sf") {
-        if (!requireNamespace("sf", quietly = TRUE))
-          stop("the 'sf' package is required to convert sp objects to sf")
-        geos <- sf::st_as_sf(geos)
-      } else if (!isS4(geos) && geo_format == "sp") {
-        if (!requireNamespace("sf", quietly = TRUE))
-          stop("the 'sf' package is required to convert sf objects to sp")
-        geos <- methods::as(sf::st_sf(geos), "Spatial")
-      }
     }
 
     result <- if (is.null(result)) {
