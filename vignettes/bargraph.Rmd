@@ -62,23 +62,41 @@ categories$Detail <- gsub(" in a building that has ",", ",categories$Detail)
 
 # Rename census variables with the more detailed names above
 names(census_data)[grep("v_", names(census_data))] <- categories$Detail
-
 ```
 
 
 ### Graph
 
-All that's left to do is graph the data. In this instance, we're putting together a stacked bar chart that shows us a quick comparison of dwelling type across selected Census Metropolitan Areas. 
+All that's left to do is graph the data. In this instance, we're putting together a stacked bar chart that shows us a quick comparison of dwelling type across selected Census Metropolitan Areas. To make things look nicer, we first order the dwelling types by their overall prevalence in the sample and the areas by the prevalence of the largest dwelling type.
+
+```{r}
+# order dwelling types by prevalence
+l <- setNames(lapply(categories$Detail,function(x){sum(census_data[[x]]/census_data$Dwellings)}),categories$Detail)
+cats <- names(rev(l[order(unlist(l))]))
+
+# Building types are only for occupied units, add in unoccupied to base out of all dwellings
+census_data$`Unoccupied (by usual residents)` <- census_data$Dwellings-census_data$Households
+cat_list <- c(cats,"Unoccupied (by usual residents)")
+
+# sort regions by most prevalent dwelling type
+region_list <- census_data %>% arrange(UQ(as.name(cat_list[1]))/Dwellings) %>% pull("Region Name")
+```
+
 
 ```{r, fig.width=10}
 
 # We want to use ggplot to plot this, and ggplot requires data in a long format. Reshape and gather data using tidyr::gather
-plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, categories$Detail)
+plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, cat_list)
+
+# set correct order on factors 
+plot_data$`Dwelling Type` <- factor(plot_data$`Dwelling Type`,levels=rev(cat_list), ordered = TRUE) 
+plot_data$`Region Name` <- factor(plot_data$`Region Name`,levels=rev(region_list), ordered=TRUE)
+
 
 library(ggplot2)
 library(scales)
 
-ggplot(plot_data, aes(x = `Region Name`, y = Count, group = `Dwelling Type`, fill = `Dwelling Type`)) +
+ggplot(plot_data %>% arrange(`Region Name`), aes(x = `Region Name`, y = Count, group = `Dwelling Type`, fill = `Dwelling Type`)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_y_continuous(labels = percent) + 
   labs(x = "6 largest CMAs", y = "Share of occupied dwelling units (%)", title="Occupied Private Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca") +
