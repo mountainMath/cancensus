@@ -18,6 +18,10 @@ library(cancensus)
 
 **cancensus** requires a valid CensusMapper API key to use. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
 
+## Local Cache
+
+For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. In particular, the defauly cache will be wiped every time **cancensus** gets re-installed, setting a defauly cache directory will avoid that.
+
 ## Currently available datasets
 
 **cancensus** can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm). The next release is income data, which is scheduled for September 13, 2017. 

@@ -141,7 +141,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
     geo_file <- cache_path("CM_geo_",
-                           digest::digest(param_string, algo = "md5"), ".rda")
+                           digest::digest(param_string, algo = "md5"), ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
@@ -156,22 +156,17 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      geos <- if (geo_format == "sf") {
-        httr::content(response, type = "text", encoding = "UTF-8") %>%
-          sf::read_sf() %>%
-          transform_geo(level)
-      } else { # geo_format == "sp"
-        geos <- rgdal::readOGR(httr::content(response, type = "text",
-                                             encoding = "UTF-8"), "OGRGeoJSON")
-        geos@data <- transform_geo(geos@data, level)
-        geos
-      }
-      attr(geos, "last_updated") <- Sys.time()
-      save(geos, file = geo_file)
+      write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
     } else {
       if (!quiet) message("Reading geo data from local cache.")
-      # Load `geos` object from cache.
-      load(file = geo_file)
+    }
+    geos <- if (geo_format == "sf") {
+      sf::read_sf(geo_file) %>%
+        transform_geo(level)
+    } else { # geo_format == "sp"
+      geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
+      geos@data <- transform_geo(geos@data, level)
+      geos
     }
 
     result <- if (is.null(result)) {

@@ -4,7 +4,7 @@ author: "Jens von Bergmann"
 date: "2017-08-04"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Dot-Density Example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,12 +18,12 @@ library(cancensus)
 ```
 
 Load data we want to use for dot density map, use the [CensusMapper API tool](https://censusmapper.ca/api) to select variabes and regions, and we add the `format='sp'` option to read the data in `sp` format.
-```{r}
+```{r, message=FALSE, warning=FALSE}
 sp <- get_census(geo_format='sp',dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_2066","v_CA16_2060","v_CA16_1916","v_CA16_1727","v_CA16_1937","v_CA16_1958","v_CA16_1973"), level='DA')
 ```
 
 For plotting, we also want to plot the administrative boundaries as a base layer for better orientation.
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # load data for background polygons (geograhic data only)
 base_geom <- get_census(geo_format ='sp', dataset='CA16', regions=list(CMA="59933"),  level='CSD')
 ```

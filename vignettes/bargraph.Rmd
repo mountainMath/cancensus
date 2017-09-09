@@ -4,7 +4,7 @@ author: "Jens von Bergmann"
 date: '2017-08-17'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Bar Graph Demo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -83,7 +83,7 @@ region_list <- census_data %>% arrange(UQ(as.name(cat_list[1]))/Dwellings) %>% p
 ```
 
 
-```{r, fig.width=10}
+```{r, fig.width=7}
 
 # We want to use ggplot to plot this, and ggplot requires data in a long format. Reshape and gather data using tidyr::gather
 plot_data <- census_data %>% tidyr::gather(key = `Dwelling Type`, value = Count, cat_list)
@@ -94,12 +94,11 @@ plot_data$`Region Name` <- factor(plot_data$`Region Name`,levels=rev(region_list
 
 
 library(ggplot2)
-library(scales)
 
 ggplot(plot_data %>% arrange(`Region Name`), aes(x = `Region Name`, y = Count, group = `Dwelling Type`, fill = `Dwelling Type`)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_y_continuous(labels = percent) + 
-  labs(x = "6 largest CMAs", y = "Share of occupied dwelling units (%)", title="Occupied Private Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca") +
+  labs(x = "8 largest Municipalities in Toronto CMA", y = "Share of dwelling units (%)", title="Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca") +
   scale_fill_brewer(palette = "Paired") +
   theme_bw()
 ```
