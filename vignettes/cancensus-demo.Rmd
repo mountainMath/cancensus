@@ -28,6 +28,8 @@ To tie into the CensusMapper API we utilize the "censusmapper" library. As an ex
 vectors=c("v_CA16_408","v_CA16_409","v_CA16_410","v_CA16_412","v_CA16_413","v_CA16_414","v_CA16_415","v_CA16_416","v_CA16_417")
 #set the regions we are intereseted in
 regions=list(CMA="59933")
+# using sf format, load library to ensure proper parsing
+library(sf)
 #load the data
 census_data <- get_census(dataset='CA16',level='CT',regions=regions,vectors=vectors, geo_format = 'sf')
 ```
@@ -45,7 +47,6 @@ census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$
 # objects and for the viridis colour scales:
 # devtools::install_github("tidyverse/ggplot2")
 library(ggplot2)
-library(sf)
 
 ggplot(census_data) +
   geom_sf(aes(fill = sd)) +

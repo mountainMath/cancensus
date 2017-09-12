@@ -97,7 +97,7 @@ library(ggplot2)
 
 ggplot(plot_data %>% arrange(`Region Name`), aes(x = `Region Name`, y = Count, group = `Dwelling Type`, fill = `Dwelling Type`)) +
   geom_bar(position = "fill", stat = "identity") +
-  scale_y_continuous(labels = percent) + 
+  scale_y_continuous(labels = scales::percent) + 
   labs(x = "8 largest Municipalities in Toronto CMA", y = "Share of dwelling units (%)", title="Dwellings by Structural Type of Dwelling",caption="Canada Census 2016 via cancensus & censusmapper.ca") +
   scale_fill_brewer(palette = "Paired") +
   theme_bw()
