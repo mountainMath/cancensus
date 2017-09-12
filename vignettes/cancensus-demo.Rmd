@@ -1,10 +1,10 @@
 ---
-title: "CensusMapper Demo"
+title: "Simple Mapping Demo"
 author: "Jens von Bergmann"
 date: "2017-07-31"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Simple Mapping Demo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -37,15 +37,15 @@ census_data <- get_census(dataset='CA16',level='CT',regions=regions,vectors=vect
 We compute a the percentage of single detached dwellings out of all occupied dwelling units and map it.
 
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, fig.height=5, fig.width=7}
 # compute percentage of single detached
 census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
 
-library(sf)
 # Use the latest version of ggplot2 to effortlessly plot sf
 # objects and for the viridis colour scales:
 # devtools::install_github("tidyverse/ggplot2")
 library(ggplot2)
+library(sf)
 
 ggplot(census_data) +
   geom_sf(aes(fill = sd)) +
@@ -58,7 +58,7 @@ ggplot(census_data) +
 ## Other visualizations
 Or we can explore the data through non-map based means, for example how the proportion of single detached and duplex dwelling relate. Duplex dwellings are in most cases suited single family homes. We can explore how the relationship between single family homes and duplexes depend on the municipal regulations allowing for secondary suites.
 
-```{r}
+```{r, fig.height=3, fig.width=4}
 census_data$duplex <- census_data$`v_CA16_414: Apartment or flat in a duplex`/ census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data`
 
 census_data$color_code <- ifelse(census_data$`Region Name` == "Vancouver", 'red', ifelse(census_data$`Region Name` == "Burnaby", 'blue', ifelse(census_data$`Region Name` == "Surrey", 'green', 'grey')))
