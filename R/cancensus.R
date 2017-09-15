@@ -397,7 +397,7 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
   # only keep leaves if leaves_only==TRUE
   if (leaves_only) {
     vector_list <- vector_list %>%
-      dplyr::filter(!(vector %in% list_census_vectors(dataset)$parent_vector))
+      dplyr::filter(!(vector %in% list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)$parent_vector))
   }
   attr(vector_list, "dataset") <- dataset
   return(vector_list)
