@@ -15,7 +15,7 @@
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
-#' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{census_vectors(...)} to return variable label information in detail.
+#' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
@@ -614,8 +614,16 @@ as_census_region_list <- function(tbl) {
 #' A data frame with a column \code{variable} containing the truncated
 #' variable name, and a column \code{label} describing it.
 #'
+#' # Query census data with truncated labels:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', geo_format = "sf", labels="short")
+#'
+#' # Get details for truncated vectors:
+#' census_vectors(census_data)
+#'
 #' @export
-census_vectors <-  function(x) {
+label_vectors <-  function(x) {
   if("census_vectors" %in% names(attributes(x))) {
     attr(x, "census_vectors")
   } else {
