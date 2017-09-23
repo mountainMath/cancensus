@@ -30,6 +30,12 @@ Returns a data frame with the following columns:
 
   \item{\code{municipal_status}}{Additional identifiers to distinguish the
     municipal status of census subdivisions.}
+
+  \item{\code{CMA_UID}}{The identifier for the Census Metropolitan Area the region is in (if any).}
+
+  \item{\code{CD_UID}}{The identifier for the Census District the region is in (if any).}
+
+  \item{\code{PR_UID}}{The identifier for the Province the region is in (if uniqe).}
 }
 }
 \description{

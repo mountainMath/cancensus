@@ -477,6 +477,12 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #'
 #'   \item{\code{municipal_status}}{Additional identifiers to distinguish the
 #'     municipal status of census subdivisions.}
+#'
+#'   \item{\code{CMA_UID}}{The identifier for the Census Metropolitan Area the region is in (if any).}
+#'
+#'   \item{\code{CD_UID}}{The identifier for the Census District the region is in (if any).}
+#'
+#'   \item{\code{PR_UID}}{The identifier for the Province the region is in (if uniqe).}
 #' }
 #'
 #' @export
@@ -496,7 +502,7 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
       readr::read_csv(content)
     }
     result <- dplyr::select(result, region = geo_uid, name, level = type,
-                            pop = population, municipal_status = flag)
+                            pop = population, municipal_status = flag, CMA_UID,CD_UID,PR_UID)
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
