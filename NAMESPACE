@@ -2,6 +2,7 @@
 
 export(as_census_region_list)
 export(cancensus.set_api_key)
+export(census_vectors)
 export(child_census_vectors)
 export(get_census)
 export(get_census_geometry)

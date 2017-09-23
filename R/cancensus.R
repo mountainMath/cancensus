@@ -581,7 +581,6 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 #' @export
 #'
 #' @examples
-#'
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' # Query the CensusMapper API for the total occupied dwellings
@@ -620,13 +619,14 @@ as_census_region_list <- function(tbl) {
 #' A data frame with a column \code{variable} containing the truncated
 #' variable name, and a column \code{label} describing it.
 #'
+#'@examples
 #' # Query census data with truncated labels:
-#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#' label_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CSD', geo_format = "sf", labels="short")
 #'
 #' # Get details for truncated vectors:
-#' census_vectors(census_data)
+#' label_vectors(census_data)
 #'
 #' @export
 label_vectors <-  function(x) {
@@ -634,7 +634,36 @@ label_vectors <-  function(x) {
     attr(x, "census_vectors")
   } else {
     warning("Data does not have variables to labels. No Census variables selected as vectors. See ?get_census() for more information. ")}
-  }
+}
+
+#' Return Census variable names and labels as a tidy data frame (Deprecated)
+#'
+#' @param x A data frame, \code{sp} or \code{sf} object returned from
+#'   \code{get_census} or similar.
+#'
+#' @return
+#'
+#' A data frame with a column \code{variable} containing the truncated
+#' variable name, and a column \code{label} describing it.
+#'
+#'@examples
+#'
+#' # Query census data with truncated labels:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', geo_format = "sf", labels="short")
+#'
+#' # Get details for truncated vectors:
+#' census_vectors(census_data)
+#' @export
+census_vectors <-  function(x) {
+  warning("census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.")
+  if("census_vectors" %in% names(attributes(x))) {
+    attr(x, "census_vectors")
+  } else {
+    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?get_census() for more information. ")}
+}
+
 
 
 # Internal function to handle unfavourable http responses
