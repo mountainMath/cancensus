@@ -48,7 +48,6 @@ library(rgeos)
 library(dplyr)
 library(ggplot2)
 library(rgdal)
-library(ggthemes)
 
 #` Dot density plot function
 #`
@@ -104,9 +103,8 @@ dot_density <- function(geo_data,categories,colors,scale,base_geo_data,title,att
     geom_path(aes(long, lat, group = group), colour = "#d3d3d3", size=0.1) +
     geom_point(data = dots.final, aes(x, y, colour = Category),size=0.1,alpha=0.7) +
     scale_colour_manual(complete_title,values = colors) +
-    theme_map() +
-    theme(legend.title=element_text(size=18),legend.text=element_text(size=18),plot.background = element_rect(fill = "#eeeeee"), legend.position = "top") +
-    guides(colour = guide_legend(override.aes = list(size=3))) +
+    theme(legend.title=element_text(size=8),legend.text=element_text(size=8),plot.background = element_rect(fill = "#eeeeee"), legend.position = "top") +
+    guides(colour = guide_legend(override.aes = list(size=1))) +
     labs(color = "label",caption=complete_attribution) +
     coord_map()
   
