@@ -18,7 +18,6 @@ Convert a (suitably filtered) data frame from
 \code{\link{get_census}}.
 }
 \examples{
-
 library(dplyr, warn.conflicts = FALSE)
 
 # Query the CensusMapper API for the total occupied dwellings

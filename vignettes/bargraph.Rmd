@@ -54,8 +54,8 @@ Next we grab the census data using the vectors we've selected.
 # get data for these CMAs, census variables only (no geographical data)
 census_data <- get_census(dataset=dataset, regions=regions, vectors=vectors, level='Regions',geo_format=NA,labels='short')
 
-# get labels using the built in function census_vectors()
-categories <- census_vectors(census_data)
+# get labels using the built in function label_vectors()
+categories <- label_vectors(census_data)
 
 # shorten label names where appropriate
 categories$Detail <- gsub(" in a building that has ",", ",categories$Detail)

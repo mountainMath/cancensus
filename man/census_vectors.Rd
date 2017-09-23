@@ -13,6 +13,11 @@ census_vectors(x)
 \value{
 A data frame with a column \code{variable} containing the truncated
 variable name, and a column \code{label} describing it.
+}
+\description{
+Return Census variable names and labels as a tidy data frame (Deprecated)
+}
+\examples{
 
 # Query census data with truncated labels:
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
@@ -21,7 +26,4 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 
 # Get details for truncated vectors:
 census_vectors(census_data)
-}
-\description{
-Return Census variable names and labels as a tidy data frame (Deprecated)
 }
