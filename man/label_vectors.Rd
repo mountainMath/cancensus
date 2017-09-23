@@ -15,7 +15,7 @@ A data frame with a column \code{variable} containing the truncated
 variable name, and a column \code{label} describing it.
 
 # Query census data with truncated labels:
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+label_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', geo_format = "sf", labels="short")
 
