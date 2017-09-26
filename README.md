@@ -99,8 +99,8 @@ ggplot(census_data) +
 
 ## Examples
 
-* [Example 1](http://htmlpreview.github.io/?https://raw.githubusercontent.com/mountainMath/cancensus/master/vignettes/cancensus-demo.nb.html)
-* [Example 2](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/Working-with-cancensus.html)
+* [Example 1](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/cancensus-demo.nb.html)
+* [Example 2](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/Working-with-cancensus.nb.html)
 * [Example 3](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/dot_density_example.nb.html)
 
 ## Version History
