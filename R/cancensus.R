@@ -383,23 +383,25 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
   n=0
-  vector_list <-
-    list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
-    dplyr::filter(parent_vector %in% base_list$vector) %>%
-    dplyr::distinct(vector, .keep_all = TRUE)
-  while (n!=nrow(vector_list)) {
-    n=nrow(vector_list)
-    new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
-      dplyr::filter(parent_vector %in% vector_list$vector)
-    vector_list <- vector_list %>% rbind(new_list) %>%
+  if (!is.null(dataset)) {
+    vector_list <-
+      list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
+      dplyr::filter(parent_vector %in% base_list$vector) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
+    while (n!=nrow(vector_list)) {
+      n=nrow(vector_list)
+      new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
+        dplyr::filter(parent_vector %in% vector_list$vector)
+      vector_list <- vector_list %>% rbind(new_list) %>%
+        dplyr::distinct(vector, .keep_all = TRUE)
+    }
+    # only keep leaves if leaves_only==TRUE
+    if (leaves_only) {
+      vector_list <- vector_list %>%
+        dplyr::filter(!(vector %in% list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)$parent_vector))
+    }
+    attr(vector_list, "dataset") <- dataset
   }
-  # only keep leaves if leaves_only==TRUE
-  if (leaves_only) {
-    vector_list <- vector_list %>%
-      dplyr::filter(!(vector %in% list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)$parent_vector))
-  }
-  attr(vector_list, "dataset") <- dataset
   return(vector_list)
 }
 
