@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
 Title: Access to Canadian Census Data Through the 'CensusMapper' API
-Version: 0.1.0
+Version: 0.1.5
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
@@ -24,12 +24,9 @@ Imports: digest (>= 0.1),
 RoxygenNote: 6.0.1
 Suggests: knitr,
     ggplot2 (>= 2.2),
-    ggthemes,
-    maptools,
+    leaflet,
     rmarkdown,
     readr,
-    rgdal,
-    rgeos,
     sf,
     sp,
     tidyr
