@@ -270,12 +270,12 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
 #' @param use_cache If set to TRUE, data will be read from a local cache, if
 #'   available. If set to FALSE (the default), query the API for the data, and
 #'   refresh the local cache with the result.
-#' @param quiet When TRUE, suppress messages and warnings.
+#' @param quiet When FALSE, showss messages and warnings. Set to TRUE by default.
 #'
 #' @export
 #'
 #' @importFrom dplyr %>%
-list_census_vectors <- function(dataset, use_cache = FALSE, quiet = FALSE) {
+list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
   # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
