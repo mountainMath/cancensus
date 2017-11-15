@@ -23,9 +23,8 @@ Imports: digest (>= 0.1),
     jsonlite (>= 1.0)
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    ggplot2 (>= 2.2),
-    ggthemes,
-    maptools,
+    ggplot2 (>= 2.2.1.9000),
+    leaflet,
     rmarkdown,
     readr,
     rgdal,
