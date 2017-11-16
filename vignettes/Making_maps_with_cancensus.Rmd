@@ -17,22 +17,13 @@ knitr::opts_chunk$set(
 
 library(cancensus)
 library(sf)
-
-# Preload census data for Toronto, CT level, median household income v_CA16_2397
-toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                      vectors="v_CA16_2397", level='CSD', use_cache = TRUE,
-                      geo_format = 'sf', quiet = TRUE, labels = 'short')
-
-toronto_sp <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                      vectors="v_CA16_2397", level='CSD', use_cache = TRUE,
-                      geo_format = 'sp', quiet = TRUE, labels = 'short')
 ```
 
 # Spatial data in cancensus
 
 **cancensus** can retrieve spatial data either on its own or packaged together with Census data. 
 
-```{r, eval = FALSE}
+```{r}
 # Census geography only
 toronto_geo <- get_census_geometry(dataset='CA16', regions=list(CMA="35535"), 
                                    level='CSD', geo_format = 'sf')
@@ -49,7 +40,7 @@ On the other hand, `sp` has been around for a long time with development startin
 
 **cancensus** retrieves Census geographic data as GeoJSON objects and then converts them into either `sp` or `sf` objects depending on the `geo_format` parameter input. The examples in this vignette assume `sf` class geography.
 
-```{r, eval = FALSE}
+```{r, echo=TRUE, eval = FALSE}
 # retrieve sf dataframe
 toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
                          vectors="v_CA16_2397", level='CSD',

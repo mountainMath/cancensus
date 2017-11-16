@@ -16,17 +16,11 @@ library(cancensus)
 library(dplyr)
 # options(cancensus.api_key = "your_api_key")
 ```
-# Canadian Census Data
-
-Statistics Canada conducts the Census of the Canadian population every five years, with the most recent Census completed in 2016. Statistics Canada [provides](http://www12.statcan.gc.ca/datasets/index-eng.cfm?Temporal=2016) datasets for Census products which are available for the 2016 Census, the 2011 National Household Survey, as well as the 2006, 2001, 1996, and 1991 Censuses at different levels of geography. Statistics Canada provides this data in HTML, XML, and Beyond 20/20 formats.
-
-At this time, Statistics Canada does not provide an API service for Census data nor any other way to programmatically access Census data for reproducible research. 
-
 # Cancensus and CensusMapper
 
 The **cancensus** package was developed to provide users with a way to access Canadian Census in a programmatic way following good [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf) practices. While the structure and data in **cancensus** is unique to Canadian Census data, this package is inspired in part by Kyle Walker's work on [tidycensus](https://github.com/walkerke/tidycensus), a package to interface with the US Census Bureau data APIs. 
 
-As Statistics Canada does not provide API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://twitter.com/vb_jens), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publically available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
+As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://twitter.com/vb_jens), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publically available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
 
 ## API Key
 
@@ -92,7 +86,7 @@ Census data is aggregated at multiple [geographic levels](### Census Geographic 
 
 Canadian Census geography can change in between Census periods. **cancensus** provides a function, `list_census_regions(dataset)`, to display all named census regions and their corresponding id for a given census dataset. 
 
-```{r list regions, message=FALSE, warning=FALSE, eval = FALSE}
+```{r list regions, message=FALSE, warning=FALSE}
 list_census_regions("CA16")
 ```
 
@@ -135,7 +129,7 @@ Census data contains thousands of different geographic regions as well as thousa
 
 Run `list_census_vectors(dataset)` to view all available Census variables for a given dataset. 
 
-```{r list_vectors, message=FALSE, warning=FALSE, eval = FALSE}
+```{r list_vectors, message=FALSE, warning=FALSE}
 list_census_vectors("CA16")
 ```
 
@@ -155,14 +149,14 @@ For each variable (vector) in that Census dataset, this shows:
 
 Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. To help with that, this package includes a built-in vector search  tool to help find specific variables. 
 
-```{r search_vectors1, message=FALSE, warning=FALSE, eval = FALSE}
+```{r search_vectors1, message=FALSE, warning=FALSE}
 # Find the variable indicating the number of people of Austrian ethnic origin
 search_census_vectors("Austrian", dataset = 'CA16')
 ```
 
 Knowing exactly how to spell the right variable can be tricky, but this search function relies on fuzzy searching so if it is unable to find an exact match of your search term, it will provide some helpful alternatives. In this case, searching for "Austraian" origin will show search terms for the vectors for both Austrian and Australian origins. 
 
-```{r search_vectors2, message=FALSE, warning=FALSE, eval = FALSE}
+```{r search_vectors2, message=FALSE, warning=FALSE}
 # Find the variable indicating the number of people of Austrian ethnic origin
 search_census_vectors("Austraian", dataset = 'CA16')
 ```
@@ -171,7 +165,7 @@ search_census_vectors("Austraian", dataset = 'CA16')
 
 Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using `parent_census_vectors` on a vector list.  
 
-```{r parent_vectors, message=FALSE, warning=FALSE, eval=FALSE}
+```{r parent_vectors, message=FALSE, warning=FALSE}
 list_census_vectors("CA16") %>% 
   filter(vector == "v_CA16_4092") %>% 
   parent_census_vectors()
@@ -179,17 +173,17 @@ list_census_vectors("CA16") %>%
 
 Sometimes we want to traverse the hierarchy in the oppposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so. 
 
-```{r child_vectors1, message=FALSE, warning=FALSE, eval=FALSE}
+```{r child_vectors1, message=FALSE, warning=FALSE}
 # Find the variable indicating the Northern European aggregate
 search_census_vectors("Northern European", dataset = 'CA16')
 ```
 
 The search result shows that the vector **v_CA16_4092** represents the aggregate for all Northern European origins. The `child_census_vectors` function can return a list of its constituent underlying variables.
 
-```{r child_vectors2, message=FALSE, warning=FALSE, eval=FALSE}
+```{r child_vectors2, message=FALSE, warning=FALSE}
 # Show all child variable leaves
 list_census_vectors("CA16") %>% 
-  filter(vector == "v_CA16_4092") %>% child_census_vectors(leaves = TRUE)
+  filter(vector == "v_CA16_4122") %>% child_census_vectors(leaves = TRUE)
 ```
 
 The `leaves = TRUE` parameter specifies whether intermediate aggregates are included or not. If `TRUE` then only the lowest level variables are returns - the "leaves" of the hierarchical tree. 
