@@ -19,6 +19,7 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
+#' @param ... Further arguments passed to \code{get_census}.
 #'
 #' @keywords canada census data api
 #'
