@@ -16,14 +16,13 @@ before_install:
 # Binary versions of packages to reduce build time.
 r_binary_packages:
   - dplyr
-  - tidyr
-  - readr
-  - stringi
+  - leaflet
   - markdown
+  - readr
   - rmarkdown
-  - ggthemes
-  - maptools
   - sp
+  - stringi
+  - tidyr
 
 # Development version of ggplot2
 r_github_packages:
