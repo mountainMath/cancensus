@@ -17,8 +17,8 @@ Encoding: UTF-8
 LazyData: yes
 ByteCompile: yes
 NeedsCompilation: no
-Depends: dplyr (>= 0.7)
 Imports: digest (>= 0.1),
+    dplyr (>= 0.7),
     httr (>= 1.0.0),
     jsonlite (>= 1.0),
     rlang
