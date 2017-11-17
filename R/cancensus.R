@@ -214,16 +214,6 @@ get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...
 # elements of the `regions` parameter.
 VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
-# Depreciated method for setting the API key. Still exported for now.
-#' @export
-cancensus.set_api_key <- function(api_key){
-  warning(paste0("cancensus.set_api_key() is depreciated, and will be removed ",
-                 "in future versions. Use options(cancensus.api_key = \"",
-                 api_key, "\") or Sys.setenv(CM_API_KEY = \"", api_key,
-                 "\") instead."))
-  options(cancensus.api_key = api_key)
-}
-
 #' Query the CensusMapper API for available datasets.
 #'
 #' @param use_cache If set to TRUE, data will be read from a local cache, if
