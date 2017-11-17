@@ -24,6 +24,6 @@ label_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           level='CSD', geo_format = "sf", labels="short")
 
 # Get details for truncated vectors:
-label_vectors(census_data)
+label_vectors(label_data)
 
 }
