@@ -1,5 +1,6 @@
-# cancensus
-R wrapper for calling CensusMapper APIs
+# cancensus: R wrapper for calling CensusMapper APIs
+
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 
 This package provides a wrapper function for CensusMapper API calls from R to query specific census data and geographies for use in R.
 
@@ -24,7 +25,7 @@ For performance reasons, and to avoid unneccessarily drawing down API quotas, **
 
 ## Currently available datasets
 
-**cancensus** can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm). The next release is income data, which is scheduled for September 13, 2017. 
+**cancensus** can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
 
 ## Picking regions and variables
 
@@ -47,8 +48,8 @@ As the number of Census regions and variables is significant, and Census naming 
 # To search for regions containing a specific term (e.g. "Victoria") in them in the 2016 Census
 search_census_regions("Victoria","CA16")
 
-# To search for variables whose description or label contains a specific term (e.g. "Ojibwe")
-search_census_vectors("Ojibwe","CA16")
+# To search for variables whose description or label contains a specific term (e.g. "Ojibway")
+search_census_vectors("Ojibway","CA16")
 ```
 
 There is also an interactive tool that is available at [CensusMapper API call generator](https://censusmapper.ca/api) to visually select regions and variables and generate code for the API call.
@@ -92,18 +93,15 @@ ggplot(census_data) +
   
 # There are many other ways of visualizing spatial data such as ggmap, tmap, and leaflet for interactive web maps. 
 ```
-## To-do
 
-* Expand vignettes and provide additional examples
-* Submit to CRAN
+## Examples of work using cancensus
 
-## Examples
+* [Income: A first look](https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/)
+* [Language Diversity in Canada](https://www.dshkol.com/2017/language-diversity-in-canada/)
 
-* [Example 1](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/cancensus-demo.nb.html)
-* [Example 2](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/Working-with-cancensus.nb.html)
-* [Example 3](http://htmlpreview.github.io/?https://github.com/mountainMath/cancensus/blob/master/vignettes/dot_density_example.nb.html)
 
 ## Version History
 
-* 0.2 - Added vector and geography discovery capabilities, improved performance, error and API messaging, package dependencies
-* 0.1 - First release of **cancensus** 
+* 0.1.5 - Added pkgdown documentation, new vignettes, and and changes to default messaging
+* 0.1.0 - Added vector and geography discovery capabilities, improved performance, error and API messaging, package dependencies
+* 0.0.1 - First release of **cancensus**
