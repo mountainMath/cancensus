@@ -335,6 +335,8 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' @export
 #'
 #' @examples
+#' library(dplyr, warn.conflicts = FALSE)
+#'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   parent_census_vectors()
@@ -368,6 +370,8 @@ parent_census_vectors <- function(vector_list){
 #' @export
 #'
 #' @examples
+#' library(dplyr, warn.conflicts = FALSE)
+#'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   child_census_vectors(TRUE)

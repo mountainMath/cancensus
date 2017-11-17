@@ -20,6 +20,8 @@ variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.
 }
 \examples{
+library(dplyr, warn.conflicts = FALSE)
+
 list_census_vectors("CA16") \%>\%
   filter(vector == "v_CA16_4092") \%>\%
   child_census_vectors(TRUE)
