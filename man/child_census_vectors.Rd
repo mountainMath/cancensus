@@ -20,5 +20,7 @@ variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.
 }
 \examples{
-child_census_vectors(vector_list, 'CA16')
+list_census_vectors("CA16") \%>\%
+  filter(vector == "v_CA16_4092") \%>\%
+  child_census_vectors(TRUE)
 }

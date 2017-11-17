@@ -345,7 +345,9 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' @export
 #'
 #' @examples
-#' parent_census_vectors(vector_list, 'CA16')
+#' list_census_vectors("CA16") %>%
+#'   filter(vector == "v_CA16_4092") %>%
+#'   parent_census_vectors()
 parent_census_vectors <- function(vector_list){
   base_list <- vector_list
   dataset <- attr(base_list, "dataset")
@@ -376,7 +378,9 @@ parent_census_vectors <- function(vector_list){
 #' @export
 #'
 #' @examples
-#' child_census_vectors(vector_list, 'CA16')
+#' list_census_vectors("CA16") %>%
+#'   filter(vector == "v_CA16_4092") %>%
+#'   child_census_vectors(TRUE)
 child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
@@ -536,10 +540,10 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 #' search_census_regions('Victorea', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar named regions.
-#' search_census_vectors('Victoria', 'CA16')
+#' search_census_regions('Victoria', 'CA16')
 #'
 #' # This will limit region results to only include CMA level regions
-#' search_census_vectors('Victoria', 'CA16', level = "CMA")
+#' search_census_regions('Victoria', 'CA16', level = "CMA")
 search_census_regions <- function(searchterm, dataset, level=NA, ...) {
   reglist <- list_census_regions(dataset, ...)
   result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
@@ -626,7 +630,7 @@ as_census_region_list <- function(tbl) {
 #'                           level='CSD', geo_format = "sf", labels="short")
 #'
 #' # Get details for truncated vectors:
-#' label_vectors(census_data)
+#' label_vectors(label_data)
 #'
 #' @export
 label_vectors <-  function(x) {
