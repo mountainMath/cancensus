@@ -14,7 +14,7 @@ refresh the local cache with the result.}
 \item{quiet}{When TRUE, suppress messages and warnings.}
 }
 \value{
-A data frame with a column \code{dataset} containing the code for the
+Returns a data frame with a column \code{dataset} containing the code for the
 dataset, and a column \code{description} describing it.
 }
 \description{
