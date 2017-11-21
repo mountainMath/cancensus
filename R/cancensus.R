@@ -19,6 +19,7 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
+#' @param ... Further arguments passed to \code{get_census}.
 #'
 #' @keywords canada census data api
 #'
@@ -115,8 +116,8 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
           readr::read_csv(na = na_strings,
                           col_types = list(.default = "d", GeoUID = "c",
                                            Type = "c", "Region Name" = "c")) %>%
-          mutate(Type = as.factor(Type),
-                 `Region Name` = as.factor(`Region Name`))
+          dplyr::mutate(Type = as.factor(.data$Type),
+                        `Region Name` = as.factor(.data$`Region Name`))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           utils::read.csv(na = na_strings,
@@ -173,11 +174,12 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       geos
     } else if (geo_format == "sf") {
       # the sf object needs to be first in join to retain all spatial information
-      dplyr::select(result, -Population, -Dwellings, -Households, -Type) %>%
+      dplyr::select(result, -.data$Population, -.data$Dwellings,
+                    -.data$Households, -.data$Type) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
     } else { # geo_format == "sp"
-      geos@data <- dplyr::select(geos@data, -Population, -Dwellings,
-                                 -Households, -Type)
+      geos@data <- dplyr::select(geos@data, -.data$Population, -.data$Dwellings,
+                                 -.data$Households, -.data$Type)
       sp::merge(geos, result, by = "GeoUID")
     }
   }
@@ -212,16 +214,6 @@ get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...
 # elements of the `regions` parameter.
 VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
-# Depreciated method for setting the API key. Still exported for now.
-#' @export
-cancensus.set_api_key <- function(api_key){
-  warning(paste0("cancensus.set_api_key() is depreciated, and will be removed ",
-                 "in future versions. Use options(cancensus.api_key = \"",
-                 api_key, "\") or Sys.setenv(CM_API_KEY = \"", api_key,
-                 "\") instead."))
-  options(cancensus.api_key = api_key)
-}
-
 #' Query the CensusMapper API for available datasets.
 #'
 #' @param use_cache If set to TRUE, data will be read from a local cache, if
@@ -235,8 +227,6 @@ cancensus.set_api_key <- function(api_key){
 #' dataset, and a column \code{description} describing it.
 #'
 #' @export
-#'
-#' @importFrom dplyr %>%
 list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -283,8 +273,6 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
 #' all labels within its hierarchical structure. 
 #'
 #' @export
-#'
-#' @importFrom dplyr %>%
 list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
   # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
@@ -305,7 +293,7 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
       readr::read_csv(content)
     }
     result <- dplyr::mutate(
-      result, type = factor(type),
+      result, type = factor(.data$type),
       units = factor(units, levels = as.character(1:5),
                      labels = c("Number", "Percentage ratio (0.0-1.0)",
                                 "Currency", "Ratio", "Percentage (0-100)")),
@@ -317,8 +305,8 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
         grepl("^3.", add) ~ gsub(".", ", ", gsub("^3.", "Median of ", add),
                                  fixed = TRUE)
       )) %>%
-      dplyr::select(vector, type, label, units, parent_vector = parent,
-                    aggregation, details)
+      dplyr::select(.data$vector, .data$type, .data$label, .data$units, parent_vector = .data$parent,
+                    .data$aggregation, .data$details)
     attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
     save(result, file = cache_file)
@@ -346,7 +334,11 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' @export
 #'
 #' @examples
-#' parent_census_vectors(vector_list, 'CA16')
+#' library(dplyr, warn.conflicts = FALSE)
+#'
+#' list_census_vectors("CA16") %>%
+#'   filter(vector == "v_CA16_4092") %>%
+#'   parent_census_vectors()
 parent_census_vectors <- function(vector_list){
   base_list <- vector_list
   dataset <- attr(base_list, "dataset")
@@ -377,7 +369,11 @@ parent_census_vectors <- function(vector_list){
 #' @export
 #'
 #' @examples
-#' child_census_vectors(vector_list, 'CA16')
+#' library(dplyr, warn.conflicts = FALSE)
+#'
+#' list_census_vectors("CA16") %>%
+#'   filter(vector == "v_CA16_4092") %>%
+#'   child_census_vectors(TRUE)
 child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
@@ -385,12 +381,12 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
   if (!is.null(dataset)) {
     vector_list <-
       list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
-      dplyr::filter(parent_vector %in% base_list$vector) %>%
+      dplyr::filter(.data$parent_vector %in% base_list$vector) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
     while (n!=nrow(vector_list)) {
       n=nrow(vector_list)
       new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
-        dplyr::filter(parent_vector %in% vector_list$vector)
+        dplyr::filter(.data$parent_vector %in% vector_list$vector)
       vector_list <- vector_list %>% rbind(new_list) %>%
         dplyr::distinct(vector, .keep_all = TRUE)
     }
@@ -487,8 +483,6 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' }
 #'
 #' @export
-#'
-#' @importFrom dplyr %>%
 list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -502,8 +496,10 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
     } else {
       readr::read_csv(content)
     }
-    result <- dplyr::select(result, region = geo_uid, name, level = type,
-                            pop = population, municipal_status = flag, CMA_UID,CD_UID,PR_UID)
+    result <- dplyr::select(result, region = .data$geo_uid, .data$name,
+                            level = .data$type, pop = .data$population,
+                            municipal_status = .data$flag, .data$CMA_UID,
+                            .data$CD_UID, .data$PR_UID)
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -537,10 +533,10 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 #' search_census_regions('Victorea', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar named regions.
-#' search_census_vectors('Victoria', 'CA16')
+#' search_census_regions('Victoria', 'CA16')
 #'
 #' # This will limit region results to only include CMA level regions
-#' search_census_vectors('Victoria', 'CA16', level = "CMA")
+#' search_census_regions('Victoria', 'CA16', level = "CMA")
 search_census_regions <- function(searchterm, dataset, level=NA, ...) {
   reglist <- list_census_regions(dataset, ...)
   result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
@@ -601,9 +597,9 @@ as_census_region_list <- function(tbl) {
     stop(paste("`as_region_list()` can only handle data frames",
                "returned by `list_regions()`."))
   }
-  nested <- dplyr::group_by(tbl, level) %>%
+  nested <- dplyr::group_by(tbl, .data$level) %>%
     # Use the dark magic of list columns...
-    dplyr::summarise(regions = list(region))
+    dplyr::summarise(regions = list(.data$region))
 
   regions <- nested$regions
   names(regions) <- nested$level
@@ -627,7 +623,7 @@ as_census_region_list <- function(tbl) {
 #'                           level='CSD', geo_format = "sf", labels="short")
 #'
 #' # Get details for truncated vectors:
-#' label_vectors(census_data)
+#' label_vectors(label_data)
 #'
 #' @export
 label_vectors <-  function(x) {
@@ -787,3 +783,10 @@ cache_path <- function(...) {
                                           "/cache"))
   }
 }
+
+# Suppress warnings for missing bindings for '.' in R CMD check.
+if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
+
+#' @importFrom dplyr %>%
+#' @importFrom rlang .data
+NULL
