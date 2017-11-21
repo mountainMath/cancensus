@@ -17,10 +17,11 @@ Encoding: UTF-8
 LazyData: yes
 ByteCompile: yes
 NeedsCompilation: no
-Depends: dplyr (>= 0.7)
 Imports: digest (>= 0.1),
+    dplyr (>= 0.7),
     httr (>= 1.0.0),
-    jsonlite (>= 1.0)
+    jsonlite (>= 1.0),
+    rlang
 RoxygenNote: 6.0.1
 Suggests: knitr,
     ggplot2 (>= 2.2.1.9000),
