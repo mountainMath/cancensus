@@ -1,5 +1,6 @@
 # cancensus: R wrapper for calling CensusMapper APIs
 
+[![Build Status](https://travis-ci.org/mountainMath/cancensus.svg?branch=master)](https://travis-ci.org/mountainMath/cancensus)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 
 This package provides a wrapper function for CensusMapper API calls from R to query specific census data and geographies for use in R.
