@@ -165,7 +165,11 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       sf::read_sf(geo_file) %>%
         transform_geo(level)
     } else { # geo_format == "sp"
-      geos <- rgdal::readOGR(geo_file, "OGRGeoJSON")
+      geos <- try(rgdal::readOGR(geo_file, "OGRGeoJSON"), silent = TRUE)
+      if(class(geos) == "try-error") {
+        layer_name=paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
+        geos <- rgdal::readOGR(geo_file,layer_name)
+      }
       geos@data <- transform_geo(geos@data, level)
       geos
     }
