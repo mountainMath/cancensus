@@ -30,6 +30,7 @@ Suggests: knitr,
     readr,
     rgdal,
     rgeos,
+    scales,
     sf,
     sp,
     tidyr
