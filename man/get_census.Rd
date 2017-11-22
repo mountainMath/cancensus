@@ -34,6 +34,8 @@ get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
 \item{quiet}{When TRUE, suppress messages and warnings.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
+
+\item{...}{Further arguments passed to \code{get_census}.}
 }
 \description{
 This function allows convenient access to Canadian census data and boundary
