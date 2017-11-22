@@ -141,8 +141,8 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
   if (!is.na(geo_format)) {
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
-    geo_file <- cache_path("CM_geo_",
-                           digest::digest(param_string, algo = "md5"), ".geojson")
+    geo_base_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
+    geo_file <- cache_path(geo_base_name, ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
         stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
@@ -166,10 +166,9 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
         transform_geo(level)
     } else { # geo_format == "sp"
       geos <- tryCatch({
-        layer_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
-        rgdal::readOGR(geo_file,layer_name)
+        rgdal::readOGR(geo_file,geo_base_name)
       }, error = function(e) {
-        rgdal::readOGR(geo_file, "OGRGeoJSON"
+        rgdal::readOGR(geo_file, "OGRGeoJSON")
       }, silent = TRUE)
       geos@data <- transform_geo(geos@data, level)
       geos
