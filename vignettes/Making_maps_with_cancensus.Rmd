@@ -1,7 +1,7 @@
 ---
 title: "Making maps with cancensus"
 author: "Dmitry Shkolnik"
-date: "11/20/2017"
+date: "11/22/2017"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -14,34 +14,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
-library(cancensus)
-library(sf)
-
-# Preload census data for Toronto, CT level, median household income v_CA16_2397
-toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                      vectors="v_CA16_2397", level='CSD', use_cache = TRUE,
-                      geo_format = 'sf', quiet = TRUE, labels = 'short')
-
-toronto_sp <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                      vectors="v_CA16_2397", level='CSD', use_cache = TRUE,
-                      geo_format = 'sp', quiet = TRUE, labels = 'short')
 ```
 
 # Spatial data in cancensus
 
 **cancensus** can retrieve spatial data either on its own or packaged together with Census data. 
-
-```{r, eval = FALSE}
-# Census geography only
-toronto_geo <- get_census_geometry(dataset='CA16', regions=list(CMA="35535"), 
-                                   level='CSD', geo_format = 'sf')
-
-# or bundled with data at the appropriate geographic level
-toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                      vectors="v_CA16_2397", level='CSD',
-                      geo_format = 'sf', labels = 'short')
-```
 
 You can specify whether you want data returned in an `sf`-class data frame or as a `sp`-class SpatialPolygonsDataFrame object. There are advantages to each spatial format. The `sf` spatial framework is under development as the new principal spatial library for R and takes advantage of the [Simple Features](https://en.wikipedia.org/wiki/Simple_Features) standard. 
 
@@ -49,10 +26,12 @@ On the other hand, `sp` has been around for a long time with development startin
 
 **cancensus** retrieves Census geographic data as GeoJSON objects and then converts them into either `sp` or `sf` objects depending on the `geo_format` parameter input. The examples in this vignette assume `sf` class geography.
 
-```{r, eval = FALSE}
+```{r, message = FALSE, warning = FALSE}
+library(cancensus)
+library(sf)
 # retrieve sf dataframe
-toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                         vectors="v_CA16_2397", level='CSD',
+toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
+                         vectors="v_CA16_2397", level='CSD', quiet = TRUE, 
                          geo_format = 'sf', labels = 'short')
 ```
 
@@ -61,14 +40,14 @@ toronto_sf <- get_census(dataset='CA16', regions=list(CMA="35535"),
 THe `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular colummn. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
 ```{r}
-plot(toronto_sf[14], main = "Toronto Household Income by CSD")
+plot(toronto[14], main = "Toronto Household Income by CSD")
 ```
 
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticles, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
 ```{r}
-plot(toronto_sf[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)
-plot(toronto_sf[toronto_sf$v_CA16_2397 > 100000,14], col = "red", add = TRUE)
+plot(toronto[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)
+plot(toronto[toronto$v_CA16_2397 > 100000,14], col = "red", add = TRUE)
 ```
 
 # Maps with ggplot2
@@ -86,13 +65,13 @@ An example of a basic map.
 
 ```{r}
 library(ggplot2)
-ggplot(toronto_sf) + geom_sf(aes(fill = v_CA16_2397))
+ggplot(toronto) + geom_sf(aes(fill = v_CA16_2397))
 ```
 
 Or a similar map with all of the trimmings: 
 
 ```{r}
-ggplot(toronto_sf) + geom_sf(aes(fill = v_CA16_2397), colour = "grey") +
+ggplot(toronto) + geom_sf(aes(fill = v_CA16_2397), colour = "grey") +
   scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
   theme(panel.grid = element_blank(),
         axis.text = element_blank(),
@@ -106,10 +85,9 @@ The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web
 
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
 
-```{r}
+```{r, message = FALSE}
 library(leaflet)
-
-leaflet(toronto_sf) %>% 
+leaflet(toronto) %>% 
   addProviderTiles(providers$CartoDB.Positron) %>%
   addPolygons()
 ```
@@ -118,9 +96,8 @@ Adding colour ramps and additional interactivity takes a little bit more work bu
 
 ```{r}
 bins <- c(0, 30000,40000, 50000,60000, 70000,80000, 90000,100000, 110000, Inf)
-pal <- colorBin("RdYlBu", domain = toronto_sf$v_CA16_2397, bins = bins)
-
-leaflet(toronto_sf) %>% 
+pal <- colorBin("RdYlBu", domain = toronto$v_CA16_2397, bins = bins)
+leaflet(toronto) %>% 
   addProviderTiles(providers$CartoDB.Positron) %>%
   addPolygons(fillColor = ~pal(v_CA16_2397),
               color = "white",
