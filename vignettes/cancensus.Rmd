@@ -2,7 +2,7 @@
 title: "cancensus"
 author: 
 - name: "Dmitry Shkolnik"
-date: "11/20/2017"
+date: "11/22/2017"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -11,7 +11,10 @@ vignette: >
 ---
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(include = TRUE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 library(cancensus)
 library(dplyr)
 # options(cancensus.api_key = "your_api_key")
@@ -33,7 +36,6 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 ```{r load package, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("mountainmath/cancensus")
-
 library(cancensus)
 options(cancensus.api_key = "your_api_key")
 ```
@@ -52,12 +54,10 @@ options(cancensus.api_key = "your_api_key")
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = NA)
-
 # Returns data and geography as an sf-class data frame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = 'sf')
-
 # Returns a SpatialPolygonsDataFrame object with data and geogrpahy
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -96,7 +96,6 @@ The `regions` parameter in `get_census` requires as input a list of region id st
 # Retrieves Vancouver and Toronto
 list_census_regions('CA16') %>% 
   filter(level == "CMA", name %in% c("Vancouver","Toronto"))
-
 census_data <- get_census(dataset='CA16', regions=list(CMA=c("59933","35535")),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE)
