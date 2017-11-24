@@ -1,13 +1,9 @@
-# cancensus: R wrapper for calling CensusMapper APIs
+# cancensus: an R package to access, retrieve, and work with Canadian Census data and geography 
 
 [![Build Status](https://travis-ci.org/mountainMath/cancensus.svg?branch=master)](https://travis-ci.org/mountainMath/cancensus)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 
-This package provides a wrapper function for CensusMapper API calls from R to query specific census data and geographies for use in R.
-
-The CensusMapper API is still in beta, and the use of the CensusMapper API requires API keys. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
-
-**Cancensus is currently in early beta and parts of the code may be subject to change.** 
+[Cancensus reference guide](https://mountainmath.github.io/cancensus/index.html)
 
 ## Installing the package
 
@@ -16,13 +12,15 @@ devtools::install_github("mountainmath/cancensus")
 library(cancensus)
 ```
 
-## Get your API key
+## API key
 
-**cancensus** requires a valid CensusMapper API key to use. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
+This package relies on queries to the CensusMapper API, which requires a Censusmapper API key. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
+
+To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
 
 ## Local Cache
 
-For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. In particular, the defauly cache will be wiped every time **cancensus** gets re-installed, setting a defauly cache directory will avoid that.
+For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. In particular, the default cache will be wiped every time **cancensus** gets re-installed, setting a default cache directory will avoid that.
 
 ## Currently available datasets
 
@@ -43,16 +41,6 @@ list_census_regions("CA16")
 list_census_vectors("CA16")
 ```
 
-As the number of Census regions and variables is significant, and Census naming patterns are not always the most intuitive, there are a few functions to help users narrow down the data to what they need. These functions will try to catch mispelled search terms and prompt the user with correctly-spelled alternatives.
-
-```
-# To search for regions containing a specific term (e.g. "Victoria") in them in the 2016 Census
-search_census_regions("Victoria","CA16")
-
-# To search for variables whose description or label contains a specific term (e.g. "Ojibway")
-search_census_vectors("Ojibway","CA16")
-```
-
 There is also an interactive tool that is available at [CensusMapper API call generator](https://censusmapper.ca/api) to visually select regions and variables and generate code for the API call.
 
 ## Getting the data
@@ -67,39 +55,19 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("
 
 # Return a SpatialPolygonsDataFrame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")
-
-# Additional options can viewed in documentation by entering ?get_census() in your R console
 ```
 **cancensus** attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded,  **cancensus** will instead access the locally cached equivalent. 
-
-## Analyze and Visualize
-
-**cancensus** generates tidy data that is easy to work with for manipulation, analysis, and visualization. 
-
-```
-census_data$sd <- census_data$`v_CA16_409: Single-detached house` / census_data$`v_CA16_408: Occupied private dwellings by structural type of dwelling data` 
-
-# or, equivalently using dplyr
-census_data <- census_data %>% 
-  mutate(sd = `v_CA16_409: Single-detached house`/`v_CA16_408: Occupied private dwellings by structural type of dwelling data`)
-
-# Visualize:
-# devtools::install_github("tidyverse/ggplot2") - development version of ggplot2 which includes geom_sf
-library(ggplot2)
-ggplot(census_data) +
-  geom_sf(aes(fill = sd)) +
-  scale_fill_viridis_c("%SD") +
-  ggtitle("Proportion of Dwelling Units that are Single Detached") +
-  theme_bw()
-  
-# There are many other ways of visualizing spatial data such as ggmap, tmap, and leaflet for interactive web maps. 
-```
 
 ## Examples of work using cancensus
 
 * [Income: A first look](https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/)
 * [Language Diversity in Canada](https://www.dshkol.com/2017/language-diversity-in-canada/)
 
+We'd love to feature examples of work or projects that use cancensus.
+
+## Vignettes 
+* [Getting started with cancensus](https://mountainmath.github.io/cancensus/articles/cancensus.html)
+* [Making maps with cancensus](https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html)
 
 ## Version History
 
