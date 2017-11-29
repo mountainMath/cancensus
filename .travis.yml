@@ -20,6 +20,7 @@ r_binary_packages:
   - markdown
   - readr
   - rmarkdown
+  - sf
   - sp
   - stringi
   - tidyr
