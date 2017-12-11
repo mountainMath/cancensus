@@ -27,3 +27,4 @@ r_binary_packages:
 # Development version of ggplot2
 r_github_packages:
   - tidyverse/ggplot2
+  - r-spatial/sf
