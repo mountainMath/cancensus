@@ -120,6 +120,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
                         `Region Name` = as.factor(.data$`Region Name`))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
+          textConnection %>%
           utils::read.csv(na = na_strings,
                           colClasses = c("GeoUID" = "character",
                                          "Type" = "factor",
@@ -292,7 +293,7 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
+      dplyr::as_data_frame(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
     } else {
       readr::read_csv(content)
     }
@@ -497,7 +498,7 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(content, stringsAsFactors = FALSE))
+      dplyr::as_data_frame(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
     } else {
       readr::read_csv(content)
     }
