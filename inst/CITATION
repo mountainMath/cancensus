@@ -3,11 +3,12 @@ utils::citHeader("If you wish to cite cancensus:")
 utils::citEntry(entry = "manual",
                 author = c(
                   person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
-                  person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut")),
-                title = "cancensus: CensusMapper API Interface to Canada Census data",
+                  person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
+                  person("Aaron", "Jacobs", email = "atheriel@gmail.com", role = "aut")),
+                title = "cancensus: An R package to access, retrieve, and work with Canadian Census data and geography",
                 year = "2017",
-                note = {"R package version 0.1.5"},
-                url = "http://github.com/mountainMath/cancensus",
-                textVersion = "von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to access, retrieve, and work with Canadian Census data and geography. v0.1.5."
+                note = {"R package version 0.1.6"},
+                url = "https://mountainmath.github.io/cancensus/",
+                textVersion = "von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to access, retrieve, and work with Canadian Census data and geography. v0.1.6."
 )
 
