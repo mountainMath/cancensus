@@ -1,14 +1,16 @@
 Package: cancensus
 Type: Package
-Title: Access to Canadian Census Data Through the 'CensusMapper' API
-Version: 0.1.5
+Title: An R package to access, retrieve, and work with Canadian Census data and geography
+Version: 0.1.6
 Authors@R: c(
-    person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
-    person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
+    person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
+    person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
     person("Aaron", "Jacobs", email = "atheriel@gmail.com", role = "aut"))
-Description: This package provides convenient and uniform access to to Canadian
-    census data and boundary geometry through the 'CensusMapper' interface. API
-    keys are available with free registration at <https://censusmapper.ca/api>.
+Description: This package provides integrated, convenient, and uniform access to to Canadian
+    Census data and geography using the CensusMapper API. This package produces analysis-ready 
+    'tidy' data frames and spatial data in multiple formats, as well as convenience functions
+    for working with Census variables, variable hierarchies, and region selection. API
+    keys are freely available with free registration at <https://censusmapper.ca/api>.
     Census data and boundary geometries are reproduced and distributed on an "as
     is" basis with the permission of Statistics Canada (Statistics Canada 2006;
     2011; 2016).
@@ -35,5 +37,5 @@ Suggests: knitr,
     sp,
     tidyr
 VignetteBuilder: knitr
-URL: https://github.com/mountainMath/cancensus, https://censusmapper.ca
+URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/cancensus/, https://censusmapper.ca/api
 BugReports: https://github.com/mountainMath/cancensus/issues

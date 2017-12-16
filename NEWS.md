@@ -1,3 +1,9 @@
+# cancensus 0.1.6
+
+* Fixed a bug where `read.csv` was incorrectly loading text data if `readr::read_csv` was not available 
+* CRAN compatible vignettes and documentation
+* Prepared for CRAN submission
+
 # cancensus 0.1.5
 
 * Added a `NEWS.md` file to track changes to the package.
