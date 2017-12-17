@@ -52,6 +52,7 @@ tool at <https://censusmapper.ca/api>.
 \examples{
 # Query the API for data on dwellings in Vancouver, at the census subdivision
 # level:
+\dontrun{
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD')
@@ -74,11 +75,12 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 
 # Get details for truncated vectors:
 census_vectors(census_data)
-
+}
+\dontrun{
 # Query the API for census subdivision boundary geometry within Vancouver.
 vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
                                level='CSD', geo_format = "sf")
-
+}
 }
 \keyword{api}
 \keyword{canada}

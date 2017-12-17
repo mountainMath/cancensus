@@ -32,6 +32,7 @@
 #' @examples
 #' # Query the API for data on dwellings in Vancouver, at the census subdivision
 #' # level:
+#' \dontrun{
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CSD')
@@ -54,7 +55,7 @@
 #'
 #' # Get details for truncated vectors:
 #' census_vectors(census_data)
-#'
+#'}
 get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
@@ -207,10 +208,11 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Query the API for census subdivision boundary geometry within Vancouver.
 #' vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
 #'                                level='CSD', geo_format = "sf")
-#'
+#'}
 get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...) {
   return(get_census(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
 }
@@ -340,11 +342,13 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   parent_census_vectors()
+#' }
 parent_census_vectors <- function(vector_list){
   base_list <- vector_list
   dataset <- attr(base_list, "dataset")
@@ -375,11 +379,13 @@ parent_census_vectors <- function(vector_list){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   child_census_vectors(TRUE)
+#'   }
 child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
@@ -420,10 +426,12 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' search_census_vectors('Ojibway', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar terms.
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
+#' }
 search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
   #to do: add caching of vector list here
   veclist <- list_census_vectors(dataset, ...)
@@ -536,6 +544,7 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' search_census_regions('Victorea', 'CA16')
 #'
 #' # This will return a warning that no match was found, but will suggest similar named regions.
@@ -543,6 +552,7 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 #'
 #' # This will limit region results to only include CMA level regions
 #' search_census_regions('Victoria', 'CA16', level = "CMA")
+#' }
 search_census_regions <- function(searchterm, dataset, level=NA, ...) {
   reglist <- list_census_regions(dataset, ...)
   result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
@@ -584,6 +594,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' # Query the CensusMapper API for the total occupied dwellings
@@ -596,7 +607,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 #' occupied <- get_census("CA16", regions = regions,
 #'                             vectors = c("v_CA16_408"),
 #'                             level = "Regions")
-#'
+#' }
 as_census_region_list <- function(tbl) {
   # This isn't bulletproof validation, but it should deter some misuse.
   if (!all(c("level", "region") %in% names(tbl))) {
@@ -623,6 +634,7 @@ as_census_region_list <- function(tbl) {
 #' variable name, and a column \code{label} describing it.
 #'
 #'@examples
+#'\dontrun{
 #' # Query census data with truncated labels:
 #' label_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -630,7 +642,7 @@ as_census_region_list <- function(tbl) {
 #'
 #' # Get details for truncated vectors:
 #' label_vectors(label_data)
-#'
+#' }
 #' @export
 label_vectors <-  function(x) {
   if("census_vectors" %in% names(attributes(x))) {
@@ -650,7 +662,7 @@ label_vectors <-  function(x) {
 #' variable name, and a column \code{label} describing it.
 #'
 #'@examples
-#'
+#' \dontrun{
 #' # Query census data with truncated labels:
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -658,6 +670,7 @@ label_vectors <-  function(x) {
 #'
 #' # Get details for truncated vectors:
 #' census_vectors(census_data)
+#' }
 #' @export
 census_vectors <-  function(x) {
   warning("census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.")

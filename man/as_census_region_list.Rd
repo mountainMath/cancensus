@@ -18,6 +18,7 @@ Convert a (suitably filtered) data frame from
 \code{\link{get_census}}.
 }
 \examples{
+\dontrun{
 library(dplyr, warn.conflicts = FALSE)
 
 # Query the CensusMapper API for the total occupied dwellings
@@ -30,5 +31,5 @@ regions <- list_census_regions("CA16") \%>\%
 occupied <- get_census("CA16", regions = regions,
                             vectors = c("v_CA16_408"),
                             level = "Regions")
-
+}
 }
