@@ -173,9 +173,9 @@ tool at &lt;https://censusmapper.ca/api&gt;.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># Query the API for data on dwellings in Vancouver, at the census subdivision</span>
-<span class='co'># level:</span>
+    <pre class="examples"><div class='input'># Query the API for data on dwellings in Vancouver, at the census subdivision
+# level:
+</div><span class='co'># NOT RUN {</span>
 <span class='no'>census_data</span> <span class='kw'>&lt;-</span> <span class='fu'>get_census</span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>CMA</span><span class='kw'>=</span><span class='st'>"59933"</span>),
                           <span class='kw'>vectors</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
                           <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CSD'</span>)
@@ -198,11 +198,10 @@ tool at &lt;https://censusmapper.ca/api&gt;.</p>
 
 <span class='co'># Get details for truncated vectors:</span>
 <span class='fu'><a href='census_vectors.html'>census_vectors</a></span>(<span class='no'>census_data</span>)
-
+<span class='co'># }</span><span class='co'># NOT RUN {</span>
 <span class='co'># Query the API for census subdivision boundary geometry within Vancouver.</span>
 <span class='no'>vc_csds</span> <span class='kw'>&lt;-</span> <span class='fu'>get_census_geometry</span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>CMA</span><span class='kw'>=</span><span class='st'>"59933"</span>),
                                <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CSD'</span>, <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='st'>"sf"</span>)
-
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

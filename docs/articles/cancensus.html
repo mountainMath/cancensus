@@ -128,13 +128,7 @@ census_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference
 <a href="#census-datasets" class="anchor"></a>Census Datasets</h2>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>To view available datasets, run <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 3 x 2</span>
-<span class="co">#&gt;   dataset                description</span>
-<span class="co">#&gt; *   &lt;chr&gt;                      &lt;chr&gt;</span>
-<span class="co">#&gt; 1    CA06         2006 Canada Census</span>
-<span class="co">#&gt; 2    CA11 2011 Canada Census and NHS</span>
-<span class="co">#&gt; 3    CA16         2016 Canada Census</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()</code></pre></div>
 <p>As other Census datasets become available via the CensusMapper API, they will be listed as output when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
 <div id="census-regions" class="section level2">
@@ -142,22 +136,7 @@ census_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference
 <a href="#census-regions" class="anchor"></a>Census Regions</h2>
 <p>Census data is aggregated at multiple <a href="###%20Census%20Geographic%20Levels">geographic levels</a>. Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census division (CD), and census subdivision (CSD) are defined as named census regions.</p>
 <p>Canadian Census geography can change in between Census periods. <strong>cancensus</strong> provides a function, <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>, to display all named census regions and their corresponding id for a given census dataset.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">"CA16"</span>)
-<span class="co">#&gt; # A tibble: 5,504 x 8</span>
-<span class="co">#&gt;    region                      name level      pop municipal_status</span>
-<span class="co">#&gt;     &lt;chr&gt;                     &lt;chr&gt; &lt;chr&gt;    &lt;int&gt;            &lt;chr&gt;</span>
-<span class="co">#&gt;  1     01                    Canada     C 35151728             &lt;NA&gt;</span>
-<span class="co">#&gt;  2     35                   Ontario    PR 13448494             &lt;NA&gt;</span>
-<span class="co">#&gt;  3     24                    Quebec    PR  8164361             &lt;NA&gt;</span>
-<span class="co">#&gt;  4     59          British Columbia    PR  4648055             &lt;NA&gt;</span>
-<span class="co">#&gt;  5     48                   Alberta    PR  4067175             &lt;NA&gt;</span>
-<span class="co">#&gt;  6     46                  Manitoba    PR  1278365             &lt;NA&gt;</span>
-<span class="co">#&gt;  7     47              Saskatchewan    PR  1098352             &lt;NA&gt;</span>
-<span class="co">#&gt;  8     12               Nova Scotia    PR   923598             &lt;NA&gt;</span>
-<span class="co">#&gt;  9     13             New Brunswick    PR   747101             &lt;NA&gt;</span>
-<span class="co">#&gt; 10     10 Newfoundland and Labrador    PR   519716             &lt;NA&gt;</span>
-<span class="co">#&gt; # ... with 5,494 more rows, and 3 more variables: CMA_UID &lt;int&gt;,</span>
-<span class="co">#&gt; #   CD_UID &lt;int&gt;, PR_UID &lt;int&gt;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">"CA16"</span>)</code></pre></div>
 <p>The <code>regions</code> parameter in <code>get_census</code> requires as input a list of region id strings that correspond to that regions geoid. You can combine different regions together into region lists.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Retrieves Vancouver and Toronto</span>
 <span class="kw"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">'CA16'</span>) %&gt;%<span class="st"> </span>
@@ -231,22 +210,7 @@ census_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference
 <h2 class="hasAnchor">
 <a href="#displaying-available-census-variables" class="anchor"></a>Displaying available Census variables</h2>
 <p>Run <code><a href="../reference/list_census_vectors.html">list_census_vectors(dataset)</a></code> to view all available Census variables for a given dataset.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>)
-<span class="co">#&gt; # A tibble: 4,916 x 7</span>
-<span class="co">#&gt;        vector   type                                         label  units</span>
-<span class="co">#&gt;         &lt;chr&gt; &lt;fctr&gt;                                         &lt;chr&gt; &lt;fctr&gt;</span>
-<span class="co">#&gt;  1 v_CA16_401  Total                              Population, 2016 Number</span>
-<span class="co">#&gt;  2 v_CA16_402  Total                              Population, 2011 Number</span>
-<span class="co">#&gt;  3 v_CA16_403  Total    Population percentage change, 2011 to 2016 Number</span>
-<span class="co">#&gt;  4 v_CA16_404  Total                       Total private dwellings Number</span>
-<span class="co">#&gt;  5 v_CA16_405  Total Private dwellings occupied by usual residents Number</span>
-<span class="co">#&gt;  6 v_CA16_406  Total       Population density per square kilometre  Ratio</span>
-<span class="co">#&gt;  7 v_CA16_407  Total                Land area in square kilometres Number</span>
-<span class="co">#&gt;  8   v_CA16_1  Total                                   Total - Age Number</span>
-<span class="co">#&gt;  9   v_CA16_2   Male                                   Total - Age Number</span>
-<span class="co">#&gt; 10   v_CA16_3 Female                                   Total - Age Number</span>
-<span class="co">#&gt; # ... with 4,906 more rows, and 3 more variables: parent_vector &lt;chr&gt;,</span>
-<span class="co">#&gt; #   aggregation &lt;chr&gt;, details &lt;chr&gt;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>)</code></pre></div>
 </div>
 <div id="variable-characteristics" class="section level2">
 <h2 class="hasAnchor">
@@ -267,22 +231,10 @@ census_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference
 <a href="#variable-search" class="anchor"></a>Variable search</h2>
 <p>Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. To help with that, this package includes a built-in vector search tool to help find specific variables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austrian"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;        vector   type    label  units parent_vector aggregation</span>
-<span class="co">#&gt;         &lt;chr&gt; &lt;fctr&gt;    &lt;chr&gt; &lt;fctr&gt;         &lt;chr&gt;       &lt;chr&gt;</span>
-<span class="co">#&gt; 1 v_CA16_4092  Total Austrian Number   v_CA16_4089    Additive</span>
-<span class="co">#&gt; 2 v_CA16_4093   Male Austrian Number   v_CA16_4090    Additive</span>
-<span class="co">#&gt; 3 v_CA16_4094 Female Austrian Number   v_CA16_4091    Additive</span>
-<span class="co">#&gt; # ... with 1 more variables: details &lt;chr&gt;</span></code></pre></div>
+<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austrian"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)</code></pre></div>
 <p>Knowing exactly how to spell the right variable can be tricky, but this search function relies on fuzzy searching so if it is unable to find an exact match of your search term, it will provide some helpful alternatives. In this case, searching for “Austraian” origin will show search terms for the vectors for both Austrian and Australian origins.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austraian"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 2 x 1</span>
-<span class="co">#&gt;   `Similarly named objects`</span>
-<span class="co">#&gt;                       &lt;chr&gt;</span>
-<span class="co">#&gt; 1                  Austrian</span>
-<span class="co">#&gt; 2                Australian</span></code></pre></div>
+<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austraian"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)</code></pre></div>
 </div>
 <div id="managing-variable-hiararchy" class="section level2">
 <h2 class="hasAnchor">
@@ -290,44 +242,14 @@ census_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference
 <p>Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using <code>parent_census_vectors</code> on a vector list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(vector ==<span class="st"> "v_CA16_4092"</span>) %&gt;%<span class="st"> </span>
-<span class="st">  </span><span class="kw"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span>()
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;        vector   type</span>
-<span class="co">#&gt;         &lt;chr&gt; &lt;fctr&gt;</span>
-<span class="co">#&gt; 1 v_CA16_4089  Total</span>
-<span class="co">#&gt; 2 v_CA16_4044  Total</span>
-<span class="co">#&gt; 3 v_CA16_3999  Total</span>
-<span class="co">#&gt; # ... with 5 more variables: label &lt;chr&gt;, units &lt;fctr&gt;,</span>
-<span class="co">#&gt; #   parent_vector &lt;chr&gt;, aggregation &lt;chr&gt;, details &lt;chr&gt;</span></code></pre></div>
+<span class="st">  </span><span class="kw"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span>()</code></pre></div>
 <p>Sometimes we want to traverse the hierarchy in the oppposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
-<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;        vector   type</span>
-<span class="co">#&gt;         &lt;chr&gt; &lt;fctr&gt;</span>
-<span class="co">#&gt; 1 v_CA16_4122  Total</span>
-<span class="co">#&gt; 2 v_CA16_4123   Male</span>
-<span class="co">#&gt; 3 v_CA16_4124 Female</span>
-<span class="co">#&gt; 4 v_CA16_4140  Total</span>
-<span class="co">#&gt; 5 v_CA16_4141   Male</span>
-<span class="co">#&gt; 6 v_CA16_4142 Female</span>
-<span class="co">#&gt; # ... with 5 more variables: label &lt;chr&gt;, units &lt;fctr&gt;,</span>
-<span class="co">#&gt; #   parent_vector &lt;chr&gt;, aggregation &lt;chr&gt;, details &lt;chr&gt;</span></code></pre></div>
+<span class="kw"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)</code></pre></div>
 <p>The search result shows that the vector <strong>v_CA16_4092</strong> represents the aggregate for all Northern European origins. The <code>child_census_vectors</code> function can return a list of its constituent underlying variables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Show all child variable leaves</span>
 <span class="kw"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) %&gt;%<span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(vector ==<span class="st"> "v_CA16_4122"</span>) %&gt;%<span class="st"> </span><span class="kw"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span>(<span class="dt">leaves =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;        vector   type                             label  units</span>
-<span class="co">#&gt;         &lt;chr&gt; &lt;fctr&gt;                             &lt;chr&gt; &lt;fctr&gt;</span>
-<span class="co">#&gt; 1 v_CA16_4125  Total                            Danish Number</span>
-<span class="co">#&gt; 2 v_CA16_4128  Total                           Finnish Number</span>
-<span class="co">#&gt; 3 v_CA16_4131  Total                         Icelandic Number</span>
-<span class="co">#&gt; 4 v_CA16_4134  Total                         Norwegian Number</span>
-<span class="co">#&gt; 5 v_CA16_4137  Total                           Swedish Number</span>
-<span class="co">#&gt; 6 v_CA16_4140  Total Northern European origins, n.i.e. Number</span>
-<span class="co">#&gt; # ... with 3 more variables: parent_vector &lt;chr&gt;, aggregation &lt;chr&gt;,</span>
-<span class="co">#&gt; #   details &lt;chr&gt;</span></code></pre></div>
+<span class="st">  </span><span class="kw">filter</span>(vector ==<span class="st"> "v_CA16_4122"</span>) %&gt;%<span class="st"> </span><span class="kw"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span>(<span class="dt">leaves =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>The <code>leaves = TRUE</code> parameter specifies whether intermediate aggregates are included or not. If <code>TRUE</code> then only the lowest level variables are returns - the “leaves” of the hierarchical tree.</p>
 </div>
 </div>
