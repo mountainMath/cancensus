@@ -4,7 +4,7 @@
 #' files through the CensusMapper API. An API key is required to retrieve data.
 #'
 #' \code{get_census_geometry} is a convenience function
-#' that retrives only Census geography boundaries.
+#' that retrieves only Census geography boundaries.
 #'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
@@ -333,7 +333,7 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
   }
 }
 
-#' List all parent variables from vector hierarchichal based on a (sub-)list of census
+#' List all parent variables from vector hierarchical based on a (sub-)list of census
 #' variables returned by
 #' \code{list_census_vectors} or \code{search_census_vectors}.
 #'
@@ -368,7 +368,7 @@ parent_census_vectors <- function(vector_list){
   return(vector_list)
 }
 
-#' List all child variables from vector hierarchichal based on a (sub-)list of census
+#' List all child variables from vector hierarchical based on a (sub-)list of census
 #' variables returned by
 #' \code{list_census_vectors} or \code{search_census_vectors}.
 #'
@@ -493,7 +493,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #'
 #'   \item{\code{CD_UID}}{The identifier for the Census District the region is in (if any).}
 #'
-#'   \item{\code{PR_UID}}{The identifier for the Province the region is in (if uniqe).}
+#'   \item{\code{PR_UID}}{The identifier for the Province the region is in (if unique).}
 #' }
 #'
 #' @export
