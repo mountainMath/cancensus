@@ -1,7 +1,7 @@
 ---
 title: "Making maps with cancensus"
 author: "Dmitry Shkolnik"
-date: "11/22/2017"
+date: ""
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Making maps with cancensus}
