@@ -2,7 +2,7 @@
 % Please edit documentation in R/cancensus.R
 \name{parent_census_vectors}
 \alias{parent_census_vectors}
-\title{List all parent variables from vector hierarchichal based on a (sub-)list of census
+\title{List all parent variables from vector hierarchical based on a (sub-)list of census
 variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.}
 \usage{
@@ -12,7 +12,7 @@ parent_census_vectors(vector_list)
 \item{vector_list}{The list of vectors to be used}
 }
 \description{
-List all parent variables from vector hierarchichal based on a (sub-)list of census
+List all parent variables from vector hierarchical based on a (sub-)list of census
 variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.
 }

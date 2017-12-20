@@ -43,7 +43,7 @@ files through the CensusMapper API. An API key is required to retrieve data.
 }
 \details{
 \code{get_census_geometry} is a convenience function
-that retrives only Census geography boundaries.
+that retrieves only Census geography boundaries.
 
 For help selecting regions and vectors, see \code{\link{list_census_regions}}
 and \code{\link{list_census_vectors}}, or check out the interactive selection

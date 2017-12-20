@@ -35,7 +35,7 @@ Returns a data frame with the following columns:
 
   \item{\code{CD_UID}}{The identifier for the Census District the region is in (if any).}
 
-  \item{\code{PR_UID}}{The identifier for the Province the region is in (if uniqe).}
+  \item{\code{PR_UID}}{The identifier for the Province the region is in (if unique).}
 }
 }
 \description{
