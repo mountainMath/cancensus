@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography • cancensus</title>
+<title>An R Package to Access, Retrieve, and Work with Canadian Census Data and Geography • cancensus</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -130,7 +130,7 @@ list_census_vectors("CA16")</a></code></pre>
 <div id="getting-the-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#getting-the-data" class="anchor"></a>Getting the data</h3>
-<p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/web/packages/sf/index.html"><strong>sf</strong></a> or <a href="https://cran.r-project.org/web/packages/sp/index.html"><strong>sp</strong></a> formats.</p>
+<p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp"><strong>sp</strong></a> formats.</p>
 <pre><code># Return data only
 census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 

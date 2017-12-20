@@ -1,6 +1,6 @@
 Package: cancensus
 Type: Package
-Title: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography
+Title: An R Package to Access, Retrieve, and Work with Canadian Census Data and Geography
 Version: 0.1.6
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),

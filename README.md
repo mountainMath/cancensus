@@ -55,7 +55,7 @@ There is also an interactive tool that is available at [CensusMapper API call ge
 
 ### Getting the data
 
-**cancensus** can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, **cancensus** returns tidy tabular data only, but has options to return spatial data objects in either [**sf**](https://cran.r-project.org/web/packages/sf/index.html) or [**sp**](https://cran.r-project.org/web/packages/sp/index.html) formats. 
+**cancensus** can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, **cancensus** returns tidy tabular data only, but has options to return spatial data objects in either [**sf**](https://cran.r-project.org/package=sf) or [**sp**](https://cran.r-project.org/package=sp) formats. 
 ```
 # Return data only
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
