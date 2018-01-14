@@ -165,7 +165,8 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     }
     geos <- if (geo_format == "sf") {
       sf::read_sf(geo_file) %>%
-        transform_geo(level)
+        transform_geo(level) %>%
+        sf::st_as_sf()
     } else { # geo_format == "sp"
       geos <- tryCatch({
         rgdal::readOGR(geo_file,geo_base_name)
@@ -726,7 +727,7 @@ transform_geo <- function(g, level) {
                      dplyr::funs(as.factor))
 
   #change names
-  #standar table
+  #standard table
   name_change <- dplyr::data_frame(
     old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
@@ -773,7 +774,6 @@ transform_geo <- function(g, level) {
     old_names[old_names==x]<-name_change$new[name_change$old==x]
   }
   names(g)<-old_names
-  #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
 
   return(g)
 }
