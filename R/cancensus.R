@@ -165,8 +165,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     }
     geos <- if (geo_format == "sf") {
       sf::read_sf(geo_file) %>%
-        transform_geo(level) %>%
-        sf::st_as_sf()
+        transform_geo(level)
     } else { # geo_format == "sp"
       geos <- tryCatch({
         rgdal::readOGR(geo_file,geo_base_name)
