@@ -182,14 +182,14 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       # the sf object needs to be first in join to retain all spatial information
       dplyr::select(result, -.data$Population, -.data$Dwellings,
                     -.data$Households, -.data$Type) %>%
-        dplyr::inner_join(geos, ., by = "GeoUID") %>%
-        sf::st_as_sf()
+        dplyr::inner_join(geos, ., by = "GeoUID")
     } else { # geo_format == "sp"
       geos@data <- dplyr::select(geos@data, -.data$Population, -.data$Dwellings,
                                  -.data$Households, -.data$Type)
       sp::merge(geos, result, by = "GeoUID")
     }
   }
+
 
   if (length(vectors)>0) {
    census_vectors <- names(result)[grep("^v_", names(result))]
@@ -202,6 +202,11 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
      else {names(result) <- gsub(":.*","",names(result))}
    }
   }
+
+  if (!is.na(geo_format) & geo_format=='sf') { # ensure sf format even if library not loaded
+    result <- sf::st_as_sf(result)
+  }
+
   return(result)
 }
 
