@@ -190,6 +190,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     }
   }
 
+
   if (length(vectors)>0) {
    census_vectors <- names(result)[grep("^v_", names(result))]
    census_vectors <- strsplit(census_vectors, ": ")
@@ -201,6 +202,11 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
      else {names(result) <- gsub(":.*","",names(result))}
    }
   }
+
+  if (!is.na(geo_format) & geo_format=='sf') { # ensure sf format even if library not loaded
+    result <- sf::st_as_sf(result)
+  }
+
   return(result)
 }
 
@@ -725,7 +731,7 @@ transform_geo <- function(g, level) {
                      dplyr::funs(as.factor))
 
   #change names
-  #standar table
+  #standard table
   name_change <- dplyr::data_frame(
     old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
@@ -772,7 +778,6 @@ transform_geo <- function(g, level) {
     old_names[old_names==x]<-name_change$new[name_change$old==x]
   }
   names(g)<-old_names
-  #g <- g %>% rename('GeoUID'='id','Population'='pop','Dwellings'='dw','Households'='hh',"Type"='t')
 
   return(g)
 }
