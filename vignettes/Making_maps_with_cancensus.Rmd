@@ -85,7 +85,11 @@ ggplot(toronto) + geom_sf(aes(fill = v_CA16_2397), colour = "grey") +
 The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web maps, and RStudio has [package](https://rstudio.github.io/leaflet/) that allows creation of interactive leaflet maps without having to leave R or use Javascript. 
 
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
-
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# This chunk disables leaflet output in remaining chunks for PDF vignettes
+if(Sys.getenv("COMPILE_VIG")==FALSE) {
+  knitr::opts_chunk$set(eval = FALSE)}
+```
 ```{r, message = FALSE}
 library(leaflet)
 leaflet(toronto) %>% 

@@ -1,11 +1,10 @@
 ---
 title: "cancensus"
-author: 
-- name: "Dmitry Shkolnik"
+author: "" 
 date: ""
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Making maps with cancensus}
+  %\VignetteIndexEntry{cancensus}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,7 +21,7 @@ library(dplyr)
 ```
 # Cancensus and CensusMapper
 
-The **cancensus** package was developed to provide users with a way to access Canadian Census in a programmatic way following good [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf) practices. While the structure and data in **cancensus** is unique to Canadian Census data, this package is inspired in part by Kyle Walker's work on [tidycensus](https://github.com/walkerke/tidycensus), a package to interface with the US Census Bureau data APIs. 
+The **cancensus** package was developed to provide users with a way to access Canadian Census in a programmatic way following good [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf) practices. While the structure and data in **cancensus** is unique to Canadian Census data, this package is inspired in part by [tidycensus](https://github.com/walkerke/tidycensus), a package to interface with the US Census Bureau data APIs. 
 
 As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://twitter.com/vb_jens), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publically available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
 
