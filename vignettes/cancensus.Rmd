@@ -2,7 +2,12 @@
 title: "cancensus"
 author: "" 
 date: ""
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+  pdf_document:
+    highlight: haddock
+mainfont: Roboto
+
 vignette: >
   %\VignetteIndexEntry{cancensus}
   %\VignetteEngine{knitr::rmarkdown}
@@ -58,7 +63,7 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = 'sf')
-# Returns a SpatialPolygonsDataFrame object with data and geogrpahy
+# Returns a SpatialPolygonsDataFrame object with data and geography
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = 'sp')
