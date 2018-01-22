@@ -3,7 +3,6 @@ title: "Making maps with cancensus"
 author: "Dmitry Shkolnik"
 date: ""
 output: 
-  rmarkdown::html_vignette:
   pdf_document:
     highlight: haddock
 mainfont: Roboto
