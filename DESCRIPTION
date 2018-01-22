@@ -26,7 +26,7 @@ Imports: digest (>= 0.1),
     rlang
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    ggplot2 (>= 2.2.1.9000),
+    ggplot2,
     leaflet,
     rmarkdown,
     readr,
