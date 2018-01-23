@@ -129,13 +129,11 @@ variables returned by
 <span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='http://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>vector</span> <span class='kw'>==</span> <span class='st'>"v_CA16_4092"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>parent_census_vectors</span>()</div><div class='output co'>#&gt; # A tibble: 3 x 7
-#&gt;        vector   type
-#&gt;         &lt;chr&gt; &lt;fctr&gt;
-#&gt; 1 v_CA16_4089  Total
-#&gt; 2 v_CA16_4044  Total
-#&gt; 3 v_CA16_3999  Total
-#&gt; # ... with 5 more variables: label &lt;chr&gt;, units &lt;fctr&gt;, parent_vector &lt;chr&gt;,
-#&gt; #   aggregation &lt;chr&gt;, details &lt;chr&gt;</div></pre>
+#&gt;   vector      type  label      units parent_vector aggregation details         
+#&gt;   &lt;chr&gt;       &lt;fct&gt; &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;           
+#&gt; 1 v_CA16_4089 Total Western E… Numb… v_CA16_4044   Additive    CA 2016 Census;…
+#&gt; 2 v_CA16_4044 Total European … Numb… v_CA16_3999   Additive    CA 2016 Census;…
+#&gt; 3 v_CA16_3999 Total Total - E… Numb… &lt;NA&gt;          Additive    CA 2016 Census;…</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -154,7 +152,7 @@ variables returned by
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
