@@ -125,20 +125,17 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='co'># Query the CensusMapper API for the total occupied dwellings</span>
 <span class='co'># of 20 random Census Subdivisions, in Census 2016.</span>
 <span class='no'>regions</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='list_census_regions.html'>list_census_regions</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
-  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>level</span> <span class='kw'>==</span> <span class='st'>"CSD"</span>) <span class='kw'>%&gt;%</span>
-  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://dplyr.tidyverse.org/reference/sample.html'>sample_n</a></span>(<span class='fl'>20</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>as_census_region_list</span>()
-
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>level</span> <span class='kw'>==</span> <span class='st'>"CSD"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/sample.html'>sample_n</a></span>(<span class='fl'>20</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>as_census_region_list</span>()</div><div class='output co'>#&gt; <span class='message'>Querying CensusMapper API for regions data...</span></div><div class='input'>
 <span class='no'>occupied</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(<span class='st'>"CA16"</span>, <span class='kw'>regions</span> <span class='kw'>=</span> <span class='no'>regions</span>,
                             <span class='kw'>vectors</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"v_CA16_408"</span>),
-                            <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Regions"</span>)
-<span class='co'># }</span></pre>
+                            <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Regions"</span>)</div><div class='output co'>#&gt; <span class='message'>Querying CensusMapper API...</span></div><div class='output co'>#&gt; Downloading: 850 B     Downloading: 850 B     Downloading: 850 B     Downloading: 850 B     Downloading: 850 B     Downloading: 850 B     </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

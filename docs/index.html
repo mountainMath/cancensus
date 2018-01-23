@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>An R Package to Access, Retrieve, and Work with Canadian Census Data and Geography • cancensus</title>
+<title>Canadian Census Data and Geography from the 'CensusMapper' API • cancensus</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -74,9 +74,7 @@
       
       </header><div class="row">
   <div class="contents col-md-9">
-    <div id="cancensus" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#cancensus" class="anchor"></a>cancensus</h1></div>
+    <section class="level1"><div class="page-header"><h1>cancensus</h1></div>
 
 <p>An R Package to access, retrieve, and work with Canadian Census data and geography</p>
 <ul>
@@ -86,36 +84,19 @@
 <li>Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdividision, Census Tract, and Dissemination Areas</li>
 <li>Provides up-to-date data for the 2016, 2011, and 2006 Censuses</li>
 </ul>
-<div id="reference" class="section level3">
-<h3 class="hasAnchor">
-<a href="#reference" class="anchor"></a>Reference</h3>
+<section class="level3"><h3>Reference</h3>
 <p><a href="https://mountainmath.github.io/cancensus/index.html"><strong>Cancensus home page and reference guide</strong></a></p>
-</div>
-<div id="installing-the-package" class="section level3">
-<h3 class="hasAnchor">
-<a href="#installing-the-package" class="anchor"></a>Installing the package</h3>
+</section><section class="level3"><h3>Installing the package</h3>
 <pre><code><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">devtools::install_github("mountainmath/cancensus")
 library(cancensus)</a></code></pre>
-</div>
-<div id="api-key" class="section level3">
-<h3 class="hasAnchor">
-<a href="#api-key" class="anchor"></a>API key</h3>
+</section><section class="level3"><h3>API key</h3>
 <p>This package relies on queries to the CensusMapper API, which requires a Censusmapper API key. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
 <p>To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>options(cancensus.api_key = "your_api_key")</code>.</p>
-</div>
-<div id="local-cache" class="section level3">
-<h3 class="hasAnchor">
-<a href="#local-cache" class="anchor"></a>Local Cache</h3>
+</section><section class="level3"><h3>Local Cache</h3>
 <p>For performance reasons, and to avoid unneccessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using <code>options(cancensus.cache_path = 'XXX')</code>, this enables better control over the data. In particular, the default cache will be wiped every time <strong>cancensus</strong> gets re-installed, setting a default cache directory will avoid that.</p>
-</div>
-<div id="currently-available-datasets" class="section level3">
-<h3 class="hasAnchor">
-<a href="#currently-available-datasets" class="anchor"></a>Currently available datasets</h3>
+</section><section class="level3"><h3>Currently available datasets</h3>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
-</div>
-<div id="picking-regions-and-variables" class="section level3">
-<h3 class="hasAnchor">
-<a href="#picking-regions-and-variables" class="anchor"></a>Picking regions and variables</h3>
+</section><section class="level3"><h3>Picking regions and variables</h3>
 <p>Census data contains thousands of different geographic regions as well as thousands of unique variables. There are several useful functions within <strong>cancensus</strong> to simplify accessing Census metadata, locating regions, and identifying variables.</p>
 <pre><code><a href="reference/list_census_datasets.html"># To view available Census datasets
 list_census_datasets()
@@ -126,10 +107,7 @@ list_census_regions("CA16")
 # To view available Census variables for the 2016 Census
 list_census_vectors("CA16")</a></code></pre>
 <p>There is also an interactive tool that is available at <a href="https://censusmapper.ca/api">CensusMapper API call generator</a> to visually select regions and variables and generate code for the API call.</p>
-</div>
-<div id="getting-the-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#getting-the-data" class="anchor"></a>Getting the data</h3>
+</section><section class="level3"><h3>Getting the data</h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp"><strong>sp</strong></a> formats.</p>
 <pre><code># Return data only
 census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
@@ -140,35 +118,21 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 # Return a SpatialPolygonsDataFrame
 census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")</code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
-</div>
-<div id="examples-of-work-using-cancensus" class="section level3">
-<h3 class="hasAnchor">
-<a href="#examples-of-work-using-cancensus" class="anchor"></a>Examples of work using cancensus</h3>
+</section><section class="level3"><h3>Examples of work using cancensus</h3>
 <ul>
 <li><a href="https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/">Income: A first look</a></li>
 <li><a href="https://www.dshkol.com/2017/language-diversity-in-canada/">Language Diversity in Canada</a></li>
 </ul>
 <p>We’d love to feature examples of work or projects that use cancensus.</p>
-</div>
-<div id="vignettes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#vignettes" class="anchor"></a>Vignettes</h3>
+</section><section class="level3"><h3>Vignettes</h3>
 <ul>
 <li><a href="https://mountainmath.github.io/cancensus/articles/cancensus.html">Getting started with cancensus</a></li>
 <li><a href="https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html">Making maps with cancensus</a></li>
-</ul>
-</div>
-<div id="contributing" class="section level3">
-<h3 class="hasAnchor">
-<a href="#contributing" class="anchor"></a>Contributing</h3>
+</ul></section><section class="level3"><h3>Contributing</h3>
 <ul>
 <li>We encourage contributions to improve this project. The best way is through issues and pull requests.</li>
 <li>If you want to get in touch, we are pretty good at responding via email or via twitter at <a href="https://twitter.com/dshkol">@dshkol</a> or <a href="https://twitter.com/vb_jens">@vb_jens</a>.</li>
-</ul>
-</div>
-<div id="cite-cancensus" class="section level3">
-<h3 class="hasAnchor">
-<a href="#cite-cancensus" class="anchor"></a>Cite <strong>cancensus</strong>
+</ul></section><section class="level3"><h3>Cite <strong>cancensus</strong>
 </h3>
 <p>If you wish to cite cancensus:</p>
 <p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to access, retrieve, and work with Canadian Census data and geography. v0.1.6.</p>
@@ -180,9 +144,8 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
     note = {R package version 0.1.6},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
+</section></section>
 </div>
-</div>
-  </div>
 
   <div class="col-md-3" id="sidebar">
     <h2>Links</h2>

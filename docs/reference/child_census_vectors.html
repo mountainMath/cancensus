@@ -129,14 +129,13 @@ i.e. vectors that don't have children</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='http://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>vector</span> <span class='kw'>==</span> <span class='st'>"v_CA16_4092"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>child_census_vectors</span>(<span class='fl'>TRUE</span>)
-
-<span class='co'># }</span></pre>
+  <span class='fu'>child_census_vectors</span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; # A tibble: 0 x 7
+#&gt; # ... with 7 variables: vector &lt;chr&gt;, type &lt;fctr&gt;, label &lt;chr&gt;, units &lt;fctr&gt;,
+#&gt; #   parent_vector &lt;chr&gt;, aggregation &lt;chr&gt;, details &lt;chr&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
