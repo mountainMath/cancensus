@@ -2,9 +2,7 @@
 title: "cancensus"
 author: "" 
 date: ""
-output: 
-  pdf_document:
-    highlight: haddock
+output: rmarkdown::html_vignette
 mainfont: Roboto
 
 vignette: >

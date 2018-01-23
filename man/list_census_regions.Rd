@@ -41,3 +41,6 @@ Returns a data frame with the following columns:
 \description{
 Query the CensusMapper API for available regions in a given dataset.
 }
+\examples{
+list_census_regions('CA16')
+}

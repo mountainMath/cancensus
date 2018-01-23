@@ -23,11 +23,11 @@ If specified, only return variables of specified `level`.}
 Query the CensusMapper API for regions with names matching a searchterm.
 }
 \examples{
-\dontrun{
-search_census_regions('Victorea', 'CA16')
-
-# This will return a warning that no match was found, but will suggest similar named regions.
 search_census_regions('Victoria', 'CA16')
+
+\dontrun{
+# This will return a warning that no match was found, but will suggest similar named regions.
+search_census_regions('Victorea', 'CA16')
 
 # This will limit region results to only include CMA level regions
 search_census_regions('Victoria', 'CA16', level = "CMA")

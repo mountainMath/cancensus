@@ -2,9 +2,7 @@
 title: "Making maps with cancensus"
 author: "Dmitry Shkolnik"
 date: ""
-output: 
-  pdf_document:
-    highlight: haddock
+output: rmarkdown::html_vignette
 mainfont: Roboto
 vignette: >
   %\VignetteIndexEntry{Making maps with cancensus}

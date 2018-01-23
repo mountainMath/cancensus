@@ -24,8 +24,8 @@ library(dplyr, warn.conflicts = FALSE)
 # Query the CensusMapper API for the total occupied dwellings
 # of 20 random Census Subdivisions, in Census 2016.
 regions <- list_census_regions("CA16") \%>\%
-  dplyr::filter(level == "CSD") \%>\%
-  dplyr::sample_n(20) \%>\%
+  filter(level == "CSD") \%>\%
+  sample_n(20) \%>\%
   as_census_region_list()
 
 occupied <- get_census("CA16", regions = regions,

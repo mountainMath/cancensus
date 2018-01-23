@@ -1,14 +1,14 @@
 Package: cancensus
 Type: Package
-Title: An R Package to Access, Retrieve, and Work with Canadian Census Data and Geography
+Title: Canadian Census Data and Geography from the 'CensusMapper' API
 Version: 0.1.6
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
     person("Aaron", "Jacobs", email = "atheriel@gmail.com", role = "aut"))
 Description: Integrated, convenient, and uniform access to Canadian
-    Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready 
-    'tidy' data frames and spatial data in multiple formats, as well as convenience functions
+    Census data and geography retrieved using the 'CensusMapper' API. This package produces analysis-ready 
+    tidy data frames and spatial data in multiple formats, as well as convenience functions
     for working with Census variables, variable hierarchies, and region selection. API
     keys are freely available with free registration at <https://censusmapper.ca/api>.
     Census data and boundary geometries are reproduced and distributed on an "as

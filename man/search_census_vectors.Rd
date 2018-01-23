@@ -23,9 +23,8 @@ If specified, only return variables of specified `type`.}
 Query the CensusMapper API for vectors with descriptions matching a searchterm.
 }
 \examples{
-\dontrun{
 search_census_vectors('Ojibway', 'CA16')
-
+\dontrun{
 # This will return a warning that no match was found, but will suggest similar terms.
 search_census_vectors('Ojibwe', 'CA16', 'Total')
 }

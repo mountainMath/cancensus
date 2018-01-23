@@ -348,13 +348,11 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   parent_census_vectors()
-#' }
 parent_census_vectors <- function(vector_list){
   base_list <- vector_list
   dataset <- attr(base_list, "dataset")
@@ -385,13 +383,11 @@ parent_census_vectors <- function(vector_list){
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   child_census_vectors(TRUE)
-#'   }
 child_census_vectors <- function(vector_list, leaves_only=FALSE){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
@@ -432,9 +428,8 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE){
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' search_census_vectors('Ojibway', 'CA16')
-#'
+#'\dontrun{
 #' # This will return a warning that no match was found, but will suggest similar terms.
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
 #' }
@@ -503,6 +498,9 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' }
 #'
 #' @export
+#'
+#' @examples
+#' list_census_regions('CA16')
 list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -550,11 +548,11 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' search_census_regions('Victorea', 'CA16')
-#'
-#' # This will return a warning that no match was found, but will suggest similar named regions.
 #' search_census_regions('Victoria', 'CA16')
+#'
+#' \dontrun{
+#' # This will return a warning that no match was found, but will suggest similar named regions.
+#' search_census_regions('Victorea', 'CA16')
 #'
 #' # This will limit region results to only include CMA level regions
 #' search_census_regions('Victoria', 'CA16', level = "CMA")
@@ -606,8 +604,8 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 #' # Query the CensusMapper API for the total occupied dwellings
 #' # of 20 random Census Subdivisions, in Census 2016.
 #' regions <- list_census_regions("CA16") %>%
-#'   dplyr::filter(level == "CSD") %>%
-#'   dplyr::sample_n(20) %>%
+#'   filter(level == "CSD") %>%
+#'   sample_n(20) %>%
 #'   as_census_region_list()
 #'
 #' occupied <- get_census("CA16", regions = regions,
