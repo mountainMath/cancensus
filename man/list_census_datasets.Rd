@@ -20,3 +20,8 @@ dataset, and a column \code{description} describing it.
 \description{
 Query the CensusMapper API for available datasets.
 }
+\examples{
+
+# List available datasets in CensusMapper
+list_census_datasets()
+}

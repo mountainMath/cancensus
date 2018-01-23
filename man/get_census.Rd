@@ -47,7 +47,7 @@ that retrieves only Census geography boundaries.
 
 For help selecting regions and vectors, see \code{\link{list_census_regions}}
 and \code{\link{list_census_vectors}}, or check out the interactive selection
-tool at <https://censusmapper.ca/api>.
+tool at \url{https://censusmapper.ca/api}.
 }
 \examples{
 # Query the API for data on dwellings in Vancouver, at the census subdivision
@@ -74,7 +74,7 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           level='CSD', geo_format = "sf", labels="short")
 
 # Get details for truncated vectors:
-census_vectors(census_data)
+label_vectors(census_data)
 }
 \dontrun{
 # Query the API for census subdivision boundary geometry within Vancouver.

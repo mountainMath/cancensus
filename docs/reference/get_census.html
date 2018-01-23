@@ -169,7 +169,7 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 that retrieves only Census geography boundaries.</p>
 <p>For help selecting regions and vectors, see <code><a href='list_census_regions.html'>list_census_regions</a></code>
 and <code><a href='list_census_vectors.html'>list_census_vectors</a></code>, or check out the interactive selection
-tool at &lt;https://censusmapper.ca/api&gt;.</p>
+tool at <a href='https://censusmapper.ca/api'>https://censusmapper.ca/api</a>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -192,7 +192,7 @@ tool at &lt;https://censusmapper.ca/api&gt;.</p>
                           <span class='kw'>vectors</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
                           <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CSD'</span>, <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='st'>"sf"</span>, <span class='kw'>labels</span><span class='kw'>=</span><span class='st'>"short"</span>)</div><div class='output co'>#&gt; <span class='message'>Reading vectors data from local cache.</span></div><div class='output co'>#&gt; <span class='message'>Reading geo data from local cache.</span></div><div class='input'>
 <span class='co'># Get details for truncated vectors:</span>
-<span class='fu'><a href='census_vectors.html'>census_vectors</a></span>(<span class='no'>census_data</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.</span></div><div class='output co'>#&gt; # A tibble: 3 x 2
+<span class='fu'><a href='label_vectors.html'>label_vectors</a></span>(<span class='no'>census_data</span>)</div><div class='output co'>#&gt; # A tibble: 3 x 2
 #&gt;       Vector                                                         Detail
 #&gt;        &lt;chr&gt;                                                          &lt;chr&gt;
 #&gt; 1 v_CA16_408 Occupied private dwellings by structural type of dwelling data

@@ -8,7 +8,7 @@
 #'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
-#' tool at <https://censusmapper.ca/api>.
+#' tool at \url{https://censusmapper.ca/api}.
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
@@ -54,7 +54,7 @@
 #'                           level='CSD', geo_format = "sf", labels="short")
 #'
 #' # Get details for truncated vectors:
-#' census_vectors(census_data)
+#' label_vectors(census_data)
 #'}
 get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
@@ -240,6 +240,11 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 #' dataset, and a column \code{description} describing it.
 #'
 #' @export
+#'
+#' @examples
+#'
+#' # List available datasets in CensusMapper
+#' list_census_datasets()
 list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
   cache_file <- cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -686,7 +691,7 @@ census_vectors <-  function(x) {
 
 
 
-# Internal function to handle unfavourable http responses
+# Internal function to handle unfavourable HTTP responses
 handle_cm_status_code <- function(response,path){
   if (httr::status_code(response)!=200) {
     message=httr::content(response,as="text")
