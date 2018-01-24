@@ -135,22 +135,24 @@ If specified, only return variables of specified `type`.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>search_census_vectors</span>(<span class='st'>'Ojibway'</span>, <span class='st'>'CA16'</span>)</div><div class='output co'>#&gt; # A tibble: 24 x 7
-#&gt;    vector      type   label  units parent_vector aggregation details           
-#&gt;    &lt;chr&gt;       &lt;fct&gt;  &lt;chr&gt;  &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;             
-#&gt;  1 v_CA16_617  Total  Ojibw… Numb… v_CA16_569    Additive    CA 2016 Census; 1…
-#&gt;  2 v_CA16_618  Male   Ojibw… Numb… v_CA16_570    Additive    CA 2016 Census; 1…
-#&gt;  3 v_CA16_619  Female Ojibw… Numb… v_CA16_571    Additive    CA 2016 Census; 1…
-#&gt;  4 v_CA16_623  Total  Ojibw… Numb… v_CA16_617    Additive    CA 2016 Census; 1…
-#&gt;  5 v_CA16_624  Male   Ojibw… Numb… v_CA16_618    Additive    CA 2016 Census; 1…
-#&gt;  6 v_CA16_625  Female Ojibw… Numb… v_CA16_619    Additive    CA 2016 Census; 1…
-#&gt;  7 v_CA16_1424 Total  Ojibw… Numb… v_CA16_1376   Additive    CA 2016 Census; 1…
-#&gt;  8 v_CA16_1425 Male   Ojibw… Numb… v_CA16_1377   Additive    CA 2016 Census; 1…
-#&gt;  9 v_CA16_1426 Female Ojibw… Numb… v_CA16_1378   Additive    CA 2016 Census; 1…
-#&gt; 10 v_CA16_1430 Total  Ojibw… Numb… v_CA16_1424   Additive    CA 2016 Census; 1…
-#&gt; # ... with 14 more rows</div><span class='co'># NOT RUN {</span>
-<span class='co'># This will return a warning that no match was found, but will suggest similar terms.</span>
-<span class='fu'>search_census_vectors</span>(<span class='st'>'Ojibwe'</span>, <span class='st'>'CA16'</span>, <span class='st'>'Total'</span>)
-<span class='co'># }</span></pre>
+#&gt;         vector   type                        label  units parent_vector
+#&gt;          &lt;chr&gt; &lt;fctr&gt;                        &lt;chr&gt; &lt;fctr&gt;         &lt;chr&gt;
+#&gt;  1  v_CA16_617  Total Ojibway-Potawatomi languages Number    v_CA16_569
+#&gt;  2  v_CA16_618   Male Ojibway-Potawatomi languages Number    v_CA16_570
+#&gt;  3  v_CA16_619 Female Ojibway-Potawatomi languages Number    v_CA16_571
+#&gt;  4  v_CA16_623  Total                      Ojibway Number    v_CA16_617
+#&gt;  5  v_CA16_624   Male                      Ojibway Number    v_CA16_618
+#&gt;  6  v_CA16_625 Female                      Ojibway Number    v_CA16_619
+#&gt;  7 v_CA16_1424  Total Ojibway-Potawatomi languages Number   v_CA16_1376
+#&gt;  8 v_CA16_1425   Male Ojibway-Potawatomi languages Number   v_CA16_1377
+#&gt;  9 v_CA16_1426 Female Ojibway-Potawatomi languages Number   v_CA16_1378
+#&gt; 10 v_CA16_1430  Total                      Ojibway Number   v_CA16_1424
+#&gt; # ... with 14 more rows, and 2 more variables: aggregation &lt;chr&gt;, details &lt;chr&gt;</div><div class='input'><span class='co'># This will return a warning that no match was found, but will suggest similar terms.</span>
+<span class='fu'>search_census_vectors</span>(<span class='st'>'Ojibwe'</span>, <span class='st'>'CA16'</span>, <span class='st'>'Total'</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No results found. Please use accurate spelling. See above for list of variables with similar named terms.</span></div><div class='output co'>#&gt; # A tibble: 2 x 1
+#&gt;      `Similarly named objects`
+#&gt;                          &lt;chr&gt;
+#&gt; 1 Ojibway-Potawatomi languages
+#&gt; 2                      Ojibway</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -169,7 +171,7 @@ If specified, only return variables of specified `type`.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>

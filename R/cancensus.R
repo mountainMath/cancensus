@@ -291,8 +291,12 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
 #' all labels within its hierarchical structure.
 #'
 #' @export
+#'
+#' @examples
+#'
+#' # List all vectors for a given Census dataset in CensusMapper
+#' list_census_vectors('CA16')
 list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
-  # TODO: Validate dataset?
   cache_file <- cache_path(dataset, "_vectors.rda")
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset,

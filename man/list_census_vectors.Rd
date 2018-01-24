@@ -29,3 +29,8 @@ all labels within its hierarchical structure.
 \description{
 Query the CensusMapper API for available vectors for a given dataset.
 }
+\examples{
+
+# List all vectors for a given Census dataset in CensusMapper
+list_census_vectors('CA16')
+}

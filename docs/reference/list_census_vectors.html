@@ -139,6 +139,24 @@ and a column <code>details</code> with a detailed description of the variable ge
 all labels within its hierarchical structure.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='co'># List all vectors for a given Census dataset in CensusMapper</span>
+<span class='fu'>list_census_vectors</span>(<span class='st'>'CA16'</span>)</div><div class='output co'>#&gt; # A tibble: 6,611 x 7
+#&gt;        vector   type                                         label  units
+#&gt;         &lt;chr&gt; &lt;fctr&gt;                                         &lt;chr&gt; &lt;fctr&gt;
+#&gt;  1 v_CA16_401  Total                              Population, 2016 Number
+#&gt;  2 v_CA16_402  Total                              Population, 2011 Number
+#&gt;  3 v_CA16_403  Total    Population percentage change, 2011 to 2016 Number
+#&gt;  4 v_CA16_404  Total                       Total private dwellings Number
+#&gt;  5 v_CA16_405  Total Private dwellings occupied by usual residents Number
+#&gt;  6 v_CA16_406  Total       Population density per square kilometre  Ratio
+#&gt;  7 v_CA16_407  Total                Land area in square kilometres Number
+#&gt;  8   v_CA16_1  Total                                   Total - Age Number
+#&gt;  9   v_CA16_2   Male                                   Total - Age Number
+#&gt; 10   v_CA16_3 Female                                   Total - Age Number
+#&gt; # ... with 6,601 more rows, and 3 more variables: parent_vector &lt;chr&gt;,
+#&gt; #   aggregation &lt;chr&gt;, details &lt;chr&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -146,7 +164,9 @@ all labels within its hierarchical structure.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
@@ -157,7 +177,7 @@ all labels within its hierarchical structure.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>
