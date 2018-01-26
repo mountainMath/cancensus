@@ -35,7 +35,16 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 
 ## Installing cancensus
 
-```{r load package, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
+The stable version of **cancensus** can be easily installed from CRAN.
+```{r load_package_cran, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
+install.packages("cancensus")
+library(cancensus)
+options(cancensus.api_key = "your_api_key")
+#options(cancensus.cache_path = "custom cache path")
+```
+
+Alternatively, the latest development version can be installed from Github using `devtools`. 
+```{r load_package_git, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("mountainmath/cancensus")
 library(cancensus)
@@ -45,7 +54,7 @@ options(cancensus.api_key = "your_api_key")
 
 Data returned through the API is cached in order to cut down on API usage, reduce network traffic and increase speed. By default **cancensus** caches data in the package path, and cached data will be purged every time the package is updated. We recommend setting the `cancensus.cache_path` to a custom directory to allow cached data to persist through package updates.
 
-Setting the API key and the cache path in the `.Rprofile` facilitates the ability to share code without exposing API keys or relying on the local directory structure.
+Setting the API key and the cache path in the `.Rprofile` facilitates the ability to share code without exposing API keys or relying on the local directory structure. The `cancensus.cache_path` option simplifies setting up custom cache directories.  
 
 # Accessing Census Data
 

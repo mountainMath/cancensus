@@ -1,8 +1,8 @@
 # cancensus 0.1.6
 
 * Fixed a bug where `read.csv` was incorrectly loading text data if `readr::read_csv` was not available 
-* CRAN compatible vignettes and documentation
-* Prepared for CRAN submission
+* Ensured that data frames were `sf`-class data frames if option `sf` was selected for spatial data. 
+* released on CRAN
 
 # cancensus 0.1.5
 

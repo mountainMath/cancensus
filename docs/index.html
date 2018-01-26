@@ -76,7 +76,7 @@
   <div class="contents col-md-9">
     <section class="level1"><div class="page-header"><h1>cancensus</h1></div>
 
-<p>An R Package to access, retrieve, and work with Canadian Census data and geography</p>
+<p>Access, retrieve, and work with Canadian Census data and geography.</p>
 <ul>
 <li>Download data and Census geography in tidy and analysis-ready format</li>
 <li>Convenience tools for searching for and working with Census regions and variable hierarchies</li>
@@ -87,6 +87,9 @@
 <section class="level3"><h3>Reference</h3>
 <p><a href="https://mountainmath.github.io/cancensus/index.html"><strong>Cancensus home page and reference guide</strong></a></p>
 </section><section class="level3"><h3>Installing the package</h3>
+<pre><code>install.packages("cancensus")
+library(cancensus)</code></pre>
+<p>Alternatively, the latest development version can be installed from Github.</p>
 <pre><code><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">devtools::install_github("mountainmath/cancensus")
 library(cancensus)</a></code></pre>
 </section><section class="level3"><h3>API key</h3>
@@ -183,7 +186,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>

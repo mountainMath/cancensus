@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/mountainMath/cancensus.svg?branch=master)](https://travis-ci.org/mountainMath/cancensus)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 
-An R Package to access, retrieve, and work with Canadian Census data and geography 
+Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
 * Convenience tools for searching for and working with Census regions and variable hierarchies
@@ -17,6 +17,12 @@ An R Package to access, retrieve, and work with Canadian Census data and geograp
 
 ### Installing the package
 
+```
+install.packages("cancensus")
+library(cancensus)
+```
+
+Alternatively, the latest development version can be installed from Github.
 ```
 devtools::install_github("mountainmath/cancensus")
 library(cancensus)

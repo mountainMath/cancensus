@@ -149,20 +149,13 @@ If specified, only return variables of specified `level`.</p></td>
 #&gt; 10 4601078    Victoria Beach   CSD    398               RM      NA   4601
 #&gt; 11 1102032          Victoria   CSD     74              COM      NA   1102
 #&gt; # ... with 1 more variables: PR_UID &lt;int&gt;</div><div class='input'>
-</div><div class='input'><span class='co'># This will return a warning that no match was found, but will suggest similar named regions.</span>
-<span class='fu'>search_census_regions</span>(<span class='st'>'Victorea'</span>, <span class='st'>'CA16'</span>)</div><div class='output co'>#&gt; <span class='message'>Querying CensusMapper API for regions data...</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No results found. Please use accurate spelling. See above for list of similarly named regions.</span></div><div class='output co'>#&gt; # A tibble: 5 x 1
-#&gt;   `Similar named regions`
-#&gt;                     &lt;chr&gt;
-#&gt; 1                Victoria
-#&gt; 2           Victoriaville
-#&gt; 3       Victoria, Subd. B
-#&gt; 4       Victoria, Subd. A
-#&gt; 5          Victoria Beach</div><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='co'># This will return a warning that no match was found, but will suggest similar named regions.</span>
+<span class='fu'>search_census_regions</span>(<span class='st'>'Victorea'</span>, <span class='st'>'CA16'</span>)
+
 <span class='co'># This will limit region results to only include CMA level regions</span>
-<span class='fu'>search_census_regions</span>(<span class='st'>'Victoria'</span>, <span class='st'>'CA16'</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"CMA"</span>)</div><div class='output co'>#&gt; <span class='message'>Querying CensusMapper API for regions data...</span></div><div class='output co'>#&gt; # A tibble: 1 x 8
-#&gt;   region     name level    pop municipal_status CMA_UID CD_UID PR_UID
-#&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;            &lt;chr&gt;   &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
-#&gt; 1  59935 Victoria   CMA 367770                B      NA     NA     59</div></pre>
+<span class='fu'>search_census_regions</span>(<span class='st'>'Victoria'</span>, <span class='st'>'CA16'</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"CMA"</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -181,7 +174,7 @@ If specified, only return variables of specified `level`.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
