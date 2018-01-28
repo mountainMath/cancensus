@@ -812,7 +812,7 @@ cache_path <- function(...) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
     warning(paste("Please set ",
-                  "options(cancensus.cache_path = ‘<path to cancensus cache directory’)",
+                  "options(cancensus.cache_path = '<path to cancensus cache directory>')",
                   "to speed up performance, protect your API quota, and remove the need",
                   "for duplicate network data calls.",
                   "You may add this option, together with your API key, to your .Rprofile."))
