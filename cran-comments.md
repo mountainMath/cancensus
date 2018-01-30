@@ -1,3 +1,7 @@
+## Update
+
+After initial acceptance, CRAN checks identified an issue stemming from the package using a local cache that writes to the user library rather than R's temporary director. Kurt Hornik advised to fix this and to submit an update. This update changes default caching behaviour to confirm with CRAN requirements. Users are prompted with a suggestion encouraging them to set up a persistent local cache.
+
 ## Resubmission
 
 This is a resubmission addressing comments from reviewer Swetlana Herbrandt. In addition to recommendations for changes to package title and description to avoid redundancy and conform to standards, Swetlana noted that all examples are wrapped in `/dontrun{}` and are not tested. 

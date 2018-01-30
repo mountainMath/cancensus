@@ -811,10 +811,10 @@ cache_path <- function(...) {
   if (!"cancensus.cache_path" %in% names(options())) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
-    warning(paste("Please set ",
-                  "options(cancensus.cache_path = '<path to cancensus cache directory>')",
-                  "to speed up performance, protect your API quota, and remove the need",
-                  "for duplicate network data calls.",
+    message(paste("Census data is currently stored temporarily./n",
+                  "In order to speed up performance, reduce API quota usage, and reduce ",
+                  "unnecessary network calls, please set up a persistent cache directory by ",
+                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')/n",
                   "You may add this option, together with your API key, to your .Rprofile."))
   }
 }

@@ -36,7 +36,7 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 
 ### Local Cache
 
-For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. In particular, the default cache will be wiped every time **cancensus** gets re-installed, setting a default cache directory will avoid that.
+For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 ### Currently available datasets
 
