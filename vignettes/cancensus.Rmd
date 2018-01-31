@@ -38,16 +38,20 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 The stable version of **cancensus** can be easily installed from CRAN.
 ```{r load_package_cran, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 install.packages("cancensus")
+
 library(cancensus)
+
 options(cancensus.api_key = "your_api_key")
-#options(cancensus.cache_path = "custom cache path")
+options(cancensus.cache_path = "custom cache path")
 ```
 
 Alternatively, the latest development version can be installed from Github using `devtools`. 
 ```{r load_package_git, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("mountainmath/cancensus")
+
 library(cancensus)
+
 options(cancensus.api_key = "your_api_key")
 options(cancensus.cache_path = "custom cache path")
 ```
@@ -70,10 +74,12 @@ Setting the API key and the cache path in the `.Rprofile` facilitates the abilit
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = NA)
+
 # Returns data and geography as an sf-class data frame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE, geo_format = 'sf')
+
 # Returns a SpatialPolygonsDataFrame object with data and geography
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -112,6 +118,7 @@ The `regions` parameter in `get_census` requires as input a list of region id st
 # Retrieves Vancouver and Toronto
 list_census_regions('CA16') %>% 
   filter(level == "CMA", name %in% c("Vancouver","Toronto"))
+
 census_data <- get_census(dataset='CA16', regions=list(CMA=c("59933","35535")),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', use_cache = FALSE)
