@@ -1,25 +1,32 @@
-# cancensus 0.1.7
+# 0.1.7
+  ## Major changes 
+  - Set default caching to `tempdir()`
+  - Encourage users to set up local persistent caching using `options(cancensus.cache_path = 'XXX')`
 
-* Set default caching to `tempdir()`
-* Encourage users to set up local persistent caching using `options(cancensus.cache_path = 'XXX')`
+# 0.1.6
+  ## Major changes
+  - First released on CRAN
+  ## Minor changes
+  - Ensured that data frames were `sf`-class data frames if option `sf` was selected for spatial data. 
+  ## Bug fixes
+  - Fixed a bug where `read.csv` was incorrectly loading text data if `readr::read_csv` was not available 
 
-# cancensus 0.1.6
+# 0.1.5
+  ## Major changes
+  - Added a `NEWS.md` file to track changes to the package.
+  - Added pkgdown documentation
+  - New vignettes - _cancensus_ and _Making maps with cancensus_
+  ## Minor changes
+  - Default behaviour for `list_census_vectors()` changed to have `quiet = TRUE`
 
-* Fixed a bug where `read.csv` was incorrectly loading text data if `readr::read_csv` was not available 
-* Ensured that data frames were `sf`-class data frames if option `sf` was selected for spatial data. 
-* released on CRAN
+# 0.1.0
+  ## Major changes
+  - Added vector and geography search and discovery capabilities
+  - Improved performance
+  - Error and API issue messaging
+  ## Minor changes
+  - Reduced package dependencies
 
-# cancensus 0.1.5
-
-* Added a `NEWS.md` file to track changes to the package.
-* Added pkgdown documentation
-* New vignettes - _cancensus_ and _Making maps with cancensus_
-* Default behaviour for `list_census_vectors()` changed to have `quiet = TRUE`
-
-# cancensus 0.1.0
-
-* Added vector and geography discovery capabilities, improved performance, error and API messaging, package dependencies
-
-# cancensus 0.0.1
-
-* Initial release
+# 0.0.1
+  ## Major changes
+  - Initial release

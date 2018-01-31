@@ -96,7 +96,7 @@ library(cancensus)</a></code></pre>
 <p>This package relies on queries to the CensusMapper API, which requires a Censusmapper API key. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
 <p>To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>options(cancensus.api_key = "your_api_key")</code>.</p>
 </section><section class="level3"><h3>Local Cache</h3>
-<p>For performance reasons, and to avoid unneccessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default the cache directory is in the package install directory so that the cache is shared across R projects. The default can be overwritten using <code>options(cancensus.cache_path = 'XXX')</code>, this enables better control over the data. In particular, the default cache will be wiped every time <strong>cancensus</strong> gets re-installed, setting a default cache directory will avoid that.</p>
+<p>For performance reasons, and to avoid unneccessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>options(cancensus.cache_path = 'XXX')</code>, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
 </section><section class="level3"><h3>Currently available datasets</h3>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 </section><section class="level3"><h3>Picking regions and variables</h3>
@@ -153,6 +153,8 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
   <div class="col-md-3" id="sidebar">
     <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cran.r-project.org/package=cancensus">https://​cran.r-project.org/​package=cancensus</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/mountainMath/cancensus">https://​github.com/​mountainMath/​cancensus</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/mountainMath/cancensus/issues">https://​github.com/​mountainMath/​cancensus/​issues</a>
