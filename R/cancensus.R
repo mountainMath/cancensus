@@ -82,8 +82,8 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
         "Census data is currently stored temporarily.\n\n",
         "In order to speed up performance, reduce API quota usage, and reduce",
         "unnecessary network calls, please set up a persistent cache directory by",
-        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n",
-        "You may add this option, together with your API key, to your .Rprofile."
+        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
+        "You may add this option, together with your API key, to your .Rprofile.\n\n"
       )
     )
   }
