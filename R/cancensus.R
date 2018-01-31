@@ -74,15 +74,15 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
 
   # Remind to set cache directory
 
-  if (!"cancensus.cache_path" %in% names(options())) {
+  if (nzchar(options("cancensus.cache_path")) == FALSE) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
     message(
       paste(
-        "Census data is currently stored temporarily./n",
+        "Census data is currently stored temporarily.\n\n",
         "In order to speed up performance, reduce API quota usage, and reduce ",
         "unnecessary network calls, please set up a persistent cache directory by ",
-        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')/n",
+        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n",
         "You may add this option, together with your API key, to your .Rprofile."
       )
     )
@@ -827,10 +827,10 @@ cache_path <- function(...) {
   if (!"cancensus.cache_path" %in% names(options())) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
-    packageStartupMessage(paste("Census data is currently stored temporarily./n",
+    packageStartupMessage(paste("Census data is currently stored temporarily.\n\n",
                   "In order to speed up performance, reduce API quota usage, and reduce ",
                   "unnecessary network calls, please set up a persistent cache directory by ",
-                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')/n",
+                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
                   "You may add this option, together with your API key, to your .Rprofile."))
   }
 }
