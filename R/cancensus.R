@@ -72,6 +72,22 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     regions <- jsonlite::toJSON(regions)
   }
 
+  # Remind to set cache directory
+
+  if(as.character(options("cancensus.cache_path"))==tempdir()) {
+    # Cache in tmp dir by default.
+    options(cancensus.cache_path = tempdir())
+    message(
+      paste(
+        "Census data is currently stored temporarily.\n\n",
+        "In order to speed up performance, reduce API quota usage, and reduce",
+        "unnecessary network calls, please set up a persistent cache directory by",
+        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
+        "You may add this option, together with your API key, to your .Rprofile.\n\n"
+      )
+    )
+  }
+
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
     stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', or 'DA'")
@@ -809,9 +825,13 @@ cache_path <- function(...) {
   }
 
   if (!"cancensus.cache_path" %in% names(options())) {
-    # Cache internally by default.
-    options(cancensus.cache_path = paste0(system.file(package = "cancensus"),
-                                          "/cache"))
+    # Cache in tmp dir by default.
+    options(cancensus.cache_path = tempdir())
+    packageStartupMessage(paste("Census data is currently stored temporarily.\n\n",
+                  "In order to speed up performance, reduce API quota usage, and reduce",
+                  "unnecessary network calls, please set up a persistent cache directory by",
+                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
+                  "You may add this option, together with your API key, to your .Rprofile."))
   }
 }
 

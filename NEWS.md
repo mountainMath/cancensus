@@ -1,3 +1,8 @@
+# cancensus 0.1.7
+
+* Set default caching to `tempdir()`
+* Encourage users to set up local persistent caching using `options(cancensus.cache_path = 'XXX')`
+
 # cancensus 0.1.6
 
 * Fixed a bug where `read.csv` was incorrectly loading text data if `readr::read_csv` was not available 
