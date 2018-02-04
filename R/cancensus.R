@@ -818,7 +818,7 @@ cache_path <- function(...) {
   paste0(cache_dir, "/", ...)
 }
 
-.onLoad <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname) {
   if (!"cancensus.api_key" %in% names(options())) {
     # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
     options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
