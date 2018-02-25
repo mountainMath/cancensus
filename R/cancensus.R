@@ -207,20 +207,20 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
   }
 
 
-  if (length(vectors)>0) {
-   census_vectors <- names(result)[grep("^v_", names(result))]
-   census_vectors <- strsplit(census_vectors, ": ")
-   census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
-   names(census_vectors) <- c("Vector", "Detail")
-   attr(result, "census_vectors") <- census_vectors
-   if(labels == "short") {
-     if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
-     else {names(result) <- gsub(":.*","",names(result))}
-   }
-  }
-
   if (!is.na(geo_format) & geo_format=='sf') { # ensure sf format even if library not loaded
     result <- sf::st_as_sf(result)
+  }
+
+  if (length(vectors)>0) {
+    census_vectors <- names(result)[grep("^v_", names(result))]
+    census_vectors <- strsplit(census_vectors, ": ")
+    census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
+    names(census_vectors) <- c("Vector", "Detail")
+    attr(result, "census_vectors") <- census_vectors
+    if(labels == "short") {
+      if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+      else {names(result) <- gsub(":.*","",names(result))}
+    }
   }
 
   return(result)
