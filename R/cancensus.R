@@ -108,7 +108,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
   if (length(vectors)>0) {
     param_string <- paste0("regions=", regions,
                            # Convert vectors to a JSON list.
-                           "&vectors=", jsonlite::toJSON(vectors),
+                           "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
@@ -217,9 +217,10 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
     census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
     names(census_vectors) <- c("Vector", "Detail")
     attr(result, "census_vectors") <- census_vectors
-    if(labels == "short") {
+    if (labels == "short" | !is.null(names(vectors))) {
       if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
       else {names(result) <- gsub(":.*","",names(result))}
+      if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
     }
   }
 
