@@ -741,7 +741,7 @@ transform_geo <- function(g, level) {
   as_character=c("id","rpid","rgid","ruid","rguid","q")
   as_numeric=c("a","nrr")
   as_factor=c("t")
-  as_integer=c("pop","dw","hh","pop2")
+  as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
   as_character=append(append(as_character,as_numeric),as_integer)
 
   g <- g %>%
@@ -757,8 +757,8 @@ transform_geo <- function(g, level) {
   #change names
   #standard table
   name_change <- dplyr::data_frame(
-    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
-    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
+    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
+    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
   #geo uid name changes
   if (level=='DB') {
