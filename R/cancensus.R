@@ -11,8 +11,8 @@
 #' tool at \url{https://censusmapper.ca/api}.
 #'
 #' @param dataset A CensusMapper dataset identifier.
-#' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
@@ -56,10 +56,12 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
   result <- NULL
+
+  if (is.na(level)) level="Regions"
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -105,11 +107,12 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
 
   base_url="https://CensusMapper.ca/api/v1/"
   # load data variables
-  if (length(vectors)>0) {
+  if (length(vectors)>0 || is.na(geo_format)) {
     param_string <- paste0("regions=", regions,
                            # Convert vectors to a JSON list.
                            "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
+    if (is.na(geo_format) && geo_hierarchy==TRUE) param_string=paste0(param_string,"&geo_hierarchy=true")
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
@@ -145,6 +148,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
                           stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble()
       }
+      if (is.na(geo_format) && geo_hierarchy==TRUE) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
     } else {
@@ -153,7 +157,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       load(file = data_file)
     }
   } else if (is.na(geo_format)) {
-    stop('Neither vectors nor geo data specified, nothing to do.')
+    stop('Should never get here!')
   }
 
   if (!is.na(geo_format)) {
@@ -802,6 +806,9 @@ transform_geo <- function(g, level) {
     old_names[old_names==x]<-name_change$new[name_change$old==x]
   }
   names(g)<-old_names
+
+  to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
+  if (length(to_remove)>0) g <- g %>% dplyr::select(-one_of(to_remove))
 
   return(g)
 }
