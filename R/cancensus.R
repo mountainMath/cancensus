@@ -808,7 +808,7 @@ transform_geo <- function(g, level) {
   names(g)<-old_names
 
   to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
-  if (length(to_remove)>0) g <- g %>% dplyr::select(-one_of(to_remove))
+  if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
 
   return(g)
 }
