@@ -112,7 +112,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                            # Convert vectors to a JSON list.
                            "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
-    if (is.na(geo_format) && geo_hierarchy==TRUE) param_string=paste0(param_string,"&geo_hierarchy=true")
+    if (is.na(geo_format)) param_string=paste0(param_string,"&geo_hierarchy=true")
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
@@ -148,7 +148,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                           stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble()
       }
-      if (is.na(geo_format) && geo_hierarchy==TRUE) result <- result %>% transform_geo(level)
+      if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
     } else {
@@ -156,8 +156,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # Load `result` object from cache.
       load(file = data_file)
     }
-  } else if (is.na(geo_format)) {
-    stop('Should never get here!')
   }
 
   if (!is.na(geo_format)) {
