@@ -9,7 +9,7 @@ r:
 
 # Add GDAL, GEOS, proj, and units2 dependencies.
 before_install:
-  - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
+  - sudo add-apt-repository ppa:ubuntugis/ppa --yes
   - sudo apt-get --yes --force-yes update -qq
   - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
 
@@ -24,4 +24,3 @@ r_binary_packages:
   - stringi
   - tidyr
   - ggplot2
-  - sf
