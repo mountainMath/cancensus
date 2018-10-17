@@ -10,18 +10,18 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 2006; 2011; 2016).
 }
 \usage{
-get_census(dataset, level, regions, vectors = c(), geo_format = NA,
-  labels = "detailed", use_cache = TRUE, quiet = FALSE,
-  api_key = getOption("cancensus.api_key"))
+get_census(dataset, regions, level = NA, vectors = c(),
+  geo_format = NA, labels = "detailed", use_cache = TRUE,
+  quiet = FALSE, api_key = getOption("cancensus.api_key"))
 
 get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
 
-\item{level}{The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
-
 \item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
+
+\item{level}{The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.}
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
 

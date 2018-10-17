@@ -11,8 +11,8 @@
 #' tool at \url{https://censusmapper.ca/api}.
 #'
 #' @param dataset A CensusMapper dataset identifier.
-#' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
@@ -56,10 +56,12 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
   have_api_key <- !is.null(api_key)
   result <- NULL
+
+  if (is.na(level)) level="Regions"
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -105,11 +107,12 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
 
   base_url="https://CensusMapper.ca/api/v1/"
   # load data variables
-  if (length(vectors)>0) {
+  if (length(vectors)>0 || is.na(geo_format)) {
     param_string <- paste0("regions=", regions,
                            # Convert vectors to a JSON list.
-                           "&vectors=", jsonlite::toJSON(vectors),
+                           "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
+    if (is.na(geo_format)) param_string=paste0(param_string,"&geo_hierarchy=true")
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
@@ -145,6 +148,7 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
                           stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble()
       }
+      if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
     } else {
@@ -152,8 +156,6 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
       # Load `result` object from cache.
       load(file = data_file)
     }
-  } else if (is.na(geo_format)) {
-    stop('Neither vectors nor geo data specified, nothing to do.')
   }
 
   if (!is.na(geo_format)) {
@@ -207,20 +209,21 @@ get_census <- function (dataset, level, regions, vectors=c(), geo_format = NA, l
   }
 
 
-  if (length(vectors)>0) {
-   census_vectors <- names(result)[grep("^v_", names(result))]
-   census_vectors <- strsplit(census_vectors, ": ")
-   census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
-   names(census_vectors) <- c("Vector", "Detail")
-   attr(result, "census_vectors") <- census_vectors
-   if(labels == "short") {
-     if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
-     else {names(result) <- gsub(":.*","",names(result))}
-   }
-  }
-
   if (!is.na(geo_format) & geo_format=='sf') { # ensure sf format even if library not loaded
     result <- sf::st_as_sf(result)
+  }
+
+  if (length(vectors)>0) {
+    census_vectors <- names(result)[grep("^v_", names(result))]
+    census_vectors <- strsplit(census_vectors, ": ")
+    census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
+    names(census_vectors) <- c("Vector", "Detail")
+    attr(result, "census_vectors") <- census_vectors
+    if (labels == "short" | !is.null(names(vectors))) {
+      if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
+      else {names(result) <- gsub(":.*","",names(result))}
+      if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
+    }
   }
 
   return(result)
@@ -740,7 +743,7 @@ transform_geo <- function(g, level) {
   as_character=c("id","rpid","rgid","ruid","rguid","q")
   as_numeric=c("a","nrr")
   as_factor=c("t")
-  as_integer=c("pop","dw","hh","pop2")
+  as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
   as_character=append(append(as_character,as_numeric),as_integer)
 
   g <- g %>%
@@ -756,8 +759,8 @@ transform_geo <- function(g, level) {
   #change names
   #standard table
   name_change <- dplyr::data_frame(
-    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q"),
-    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags")
+    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
+    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
   #geo uid name changes
   if (level=='DB') {
@@ -801,6 +804,9 @@ transform_geo <- function(g, level) {
     old_names[old_names==x]<-name_change$new[name_change$old==x]
   }
   names(g)<-old_names
+
+  to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
+  if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
 
   return(g)
 }

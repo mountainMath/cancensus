@@ -33,7 +33,7 @@ library(cancensus)
 library(sf)
 # retrieve sf dataframe
 toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                         vectors="v_CA16_2397", level='CSD', quiet = TRUE, 
+                         vectors=c("median_hh_income"="v_CA16_2397"), level='CSD', quiet = TRUE, 
                          geo_format = 'sf', labels = 'short')
 ```
 
@@ -42,24 +42,19 @@ toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
 THe `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular colummn. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
 ```{r}
-plot(toronto[14], main = "Toronto Household Income by CSD")
+plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD")
 ```
 
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticles, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
 ```{r}
 plot(toronto[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)
-plot(toronto[toronto$v_CA16_2397 > 100000,14], col = "red", add = TRUE)
+plot(toronto[toronto$median_hh_income > 100000,14], col = "red", add = TRUE)
 ```
 
 # Maps with ggplot2
 
-Plotting `sf` objects with `ggplot2` is very straightforward with the built-in `geom_sf` layer. However, as of writing, this new geom is only available in the recent dev versions of the `ggplot2` package. The next scheduled CRAN release of `ggplot2` will fully incorporate `geom_sf`. It's easy to install the dev version from Github:
-
-```{r, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("tidyverse/ggplot2")
-```
+Plotting `sf` objects with `ggplot2` is very straightforward with the built-in `geom_sf` layer in the latest version of `ggplot2`. 
 
 `ggplot2` supports all types of simple features and can automatically read and align CRS across multiple layers, can automatically adjust aspect ratio, and will automatically draw a graticule for your map. The advantage of using `ggplot2` for static maps is the customization and flexibility offered by the `ggplot2` layer and geom system.
 
@@ -67,17 +62,18 @@ An example of a basic map.
 
 ```{r}
 library(ggplot2)
-ggplot(toronto) + geom_sf(aes(fill = v_CA16_2397))
+ggplot(toronto) + geom_sf(aes(fill = median_hh_income))
 ```
 
 Or a similar map with all of the trimmings: 
 
 ```{r}
-ggplot(toronto) + geom_sf(aes(fill = v_CA16_2397), colour = "grey") +
+ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
   scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
   theme(panel.grid = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank()) + 
+  coord_sf(datum=NA) +
   labs(title = "Median Household Income", subtitle = "Toronto Census Subdivisions, 2016 Census")
 ```
 
@@ -105,7 +101,7 @@ bins <- c(0, 30000,40000, 50000,60000, 70000,80000, 90000,100000, 110000, Inf)
 pal <- colorBin("RdYlBu", domain = toronto$v_CA16_2397, bins = bins)
 leaflet(toronto) %>% 
   addProviderTiles(providers$CartoDB.Positron) %>%
-  addPolygons(fillColor = ~pal(v_CA16_2397),
+  addPolygons(fillColor = ~pal(median_hh_income),
               color = "white",
               weight = 1,
               opacity = 1,
