@@ -3,4 +3,5 @@
 ^\.travis\.yml$
 ^cran-comments\.md$
 ^docs$
+^pkgdown$
 .*data_cache/

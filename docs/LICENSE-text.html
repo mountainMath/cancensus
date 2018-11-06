@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return Census variable names and labels as a tidy data frame (Deprecated) — census_vectors • cancensus</title>
+<title>License • cancensus</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,17 +25,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script>
+<link href="pkgdown.css" rel="stylesheet">
+<script src="pkgdown.js"></script>
 
 
 
-  <link href="../extra.css" rel="stylesheet">
+  <link href="extra.css" rel="stylesheet">
   
-<meta property="og:title" content="Return Census variable names and labels as a tidy data frame (Deprecated) — census_vectors" />
-
-<meta property="og:description" content="Return Census variable names and labels as a tidy data frame (Deprecated)" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:title" content="License" />
 
 
 
@@ -61,7 +58,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -72,7 +69,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">cancensus</a>
+        <a class="navbar-link" href="index.html">cancensus</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.8</span>
       </span>
     </div>
@@ -80,16 +77,16 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
+  <a href="index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="../articles/cancensus.html">Get started</a>
+  <a href="articles/cancensus.html">Get started</a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -99,12 +96,12 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
+      <a href="articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -125,60 +122,20 @@
       </header>
 
 <div class="row">
-  <div class="col-md-9 contents">
+  <div class="contents col-md-9">
     <div class="page-header">
-    <h1>Return Census variable names and labels as a tidy data frame (Deprecated)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/cancensus.R'><code>R/cancensus.R</code></a></small>
-    <div class="hidden name"><code>census_vectors.Rd</code></div>
+      <h1>License</h1>
     </div>
 
-    <div class="ref-description">
-    
-    <p>Return Census variable names and labels as a tidy data frame (Deprecated)</p>
-    
-    </div>
+<pre>YEAR: 2018
+COPYRIGHT HOLDER: Jens von Bergmann
 
-    <pre class="usage"><span class='fu'>census_vectors</span>(<span class='no'>x</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>A data frame, <code>sp</code> or <code>sf</code> object returned from
-<code>get_census</code> or similar.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A data frame with a column <code>variable</code> containing the truncated
-variable name, and a column <code>label</code> describing it.</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># Query census data with truncated labels:</span>
-<span class='no'>census_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>CMA</span><span class='kw'>=</span><span class='st'>"59933"</span>),
-                          <span class='kw'>vectors</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
-                          <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CSD'</span>, <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='st'>"sf"</span>, <span class='kw'>labels</span><span class='kw'>=</span><span class='st'>"short"</span>)
-
-<span class='co'># Get details for truncated vectors:</span>
-<span class='fu'>census_vectors</span>(<span class='no'>census_data</span>)
-<span class='co'># }</span></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+</pre>
 
   </div>
+
 </div>
+
 
       <footer>
       <div class="copyright">

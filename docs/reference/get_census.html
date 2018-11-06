@@ -18,13 +18,28 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
+  <link href="../extra.css" rel="stylesheet">
   
-  
+<meta property="og:title" content="Access to Canadian census data through the CensusMapper API — get_census" />
+
+<meta property="og:description" content="This function allows convenient access to Canadian census data and boundary
+files through the CensusMapper API. An API key is required to retrieve data." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -33,6 +48,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107390160-3');
+</script>
 
   </head>
 
@@ -47,8 +72,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">cancensus</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">cancensus</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.8</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -58,7 +87,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/cancensus.html">Get Started</a>
+  <a href="../articles/cancensus.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +105,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -88,6 +117,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -95,24 +125,28 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Access to Canadian census data through the CensusMapper API</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/cancensus.R'><code>R/cancensus.R</code></a></small>
+    <div class="hidden name"><code>get_census.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>This function allows convenient access to Canadian census data and boundary
 files through the CensusMapper API. An API key is required to retrieve data.</p>
     
+    </div>
 
-    <pre class="usage"><span class='fu'>get_census</span>(<span class='no'>dataset</span>, <span class='no'>level</span>, <span class='no'>regions</span>, <span class='kw'>vectors</span> <span class='kw'>=</span> <span class='fu'>c</span>(), <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>labels</span> <span class='kw'>=</span> <span class='st'>"detailed"</span>, <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>api_key</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"cancensus.api_key"</span>))
+    <pre class="usage"><span class='fu'>get_census</span>(<span class='no'>dataset</span>, <span class='no'>regions</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>vectors</span> <span class='kw'>=</span> <span class='fu'>c</span>(),
+  <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>labels</span> <span class='kw'>=</span> <span class='st'>"detailed"</span>, <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>api_key</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"cancensus.api_key"</span>))
 
 <span class='fu'>get_census_geometry</span>(<span class='no'>dataset</span>, <span class='no'>level</span>, <span class='no'>regions</span>, <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='st'>"sf"</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -120,12 +154,12 @@ files through the CensusMapper API. An API key is required to retrieve data.</p>
       <td><p>A CensusMapper dataset identifier.</p></td>
     </tr>
     <tr>
-      <th>level</th>
-      <td><p>The census aggregation level to retrieve. One of <code>"Regions"</code>, <code>"PR"</code>, <code>"CMA"</code>, <code>"CD"</code>, <code>"CSD"</code>, <code>"CT"</code> or <code>"DA"</code>.</p></td>
-    </tr>
-    <tr>
       <th>regions</th>
       <td><p>A named list of census regions to retrieve. Names must be valid census aggregation levels.</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>The census aggregation level to retrieve, defaults to <code>"Regions"</code>. One of <code>"Regions"</code>, <code>"PR"</code>, <code>"CMA"</code>, <code>"CD"</code>, <code>"CSD"</code>, <code>"CT"</code> or <code>"DA"</code>.</p></td>
     </tr>
     <tr>
       <th>vectors</th>
@@ -221,15 +255,18 @@ tool at <a href='https://censusmapper.ca/api'>https://censusmapper.ca/api</a>.</
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jens von Bergmann, Dmitry Shkolnik, Aaron Jacobs.</p>
+  <p>Developed by <a href='https://mountainmath.ca'>Jens von Bergmann</a>, <a href='https://dshkol.com'>Dmitry Shkolnik</a>, Aaron Jacobs.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

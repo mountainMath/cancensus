@@ -18,13 +18,27 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
+  <link href="../extra.css" rel="stylesheet">
   
-  
+<meta property="og:title" content="Query the CensusMapper API for available vectors for a given dataset. — list_census_vectors" />
+
+<meta property="og:description" content="Query the CensusMapper API for available vectors for a given dataset." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -33,6 +47,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107390160-3');
+</script>
 
   </head>
 
@@ -47,8 +71,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">cancensus</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">cancensus</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.8</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -58,7 +86,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/cancensus.html">Get Started</a>
+  <a href="../articles/cancensus.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +104,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -88,6 +116,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -95,19 +124,23 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Query the CensusMapper API for available vectors for a given dataset.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/cancensus.R'><code>R/cancensus.R</code></a></small>
+    <div class="hidden name"><code>list_census_vectors.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Query the CensusMapper API for available vectors for a given dataset.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>list_census_vectors</span>(<span class='no'>dataset</span>, <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -142,20 +175,20 @@ all labels within its hierarchical structure.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># List all vectors for a given Census dataset in CensusMapper</span>
-<span class='fu'>list_census_vectors</span>(<span class='st'>'CA16'</span>)</div><div class='output co'>#&gt; # A tibble: 6,611 x 7
-#&gt;    vector     type   label     units  parent_vector aggregation details        
-#&gt;    &lt;chr&gt;      &lt;fct&gt;  &lt;chr&gt;     &lt;fct&gt;  &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;          
-#&gt;  1 v_CA16_401 Total  Populati… Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt;  2 v_CA16_402 Total  Populati… Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt;  3 v_CA16_403 Total  Populati… Number &lt;NA&gt;          Average of… CA 2016 Census…
-#&gt;  4 v_CA16_404 Total  Total pr… Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt;  5 v_CA16_405 Total  Private … Number v_CA16_404    Additive    CA 2016 Census…
-#&gt;  6 v_CA16_406 Total  Populati… Ratio  &lt;NA&gt;          Average of… CA 2016 Census…
-#&gt;  7 v_CA16_407 Total  Land are… Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt;  8 v_CA16_1   Total  Total - … Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt;  9 v_CA16_2   Male   Total - … Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt; 10 v_CA16_3   Female Total - … Number &lt;NA&gt;          Additive    CA 2016 Census…
-#&gt; # ... with 6,601 more rows</div></pre>
+<span class='fu'>list_census_vectors</span>(<span class='st'>'CA16'</span>)</div><div class='output co'>#&gt; # A tibble: 6,623 x 7
+#&gt;    vector  type   label      units parent_vector aggregation  details          
+#&gt;    &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;            
+#&gt;  1 v_CA16… Total  Populatio… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt;  2 v_CA16… Total  Populatio… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt;  3 v_CA16… Total  Populatio… Numb… &lt;NA&gt;          Average of … CA 2016 Census; …
+#&gt;  4 v_CA16… Total  Total pri… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt;  5 v_CA16… Total  Private d… Numb… v_CA16_404    Additive     CA 2016 Census; …
+#&gt;  6 v_CA16… Total  Populatio… Ratio &lt;NA&gt;          Average of … CA 2016 Census; …
+#&gt;  7 v_CA16… Total  Land area… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt;  8 v_CA16… Total  Total - A… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt;  9 v_CA16… Male   Total - A… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt; 10 v_CA16… Female Total - A… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+#&gt; # ... with 6,613 more rows</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -172,15 +205,18 @@ all labels within its hierarchical structure.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jens von Bergmann, Dmitry Shkolnik, Aaron Jacobs.</p>
+  <p>Developed by <a href='https://mountainmath.ca'>Jens von Bergmann</a>, <a href='https://dshkol.com'>Dmitry Shkolnik</a>, Aaron Jacobs.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

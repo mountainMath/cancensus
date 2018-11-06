@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>All news • cancensus</title>
+<title>Changelog • cancensus</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,24 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
+  <link href="../extra.css" rel="stylesheet">
   
-  
+<meta property="og:title" content="Changelog" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -33,6 +44,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107390160-3');
+</script>
 
   </head>
 
@@ -47,8 +68,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">cancensus</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">cancensus</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.8</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -58,7 +83,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/cancensus.html">Get Started</a>
+  <a href="../articles/cancensus.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +101,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -88,6 +113,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -95,21 +121,147 @@
       
       </header>
 
-      <div class="row">
-
-  <div class="col-md-9">
+<div class="row">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Change log <small>All releases</small></h1>
+      <h1>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/mountainMath/cancensus/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="contents">
-    </div>
+    <div id="cancensus-0-1-8" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-8" class="anchor"></a>cancensus 0.1.8</h2>
+<div id="major-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Remove dependency on development versions of <code>sf</code> and <code>ggplot2</code> packages</li>
+<li>Add feature allowing for named vector retrieval</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor Changes</h3>
+<ul>
+<li>Vignette updates</li>
+<li>Calls that retrieve only geography will now return geographic hierarchy information as well</li>
+<li>Small tweaks that make it easier to do 2011-2016 intra-census comparisons</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h3>
+<ul>
+<li>Fix labels when geo format is <code>sf</code>
+</li>
+<li>Remove some unnecessary code for geographic hierarchies</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-1-7" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-7" class="anchor"></a>cancensus 0.1.7</h2>
+<div id="major-changes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-1" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Set default caching to <code>tempdir()</code>
+</li>
+<li>Encourage users to set up local persistent caching using <code>options(cancensus.cache_path = 'XXX')</code>
+</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-1-6" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-6" class="anchor"></a>cancensus 0.1.6</h2>
+<div id="major-changes-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-2" class="anchor"></a>Major changes</h3>
+<ul>
+<li>First released on CRAN</li>
+</ul>
+</div>
+<div id="minor-changes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>Ensured that data frames were <code>sf</code>-class data frames if option <code>sf</code> was selected for spatial data.</li>
+</ul>
+</div>
+<div id="bug-fixes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h3>
+<ul>
+<li>Fixed a bug where <code>read.csv</code> was incorrectly loading text data if <code><a href="http://www.rdocumentation.org/packages/readr/topics/read_delim">readr::read_csv</a></code> was not available</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-1-5" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-5" class="anchor"></a>cancensus 0.1.5</h2>
+<div id="major-changes-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-3" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
+<li>Added pkgdown documentation</li>
+<li>New vignettes - <em>cancensus</em> and <em>Making maps with cancensus</em>
+</li>
+</ul>
+</div>
+<div id="minor-changes-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>Default behaviour for <code><a href="../reference/list_census_vectors.html">list_census_vectors()</a></code> changed to have <code>quiet = TRUE</code>
+</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-1-0" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-0" class="anchor"></a>cancensus 0.1.0</h2>
+<div id="major-changes-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-4" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Added vector and geography search and discovery capabilities</li>
+<li>Improved performance</li>
+<li>Error and API issue messaging</li>
+</ul>
+</div>
+<div id="minor-changes-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes-3" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>Reduced package dependencies</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-0-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-0-1" class="anchor"></a>cancensus 0.0.1</h2>
+<div id="major-changes-5" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-5" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Initial release</li>
+</ul>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#cancensus-0-1-8">0.1.8</a></li>
+        <li><a href="#cancensus-0-1-7">0.1.7</a></li>
+        <li><a href="#cancensus-0-1-6">0.1.6</a></li>
+        <li><a href="#cancensus-0-1-5">0.1.5</a></li>
+        <li><a href="#cancensus-0-1-0">0.1.0</a></li>
+        <li><a href="#cancensus-0-0-1">0.0.1</a></li>
       </ul>
     </div>
   </div>
@@ -118,15 +270,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jens von Bergmann, Dmitry Shkolnik, Aaron Jacobs.</p>
+  <p>Developed by <a href='https://mountainmath.ca'>Jens von Bergmann</a>, <a href='https://dshkol.com'>Dmitry Shkolnik</a>, Aaron Jacobs.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

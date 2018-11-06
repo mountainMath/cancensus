@@ -1,3 +1,10 @@
+## Update - v.0.1.8
+
+Minor update of package. Changes include: 
+* New minor usability features that do not change package internals
+* Addition of minor fixes 
+* Replacement of unnecessary references to development-version packages in vignettes where CRAN versions now exist
+
 ## Update - v.0.1.7
 
 After initial acceptance, CRAN checks identified an issue stemming from the package using a local cache that writes to the user library rather than R's temporary director. Kurt Hornik advised to fix this and to submit an update. 

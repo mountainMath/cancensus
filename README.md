@@ -108,3 +108,19 @@ A BibTeX entry for LaTeX users is
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```
+
+### Statistics Canada Attribution
+
+Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:
+
+```
+Acknowledgment of Source
+
+(a) You shall include and maintain the following notice on all licensed rights of the Information:
+
+  - Source: Statistics Canada, name of product, reference date. Reproduced and distributed on an "as is" basis with the permission of Statistics Canada.
+ 
+(b) Where any Information is contained within a Value-added Product, you shall include on such Value-added Product the following notice:
+
+  - Adapted from Statistics Canada, name of product, reference date. This does not constitute an endorsement by Statistics Canada of this product.
+```

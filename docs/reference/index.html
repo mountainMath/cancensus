@@ -18,13 +18,24 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
+  <link href="../extra.css" rel="stylesheet">
   
-  
+<meta property="og:title" content="Function reference" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -33,6 +44,16 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107390160-3');
+</script>
 
   </head>
 
@@ -47,8 +68,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">cancensus</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">cancensus</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.8</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -58,7 +83,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/cancensus.html">Get Started</a>
+  <a href="../articles/cancensus.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +101,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -88,6 +113,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -95,106 +121,102 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;0.1.7</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="as_census_region_list.html">as_census_region_list</a></code> </p>
-          </td>
-          <td><p>Convert a (suitably filtered) data frame from
-<code><a href='reference/list_census_regions.html'>list_census_regions</a></code> to a list suitable for passing to
-<code><a href='reference/get_census.html'>get_census</a></code>.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="census_vectors.html">census_vectors</a></code> </p>
-          </td>
-          <td><p>Return Census variable names and labels as a tidy data frame (Deprecated)</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="child_census_vectors.html">child_census_vectors</a></code> </p>
-          </td>
-          <td><p>List all child variables from vector hierarchical based on a (sub-)list of census
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="as_census_region_list.html">as_census_region_list()</a></code> </p>
+        </td>
+        <td><p>Convert a (suitably filtered) data frame from
+<code>list_census_regions</code> to a list suitable for passing to
+<code>get_census</code>.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="census_vectors.html">census_vectors()</a></code> </p>
+        </td>
+        <td><p>Return Census variable names and labels as a tidy data frame (Deprecated)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="child_census_vectors.html">child_census_vectors()</a></code> </p>
+        </td>
+        <td><p>List all child variables from vector hierarchical based on a (sub-)list of census
 variables returned by
 <code>list_census_vectors</code> or <code>search_census_vectors</code>.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="get_census.html">get_census</a></code> <code><a href="get_census.html">get_census_geometry</a></code> </p>
-          </td>
-          <td><p>Access to Canadian census data through the CensusMapper API</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="label_vectors.html">label_vectors</a></code> </p>
-          </td>
-          <td><p>Return Census variable names and labels as a tidy data frame</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="list_census_datasets.html">list_census_datasets</a></code> </p>
-          </td>
-          <td><p>Query the CensusMapper API for available datasets.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="list_census_regions.html">list_census_regions</a></code> </p>
-          </td>
-          <td><p>Query the CensusMapper API for available regions in a given dataset.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="list_census_vectors.html">list_census_vectors</a></code> </p>
-          </td>
-          <td><p>Query the CensusMapper API for available vectors for a given dataset.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="parent_census_vectors.html">parent_census_vectors</a></code> </p>
-          </td>
-          <td><p>List all parent variables from vector hierarchical based on a (sub-)list of census
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_census.html">get_census()</a></code> <code><a href="get_census.html">get_census_geometry()</a></code> </p>
+        </td>
+        <td><p>Access to Canadian census data through the CensusMapper API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="label_vectors.html">label_vectors()</a></code> </p>
+        </td>
+        <td><p>Return Census variable names and labels as a tidy data frame</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="list_census_datasets.html">list_census_datasets()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for available datasets.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="list_census_regions.html">list_census_regions()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for available regions in a given dataset.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="list_census_vectors.html">list_census_vectors()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for available vectors for a given dataset.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="parent_census_vectors.html">parent_census_vectors()</a></code> </p>
+        </td>
+        <td><p>List all parent variables from vector hierarchical based on a (sub-)list of census
 variables returned by
 <code>list_census_vectors</code> or <code>search_census_vectors</code>.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="search_census_regions.html">search_census_regions</a></code> </p>
-          </td>
-          <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="search_census_vectors.html">search_census_vectors</a></code> </p>
-          </td>
-          <td><p>Query the CensusMapper API for vectors with descriptions matching a searchterm.</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="search_census_regions.html">search_census_regions()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for vectors with descriptions matching a searchterm.</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -207,15 +229,18 @@ variables returned by
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jens von Bergmann, Dmitry Shkolnik, Aaron Jacobs.</p>
+  <p>Developed by <a href='https://mountainmath.ca'>Jens von Bergmann</a>, <a href='https://dshkol.com'>Dmitry Shkolnik</a>, Aaron Jacobs.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

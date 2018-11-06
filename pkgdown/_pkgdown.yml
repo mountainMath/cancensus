@@ -1,0 +1,14 @@
+pandoc: 2.2.1
+pkgdown: 1.1.0
+pkgdown_sha: ~
+articles:
+  Making_maps_with_cancensus: Making_maps_with_cancensus.html
+  cancensus: cancensus.html
+authors:
+  Jens von Bergmann:
+    href: https://mountainmath.ca
+  Dmitry Shkolnik:
+    href: https://dshkol.com
+template:
+  params:
+    ganalytics: UA-107390160-3
