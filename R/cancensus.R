@@ -105,7 +105,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
   }
 
-  base_url="https://CensusMapper.ca/api/v1/"
+  base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
     param_string <- paste0("regions=", regions,
@@ -538,14 +538,15 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
+      dplyr::as_data_frame(utils::read.csv(textConnection(content), colClasses = 'character',stringsAsFactors = FALSE))
     } else {
-      readr::read_csv(content)
+      readr::read_csv(content,col_types = readr::cols(.default='c'))
     }
     result <- dplyr::select(result, region = .data$geo_uid, .data$name,
                             level = .data$type, pop = .data$population,
                             municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)
+                            .data$CD_UID, .data$PR_UID)  %>%
+      dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
