@@ -71,7 +71,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
     stop("regions must be composed of valid census aggregation levels.")
   } else {
-    regions <- jsonlite::toJSON(regions)
+    regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
   # Remind to set cache directory
