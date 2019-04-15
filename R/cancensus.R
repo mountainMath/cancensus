@@ -787,7 +787,7 @@ transform_geo <- function(g, level) {
   }
   if (level=='CSD') {
     name_change <- name_change %>% rbind(
-      c('rpid','CSD_UID'),
+      c('rpid','CD_UID'),
       c('rgid','PR_UID'),
       c('ruid','CMA_UID'))
   }
