@@ -764,6 +764,10 @@ transform_geo <- function(g, level) {
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
   #geo uid name changes
+  if (level=='Regions') {
+    l=g$t %>% unique()
+    if (length(l)==1) level=l
+  }
   if (level=='DB') {
     name_change <- name_change %>% rbind(
       c('rpid','DA_UID'),
