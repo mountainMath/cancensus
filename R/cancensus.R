@@ -128,7 +128,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..")
+      na_strings <- c("x", "F", "...", "..", "-")
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
