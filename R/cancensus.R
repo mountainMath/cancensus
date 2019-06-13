@@ -128,25 +128,38 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..", "-")
+      na_strings <- c("x", "F", "...", "..", "-","N")
+
+      as.num = function(x, na.strings = "NA") {
+        stopifnot(is.character(x))
+        na = x %in% na.strings
+        x[na] = 0
+        x = as.numeric(x)
+        x[na] = NA_real_
+        x
+      }
+
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           readr::read_csv(na = na_strings,
-                          col_types = list(.default = "d", GeoUID = "c",
-                                           Type = "c", "Region Name" = "c")) %>%
+                          col_types = list(.default = "c")) %>%
+          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                             names(.)[grepl("v_",names(.))]),
+                           as.num,na.strings=na_strings) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
-          utils::read.csv(na = na_strings,
-                          colClasses = c("GeoUID" = "character",
-                                         "Type" = "factor",
-                                         "Region Name" = "factor"),
-                          stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble()
+          utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
+          dplyr::as_tibble() %>%
+          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                             names(.)[grepl("v_",names(.))]),
+                           as.num,na.strings=na_strings) %>%
+          dplyr::mutate(Type = as.factor(.data$Type),
+                        `Region Name` = as.factor(.data$`Region Name`))
       }
       if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
