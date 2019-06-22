@@ -420,6 +420,8 @@ parent_census_vectors <- function(vector_list){
 #' @param vector_list The list of vectors to be used
 #' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
 #' i.e. vectors that don't have children
+#' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
+#' child census vectors..
 #'
 #' @export
 #'
@@ -429,16 +431,18 @@ parent_census_vectors <- function(vector_list){
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   child_census_vectors(TRUE)
-child_census_vectors <- function(vector_list, leaves_only=FALSE){
+child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
-  n=0
+  n <- 0
+  child_level <- 1
   if (!is.null(dataset)) {
     vector_list <-
       list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
       dplyr::filter(.data$parent_vector %in% base_list$vector) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
-    while (n!=nrow(vector_list)) {
+    while (n!=nrow(vector_list) && (is.na(max_level) || child_level<max_level)) {
+      child_level <- child_level+1
       n=nrow(vector_list)
       new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
         dplyr::filter(.data$parent_vector %in% vector_list$vector)
