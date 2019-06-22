@@ -5,3 +5,5 @@
 ^docs$
 ^pkgdown$
 .*data_cache/
+^doc$
+^Meta$
