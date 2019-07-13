@@ -7,3 +7,4 @@
 .*data_cache/
 ^doc$
 ^Meta$
+R/hex_sticker.R
