@@ -251,8 +251,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 #' vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
 #'                                level='CSD', geo_format = "sf")
 #'}
-get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...) {
-  return(get_census(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
+get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
+  return(get_census(dataset=dataset, regions=regions, level=level, vectors=c(), geo_format=geo_format, ...))
 }
 
 # This is the set of valid census aggregation levels, also used in the named

@@ -14,7 +14,8 @@ get_census(dataset, regions, level = NA, vectors = c(),
   geo_format = NA, labels = "detailed", use_cache = TRUE,
   quiet = FALSE, api_key = getOption("cancensus.api_key"))
 
-get_census_geometry(dataset, level, regions, geo_format = "sf", ...)
+get_census_geometry(dataset, regions, level = NA, geo_format = "sf",
+  ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
