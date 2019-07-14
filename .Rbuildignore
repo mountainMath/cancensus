@@ -5,4 +5,3 @@
 ^docs$
 ^pkgdown$
 .*data_cache/
-R/hex_sticker.R
