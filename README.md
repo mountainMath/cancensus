@@ -4,6 +4,9 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
 
+
+<a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
+
 Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
@@ -96,7 +99,7 @@ We'd love to feature examples of work or projects that use cancensus.
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.1.6.
+  access, retrieve, and work with Canadian Census data and geography. v0.1.8.
 
 A BibTeX entry for LaTeX users is
 ```
@@ -104,7 +107,7 @@ A BibTeX entry for LaTeX users is
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography},
     year = {2017},
-    note = {R package version 0.1.6},
+    note = {R package version 0.1.8},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```
