@@ -4,9 +4,10 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
 
-Access, retrieve, and work with Canadian Census data and geography. 
 
-<a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cansim logo" align="right" width = "25%" height = "25%"/></a>
+<a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
+
+Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
 * Convenience tools for searching for and working with Census regions and variable hierarchies
