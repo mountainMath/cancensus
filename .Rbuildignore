@@ -7,3 +7,5 @@
 .*data_cache/
 ^doc$
 ^Meta$
+images
+images/*

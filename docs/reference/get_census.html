@@ -202,9 +202,7 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>get_census_geometry</code> is a convenience function
-that retrieves only Census geography boundaries.</p>
-<p>For help selecting regions and vectors, see <code><a href='list_census_regions.html'>list_census_regions</a></code>
+    <p>For help selecting regions and vectors, see <code><a href='list_census_regions.html'>list_census_regions</a></code>
 and <code><a href='list_census_vectors.html'>list_census_vectors</a></code>, or check out the interactive selection
 tool at <a href='https://censusmapper.ca/api'>https://censusmapper.ca/api</a>.</p>
     
@@ -235,10 +233,6 @@ tool at <a href='https://censusmapper.ca/api'>https://censusmapper.ca/api</a>.</
 
 <span class='co'># Get details for truncated vectors:</span>
 <span class='fu'><a href='label_vectors.html'>label_vectors</a></span>(<span class='no'>census_data</span>)
-<span class='co'># }</span><span class='co'># NOT RUN {</span>
-<span class='co'># Query the API for census subdivision boundary geometry within Vancouver.</span>
-<span class='no'>vc_csds</span> <span class='kw'>&lt;-</span> <span class='fu'>get_census_geometry</span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>CMA</span><span class='kw'>=</span><span class='st'>"59933"</span>),
-                               <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CSD'</span>, <span class='kw'>geo_format</span> <span class='kw'>=</span> <span class='st'>"sf"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

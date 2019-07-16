@@ -3,9 +3,6 @@
 #' This function allows convenient access to Canadian census data and boundary
 #' files through the CensusMapper API. An API key is required to retrieve data.
 #'
-#' \code{get_census_geometry} is a convenience function
-#' that retrieves only Census geography boundaries.
-#'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
 #' tool at \url{https://censusmapper.ca/api}.
@@ -244,14 +241,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
 #' @rdname get_census
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Query the API for census subdivision boundary geometry within Vancouver.
-#' vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
-#'                                level='CSD', geo_format = "sf")
-#'}
+#' @keywords internal
 get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
+  .Deprecated("get_census")
   return(get_census(dataset=dataset, regions=regions, level=level, vectors=c(), geo_format=geo_format, ...))
 }
 
