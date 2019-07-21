@@ -100,7 +100,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#cancensus" class="anchor"></a>cancensus</h1></div>
 
-<p>Access, retrieve, and work with Canadian Census data and geography.</p>
+<p><a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width="25%" height="25%"></a> Access, retrieve, and work with Canadian Census data and geography.</p>
 <ul>
 <li>Download data and Census geography in tidy and analysis-ready format</li>
 <li>Convenience tools for searching for and working with Census regions and variable hierarchies</li>
@@ -196,13 +196,13 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <a href="#cite-cancensus" class="anchor"></a>Cite <strong>cancensus</strong>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to access, retrieve, and work with Canadian Census data and geography. v0.1.6.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.2.0.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography},
-    year = {2017},
-    note = {R package version 0.1.6},
+    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
+    year = {2019},
+    note = {R package version 0.2.0},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
 </div>
@@ -210,7 +210,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <h3 class="hasAnchor">
 <a href="#related-packages" class="anchor"></a>Related packages</h3>
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data">socio-economic data repository</a> with thousands of data tables available for public access.</p>
-<p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data.</p>
+<p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus">Github</a>.</p>
 <p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
 </div>
 <div id="statistics-canada-attribution" class="section level3">

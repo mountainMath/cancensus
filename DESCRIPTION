@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
-Title: Canadian Census Data and Geography from the 'CensusMapper' API
-Version: 0.1.8
+Title: Access, retrieve, and work with Canadian Census data and geography
+Version: 0.2.0
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),

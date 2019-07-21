@@ -4,6 +4,8 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
 
+
+<a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
@@ -95,16 +97,16 @@ We'd love to feature examples of work or projects that use cancensus.
 
 If you wish to cite cancensus:
 
-  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2017). cancensus: an R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.1.6.
+  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to
+  access, retrieve, and work with Canadian Census data and geography. v0.2.0.
 
 A BibTeX entry for LaTeX users is
 ```
   @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography},
-    year = {2017},
-    note = {R package version 0.1.6},
+    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
+    year = {2019},
+    note = {R package version 0.2.0},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```
@@ -112,7 +114,7 @@ A BibTeX entry for LaTeX users is
 
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. 
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). 
 
 Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
 

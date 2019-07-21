@@ -28,7 +28,7 @@ On the other hand, `sp` has been around for a long time with development startin
 
 **cancensus** retrieves Census geographic data as GeoJSON objects and then converts them into either `sp` or `sf` objects depending on the `geo_format` parameter input. The examples in this vignette assume `sf` class geography.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=TRUE}
 library(cancensus)
 library(sf)
 # retrieve sf dataframe
@@ -39,15 +39,15 @@ toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
 
 # Maps with base R graphics
 
-THe `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular colummn. In this case, the household income variable we selected is stored in the `median_hh_income` column. Plotting it is easy. 
+THe `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular colummn. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
-```{r}
+```{r, eval=TRUE}
 plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD")
 ```
 
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticles, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
-```{r}
+```{r, eval = TRUE}
 plot(toronto[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)
 plot(toronto[toronto$median_hh_income > 100000,14], col = "red", add = TRUE)
 ```
@@ -60,14 +60,14 @@ Plotting `sf` objects with `ggplot2` is very straightforward with the built-in `
 
 An example of a basic map.
 
-```{r}
+```{r, eval = TRUE}
 library(ggplot2)
 ggplot(toronto) + geom_sf(aes(fill = median_hh_income))
 ```
 
 Or a similar map with all of the trimmings: 
 
-```{r}
+```{r, eval = TRUE}
 ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
   scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
   theme(panel.grid = element_blank(),
@@ -84,7 +84,8 @@ The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 # This chunk disables leaflet output in remaining chunks for PDF vignettes
-if(Sys.getenv("COMPILE_VIG")==FALSE) {knitr::opts_chunk$set(eval = FALSE)}
+if(Sys.getenv("COMPILE_VIG")!="TRUE") {
+  knitr::opts_chunk$set(eval = FALSE)}
 ```
 ```{r, message = FALSE}
 library(leaflet)
@@ -97,7 +98,7 @@ Adding colour ramps and additional interactivity takes a little bit more work bu
 
 ```{r}
 bins <- c(0, 30000,40000, 50000,60000, 70000,80000, 90000,100000, 110000, Inf)
-pal <- colorBin("RdYlBu", domain = toronto$median_hh_income, bins = bins)
+pal <- colorBin("RdYlBu", domain = toronto$v_CA16_2397, bins = bins)
 leaflet(toronto) %>% 
   addProviderTiles(providers$CartoDB.Positron) %>%
   addPolygons(fillColor = ~pal(median_hh_income),
@@ -106,5 +107,3 @@ leaflet(toronto) %>%
               opacity = 1,
               fillOpacity = 0.65)
 ```
-
-
