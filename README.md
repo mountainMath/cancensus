@@ -6,6 +6,8 @@
 
 
 <a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
+
+
 Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
@@ -99,6 +101,7 @@ If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to
   access, retrieve, and work with Canadian Census data and geography. v0.2.0.
+
 
 A BibTeX entry for LaTeX users is
 ```
