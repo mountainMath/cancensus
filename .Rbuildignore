@@ -10,3 +10,4 @@ R/hex_sticker.R
 ^Meta$
 images
 images/*
+card_fix.sh
