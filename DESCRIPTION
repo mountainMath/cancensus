@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
-Title: Canadian Census Data and Geography from the 'CensusMapper' API
-Version: 0.1.8
+Title: Access, Retrieve, and Work with Canadian Census Data and Geography
+Version: 0.2.0
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
@@ -24,7 +24,7 @@ Imports: digest (>= 0.1),
     httr (>= 1.0.0),
     jsonlite (>= 1.0),
     rlang
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: knitr,
     ggplot2,
     leaflet,
