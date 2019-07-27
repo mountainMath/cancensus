@@ -13,7 +13,7 @@ Access, retrieve, and work with Canadian Census data and geography.
 * Download data and Census geography in tidy and analysis-ready format
 * Convenience tools for searching for and working with Census regions and variable hierarchies
 * Provides Census geography in multiple R spatial formats
-* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdividision, Census Tract, and Dissemination Areas
+* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas
 * Provides up-to-date data for the 2016, 2011, and 2006 Censuses
 
 ### Reference
@@ -41,7 +41,7 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 
 ### Local Cache
 
-For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 ### Currently available datasets
 

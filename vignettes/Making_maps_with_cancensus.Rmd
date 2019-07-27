@@ -39,13 +39,13 @@ toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
 
 # Maps with base R graphics
 
-THe `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular colummn. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
+The `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular column. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
 ```{r}
 plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD")
 ```
 
-You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticles, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
+You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticules, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
 ```{r}
 plot(toronto[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)

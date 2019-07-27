@@ -25,7 +25,7 @@ library(dplyr)
 
 The **cancensus** package was developed to provide users with a way to access Canadian Census in a programmatic way following good [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf) practices. While the structure and data in **cancensus** is unique to Canadian Census data, this package is inspired in part by [tidycensus](https://github.com/walkerke/tidycensus), a package to interface with the US Census Bureau data APIs. 
 
-As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://twitter.com/vb_jens), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publically available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
+As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://twitter.com/vb_jens), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publicly available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
 
 ## API Key
 
@@ -56,7 +56,7 @@ options(cancensus.api_key = "your_api_key")
 options(cancensus.cache_path = "custom cache path")
 ```
 
-For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 Setting the API key and the cache path in the `.Rprofile` facilitates the ability to share code without exposing API keys or relying on the local directory structure. 
 
@@ -163,7 +163,7 @@ For each variable (vector) in that Census dataset, this shows:
 * Type: variables are provided as aggregates of female responses, male responses, or total (male+female) responses
 * Label: detailed variable name
 * Units: provides information about whether the variable represents a count integer, a ratio, a percentage, or a currency figure
-* Parent_vecctor: shows the immediate hierarchical parent category for that variable, where appropriate
+* Parent_vector: shows the immediate hierarchical parent category for that variable, where appropriate
 * Aggregation: indicates how the variable should be aggregated with others, whether it is additive or if it is an average of another variable
 * Description: a rough description of a variable based on its hierarchical structure. This is constructed by **cancensus** by recursively traversing the labels for every variable's hierarchy, and facilitates searching for specific variables using key terms. 
 
@@ -183,7 +183,7 @@ Knowing exactly how to spell the right variable can be tricky, but this search f
 search_census_vectors("Austraian", dataset = 'CA16')
 ```
 
-## Managing variable hiararchy 
+## Managing variable hierarchy 
 
 Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using `parent_census_vectors` on a vector list.  
 
@@ -193,7 +193,7 @@ list_census_vectors("CA16") %>%
   parent_census_vectors()
 ```
 
-Sometimes we want to traverse the hierarchy in the oppposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so. 
+Sometimes we want to traverse the hierarchy in the opposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so. 
 
 ```{r child_vectors1, message=FALSE, warning=FALSE}
 # Find the variable indicating the Northern European aggregate
