@@ -8,6 +8,13 @@
 
 <title>Changelog • cancensus</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -33,6 +40,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 <meta property="og:title" content="Changelog" />
+
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -72,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -130,20 +140,44 @@
       <small>Source: <a href='https://github.com/mountainMath/cancensus/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="cancensus-0-1-8" class="section level2">
+    <div id="cancensus-0-2-0" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cancensus-0-1-8" class="anchor"></a>cancensus 0.1.8</h2>
+<a href="#cancensus-0-2-0" class="anchor"></a>cancensus 0.2.0</h2>
 <div id="major-changes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#major-changes" class="anchor"></a>Major changes</h3>
+<ul>
+<li>Added a <code>max_leaves_option</code> for the <code>search_census_vectors</code> function. Adds functionality to set maximum depth for child census vectors, i.e. <code>max_level=NA</code> as an additional parameter. Then e.g. <code>max_level=1</code> would only get direct children and no grandchildren.</li>
+<li>Resolved issues with mislabelled CD UID for CSD level data</li>
+<li>Improve reliability of character/numeric alignments for geographic UIDS</li>
+<li>
+<code>get_census_geography</code> is now soft deprecated and rolled into the standard <code>get_census</code> with parameters</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>Minor documentation improvements</li>
+<li>Soften dependency on <code>readr</code> package</li>
+<li>Allow for search of internal CensusMapper variables</li>
+</ul>
+</div>
+</div>
+    <div id="cancensus-0-1-8" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancensus-0-1-8" class="anchor"></a>cancensus 0.1.8</h2>
+<div id="major-changes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes-1" class="anchor"></a>Major changes</h3>
 <ul>
 <li>Remove dependency on development versions of <code>sf</code> and <code>ggplot2</code> packages</li>
 <li>Add feature allowing for named vector retrieval</li>
 </ul>
 </div>
-<div id="minor-changes" class="section level3">
+<div id="minor-changes-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor Changes</h3>
+<a href="#minor-changes-1" class="anchor"></a>Minor Changes</h3>
 <ul>
 <li>Vignette updates</li>
 <li>Calls that retrieve only geography will now return geographic hierarchy information as well</li>
@@ -163,9 +197,9 @@
     <div id="cancensus-0-1-7" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancensus-0-1-7" class="anchor"></a>cancensus 0.1.7</h2>
-<div id="major-changes-1" class="section level3">
+<div id="major-changes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#major-changes-1" class="anchor"></a>Major changes</h3>
+<a href="#major-changes-2" class="anchor"></a>Major changes</h3>
 <ul>
 <li>Set default caching to <code><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir()</a></code>
 </li>
@@ -177,16 +211,16 @@
     <div id="cancensus-0-1-6" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancensus-0-1-6" class="anchor"></a>cancensus 0.1.6</h2>
-<div id="major-changes-2" class="section level3">
+<div id="major-changes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#major-changes-2" class="anchor"></a>Major changes</h3>
+<a href="#major-changes-3" class="anchor"></a>Major changes</h3>
 <ul>
 <li>First released on CRAN</li>
 </ul>
 </div>
-<div id="minor-changes-1" class="section level3">
+<div id="minor-changes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>Ensured that data frames were <code>sf</code>-class data frames if option <code>sf</code> was selected for spatial data.</li>
 </ul>
@@ -202,9 +236,9 @@
     <div id="cancensus-0-1-5" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancensus-0-1-5" class="anchor"></a>cancensus 0.1.5</h2>
-<div id="major-changes-3" class="section level3">
+<div id="major-changes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#major-changes-3" class="anchor"></a>Major changes</h3>
+<a href="#major-changes-4" class="anchor"></a>Major changes</h3>
 <ul>
 <li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Added pkgdown documentation</li>
@@ -212,9 +246,9 @@
 </li>
 </ul>
 </div>
-<div id="minor-changes-2" class="section level3">
+<div id="minor-changes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-3" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>Default behaviour for <code><a href="../reference/list_census_vectors.html">list_census_vectors()</a></code> changed to have <code>quiet = TRUE</code>
 </li>
@@ -224,18 +258,18 @@
     <div id="cancensus-0-1-0" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancensus-0-1-0" class="anchor"></a>cancensus 0.1.0</h2>
-<div id="major-changes-4" class="section level3">
+<div id="major-changes-5" class="section level3">
 <h3 class="hasAnchor">
-<a href="#major-changes-4" class="anchor"></a>Major changes</h3>
+<a href="#major-changes-5" class="anchor"></a>Major changes</h3>
 <ul>
 <li>Added vector and geography search and discovery capabilities</li>
 <li>Improved performance</li>
 <li>Error and API issue messaging</li>
 </ul>
 </div>
-<div id="minor-changes-3" class="section level3">
+<div id="minor-changes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes-3" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-4" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>Reduced package dependencies</li>
 </ul>
@@ -244,9 +278,9 @@
     <div id="cancensus-0-0-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancensus-0-0-1" class="anchor"></a>cancensus 0.0.1</h2>
-<div id="major-changes-5" class="section level3">
+<div id="major-changes-6" class="section level3">
 <h3 class="hasAnchor">
-<a href="#major-changes-5" class="anchor"></a>Major changes</h3>
+<a href="#major-changes-6" class="anchor"></a>Major changes</h3>
 <ul>
 <li>Initial release</li>
 </ul>
@@ -258,6 +292,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#cancensus-0-2-0">0.2.0</a></li>
         <li><a href="#cancensus-0-1-8">0.1.8</a></li>
         <li><a href="#cancensus-0-1-7">0.1.7</a></li>
         <li><a href="#cancensus-0-1-6">0.1.6</a></li>
