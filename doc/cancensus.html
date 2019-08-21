@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +96,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -307,7 +308,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="cancensus-and-censusmapper" class="section level1">
 <h1>Cancensus and CensusMapper</h1>
 <p>The <strong>cancensus</strong> package was developed to provide users with a way to access Canadian Census in a programmatic way following good <a href="http://vita.had.co.nz/papers/tidy-data.pdf">tidy data</a> practices. While the structure and data in <strong>cancensus</strong> is unique to Canadian Census data, this package is inspired in part by <a href="https://github.com/walkerke/tidycensus">tidycensus</a>, a package to interface with the US Census Bureau data APIs.</p>
-<p>As Statistics Canada does not provide direct API access to Census data, <strong>cancensus</strong> retrieves Census data indirectly through the <a href="https://censusmapper.ca">CensusMapper</a> API. CensusMapper is a project by <a href="https://twitter.com/vb_jens">Jens von Bergmann</a>, one of the authors of <strong>cancensus</strong>, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publically available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and <strong>cancensus</strong> is built to interface directly with it.</p>
+<p>As Statistics Canada does not provide direct API access to Census data, <strong>cancensus</strong> retrieves Census data indirectly through the <a href="https://censusmapper.ca">CensusMapper</a> API. CensusMapper is a project by <a href="https://twitter.com/vb_jens">Jens von Bergmann</a>, one of the authors of <strong>cancensus</strong>, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publicly available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and <strong>cancensus</strong> is built to interface directly with it.</p>
 <div id="api-key" class="section level2">
 <h2>API Key</h2>
 <p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
@@ -330,7 +331,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb2-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw">options</span>(<span class="dt">cancensus.api_key =</span> <span class="st">&quot;your_api_key&quot;</span>)</a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw">options</span>(<span class="dt">cancensus.cache_path =</span> <span class="st">&quot;custom cache path&quot;</span>)</a></code></pre></div>
-<p>For performance reasons, and to avoid unneccessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>options(cancensus.cache_path = 'XXX')</code>, this enables better control over the data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>options(cancensus.cache_path = 'XXX')</code>, this enables better control over the data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
 <p>Setting the API key and the cache path in the <code>.Rprofile</code> facilitates the ability to share code without exposing API keys or relying on the local directory structure.</p>
 </div>
 </div>
@@ -484,7 +485,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li>Type: variables are provided as aggregates of female responses, male responses, or total (male+female) responses</li>
 <li>Label: detailed variable name</li>
 <li>Units: provides information about whether the variable represents a count integer, a ratio, a percentage, or a currency figure</li>
-<li>Parent_vecctor: shows the immediate hierarchical parent category for that variable, where appropriate</li>
+<li>Parent_vector: shows the immediate hierarchical parent category for that variable, where appropriate</li>
 <li>Aggregation: indicates how the variable should be aggregated with others, whether it is additive or if it is an average of another variable</li>
 <li>Description: a rough description of a variable based on its hierarchical structure. This is constructed by <strong>cancensus</strong> by recursively traversing the labels for every variable’s hierarchy, and facilitates searching for specific variables using key terms.</li>
 </ul>
@@ -509,8 +510,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; 1 Austrian                 </span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; 2 Australian</span></a></code></pre></div>
 </div>
-<div id="managing-variable-hiararchy" class="section level2">
-<h2>Managing variable hiararchy</h2>
+<div id="managing-variable-hierarchy" class="section level2">
+<h2>Managing variable hierarchy</h2>
 <p>Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using <code>parent_census_vectors</code> on a vector list.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">list_census_vectors</span>(<span class="st">&quot;CA16&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(vector <span class="op">==</span><span class="st"> &quot;v_CA16_4092&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -521,7 +522,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; 1 v_CA16… Total Western Eur… Numb… v_CA16_4044   Additive    CA 2016 Censu…</span></a>
 <a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; 2 v_CA16… Total European or… Numb… v_CA16_3999   Additive    CA 2016 Censu…</span></a>
 <a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; 3 v_CA16… Total Total - Eth… Numb… &lt;NA&gt;          Additive    CA 2016 Censu…</span></a></code></pre></div>
-<p>Sometimes we want to traverse the hierarchy in the oppposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
+<p>Sometimes we want to traverse the hierarchy in the opposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># Find the variable indicating the Northern European aggregate</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">search_census_vectors</span>(<span class="st">&quot;Northern European&quot;</span>, <span class="dt">dataset =</span> <span class="st">'CA16'</span>)</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; # A tibble: 6 x 7</span></a>
@@ -550,6 +551,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

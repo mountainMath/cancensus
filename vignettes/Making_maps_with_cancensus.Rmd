@@ -48,8 +48,8 @@ plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD")
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticules, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
 ```{r}
-plot(toronto[14], col = NA, main = "Toronto CSDs with Median HH Income > 100,000", lty = 3)
-plot(toronto[toronto$median_hh_income > 100000,14], col = "red", add = TRUE)
+plot(st_geometry(toronto), col = NA, main = "Toronto CSDs with Median HH Income > $100,000", lty = 3)
+plot(st_geometry(toronto[toronto$median_hh_income > 100000,]), col = "red", add = TRUE)
 ```
 
 # Maps with ggplot2
