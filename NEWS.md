@@ -1,3 +1,16 @@
+## cancensus 0.2.0
+
+### Major changes
+- Added a `max_leaves_option` for the `search_census_vectors` function. Adds functionality to set maximum depth for child census vectors, i.e. `max_level=NA` as an additional parameter. Then e.g. `max_level=1` would only get direct children and no grandchildren.
+- Resolved issues with mislabelled CD UID for CSD level data
+- Improve reliability of character/numeric alignments for geographic UIDS
+- `get_census_geography` is now soft deprecated and rolled into the standard `get_census` with parameters
+
+### Minor changes
+- Minor documentation improvements
+- Soften dependency on `readr` package
+- Allow for search of internal CensusMapper variables 
+
 ## cancensus 0.1.8
 
 ### Major changes

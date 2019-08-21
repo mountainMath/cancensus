@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canadian Census Data and Geography from the 'CensusMapper' API • cancensus</title>
+<title>Access, Retrieve, and Work with Canadian Census Data and Geography • cancensus</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="Canadian Census Data and Geography from the 'CensusMapper' API">
+<meta property="og:title" content="Access, Retrieve, and Work with Canadian Census Data and Geography">
 <meta property="og:description" content="Integrated, convenient, and uniform access to Canadian
     Census data and geography retrieved using the 'CensusMapper' API. This package produces analysis-ready 
     tidy data frames and spatial data in multiple formats, as well as convenience functions
@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
 <li>Download data and Census geography in tidy and analysis-ready format</li>
 <li>Convenience tools for searching for and working with Census regions and variable hierarchies</li>
 <li>Provides Census geography in multiple R spatial formats</li>
-<li>Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdividision, Census Tract, and Dissemination Areas</li>
+<li>Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas</li>
 <li>Provides up-to-date data for the 2016, 2011, and 2006 Censuses</li>
 </ul>
 <div id="reference" class="section level3">
@@ -139,7 +139,7 @@ library(cancensus)</a></code></pre>
 <div id="local-cache" class="section level3">
 <h3 class="hasAnchor">
 <a href="#local-cache" class="anchor"></a>Local Cache</h3>
-<p>For performance reasons, and to avoid unneccessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code><a href="https://www.rdocumentation.org/packages/base/topics/options">options(cancensus.cache_path = 'XXX')</a></code>, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code><a href="https://www.rdocumentation.org/packages/base/topics/options">options(cancensus.cache_path = 'XXX')</a></code>, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
 </div>
 <div id="currently-available-datasets" class="section level3">
 <h3 class="hasAnchor">
@@ -204,13 +204,13 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <a href="#cite-cancensus" class="anchor"></a>Cite <strong>cancensus</strong>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: an R package to access, retrieve, and work with Canadian Census data and geography. v0.1.8.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.2.0.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography},
+    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
     year = {2019},
-    note = {R package version 0.1.8},
+    note = {R package version 0.2.0},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
 </div>
@@ -218,7 +218,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <h3 class="hasAnchor">
 <a href="#related-packages" class="anchor"></a>Related packages</h3>
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data">socio-economic data repository</a> with thousands of data tables available for public access.</p>
-<p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data.</p>
+<p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus">Github</a>.</p>
 <p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
 </div>
 <div id="statistics-canada-attribution" class="section level3">

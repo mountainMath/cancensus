@@ -6,3 +6,8 @@
 ^pkgdown$
 .*data_cache/
 R/hex_sticker.R
+^doc$
+^Meta$
+images
+images/*
+card_fix.sh

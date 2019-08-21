@@ -5,10 +5,10 @@ utils::citEntry(entry = "manual",
                   person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut", "cre")),
                   person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = "aut"),
                   person("Aaron", "Jacobs", email = "atheriel@gmail.com", role = "aut")),
-                title = "cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography",
+                title = "cancensus: R package to access, retrieve, and work with Canadian Census data and geography",
                 year = "2019",
-                note = {"R package version 0.1.8"},
+                note = {"R package version 0.2.0"},
                 url = "https://mountainmath.github.io/cancensus/",
-                textVersion = "von Bergmann, J., Dmitry Shkolnik, and Aaron Jacobs (2019). cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography. v0.1.8."
+                textVersion = "von Bergmann, J., Dmitry Shkolnik, and Aaron Jacobs (2019). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.2.0."
 )
 

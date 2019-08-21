@@ -1,3 +1,12 @@
+## Update - v.0.2.0
+
+Maintenance update of package with some quality of life improvements. Changes include:
+* Improved variable tree searching
+* Better handling of numeric/string/factor alignments
+* Backward compatibility for some soft deprecated functions
+
+Release checked locally, on r-hub, and winbuilder. 
+
 ## Update - v.0.1.8
 
 Minor update of package. Changes include: 

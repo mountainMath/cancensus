@@ -7,12 +7,13 @@
 
 <a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 
+
 Access, retrieve, and work with Canadian Census data and geography. 
 
 * Download data and Census geography in tidy and analysis-ready format
 * Convenience tools for searching for and working with Census regions and variable hierarchies
 * Provides Census geography in multiple R spatial formats
-* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdividision, Census Tract, and Dissemination Areas
+* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas
 * Provides up-to-date data for the 2016, 2011, and 2006 Censuses
 
 ### Reference
@@ -40,7 +41,7 @@ To check your API key, just go to "Edit Profile" (in the top-right of the Census
 
 ### Local Cache
 
-For performance reasons, and to avoid unneccessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 ### Currently available datasets
 
@@ -98,16 +99,17 @@ We'd love to feature examples of work or projects that use cancensus.
 
 If you wish to cite cancensus:
 
-  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: an R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.1.8.
+  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to
+  access, retrieve, and work with Canadian Census data and geography. v0.2.0.
+
 
 A BibTeX entry for LaTeX users is
 ```
   @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: An R Package to Access, Retrieve, and Work With Canadian Census Data and Geography},
+    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
     year = {2019},
-    note = {R package version 0.1.8},
+    note = {R package version 0.2.0},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```
@@ -115,7 +117,7 @@ A BibTeX entry for LaTeX users is
 
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. 
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). 
 
 Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
 

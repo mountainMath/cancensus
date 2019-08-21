@@ -6,13 +6,16 @@
 variables returned by
 \code{list_census_vectors} or \code{search_census_vectors}.}
 \usage{
-child_census_vectors(vector_list, leaves_only = FALSE)
+child_census_vectors(vector_list, leaves_only = FALSE, max_level = NA)
 }
 \arguments{
 \item{vector_list}{The list of vectors to be used}
 
 \item{leaves_only}{Boolean flag to indicate if only leaf vectors should be returned,
 i.e. vectors that don't have children}
+
+\item{max_level}{optional, maximum depth to look for child vectors. Default is NA will return all
+child census vectors..}
 }
 \description{
 List all child variables from vector hierarchical based on a (sub-)list of census

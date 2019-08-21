@@ -3,9 +3,6 @@
 #' This function allows convenient access to Canadian census data and boundary
 #' files through the CensusMapper API. An API key is required to retrieve data.
 #'
-#' \code{get_census_geometry} is a convenience function
-#' that retrieves only Census geography boundaries.
-#'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
 #' tool at \url{https://censusmapper.ca/api}.
@@ -71,7 +68,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
     stop("regions must be composed of valid census aggregation levels.")
   } else {
-    regions <- jsonlite::toJSON(regions)
+    regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
   # Remind to set cache directory
@@ -105,7 +102,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
   }
 
-  base_url="https://CensusMapper.ca/api/v1/"
+  base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
     param_string <- paste0("regions=", regions,
@@ -128,25 +125,38 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..")
+      na_strings <- c("x", "F", "...", "..", "-","N")
+
+      as.num = function(x, na.strings = "NA") {
+        stopifnot(is.character(x))
+        na = x %in% na.strings
+        x[na] = 0
+        x = as.numeric(x)
+        x[na] = NA_real_
+        x
+      }
+
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           readr::read_csv(na = na_strings,
-                          col_types = list(.default = "d", GeoUID = "c",
-                                           Type = "c", "Region Name" = "c")) %>%
+                          col_types = list(.default = "c")) %>%
+          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                             names(.)[grepl("v_",names(.))]),
+                           as.num,na.strings=na_strings) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
-          utils::read.csv(na = na_strings,
-                          colClasses = c("GeoUID" = "character",
-                                         "Type" = "factor",
-                                         "Region Name" = "factor"),
-                          stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble()
+          utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
+          dplyr::as_tibble() %>%
+          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                             names(.)[grepl("v_",names(.))]),
+                           as.num,na.strings=na_strings) %>%
+          dplyr::mutate(Type = as.factor(.data$Type),
+                        `Region Name` = as.factor(.data$`Region Name`))
       }
       if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
@@ -231,15 +241,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
 #' @rdname get_census
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Query the API for census subdivision boundary geometry within Vancouver.
-#' vc_csds <- get_census_geometry(dataset='CA16', regions=list(CMA="59933"),
-#'                                level='CSD', geo_format = "sf")
-#'}
-get_census_geometry <- function (dataset, level, regions, geo_format = "sf", ...) {
-  return(get_census(dataset, level, regions, vectors=c(), geo_format=geo_format, ...))
+#' @keywords internal
+get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
+  .Deprecated("get_census")
+  return(get_census(dataset=dataset, regions=regions, level=level, vectors=c(), geo_format=geo_format, ...))
 }
 
 # This is the set of valid census aggregation levels, also used in the named
@@ -407,6 +412,8 @@ parent_census_vectors <- function(vector_list){
 #' @param vector_list The list of vectors to be used
 #' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
 #' i.e. vectors that don't have children
+#' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
+#' child census vectors..
 #'
 #' @export
 #'
@@ -416,16 +423,18 @@ parent_census_vectors <- function(vector_list){
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_4092") %>%
 #'   child_census_vectors(TRUE)
-child_census_vectors <- function(vector_list, leaves_only=FALSE){
+child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   base_list <- vector_list
   dataset <- attr(base_list,'dataset')
-  n=0
+  n <- 0
+  child_level <- 1
   if (!is.null(dataset)) {
     vector_list <-
       list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
       dplyr::filter(.data$parent_vector %in% base_list$vector) %>%
       dplyr::distinct(vector, .keep_all = TRUE)
-    while (n!=nrow(vector_list)) {
+    while (n!=nrow(vector_list) && (is.na(max_level) || child_level<max_level)) {
+      child_level <- child_level+1
       n=nrow(vector_list)
       new_list <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
         dplyr::filter(.data$parent_vector %in% vector_list$vector)
@@ -538,14 +547,15 @@ list_census_regions <- function(dataset, use_cache = FALSE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
+      dplyr::as_data_frame(utils::read.csv(textConnection(content), colClasses = 'character',stringsAsFactors = FALSE))
     } else {
-      readr::read_csv(content)
+      readr::read_csv(content,col_types = readr::cols(.default='c'))
     }
     result <- dplyr::select(result, region = .data$geo_uid, .data$name,
                             level = .data$type, pop = .data$population,
                             municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)
+                            .data$CD_UID, .data$PR_UID)  %>%
+      dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -763,6 +773,10 @@ transform_geo <- function(g, level) {
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
   #geo uid name changes
+  if (level=='Regions') {
+    l=g$t %>% unique()
+    if (length(l)==1) level=l
+  }
   if (level=='DB') {
     name_change <- name_change %>% rbind(
       c('rpid','DA_UID'),
@@ -786,7 +800,7 @@ transform_geo <- function(g, level) {
   }
   if (level=='CSD') {
     name_change <- name_change %>% rbind(
-      c('rpid','CSD_UID'),
+      c('rpid','CD_UID'),
       c('rgid','PR_UID'),
       c('ruid','CMA_UID'))
   }
