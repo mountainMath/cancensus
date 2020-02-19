@@ -14,7 +14,7 @@ Access, retrieve, and work with Canadian Census data and geography.
 * Convenience tools for searching for and working with Census regions and variable hierarchies
 * Provides Census geography in multiple R spatial formats
 * Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas
-* Provides up-to-date data for the 2016, 2011, and 2006 Censuses
+* Provides data for the 2016, 2011, 2006, and 2001 Censuses
 
 ### Reference
 
@@ -45,7 +45,7 @@ For performance reasons, and to avoid unnecessarily drawing down API quotas, **c
 
 ### Currently available datasets
 
-**cancensus** can access Statistics Canada Census data for the 2006 Census, the 2011 Census and National Household Survey, as well as the latest available data from the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+**cancensus** can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
 
 ### Picking regions and variables
 
