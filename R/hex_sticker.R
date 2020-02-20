@@ -25,7 +25,7 @@ generate_cancensus_sticker <- function() {
     #scale_fill_brewer(palette="Reds",guide=FALSE) +
     ggplot2::scale_fill_manual(values=colours,guide=FALSE) +
     hexSticker::theme_transparent() +
-    ggplot2::coord_sf(datum=NA)
+    ggplot2::coord_sf(datum=NA,clip = "off")
 
   hexSticker::sticker(p, package="cancensus", p_size=8, p_y = 1.45,
                       #s_x=1, s_y=1,

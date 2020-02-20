@@ -654,6 +654,4 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
 
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data
-#' @importFrom purrr map
-#' @importFrom tibble tibble
 NULL

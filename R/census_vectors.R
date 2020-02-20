@@ -131,7 +131,7 @@ parent_census_vectors <- function(vector_list){
 child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   if (!("data.frame") %in% class(vector_list)) {
     if (class(vector_list)=="character")
-      vector_list = tibble::tibble(vector=vector_list)
+      vector_list = dplyr::as_tibble(data.frame(vector=vector_list))
     else
       stop(paste0("Don't know how to parse vector list: ",vector_list))
   }
@@ -139,8 +139,9 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   dataset <- attr(base_list,'dataset')
   if (is.null(dataset)) {
     dataset <- base_list$vector %>%
-      purrr::map(function(d)unlist(strsplit(d,"_"))[2]) %>%
-      unlist %>%
+      as.character() %>%
+      lapply(function(d)unlist(strsplit(d,"_"))[2]) %>%
+      unlist() %>%
       unique()
     if (length(dataset)!=1) stop("Unable to determine dataset")
   }
