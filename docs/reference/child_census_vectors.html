@@ -6,9 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>List all child variables from vector hierarchical based on a (sub-)list of census
+<title>List all child variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>. — child_census_vectors • cancensus</title>
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code. — child_census_vectors • cancensus</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -43,15 +43,15 @@ variables returned by
 
   <link href="../extra.css" rel="stylesheet">
   
-<meta property="og:title" content="List all child variables from vector hierarchical based on a (sub-)list of census
+<meta property="og:title" content="List all child variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>. — child_census_vectors" />
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code. — child_census_vectors" />
 
-<meta property="og:description" content="List all child variables from vector hierarchical based on a (sub-)list of census
+<meta property="og:description" content="List all child variables from vector hierarchies given either a list of Census
 variables returned by
-list_census_vectors or search_census_vectors." />
+list_census_vectors or search_census_vectors, or a direct string reference to the vector code." />
 
-<meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -148,18 +148,18 @@ list_census_vectors or search_census_vectors." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>List all child variables from vector hierarchical based on a (sub-)list of census
+    <h1>List all child variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>.</h1>
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</h1>
     <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/census_vectors.R'><code>R/census_vectors.R</code></a></small>
     <div class="hidden name"><code>child_census_vectors.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>List all child variables from vector hierarchical based on a (sub-)list of census
+    <p>List all child variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>.</p>
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p>
     
     </div>
 
@@ -176,36 +176,41 @@ as returned from <code>list_census_vectors</code>.</p></td>
     <tr>
       <th>leaves_only</th>
       <td><p>Boolean flag to indicate if only leaf vectors should be returned,
-i.e. vectors that don't have children</p></td>
+i.e. vectors that don't have children.</p></td>
     </tr>
     <tr>
       <th>max_level</th>
       <td><p>optional, maximum depth to look for child vectors. Default is NA will return all
-child census vectors..</p></td>
+child census vectors.</p></td>
     </tr>
     </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>vector</span> <span class='kw'>==</span> <span class='st'>"v_CA16_2510"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>child_census_vectors</span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 7</span><span>
-#&gt;   vector   type  label    units parent_vector aggregation details               
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                 
-#&gt; </span><span style='color: #555555;'>1</span><span> v_CA16_… Total 18 to 6… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
-#&gt; </span><span style='color: #555555;'>2</span><span> v_CA16_… Total 65 year… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
-#&gt; </span><span style='color: #555555;'>3</span><span> v_CA16_… Total 0 to 5 … Numb… v_CA16_2513   Additive    CA 2016 Census; 100% …</div><div class='input'>
-<span class='co'># Query parent vectors directly using vector identifier</span>
-<span class='fu'>child_census_vectors</span>(<span class='st'>"v_CA16_2510"</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 7</span><span>
+    <pre class="examples"><div class='input'><span class='co'># Query parent vectors directly using vector identifier</span>
+<span class='fu'>child_census_vectors</span>(<span class='st'>"v_CA16_2510"</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 7</span><span>
 #&gt;   vector   type  label    units parent_vector aggregation details               
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                 
 #&gt; </span><span style='color: #555555;'>1</span><span> v_CA16_… Total 0 to 17… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
 #&gt; </span><span style='color: #555555;'>2</span><span> v_CA16_… Total 18 to 6… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
 #&gt; </span><span style='color: #555555;'>3</span><span> v_CA16_… Total 65 year… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
 #&gt; </span><span style='color: #555555;'>4</span><span> v_CA16_… Total 0 to 5 … Numb… v_CA16_2513   Additive    CA 2016 Census; 100% …</div><div class='input'>
-</div></span></pre>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+
+<span class='co'># Example using multiple vectors coerced into a list</span>
+<span class='fu'>child_census_vectors</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_2510"</span>,<span class='st'>"v_CA16_2511"</span>,<span class='st'>"v_CA16_2512"</span>))
+
+<span class='co'># or, equivalently</span>
+<span class='no'>selected_vectors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_2510"</span>,<span class='st'>"v_CA16_2511"</span>,<span class='st'>"v_CA16_2512"</span>)
+<span class='fu'>child_census_vectors</span>(<span class='no'>selected_vectors</span>)
+
+<span class='co'># Example using dplyr and piped arguments</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>vector</span> <span class='kw'>==</span> <span class='st'>"v_CA16_2510"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>child_census_vectors</span>(<span class='fl'>TRUE</span>)
+}</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

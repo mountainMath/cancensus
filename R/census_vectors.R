@@ -78,23 +78,33 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   }
 }
 
-#' List all parent variables from vector hierarchical based on a (sub-)list of census
+#' List all parent variables from vector hierarchies given either a list of Census
 #' variables returned by
-#' \code{list_census_vectors} or \code{search_census_vectors}.
+#' \code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.
 #'
-#' @param vector_list The list of vectors to be used
+#' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
+#' as returned from \code{list_census_vectors}.
 #'
 #' @export
 #'
 #' @examples
+#' # Query parent vectors directly using vector identifier
+#' parent_census_vectors("v_CA16_2519")
+#' \dontrun{
+#' # Example using multiple vectors coerced into a list
+#' parent_census_vectors(c("v_CA16_2519","v_CA16_2520","v_CA16_2521"))
+#' 
+#' # or, equivalently
+#' selected_vectors <- c("v_CA16_2519","v_CA16_2520","v_CA16_2521")
+#' parent_census_vectors(selected_vectors)
+#' 
+#' # Example using dplyr and piped arguments
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_2519") %>%
 #'   parent_census_vectors()
-#'
-#' # Query parent vectors directly using vector identifier
-#' parent_census_vectors("v_CA16_2519")
+#' }
 parent_census_vectors <- function(vector_list){
   dataset <- dataset_from_vector_list(vector_list)
   vector_list <- clean_vector_list(vector_list,dataset)
@@ -115,28 +125,39 @@ parent_census_vectors <- function(vector_list){
   return(vector_list)
 }
 
-#' List all child variables from vector hierarchical based on a (sub-)list of census
+#' List all child variables from vector hierarchies given either a list of Census
 #' variables returned by
-#' \code{list_census_vectors} or \code{search_census_vectors}.
+#' \code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.
 #'
 #' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
 #'   as returned from \code{list_census_vectors}.
 #' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
-#' i.e. vectors that don't have children
+#' i.e. vectors that don't have children.
 #' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
-#' child census vectors..
+#' child census vectors.
 #'
 #' @export
 #'
 #' @examples
+#' # Query parent vectors directly using vector identifier
+#' child_census_vectors("v_CA16_2510")
+#' 
+#' \dontrun{
+#' 
+#' # Example using multiple vectors coerced into a list
+#' child_census_vectors(c("v_CA16_2510","v_CA16_2511","v_CA16_2512"))
+#' 
+#' # or, equivalently
+#' selected_vectors <- c("v_CA16_2510","v_CA16_2511","v_CA16_2512")
+#' child_census_vectors(selected_vectors)
+#' 
+#' # Example using dplyr and piped arguments
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_2510") %>%
 #'   child_census_vectors(TRUE)
-#'
-#' # Query parent vectors directly using vector identifier
-#' child_census_vectors("v_CA16_2510")
+#'}
 #'
 child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   vector_list <- clean_vector_list(vector_list)
