@@ -51,7 +51,7 @@ variables returned by
 variables returned by
 list_census_vectors or search_census_vectors." />
 
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -181,6 +181,11 @@ variables returned by
 <span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>vector</span> <span class='kw'>==</span> <span class='st'>"v_CA16_2519"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>parent_census_vectors</span>()</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 7</span><span>
+#&gt;   vector  type  label           units parent_vector aggregation details         
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           
+#&gt; </span><span style='color: #555555;'>1</span><span> v_CA16… Total Total - Low-in… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive    CA 2016 Census;…</div><div class='input'>
+<span class='co'># Query parent vectors directly using vector identifier</span>
+<span class='fu'>parent_census_vectors</span>(<span class='st'>"v_CA16_2519"</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 7</span><span>
 #&gt;   vector  type  label           units parent_vector aggregation details         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           
 #&gt; </span><span style='color: #555555;'>1</span><span> v_CA16… Total Total - Low-in… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive    CA 2016 Census;…</div></span></pre>

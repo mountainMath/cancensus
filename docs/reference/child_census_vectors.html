@@ -51,7 +51,7 @@ variables returned by
 variables returned by
 list_census_vectors or search_census_vectors." />
 
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -196,7 +196,16 @@ child census vectors..</p></td>
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                 
 #&gt; </span><span style='color: #555555;'>1</span><span> v_CA16_… Total 18 to 6… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
 #&gt; </span><span style='color: #555555;'>2</span><span> v_CA16_… Total 65 year… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
-#&gt; </span><span style='color: #555555;'>3</span><span> v_CA16_… Total 0 to 5 … Numb… v_CA16_2513   Additive    CA 2016 Census; 100% …</div></span></pre>
+#&gt; </span><span style='color: #555555;'>3</span><span> v_CA16_… Total 0 to 5 … Numb… v_CA16_2513   Additive    CA 2016 Census; 100% …</div><div class='input'>
+<span class='co'># Query parent vectors directly using vector identifier</span>
+<span class='fu'>child_census_vectors</span>(<span class='st'>"v_CA16_2510"</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 7</span><span>
+#&gt;   vector   type  label    units parent_vector aggregation details               
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                 
+#&gt; </span><span style='color: #555555;'>1</span><span> v_CA16_… Total 0 to 17… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
+#&gt; </span><span style='color: #555555;'>2</span><span> v_CA16_… Total 18 to 6… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
+#&gt; </span><span style='color: #555555;'>3</span><span> v_CA16_… Total 65 year… Numb… v_CA16_2510   Additive    CA 2016 Census; 100% …
+#&gt; </span><span style='color: #555555;'>4</span><span> v_CA16_… Total 0 to 5 … Numb… v_CA16_2513   Additive    CA 2016 Census; 100% …</div><div class='input'>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

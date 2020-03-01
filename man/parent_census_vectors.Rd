@@ -22,4 +22,7 @@ library(dplyr, warn.conflicts = FALSE)
 list_census_vectors("CA16") \%>\%
   filter(vector == "v_CA16_2519") \%>\%
   parent_census_vectors()
+
+# Query parent vectors directly using vector identifier
+parent_census_vectors("v_CA16_2519")
 }

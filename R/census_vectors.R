@@ -92,6 +92,9 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_2519") %>%
 #'   parent_census_vectors()
+#'
+#' # Query parent vectors directly using vector identifier
+#' parent_census_vectors("v_CA16_2519")
 parent_census_vectors <- function(vector_list){
   dataset <- dataset_from_vector_list(vector_list)
   vector_list <- clean_vector_list(vector_list,dataset)
@@ -131,6 +134,10 @@ parent_census_vectors <- function(vector_list){
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_2510") %>%
 #'   child_census_vectors(TRUE)
+#'
+#' # Query parent vectors directly using vector identifier
+#' child_census_vectors("v_CA16_2510")
+#'
 child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
   vector_list <- clean_vector_list(vector_list)
   base_list <- vector_list
