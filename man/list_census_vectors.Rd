@@ -4,14 +4,15 @@
 \alias{list_census_vectors}
 \title{Query the CensusMapper API for available vectors for a given dataset.}
 \usage{
-list_census_vectors(dataset, use_cache = FALSE, quiet = TRUE)
+list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{dataset}{The dataset to query for available vectors, e.g.
 \code{"CA16"}.}
 
-\item{use_cache}{If set to TRUE, data will be read from a local cache, if
-available. If set to FALSE (the default), query the API for the data, and
+\item{use_cache}{If set to TRUE (the default), data will be read from a local cache
+that is maintained for the duration of the R session, if
+available. If set to FALSE, query the API for the data, and
 refresh the local cache with the result.}
 
 \item{quiet}{When FALSE, shows messages and warnings. Set to TRUE by default.}

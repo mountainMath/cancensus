@@ -2,8 +2,9 @@
 #'
 #' @param dataset The dataset to query for available vectors, e.g.
 #'   \code{"CA16"}.
-#' @param use_cache If set to TRUE, data will be read from a local cache, if
-#'   available. If set to FALSE (the default), query the API for the data, and
+#' @param use_cache If set to TRUE (the default), data will be read from a local cache
+#'   that is maintained for the duration of the R session, if
+#'   available. If set to FALSE, query the API for the data, and
 #'   refresh the local cache with the result.
 #' @param quiet When FALSE, shows messages and warnings. Set to TRUE by default.
 #'
@@ -23,11 +24,11 @@
 #'
 #' # List all vectors for a given Census dataset in CensusMapper
 #' list_census_vectors('CA16')
-list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
-  cache_file <- cache_path(dataset, "_vectors.rda")
+list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
+  #cache_file <- cache_path(dataset, "_vectors.rda")
+  cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
-    url <- paste0("https://censusmapper.ca/api/v1/vector_info/", dataset,
-                  ".csv")
+    url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
     response <- if (!quiet) {
       message("Querying CensusMapper API for vectors data...")
       httr::GET(url, httr::progress())
@@ -66,13 +67,13 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
   } else {
     if (!quiet) message("Reading vector information from local cache.")
     load(file = cache_file)
-    last_updated <- attr(result, "last_updated")
-    if (!quiet && is.null(last_updated) ||
-        difftime(Sys.time(), last_updated, units = "days") > 1) {
-      warning(paste("Cached vectors list may be out of date. Set `use_cache =",
-                    "FALSE` to update it."))
-    }
-    attr(result, "dataset") <- dataset # just in case, catching cached legacy datasets
+    #last_updated <- attr(result, "last_updated")
+    #if (!quiet && is.null(last_updated) ||
+    #    difftime(Sys.time(), last_updated, units = "days") > 1) {
+    #  warning(paste("Cached vectors list may be out of date. Set `use_cache =",
+    #                "FALSE` to update it."))
+    #}
+    #attr(result, "dataset") <- dataset # just in case, catching cached legacy datasets
     result
   }
 }
@@ -89,11 +90,12 @@ list_census_vectors <- function(dataset, use_cache = FALSE, quiet = TRUE) {
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
-#'   filter(vector == "v_CA16_4092") %>%
+#'   filter(vector == "v_CA16_2519") %>%
 #'   parent_census_vectors()
 parent_census_vectors <- function(vector_list){
+  dataset <- dataset_from_vector_list(vector_list)
+  vector_list <- clean_vector_list(vector_list,dataset)
   base_list <- vector_list
-  dataset <- attr(base_list, "dataset")
   n=0
   vector_list <-
     list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE) %>%
@@ -114,7 +116,8 @@ parent_census_vectors <- function(vector_list){
 #' variables returned by
 #' \code{list_census_vectors} or \code{search_census_vectors}.
 #'
-#' @param vector_list The list of vectors to be used
+#' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
+#'   as returned from \code{list_census_vectors}.
 #' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
 #' i.e. vectors that don't have children
 #' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
@@ -126,25 +129,12 @@ parent_census_vectors <- function(vector_list){
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' list_census_vectors("CA16") %>%
-#'   filter(vector == "v_CA16_4092") %>%
+#'   filter(vector == "v_CA16_2510") %>%
 #'   child_census_vectors(TRUE)
 child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
-  if (!("data.frame") %in% class(vector_list)) {
-    if (class(vector_list)=="character")
-      vector_list = dplyr::as_tibble(data.frame(vector=vector_list))
-    else
-      stop(paste0("Don't know how to parse vector list: ",vector_list))
-  }
+  vector_list <- clean_vector_list(vector_list)
   base_list <- vector_list
-  dataset <- attr(base_list,'dataset')
-  if (is.null(dataset)) {
-    dataset <- base_list$vector %>%
-      as.character() %>%
-      lapply(function(d)unlist(strsplit(d,"_"))[2]) %>%
-      unlist() %>%
-      unique()
-    if (length(dataset)!=1) stop("Unable to determine dataset")
-  }
+  dataset <- dataset_from_vector_list(vector_list)
   n <- 0
   child_level <- 1
   if (!is.null(dataset)) {

@@ -20,6 +20,6 @@ variables returned by
 library(dplyr, warn.conflicts = FALSE)
 
 list_census_vectors("CA16") \%>\%
-  filter(vector == "v_CA16_4092") \%>\%
+  filter(vector == "v_CA16_2519") \%>\%
   parent_census_vectors()
 }

@@ -9,7 +9,8 @@ variables returned by
 child_census_vectors(vector_list, leaves_only = FALSE, max_level = NA)
 }
 \arguments{
-\item{vector_list}{The list of vectors to be used}
+\item{vector_list}{The list of vectors to be used, either a character vector or a filtered tibble
+as returned from \code{list_census_vectors}.}
 
 \item{leaves_only}{Boolean flag to indicate if only leaf vectors should be returned,
 i.e. vectors that don't have children}
@@ -26,6 +27,6 @@ variables returned by
 library(dplyr, warn.conflicts = FALSE)
 
 list_census_vectors("CA16") \%>\%
-  filter(vector == "v_CA16_4092") \%>\%
+  filter(vector == "v_CA16_2510") \%>\%
   child_census_vectors(TRUE)
 }

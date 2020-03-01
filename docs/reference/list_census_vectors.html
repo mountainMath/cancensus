@@ -45,7 +45,7 @@
 
 <meta property="og:description" content="Query the CensusMapper API for available vectors for a given dataset." />
 
-<meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -153,7 +153,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>list_census_vectors</span>(<span class='no'>dataset</span>, <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>list_census_vectors</span>(<span class='no'>dataset</span>, <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,8 +165,9 @@
     </tr>
     <tr>
       <th>use_cache</th>
-      <td><p>If set to TRUE, data will be read from a local cache, if
-available. If set to FALSE (the default), query the API for the data, and
+      <td><p>If set to TRUE (the default), data will be read from a local cache
+that is maintained for the duration of the R session, if
+available. If set to FALSE, query the API for the data, and
 refresh the local cache with the result.</p></td>
     </tr>
     <tr>
