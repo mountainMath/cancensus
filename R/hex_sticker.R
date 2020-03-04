@@ -19,15 +19,17 @@ generate_cancensus_sticker <- function() {
                "#DA0E0E",
                "#AA2222")
 
-  p <- ggplot2::ggplot(census_data %>% sf::st_transform(102002)) +
+ p <- ggplot2::ggplot(census_data %>% sf::st_transform(102002)) +
     ggplot2::geom_sf(size=0.1,ggplot2::aes(fill=share_d),colour="grey30") +
     ggplot2::theme_void() +
     #scale_fill_brewer(palette="Reds",guide=FALSE) +
     ggplot2::scale_fill_manual(values=colours,guide=FALSE) +
     hexSticker::theme_transparent() +
-    ggplot2::coord_sf(datum=NA)
+    ggplot2::coord_sf(datum=NA,clip = "off")
 
   hexSticker::sticker(p, package="cancensus", p_size=8, p_y = 1.45,
+                      #s_x=1, s_y=1,
+                      #s_width=2, s_height=2,
                       s_x=1, s_y=0.75,
                       s_width=2.5, s_height=2.5,
                       #h_color="#FF0000",
@@ -35,7 +37,8 @@ generate_cancensus_sticker <- function() {
                       h_fill="grey30",
                       p_color="white",
                       white_around_sticker = TRUE,
-                      filename=here::here("images/cancensus-sticker.png"))
+                      filename=here::here("images/cancensus-sticker.png"),
+                      dpi=600)
 }
 
 #' @importFrom dplyr %>%

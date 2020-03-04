@@ -10,12 +10,19 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 2006; 2011; 2016).
 }
 \usage{
-get_census(dataset, regions, level = NA, vectors = c(),
-  geo_format = NA, labels = "detailed", use_cache = TRUE,
-  quiet = FALSE, api_key = getOption("cancensus.api_key"))
+get_census(
+  dataset,
+  regions,
+  level = NA,
+  vectors = c(),
+  geo_format = NA,
+  labels = "detailed",
+  use_cache = TRUE,
+  quiet = FALSE,
+  api_key = getOption("cancensus.api_key")
+)
 
-get_census_geometry(dataset, regions, level = NA, geo_format = "sf",
-  ...)
+get_census_geometry(dataset, regions, level = NA, geo_format = "sf", ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -56,12 +63,12 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           level='CSD')
 
 # Query the API for data on dwellings in Vancouver, at the census subdivision
-# level, and return the associated geography files in \\code{sf} format:
+# level, and return the associated geography files in \code{sf} format:
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', geo_format = "sf")
 
-# Make the same query, but return geography in \\code{sp} format:
+# Make the same query, but return geography in \code{sp} format:
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', geo_format = "sf")

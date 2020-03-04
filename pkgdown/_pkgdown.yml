@@ -1,9 +1,11 @@
 pandoc: 2.2.1
-pkgdown: 1.1.0
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
-  Making_maps_with_cancensus: Making_maps_with_cancensus.html
-  cancensus: cancensus.html
+  - title : "Making maps with cancensus"
+    contents: Making_maps_with_cancensus
+  - title : "Cancensus overview"
+    contents: cancensus
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca
@@ -12,3 +14,11 @@ authors:
 template:
   params:
     ganalytics: UA-107390160-3
+  opengraph:
+    image:
+      src: 'https://mountainmath.github.io/cancensus/logo.png'
+      alt: "cancensus"
+    twitter:
+      creator: "@vb_jens"
+      card: summary_large_image
+      site: "https://mountainmath.github.io/cancensus/"

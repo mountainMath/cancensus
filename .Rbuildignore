@@ -2,12 +2,15 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^cran-comments\.md$
+CRAN-RELEASE
 ^docs$
+docs/
+docs/*
 ^pkgdown$
 .*data_cache/
 R/hex_sticker.R
-^doc$
 ^Meta$
 images
 images/*
 card_fix.sh
+^_pkgdown\.yml$
