@@ -99,8 +99,8 @@ We'd love to feature examples of work or projects that use cancensus.
 
 If you wish to cite cancensus:
 
-  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2019). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.2.0.
+  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to
+  access, retrieve, and work with Canadian Census data and geography. v0.2.1.
 
 
 A BibTeX entry for LaTeX users is
@@ -108,8 +108,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
-    year = {2019},
-    note = {R package version 0.2.0},
+    year = {2020},
+    note = {R package version 0.2.1},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```

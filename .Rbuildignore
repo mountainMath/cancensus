@@ -14,3 +14,4 @@ images
 images/*
 card_fix.sh
 ^_pkgdown\.yml$
+^CRAN-RELEASE$
