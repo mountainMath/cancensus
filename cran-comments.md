@@ -1,3 +1,11 @@
+## Update - v.0.2.1
+
+Minor update of package. Changes include:
+- Minor documentation improvements
+- Allow for search by vector identifier
+- Allow child and parent vector retrieval by vector identifier
+- Add fucntionality for future tax data release
+
 ## Update - v.0.2.0
 
 Maintenance update of package with some quality of life improvements. Changes include:

@@ -1,3 +1,11 @@
+## cancensus 0.2.1
+
+### Minor changes
+- Minor documentation improvements
+- Allow for search by vector identifier
+- Allow child and parent vector retrieval by vector identifier
+- Add fucntionality for future tax data release
+
 ## cancensus 0.2.0
 
 ### Major changes
