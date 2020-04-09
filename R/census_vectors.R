@@ -38,7 +38,8 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
+      dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
+                       .name_repair = "unique")
     } else {
       readr::read_csv(content,col_types=readr::cols(.default="c"))
     }
