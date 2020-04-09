@@ -24,7 +24,7 @@ Imports: digest (>= 0.1),
     httr (>= 1.0.0),
     jsonlite (>= 1.0),
     rlang
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests: knitr,
     ggplot2,
     leaflet,
@@ -34,6 +34,7 @@ Suggests: knitr,
     rgeos,
     scales,
     sf,
+    geojsonsf,
     sp,
     tidyr
 VignetteBuilder: knitr
