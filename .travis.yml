@@ -21,7 +21,6 @@ r_binary_packages:
   - readr
   - rmarkdown
   - rgdal
-  - sp
   - sf
   - stringi
   - tidyr
