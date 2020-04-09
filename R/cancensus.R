@@ -192,7 +192,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!quiet) message("Reading geo data from local cache.")
     }
     geos <- if (geo_format == "sf") {
-      sf::read_sf(geo_file) %>%
+      geojsonsf::geojson_sf(geo_file) %>%
         transform_geo(level)
     } else { # geo_format == "sp"
       geos <- tryCatch({
@@ -226,7 +226,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if (length(vectors)>0) {
     census_vectors <- names(result)[grep("^v_", names(result))]
     census_vectors <- strsplit(census_vectors, ": ")
-    census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
+    census_vectors <- dplyr::as_tibble(do.call(rbind, census_vectors))
     names(census_vectors) <- c("Vector", "Detail")
     attr(result, "census_vectors") <- census_vectors
     if (labels == "short" | !is.null(names(vectors))) {
@@ -278,7 +278,7 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
-      dplyr::as_data_frame()
+      dplyr::as_tibble()
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -400,7 +400,7 @@ transform_geo <- function(g, level) {
 
   #change names
   #standard table
-  name_change <- dplyr::data_frame(
+  name_change <- dplyr::tibble(
     old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
