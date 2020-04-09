@@ -20,7 +20,14 @@ r_binary_packages:
   - markdown
   - readr
   - rmarkdown
+  - rgdal
   - sp
+  - sf
   - stringi
   - tidyr
   - ggplot2
+  - geojsonsf
+  - httr
+  - rlang
+  - jsonlite
+  - digest
