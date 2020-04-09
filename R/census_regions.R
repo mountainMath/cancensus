@@ -45,7 +45,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(textConnection(content), colClasses = 'character',stringsAsFactors = FALSE))
+      dplyr::as_tibble(utils::read.csv(textConnection(content), colClasses = 'character',stringsAsFactors = FALSE))
     } else {
       readr::read_csv(content,col_types = readr::cols(.default='c'))
     }
