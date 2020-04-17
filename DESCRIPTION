@@ -35,7 +35,6 @@ Suggests: knitr,
     scales,
     sf,
     geojsonsf,
-    sp,
     tidyr
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/cancensus/, https://censusmapper.ca/api
