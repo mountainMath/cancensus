@@ -8,10 +8,39 @@ r:
   - release
 
 # Add GDAL, GEOS, proj, and units2 dependencies.
+#before_install:
+#  - sudo add-apt-repository ppa:ubuntugis/ppa --yes
+#  - sudo apt-get --yes --force-yes update -qq
+#  - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
+
+
+# copied from sf package
+addons:
+  # postgresql: "10"
+  apt:
+    sources:
+      - sourceline: 'ppa:opencpu/jq'
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+      - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
+        key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+    packages:
+#      - devscripts # checkbashisms
+#      - libprotobuf-dev
+#      - protobuf-compiler
+      - libv8-3.14-dev
+      - libjq-dev
+      - libudunits2-dev
+      - libproj-dev
+      - libgeos-dev
+      - libspatialite-dev
+      - libgdal-dev
+      - libjson-c-dev
+      - libnetcdf-dev
+      - netcdf-bin
+
 before_install:
-  - sudo add-apt-repository ppa:ubuntugis/ppa --yes
-  - sudo apt-get --yes --force-yes update -qq
-  - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
+  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
+
 
 # Binary versions of packages to reduce build time.
 r_binary_packages:
@@ -22,6 +51,7 @@ r_binary_packages:
   - rmarkdown
   - rgdal
   - sf
+  - sp
   - stringi
   - tidyr
   - ggplot2
