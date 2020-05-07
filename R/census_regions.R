@@ -45,7 +45,10 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(textConnection(content), colClasses = 'character',stringsAsFactors = FALSE))
+      dplyr::as_tibble(utils::read.csv(textConnection(content),
+                                       colClasses = 'character',
+                                       stringsAsFactors = FALSE),
+                       .name_repair = "minimal")
     } else {
       readr::read_csv(content,col_types = readr::cols(.default='c'))
     }
@@ -112,7 +115,8 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
   else {
     # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
     # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)))
+    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)),
+                                 .name_repair = "minimal")
     names(hintlist) <- "Similar named regions"
     #
     if (length(hintlist) > 0) {

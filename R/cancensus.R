@@ -94,12 +94,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Check that we can read the requested geo format.
   if (is.na(geo_format)) { # This is ok.
-  } else if (geo_format == "sf" && !requireNamespace("sf", quietly = TRUE)) {
-    stop("the `sf` package is required to return 'sf' objects.")
-  } else if (geo_format == "sp" && !requireNamespace("rgdal", quietly = TRUE)) {
-    stop("the `rgdal` package is required to return 'sp' objects")
   } else if (!geo_format %in% c("sf", "sp")) {
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
+  } else if (!is.na(geo_format) && !requireNamespace("sf", quietly = TRUE)) {
+    stop("the `sf` package is required to return geographies.")
   }
 
   base_url=paste0(cancensus_base_url(),"/api/v1/")
@@ -125,7 +123,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..", "-","N")
+      na_strings <- c("x", "F", "...", "..", "-","N","*","**")
 
       as.num = function(x, na.strings = "NA") {
         stopifnot(is.character(x))
@@ -151,7 +149,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble() %>%
+          dplyr::as_tibble(.name_repair = "minimal") %>%
           dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
                              names(.)[grepl("v_",names(.))]),
                            as.num,na.strings=na_strings) %>%
@@ -191,30 +189,16 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     } else {
       if (!quiet) message("Reading geo data from local cache.")
     }
-    geos <- if (geo_format == "sf") {
-      sf::read_sf(geo_file) %>%
-        transform_geo(level)
-    } else { # geo_format == "sp"
-      geos <- tryCatch({
-        rgdal::readOGR(geo_file,geo_base_name)
-      }, error = function(e) {
-        rgdal::readOGR(geo_file, "OGRGeoJSON")
-      }, silent = TRUE)
-      geos@data <- transform_geo(geos@data, level)
-      geos
-    }
+    geos <- geojsonsf::geojson_sf(geo_file) %>%
+      transform_geo(level)
 
     result <- if (is.null(result)) {
       geos
-    } else if (geo_format == "sf") {
+    } else if (!is.na(geo_format)) {
       # the sf object needs to be first in join to retain all spatial information
       dplyr::select(result, -.data$Population, -.data$Dwellings,
                     -.data$Households, -.data$Type) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
-    } else { # geo_format == "sp"
-      geos@data <- dplyr::select(geos@data, -.data$Population, -.data$Dwellings,
-                                 -.data$Households, -.data$Type)
-      sp::merge(geos, result, by = "GeoUID")
     }
   }
 
@@ -224,16 +208,20 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
   if (length(vectors)>0) {
-    census_vectors <- names(result)[grep("^v_", names(result))]
-    census_vectors <- strsplit(census_vectors, ": ")
-    census_vectors <- dplyr::as_data_frame(do.call(rbind, census_vectors))
-    names(census_vectors) <- c("Vector", "Detail")
+    census_vectors <- names(result)[grep("^v_", names(result))] %>%
+      strsplit(., ": ") %>%
+      dplyr::as_tibble(x=do.call(rbind, .),.name_repair = "minimal") %>%
+      setNames(c("Vector", "Detail"))
     attr(result, "census_vectors") <- census_vectors
     if (labels == "short" | !is.null(names(vectors))) {
       if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
       else {names(result) <- gsub(":.*","",names(result))}
       if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
     }
+  }
+
+  if (!is.na(geo_format) & geo_format=='sp') { # ensure sf format even if library not loaded
+    result <- sf::as_Spatial(result)
   }
 
   return(result)
@@ -278,7 +266,7 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     handle_cm_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
-      dplyr::as_data_frame()
+      dplyr::as_tibble(.name_repair = "minimal")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -400,7 +388,7 @@ transform_geo <- function(g, level) {
 
   #change names
   #standard table
-  name_change <- dplyr::data_frame(
+  name_change <- dplyr::tibble(
     old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
@@ -492,4 +480,5 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
 
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data
+#' @importFrom stats setNames
 NULL
