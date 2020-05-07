@@ -1,10 +1,18 @@
+## cancensus 0.2.2
+
+### Minor changes
+- More efficient conversion between `sp` and `sf` spatial objects
+- Fixes issue occasionally reported when reading large GeoJSON objects as noted in https://github.com/mountainMath/cancensus/issues/138
+- Adds `geojsonsf` dependency
+- Replaces soft deprecated dplyr functions to fix https://github.com/mountainMath/cancensus/issues/137
+
 ## cancensus 0.2.1
 
 ### Minor changes
 - Minor documentation improvements
 - Allow for search by vector identifier
 - Allow child and parent vector retrieval by vector identifier
-- Add fucntionality for future tax data release
+- Add functionality for future tax data releases
 
 ## cancensus 0.2.0
 

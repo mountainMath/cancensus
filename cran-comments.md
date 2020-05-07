@@ -1,3 +1,11 @@
+## Update - v.0.2.2
+
+Minor update of package. Changes include:
+- More efficient conversion between `sp` and `sf` spatial objects
+- Fixes issue occasionally reported when reading large GeoJSON objects
+- Adds `geojsonsf` dependency
+- Replaces soft deprecated dplyr functions with updated calls
+
 ## Update - v.0.2.1
 
 Minor update of package. Changes include:
@@ -9,25 +17,25 @@ Minor update of package. Changes include:
 ## Update - v.0.2.0
 
 Maintenance update of package with some quality of life improvements. Changes include:
-* Improved variable tree searching
-* Better handling of numeric/string/factor alignments
-* Backward compatibility for some soft deprecated functions
+- Improved variable tree searching
+- Better handling of numeric/string/factor alignments
+- Backward compatibility for some soft deprecated functions
 
 Release checked locally, on r-hub, and winbuilder. 
 
 ## Update - v.0.1.8
 
 Minor update of package. Changes include: 
-* New minor usability features that do not change package internals
-* Addition of minor fixes 
-* Replacement of unnecessary references to development-version packages in vignettes where CRAN versions now exist
+- New minor usability features that do not change package internals
+- Addition of minor fixes 
+- Replacement of unnecessary references to development-version packages in vignettes where CRAN versions now exist
 
 ## Update - v.0.1.7
 
 After initial acceptance, CRAN checks identified an issue stemming from the package using a local cache that writes to the user library rather than R's temporary director. Kurt Hornik advised to fix this and to submit an update. 
 
-* This update changes default caching behaviour to confirm with CRAN requirements. 
-* Users are prompted with a suggestion encouraging them to set up a persistent local cache on load, and a second reminder when making an API call. 
+- This update changes default caching behaviour to confirm with CRAN requirements. 
+- Users are prompted with a suggestion encouraging them to set up a persistent local cache on load, and a second reminder when making an API call. 
 
 ## Resubmission - v.0.1.6 - Approved
 
