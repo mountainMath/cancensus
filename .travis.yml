@@ -24,15 +24,15 @@ r_binary_packages:
   - sf
   - dplyr
   - units
-  - leaflet
+  - tidyr
+  - rlang
   - markdown
   - readr
   - rmarkdown
   - stringi
-  - tidyr
   - ggplot2
   - geojsonsf
   - httr
-  - rlang
   - jsonlite
   - digest
+  - leaflet
