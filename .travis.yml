@@ -6,7 +6,8 @@ os: linux
 dist: xenial
 
 r:
-  - release
+  #- release
+  - oldrel
 
 before_install:
 #  Add GDAL, GEOS, proj, and units2 dependencies
