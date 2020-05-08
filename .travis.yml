@@ -1,12 +1,14 @@
 language: R
-cache: packages
+cache:
+  - packages
+  - ccache
 latex: false
 sudo: required
 os: linux
 dist: xenial
 
 r:
-  #- release
+  - release
   - oldrel
 
 before_install:
@@ -21,6 +23,7 @@ r_binary_packages:
   - rgeos
   - sf
   - dplyr
+  - units
   - leaflet
   - markdown
   - readr
