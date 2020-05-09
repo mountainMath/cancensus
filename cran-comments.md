@@ -1,6 +1,7 @@
 ## Update - v.0.2.2
 
 Minor update of package. Changes include:
+- Testing to ensure no issues with R 4.0.0
 - More efficient conversion between `sp` and `sf` spatial objects
 - Fixes issue occasionally reported when reading large GeoJSON objects
 - Adds `geojsonsf` dependency
