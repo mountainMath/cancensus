@@ -18,8 +18,6 @@
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #' @param ... Further arguments passed to \code{get_census}.
 #'
-#' @keywords canada census data api
-#'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada
 #' 2006; 2011; 2016).
@@ -386,13 +384,13 @@ transform_geo <- function(g, level) {
     dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
                      dplyr::funs(as.factor))
 
-  #change names
-  #standard table
+  # Change names
+  # Standard table
   name_change <- dplyr::tibble(
     old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
     new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
   )
-  #geo uid name changes
+  # Geo UID name changes
   if (level=='Regions') {
     l=g$t %>% unique()
     if (length(l)==1) level=l

@@ -28,6 +28,7 @@ RoxygenNote: 7.1.0
 Suggests: knitr,
     ggplot2,
     leaflet,
+    mapdeck,
     rmarkdown,
     readr,
     rgdal,
