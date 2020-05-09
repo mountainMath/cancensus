@@ -1,6 +1,5 @@
 ---
 title: "Making maps with cancensus"
-author: "Dmitry Shkolnik"
 date: ""
 output: rmarkdown::html_vignette
 mainfont: Roboto
@@ -16,6 +15,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = nzchar(Sys.getenv("COMPILE_VIG"))
 )
+
+mb_token <- Sys.getenv("MB_TOKEN")
 ```
 
 # Spatial data in cancensus
@@ -83,7 +84,7 @@ The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web
 
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-# This chunk disables leaflet output in remaining chunks for PDF vignettes
+# This chunk disables leaflet and mapdeck output in remaining chunks for PDF vignettes
 if(Sys.getenv("COMPILE_VIG")!="TRUE") {
   knitr::opts_chunk$set(eval = FALSE)}
 ```
@@ -107,3 +108,45 @@ leaflet(toronto) %>%
               opacity = 1,
               fillOpacity = 0.65)
 ```
+
+# Interactive maps with mapdeck
+
+The [mapdeck](https://github.com/SymbolixAU/mapdeck) package enables plotting of large spatial datasets on interactive maps using [Mapbox GL](https://www.mapbox.com/about/) and [Deck.gl](http://deck.gl/#/). Mapdeck is fast and has numerous features that make it well suited for working with spatial data. Using mapdeck requires a Mapbox token, with details for setup available [here](https://github.com/SymbolixAU/mapdeck#quick-start). Mapdeck provides extensive additional functionality for displaying spatial data such as visual pitch, 3d-extrusions. 
+
+```{r message = FALSE, warning = FALSE}
+library(mapdeck)
+library(dplyr)
+
+toronto3d <- toronto %>% 
+  mutate(adj_income = median_hh_income/10)
+
+mapdeck(token = mb_token, style = mapdeck_style("dark"), pitch = 45 ) %>%
+  add_polygon(
+    data = toronto3d
+    , layer = "polygon_layer"
+    , fill_colour = "median_hh_income"
+    , elevation = "adj_income"
+    , legend = TRUE
+  )
+```
+
+Mapdeck is especially useful if attempting to visualize large spatial datasets containing many objects, such as Census tracts and dissemination areas, as in this example below looking at the same household income data as above, but using Census tracts instead.  
+
+```{r message = FALSE, warning = FALSE}
+toronto_ct <- get_census(dataset='CA16', regions=list(CMA="35535"),
+                         vectors=c("median_hh_income"="v_CA16_2397"), level='CT', quiet = TRUE, 
+                         geo_format = 'sf', labels = 'short')
+
+toronto_ct3d <- toronto_ct %>% 
+  mutate(adj_income = median_hh_income/10)
+
+mapdeck(token = mb_token, style = mapdeck_style("dark"), pitch = 45 ) %>%
+  add_polygon(
+    data = toronto_ct3d
+    , layer = "polygon_layer"
+    , fill_colour = "median_hh_income"
+    , elevation = "adj_income"
+    , legend = TRUE
+  )
+```
+

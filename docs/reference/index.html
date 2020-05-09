@@ -154,7 +154,7 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-retrieving-census-data" class="hasAnchor"><a href="#section-retrieving-census-data" class="anchor"></a>Retrieving Census data</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -166,31 +166,9 @@
       <tr>
         
         <td>
-          <p><code><a href="as_census_region_list.html">as_census_region_list()</a></code> </p>
+          <p><code><a href="get_census.html">get_census()</a></code> <code><a href="get_census.html">get_census_geometry()</a></code> </p>
         </td>
-        <td><p>Convert a (suitably filtered) data frame from
-<code>list_census_regions</code> to a list suitable for passing to
-<code>get_census</code>.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="census_vectors.html">census_vectors()</a></code> </p>
-        </td>
-        <td><p>Return Census variable names and labels as a tidy data frame (Deprecated)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="child_census_vectors.html">child_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all child variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="label_vectors.html">label_vectors()</a></code> </p>
-        </td>
-        <td><p>Return Census variable names and labels as a tidy data frame</p></td>
+        <td><p>Access to Canadian census data through the CensusMapper API</p></td>
       </tr><tr>
         
         <td>
@@ -212,14 +190,6 @@ variables returned by
       </tr><tr>
         
         <td>
-          <p><code><a href="parent_census_vectors.html">parent_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all parent variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="search_census_regions.html">search_census_regions()</a></code> </p>
         </td>
         <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
@@ -229,6 +199,41 @@ variables returned by
           <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
         </td>
         <td><p>Query the CensusMapper API for vectors with descriptions matching a searchterm.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-working-with-census-data" class="hasAnchor"><a href="#section-working-with-census-data" class="anchor"></a>Working with Census data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="label_vectors.html">label_vectors()</a></code> </p>
+        </td>
+        <td><p>Return Census variable names and labels as a tidy data frame</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="child_census_vectors.html">child_census_vectors()</a></code> </p>
+        </td>
+        <td><p>List all child variables from vector hierarchies given either a list of Census
+variables returned by
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="parent_census_vectors.html">parent_census_vectors()</a></code> </p>
+        </td>
+        <td><p>List all parent variables from vector hierarchies given either a list of Census
+variables returned by
+<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
       </tr>
     </tbody>
     </table>
