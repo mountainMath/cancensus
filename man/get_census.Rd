@@ -82,8 +82,4 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 label_vectors(census_data)
 }
 }
-\keyword{api}
-\keyword{canada}
-\keyword{census}
-\keyword{data}
 \keyword{internal}

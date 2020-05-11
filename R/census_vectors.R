@@ -38,7 +38,8 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_data_frame(utils::read.csv(textConnection(content), stringsAsFactors = FALSE))
+      dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
+                       .name_repair = "minimal")
     } else {
       readr::read_csv(content,col_types=readr::cols(.default="c"))
     }
@@ -93,11 +94,11 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
 #' \dontrun{
 #' # Example using multiple vectors coerced into a list
 #' parent_census_vectors(c("v_CA16_2519","v_CA16_2520","v_CA16_2521"))
-#' 
+#'
 #' # or, equivalently
 #' selected_vectors <- c("v_CA16_2519","v_CA16_2520","v_CA16_2521")
 #' parent_census_vectors(selected_vectors)
-#' 
+#'
 #' # Example using dplyr and piped arguments
 #' library(dplyr, warn.conflicts = FALSE)
 #'
@@ -141,16 +142,16 @@ parent_census_vectors <- function(vector_list){
 #' @examples
 #' # Query parent vectors directly using vector identifier
 #' child_census_vectors("v_CA16_2510")
-#' 
+#'
 #' \dontrun{
-#' 
+#'
 #' # Example using multiple vectors coerced into a list
 #' child_census_vectors(c("v_CA16_2510","v_CA16_2511","v_CA16_2512"))
-#' 
+#'
 #' # or, equivalently
 #' selected_vectors <- c("v_CA16_2510","v_CA16_2511","v_CA16_2512")
 #' child_census_vectors(selected_vectors)
-#' 
+#'
 #' # Example using dplyr and piped arguments
 #' library(dplyr, warn.conflicts = FALSE)
 #'

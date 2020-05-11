@@ -1,11 +1,29 @@
-pandoc: 2.2.1
-pkgdown: 2.0.3
+pandoc: 2.3.1
 pkgdown_sha: ~
+
+url: https://mountainmath.github.io/cancensus/index.html
+
+home:
+  title: Access, retrieve, and work with Canadian Census data and geography.
+
+reference:
+  - title: Retrieving Census data
+  - contents:
+    - get_census
+    - get_census_geometry
+    - list_census_datasets
+    - list_census_regions
+    - list_census_vectors
+    - search_census_regions
+    - search_census_vectors
+  - title: Working with Census data
+  - contents:
+    - label_vectors
+    - child_census_vectors
+    - parent_census_vectors
 articles:
-  - title : "Making maps with cancensus"
+  - title : Extending Cancensus
     contents: Making_maps_with_cancensus
-  - title : "Cancensus overview"
-    contents: cancensus
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca

@@ -1,6 +1,5 @@
 ---
 title: "Making maps with cancensus"
-author: "Dmitry Shkolnik"
 date: ""
 output: rmarkdown::html_vignette
 mainfont: Roboto
@@ -16,6 +15,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = nzchar(Sys.getenv("COMPILE_VIG"))
 )
+
+mb_token <- Sys.getenv("MB_TOKEN")
 ```
 
 # Spatial data in cancensus
@@ -83,7 +84,7 @@ The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web
 
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-# This chunk disables leaflet output in remaining chunks for PDF vignettes
+# This chunk disables leaflet and mapdeck output in remaining chunks for PDF vignettes
 if(Sys.getenv("COMPILE_VIG")!="TRUE") {
   knitr::opts_chunk$set(eval = FALSE)}
 ```
@@ -107,3 +108,5 @@ leaflet(toronto) %>%
               opacity = 1,
               fillOpacity = 0.65)
 ```
+
+

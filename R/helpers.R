@@ -1,9 +1,10 @@
+# Internal functions that do useful things frequently required in other functions
+
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"
   url
 }
-
 
 clean_vector_list <- function(vector_list,dataset=NULL){
   if (!("data.frame") %in% class(vector_list)) {

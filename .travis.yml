@@ -1,26 +1,38 @@
 language: R
-cache: packages
+cache:
+  - packages
+  - ccache
 latex: false
 sudo: required
-dist: trusty
+os: linux
+dist: xenial
 
 r:
   - release
+  - oldrel
 
-# Add GDAL, GEOS, proj, and units2 dependencies.
 before_install:
-  - sudo add-apt-repository ppa:ubuntugis/ppa --yes
+#  Add GDAL, GEOS, proj, and units2 dependencies
+  - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable -y
   - sudo apt-get --yes --force-yes update -qq
-  - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
+  - sudo apt-get install libgdal-dev libgeos-dev libproj-dev libudunits2-dev libv8-dev libprotobuf-dev protobuf-compiler libjq-dev
 
-# Binary versions of packages to reduce build time.
-r_binary_packages:
-  - dplyr
-  - leaflet
-  - markdown
-  - readr
-  - rmarkdown
-  - sp
-  - stringi
-  - tidyr
-  - ggplot2
+#r_binary_packages:
+#  - sp
+#  - rgdal
+#  - rgeos
+#  - sf
+#  - dplyr
+#  - units
+#  - tidyr
+#  - rlang
+#  - markdown
+#  - readr
+#  - rmarkdown
+#  - stringi
+#  - ggplot2
+#  - geojsonsf
+#  - httr
+#  - jsonlite
+#  - digest
+#  - leaflet
