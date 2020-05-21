@@ -375,14 +375,10 @@ transform_geo <- function(g, level) {
   as_character=append(append(as_character,as_numeric),as_integer)
 
   g <- g %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_character),
-                     dplyr::funs(as.character)) %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_numeric),
-                     dplyr::funs(as.numeric))  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_integer),
-                     dplyr::funs(as.integer))  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
-                     dplyr::funs(as.factor))
+    dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_numeric), as.numeric)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.integer)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor)
 
   # Change names
   # Standard table
