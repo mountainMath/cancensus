@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   Making_maps_with_cancensus: Making_maps_with_cancensus.html
   cancensus: cancensus.html
-last_built: 2020-05-10T16:08Z
+last_built: 2020-05-30T09:09Z
 urls:
   reference: https://mountainmath.github.io/cancensus/index.html/reference
   article: https://mountainmath.github.io/cancensus/index.html/articles

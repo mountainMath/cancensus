@@ -4,7 +4,6 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
 
-
 <a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 
 
@@ -14,8 +13,9 @@ Access, retrieve, and work with Canadian Census data and geography.
 * Convenience tools for searching for and working with Census regions and variable hierarchies
 * Provides Census geography in multiple R spatial formats
 * Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas
-* Provides data for the 2016, 2011, 2006, and 2001 Censuses
-
+* Provides data for the 2016, 2011, 2006, and 2001 Census releases
+* Access to taxfiler data at the Census Tract level for tax years 2000 through 2017
+ 
 ### Reference
 
 [**Cancensus home page and reference guide**](https://mountainmath.github.io/cancensus/index.html)
@@ -46,6 +46,8 @@ For performance reasons, and to avoid unnecessarily drawing down API quotas, **c
 ### Currently available datasets
 
 **cancensus** can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+
+Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
 
 ### Picking regions and variables
 
@@ -83,6 +85,8 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("
 
 * [Income: A first look](https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/)
 * [Language Diversity in Canada](https://www.dshkol.com/2017/language-diversity-in-canada/)
+* [Diversity and Segregation in Canadian cities](https://www.dshkol.com/2018/diversity-and-segregation-canadian-cities/)
+* [Census tract level T1FF data](https://doodles.mountainmath.ca/blog/2020/04/23/census-tract-level-t1ff-tax-data/)
 
 We'd love to feature examples of work or projects that use cancensus.
 
