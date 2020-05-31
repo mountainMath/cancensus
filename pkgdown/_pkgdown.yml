@@ -13,6 +13,7 @@ reference:
     - get_census_geometry
     - list_census_datasets
     - list_census_regions
+    - as_census_region_list
     - list_census_vectors
     - search_census_regions
     - search_census_vectors
@@ -24,6 +25,8 @@ reference:
 articles:
   - title : Extending Cancensus
     contents: Making_maps_with_cancensus
+  - title : Dwellings by document type cross tabulation
+    contents: Dwellings_by_document_type_cross_tabulation
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca

@@ -1,0 +1,78 @@
+---
+title: "Dwellings by document type cross tabulation"
+output: rmarkdown::html_vignette
+mainfont: Roboto
+vignette: >
+  %\VignetteIndexEntry{Dwellings_by_document_type_cross_tabulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = nzchar(Sys.getenv("COMPILE_VIG"))
+)
+```
+
+CensusMapper houses a cross tabulation of *Structural Type of Dwelling* by *Document Type* down to the Census Tract level for the census years 2001 through 2016 provide via CMHC. *Structural Type of Dwelling* is a common census variable that describes the type of structure a dwelling unit is in. *Document Type* is less known, it classifies if the census determined the dwelling is
+
+* occupied by usual residents (also known as a household),
+* occupied by temporarily present persons, or
+* unoccupied.
+
+In particular, this cross tabulation has information on the struvtural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built fabric.
+
+As an example, we look at the structure of the dwelling stock in the City of Toronto in 2016.
+
+```{r setup, message = FALSE, warning = FALSE}
+library(cancensus)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+
+```{r, message = FALSE, warning = FALSE}
+vars <- list_census_vectors("CA16xSD") %>% 
+  filter(grepl("_\\d$",vector))
+variables <- setNames(vars$vector,vars$label)
+
+census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), vectors = variables, quiet = TRUE) %>%
+  pivot_longer(setdiff(names(variables),"Total dwellings")) %>%
+  mutate(share=value/sum(value))
+
+ggplot(census_data,aes(x=reorder(name,share),y=share)) +
+  geom_bar(stat="identity",fill="steelblue") +
+  coord_flip() +
+  scale_y_continuous(labels=scales::percent) +
+  labs(title="City of Toronto dwelling units by structural type",
+       x=NULL,y=NULL,caption="StatCan 2016 Census, xtab via CMHC")
+```
+
+Just like with regular census data, we can also request geographies for mapping purposes. Dwellings registered as *unoccupied* on census day capture the imagination of many, although people often mistakenly pull data on dwellings *not occupied by usual residents* as it is easily available in the standard census profile data. This dataset allows to zoom in on dwellings that were classified as *unoccupied* by the enumerator on census day.
+
+
+```{r, message = FALSE, warning = FALSE}
+vars <- list_census_vectors("CA16xSD") %>% 
+  filter(grepl("_\\d$",vector))
+variables <- setNames(vars$vector,vars$label)
+
+census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), level="CT", quiet = TRUE, geo_format = "sf",
+                          vectors = c(Total="v_CA16xSD_1", Unoccupied="v_CA16xSD_28"),use_cache = FALSE) %>%
+  mutate(share=Unoccupied/Total)
+
+ggplot(census_data,aes(fill=share)) +
+  geom_sf(size=0.1) +
+  scale_fill_viridis_c(labels=scales::percent) +
+  coord_sf(datum=NA) +
+  labs(title="City of Toronto dwellings unoccupied on census day",
+       fill="Share",
+       x=NULL,y=NULL,caption="StatCan 2016 Census, xtab via CMHC")
+
+```
+
+
+
+
