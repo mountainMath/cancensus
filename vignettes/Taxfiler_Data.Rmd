@@ -102,3 +102,5 @@ geo_data %>%
   labs(title="Change in share of census families in low income 2006-2011",fill="Percentage\npoint change",caption="StatCan CRA Taxfiler Data, via CMHC")
 ```
 
+Analyzing change over longer timelines that span changes in census geometries involves more work, the [tongfen package](https://mountainmath.github.io/tongfen/index.html) facilitates this and provides a convenient interface for generating timelines spanning geometries from several census years.
+
