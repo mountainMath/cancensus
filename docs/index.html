@@ -111,7 +111,8 @@
 <li>Convenience tools for searching for and working with Census regions and variable hierarchies</li>
 <li>Provides Census geography in multiple R spatial formats</li>
 <li>Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas</li>
-<li>Provides data for the 2016, 2011, 2006, and 2001 Censuses</li>
+<li>Provides data for the 2016, 2011, 2006, and 2001 Census releases</li>
+<li>Access to taxfiler data at the Census Tract level for tax years 2000 through 2017</li>
 </ul>
 <div id="reference" class="section level3">
 <h3 class="hasAnchor">
@@ -142,6 +143,7 @@ library(cancensus)</a></code></pre>
 <h3 class="hasAnchor">
 <a href="#currently-available-datasets" class="anchor"></a>Currently available datasets</h3>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
+<p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 </div>
 <div id="picking-regions-and-variables" class="section level3">
 <h3 class="hasAnchor">
@@ -177,6 +179,8 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <ul>
 <li><a href="https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/">Income: A first look</a></li>
 <li><a href="https://www.dshkol.com/2017/language-diversity-in-canada/">Language Diversity in Canada</a></li>
+<li><a href="https://www.dshkol.com/2018/diversity-and-segregation-canadian-cities/">Diversity and Segregation in Canadian cities</a></li>
+<li><a href="https://doodles.mountainmath.ca/blog/2020/04/23/census-tract-level-t1ff-tax-data/">Census tract level T1FF data</a></li>
 </ul>
 <p>We’d love to feature examples of work or projects that use cancensus.</p>
 </div>
