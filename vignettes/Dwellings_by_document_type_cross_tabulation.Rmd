@@ -22,7 +22,7 @@ CensusMapper houses a cross tabulation of *Structural Type of Dwelling* by *Docu
 * occupied by temporarily present persons, or
 * unoccupied.
 
-In particular, this cross tabulation has information on the struvtural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built fabric.
+In particular, this cross tabulation has information on the structural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built fabric.
 
 As an example, we look at the structure of the dwelling stock in the City of Toronto in 2016.
 

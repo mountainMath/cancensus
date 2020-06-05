@@ -27,6 +27,8 @@ articles:
     contents: Making_maps_with_cancensus
   - title : Dwellings by document type cross tabulation
     contents: Dwellings_by_document_type_cross_tabulation
+  - title : Annual T1FF Taxfiler Data
+    contents: Taxfiler_Data
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca
