@@ -1,11 +1,31 @@
 ---
-title: "Annual T1FF Taxfiler Data"
+title: "Additional datasets: Annual T1FF taxfiler data"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Taxfiler_Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+## Background
+
+Through collaboration with the [Canadian Mortgage and Housing Corporation](https://www.cmhc-schl.gc.ca/) (CMHC), CensusMapper has added and open-sourced annual T1FF taxfiler data which provides an annual look at some basic demographic variables. Data is available via the `cancensus` package for the years 2001 through 2017. The T1FF dataset contains information on: 
+
+* individual income
+* government transfers
+* family income
+* family composition
+* taxfilers by age groups
+* taxfilers and dependants by age groups
+* marital status and select other demographic variables
+
+The data comes in varying Census geographies, depending on the year. Retrieving any annual dataset via `get_census` will automatically reference to the correct Census geography and attach the correct spatial boundaries.
+
+The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is "v_TX2017_786" and that for all families is "v_TX2017_607", and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy. 
+
+## Example usage: constructing a multi-year series of families in low-income status
+
+As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -16,28 +36,25 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message = FALSE, warning = FALSE}
+# Packages used for example
 library(cancensus)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(sf)
 ```
 
-CRA T1FF Taxfiler data provides an annual look at some basic demographic variables.
+To see all available T1FF datasets and their reference codes we can use `list_census_datasets()`.
 
-This dataset contains information on
-* individual income
-* government transfers
-* family income
-* family composition
-* taxfilers by age groups
-* taxfilers and dependants by age groups
-* marital status and select other demographic variables
-
-
-As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.
-
-The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is "v_TX2017_786" and that for all families is "v_TX2017_607", and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy. 
-
+```{r, message=FALSE, warning=FALSE}
+list_census_datasets() %>% 
+  filter(grepl("Taxfiler",description))
+```
+And, as an example, available data vectors for one such T1FF dataset.
+```{r, message=FALSE, warning=FALSE}
+list_census_vectors('TX2017')
+```
+This particular dataset has pver 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. 
 ```{r, message = FALSE, warning = FALSE}
 years <- seq(2006,2017)
 all_families <- setNames(paste0("v_TX",years,"_607"),paste0(years,"_Families"))
@@ -45,7 +62,7 @@ low_income_families <- setNames(paste0("v_TX",years,"_786"),paste0(years,"_CFLIM
 all_vectors <- c(all_families,low_income_families)
 ```
 
-The data comes on varying census geographies, depending on the year. But we won't have to worry too much about this if we just grab the data via `get_census` year by year. It will pick the appropriate census geographies for us.
+While the geography varies across Census periods, the call to `get_census` will automatically attach the correct geography for each annual dataset.
 
 ```{r, message = FALSE, warning = FALSE}
 plot_data <- all_vectors %>% 
@@ -68,7 +85,7 @@ plot_data <- all_vectors %>%
 
 Here we also re-organized the data by year. All that's left is to plot the data, one year at a time.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, fig.width=14}
 ggplot(plot_data,aes(fill=share)) +
   geom_sf(size=0.1,color="white") +
   facet_wrap("Year") +
@@ -86,7 +103,7 @@ geo_data <- plot_data %>%
   filter(Year==2011) %>% 
   select(GeoUID)
 values_data <-  plot_data %>%
-  sf::st_set_geometry(NULL) %>%
+  st_set_geometry(NULL) %>%
   select(GeoUID,Year,share) %>%
   filter(Year %in% seq(2006,2011)) %>%
   pivot_wider(id_cols = GeoUID,values_from = share,names_from = Year) %>%
@@ -102,5 +119,5 @@ geo_data %>%
   labs(title="Change in share of census families in low income 2006-2011",fill="Percentage\npoint change",caption="StatCan CRA Taxfiler Data, via CMHC")
 ```
 
-Analyzing change over longer timelines that span changes in census geometries involves more work, the [tongfen package](https://mountainmath.github.io/tongfen/index.html) facilitates this and provides a convenient interface for generating timelines spanning geometries from several census years.
+Analyzing change over longer timelines that span changes in Census geometries involves more work, the [tongfen package](https://mountainmath.github.io/tongfen/index.html) facilitates this and provides a convenient interface for generating timelines spanning geometries from several Census years.
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Annual T1FF Taxfiler Data • cancensus</title>
+<title>Additional datasets: Annual T1FF taxfiler data • cancensus</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Annual T1FF Taxfiler Data">
+<meta property="og:title" content="Additional datasets: Annual T1FF taxfiler data">
 <meta property="og:description" content="cancensus">
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png">
 <meta property="og:image:alt" content="cancensus">
@@ -91,10 +91,10 @@
 
       
 
-      </header><script src="Taxfiler_Data_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Annual T1FF Taxfiler Data</h1>
+      <h1 data-toc-skip>Additional datasets: Annual T1FF taxfiler data</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/Taxfiler_Data.Rmd"><code>vignettes/Taxfiler_Data.Rmd</code></a></small>
@@ -104,20 +104,79 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cancensus</span>)
+<div id="background" class="section level2">
+<h2 class="hasAnchor">
+<a href="#background" class="anchor"></a>Background</h2>
+<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/">Canadian Mortgage and Housing Corporation</a> (CMHC), CensusMapper has added and open-sourced annual T1FF taxfiler data which provides an annual look at some basic demographic variables. Data is available via the <code>cancensus</code> package for the years 2001 through 2017. The T1FF dataset contains information on:</p>
+<ul>
+<li>individual income</li>
+<li>government transfers</li>
+<li>family income</li>
+<li>family composition</li>
+<li>taxfilers by age groups</li>
+<li>taxfilers and dependants by age groups</li>
+<li>marital status and select other demographic variables</li>
+</ul>
+<p>The data comes in varying Census geographies, depending on the year. Retrieving any annual dataset via <code>get_census</code> will automatically reference to the correct Census geography and attach the correct spatial boundaries.</p>
+<p>The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is “v_TX2017_786” and that for all families is “v_TX2017_607”, and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy.</p>
+</div>
+<div id="example-usage-constructing-a-multi-year-series-of-families-in-low-income-status" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-usage-constructing-a-multi-year-series-of-families-in-low-income-status" class="anchor"></a>Example usage: constructing a multi-year series of families in low-income status</h2>
+<p>As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># Packages used for example</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cancensus</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)</pre></body></html></div>
-<p>CRA T1FF Taxfiler data provides an annual look at some basic demographic variables.</p>
-<p>This dataset contains information on * individual income * government transfers * family income * family composition * taxfilers by age groups * taxfilers and dependants by age groups * marital status and select other demographic variables</p>
-<p>As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.</p>
-<p>The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is “v_TX2017_786” and that for all families is “v_TX2017_607”, and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">years</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">2006</span>,<span class="fl">2017</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">sf</span>)</pre></body></html></div>
+<p>To see all available T1FF datasets and their reference codes we can use <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"Taxfiler"</span>,<span class="no">description</span>))
+<span class="co">#&gt; # A tibble: 18 x 3</span>
+<span class="co">#&gt;    dataset description                  geo_dataset</span>
+<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                        &lt;chr&gt;      </span>
+<span class="co">#&gt;  1 TX2000  2000 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  2 TX2001  2001 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  3 TX2002  2002 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  4 TX2003  2003 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  5 TX2004  2004 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  6 TX2005  2005 Taxfiler data, via CMHC CA01       </span>
+<span class="co">#&gt;  7 TX2006  2006 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt;  8 TX2007  2007 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt;  9 TX2008  2008 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt; 10 TX2009  2009 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt; 11 TX2010  2010 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt; 12 TX2011  2011 Taxfiler data, via CMHC CA06       </span>
+<span class="co">#&gt; 13 TX2012  2012 Taxfiler data, via CMHC CA11       </span>
+<span class="co">#&gt; 14 TX2013  2013 Taxfiler data, via CMHC CA11       </span>
+<span class="co">#&gt; 15 TX2014  2014 Taxfiler data, via CMHC CA11       </span>
+<span class="co">#&gt; 16 TX2015  2015 Taxfiler data, via CMHC CA11       </span>
+<span class="co">#&gt; 17 TX2016  2016 Taxfiler data, via CMHC CA16       </span>
+<span class="co">#&gt; 18 TX2017  2017 Taxfiler data, via CMHC CA16</span></pre></body></html></div>
+<p>And, as an example, available data vectors for one such T1FF dataset.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">'TX2017'</span>)
+<span class="co">#&gt; # A tibble: 818 x 7</span>
+<span class="co">#&gt;    vector  type  label   units    parent_vector aggregation  details            </span>
+<span class="co">#&gt;    &lt;chr&gt;   &lt;fct&gt; &lt;chr&gt;   &lt;fct&gt;    &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;              </span>
+<span class="co">#&gt;  1 v_TX20… Total Taxfil… Number   &lt;NA&gt;          Additive     Tax data 2017; Ind…</span>
+<span class="co">#&gt;  2 v_TX20… Total % 0-24  Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  3 v_TX20… Total % 25-44 Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  4 v_TX20… Total % 45-64 Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  5 v_TX20… Total % 65+   Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  6 v_TX20… Total Averag… Ratio    v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  7 v_TX20… Total % fema… Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  8 v_TX20… Total % marr… Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt;  9 v_TX20… Total % in a… Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
+<span class="co">#&gt; 10 v_TX20… Total All pe… Number   &lt;NA&gt;          Additive     Tax data 2017; Ind…</span>
+<span class="co">#&gt; # … with 808 more rows</span></pre></body></html></div>
+<p>This particular dataset has pver 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">years</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">2006</span>,<span class="fl">2017</span>)
 <span class="no">all_families</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"v_TX"</span>,<span class="no">years</span>,<span class="st">"_607"</span>),<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">years</span>,<span class="st">"_Families"</span>))
 <span class="no">low_income_families</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"v_TX"</span>,<span class="no">years</span>,<span class="st">"_786"</span>),<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">years</span>,<span class="st">"_CFLIM-AT"</span>))
 <span class="no">all_vectors</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">all_families</span>,<span class="no">low_income_families</span>)</pre></body></html></div>
-<p>The data comes on varying census geographies, depending on the year. But we won’t have to worry too much about this if we just grab the data via <code>get_census</code> year by year. It will pick the appropriate census geographies for us.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">plot_data</span> <span class="kw">&lt;-</span> <span class="no">all_vectors</span> <span class="kw">%&gt;%</span>
+<p>While the geography varies across Census periods, the call to <code>get_census</code> will automatically attach the correct geography for each annual dataset.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">plot_data</span> <span class="kw">&lt;-</span> <span class="no">all_vectors</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"^v_"</span>,<span class="st">""</span>,<span class="no">.</span>)<span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"_\\d+$"</span>,<span class="st">""</span>,<span class="no">.</span>) <span class="kw">%&gt;%</span>
@@ -134,7 +193,7 @@
   <span class="kw pkg">sf</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/sf/man/sf.html">st_sf</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">share</span><span class="kw">=</span><span class="no">`CFLIM-AT`</span>/<span class="no">Families</span>)</pre></body></html></div>
 <p>Here we also re-organized the data by year. All that’s left is to plot the data, one year at a time.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">plot_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">fill</span><span class="kw">=</span><span class="no">share</span>)) +
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">plot_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">fill</span><span class="kw">=</span><span class="no">share</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span>(<span class="kw">size</span><span class="kw">=</span><span class="fl">0.1</span>,<span class="kw">color</span><span class="kw">=</span><span class="st">"white"</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="st">"Year"</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>,<span class="kw">option</span> <span class="kw">=</span> <span class="st">"inferno"</span>,
@@ -142,33 +201,36 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span>(<span class="kw">datum</span><span class="kw">=</span><span class="fl">NA</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">123.4</span>, -<span class="fl">122.5</span>), <span class="kw">ylim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">49.01</span>, <span class="fl">49.4</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Share of census families in low income"</span>,<span class="kw">fill</span><span class="kw">=</span><span class="st">"Share"</span>,
        <span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan CRA Taxfiler Data, via CMHC"</span>)</pre></body></html></div>
-<p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-6-1.png" width="1344"></p>
 <p>We may be tempted to re-arrange the data to create timelines, but we have to be careful as census geographies change over time.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">geo_data</span> <span class="kw">&lt;-</span> <span class="no">plot_data</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">geo_data</span> <span class="kw">&lt;-</span> <span class="no">plot_data</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">Year</span><span class="kw">==</span><span class="fl">2011</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">GeoUID</span>)
 <span class="no">values_data</span> <span class="kw">&lt;-</span>  <span class="no">plot_data</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">sf</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/sf/man/st_geometry.html">st_set_geometry</a></span>(<span class="kw">NULL</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/sf/man/st_geometry.html">st_set_geometry</a></span>(<span class="kw">NULL</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">GeoUID</span>,<span class="no">Year</span>,<span class="no">share</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">Year</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">2006</span>,<span class="fl">2011</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span>(<span class="kw">id_cols</span> <span class="kw">=</span> <span class="no">GeoUID</span>,<span class="kw">values_from</span> <span class="kw">=</span> <span class="no">share</span>,<span class="kw">names_from</span> <span class="kw">=</span> <span class="no">Year</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">change</span><span class="kw">=</span><span class="no">`2011`</span>-<span class="no">`2006`</span>)
 
 <span class="no">geo_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">values_data</span>,<span class="kw">by</span><span class="kw">=</span><span class="st">"GeoUID"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/join.html">left_join</a></span>(<span class="no">values_data</span>,<span class="kw">by</span><span class="kw">=</span><span class="st">"GeoUID"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">fill</span><span class="kw">=</span><span class="no">change</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span>(<span class="kw">size</span><span class="kw">=</span><span class="fl">0.1</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient2</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +
   <span class="co">#scale_fill_viridis_c(labels=scales::percent,option = "inferno") +</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span>(<span class="kw">datum</span><span class="kw">=</span><span class="fl">NA</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">123.4</span>, -<span class="fl">122.5</span>), <span class="kw">ylim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">49.01</span>, <span class="fl">49.4</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Change in share of census families in low income 2006-2011"</span>,<span class="kw">fill</span><span class="kw">=</span><span class="st">"Percentage\npoint change"</span>,<span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan CRA Taxfiler Data, via CMHC"</span>)</pre></body></html></div>
-<p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>Analyzing change over longer timelines that span changes in census geometries involves more work, the <a href="https://mountainmath.github.io/tongfen/index.html">tongfen package</a> facilitates this and provides a convenient interface for generating timelines spanning geometries from several census years.</p>
+<p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p>Analyzing change over longer timelines that span changes in Census geometries involves more work, the <a href="https://mountainmath.github.io/tongfen/index.html">tongfen package</a> facilitates this and provides a convenient interface for generating timelines spanning geometries from several Census years.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dwellings by document type cross tabulation • cancensus</title>
+<title>Additional datasets: Structural type of dwelling by document type • cancensus</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Dwellings by document type cross tabulation">
+<meta property="og:title" content="Additional datasets: Structural type of dwelling by document type">
 <meta property="og:description" content="cancensus">
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png">
 <meta property="og:image:alt" content="cancensus">
@@ -91,10 +91,10 @@
 
       
 
-      </header><script src="Dwellings_by_document_type_cross_tabulation_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Dwellings by document type cross tabulation</h1>
+      <h1 data-toc-skip>Additional datasets: Structural type of dwelling by document type</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/Dwellings_by_document_type_cross_tabulation.Rmd"><code>vignettes/Dwellings_by_document_type_cross_tabulation.Rmd</code></a></small>
@@ -104,42 +104,58 @@
 
     
     
-<p>CensusMapper houses a cross tabulation of <em>Structural Type of Dwelling</em> by <em>Document Type</em> down to the Census Tract level for the census years 2001 through 2016 provide via CMHC. <em>Structural Type of Dwelling</em> is a common census variable that describes the type of structure a dwelling unit is in. <em>Document Type</em> is less known, it classifies if the census determined the dwelling is</p>
+<div id="background" class="section level2">
+<h2 class="hasAnchor">
+<a href="#background" class="anchor"></a>Background</h2>
+<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/">Canadian Mortgage and Housing Corporation</a> (CMHC), CensusMapper has added and open-sourced a special cross-tabulation with <em>Structural Type of Dwelling</em> by <em>Document Type</em> down to the Census Tract level for the census years 2001, 2006, 2011 and 2016. <em>Structural Type of Dwelling</em> is a common census variable that describes the type of structure a dwelling unit is in. <em>Document Type</em> is a less frequently used variable that classifies whether the census determined the dwelling is either:</p>
 <ul>
-<li>occupied by usual residents (also known as a household),</li>
-<li>occupied by temporarily present persons, or</li>
+<li>occupied by usual residents (also known as a household);</li>
+<li>occupied by temporarily present persons; or,</li>
 <li>unoccupied.</li>
 </ul>
-<p>In particular, this cross tabulation has information on the structural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built fabric.</p>
+<p>This cross-tabulation has information on the structural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built-up fabric of urban environments.</p>
 <p>As an example, we look at the structure of the dwelling stock in the City of Toronto in 2016.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cancensus</span>)
+</div>
+<div id="example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents" class="anchor"></a>Example usage: buildings unoccupied vs not occupied by usual residents</h2>
+<p>Dwellings registered as <em>unoccupied</em> on Census day capture the imagination of many, although people often mistakenly pull data on dwellings <em>not occupied by usual residents</em> as it is easily available in the standard Census profile data. The advantage of this custom cross-tabulation is that it allows researchers to zoom in on dwellings that were classified as <em>unoccupied</em> by the enumerator on Census day for additional detail.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># Packages used in this example</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cancensus</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>
+<p>In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code <code>CA16xSD</code> for the Toronto Census subdivision with the standard Statistics Canada region code <code>3520005</code>. For more background on searching for Census geographical regions, see <code>?list_census_regions()</code> or the <a href="https://mountainmath.github.io/cancensus/articles/cancensus.html">Get started with cancensus vignette</a>.</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Select all variables matching this pattern - </span>
+<span class="co"># Jens, can you explain what this regex is doing? </span>
+<span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"_\\d$"</span>,<span class="no">vector</span>))
 <span class="no">variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="no">vars</span>$<span class="no">vector</span>,<span class="no">vars</span>$<span class="no">label</span>)
 
+<span class="co"># Simplify the code below. It's too concise for a vignette. </span>
 <span class="no">census_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span>(<span class="st">"CA16xSD"</span>,<span class="kw">regions</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">CSD</span><span class="kw">=</span><span class="st">"3520005"</span>), <span class="kw">vectors</span> <span class="kw">=</span> <span class="no">variables</span>, <span class="kw">quiet</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">setdiff</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">variables</span>),<span class="st">"Total dwellings"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">share</span><span class="kw">=</span><span class="no">value</span>/<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">value</span>))
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span>(<span class="no">name</span>,<span class="no">share</span>),<span class="kw">y</span><span class="kw">=</span><span class="no">share</span>)) +
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/setops.html">setdiff</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">variables</span>),<span class="st">"Total dwellings"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">share</span><span class="kw">=</span><span class="no">value</span>/<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">value</span>))</pre></body></html></div>
+<p>To visualize what this looks like on a bar chart:</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span>(<span class="no">name</span>,<span class="no">share</span>),<span class="kw">y</span><span class="kw">=</span><span class="no">share</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="kw">stat</span><span class="kw">=</span><span class="st">"identity"</span>,<span class="kw">fill</span><span class="kw">=</span><span class="st">"steelblue"</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span>() +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"City of Toronto dwelling units by structural type"</span>,
        <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan 2016 Census, xtab via CMHC"</span>)</pre></body></html></div>
-<p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<p>Just like with regular census data, we can also request geographies for mapping purposes. Dwellings registered as <em>unoccupied</em> on census day capture the imagination of many, although people often mistakenly pull data on dwellings <em>not occupied by usual residents</em> as it is easily available in the standard census profile data. This dataset allows to zoom in on dwellings that were classified as <em>unoccupied</em> by the enumerator on census day.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>
+<p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p>As with regular Census data, all data can be retrieved as spatial data.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># Select relevant variables</span>
+<span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"_\\d$"</span>,<span class="no">vector</span>))
 <span class="no">variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="no">vars</span>$<span class="no">vector</span>,<span class="no">vars</span>$<span class="no">label</span>)
 
+<span class="co"># Retrieve data with attached geography</span>
 <span class="no">census_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span>(<span class="st">"CA16xSD"</span>,<span class="kw">regions</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">CSD</span><span class="kw">=</span><span class="st">"3520005"</span>), <span class="kw">level</span><span class="kw">=</span><span class="st">"CT"</span>, <span class="kw">quiet</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">geo_format</span> <span class="kw">=</span> <span class="st">"sf"</span>,
                           <span class="kw">vectors</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Total</span><span class="kw">=</span><span class="st">"v_CA16xSD_1"</span>, <span class="kw">Unoccupied</span><span class="kw">=</span><span class="st">"v_CA16xSD_28"</span>),<span class="kw">use_cache</span> <span class="kw">=</span> <span class="fl">FALSE</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">share</span><span class="kw">=</span><span class="no">Unoccupied</span>/<span class="no">Total</span>)
 
+<span class="co"># Visualize</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">fill</span><span class="kw">=</span><span class="no">share</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span>(<span class="kw">size</span><span class="kw">=</span><span class="fl">0.1</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +
@@ -147,12 +163,15 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"City of Toronto dwellings unoccupied on census day"</span>,
        <span class="kw">fill</span><span class="kw">=</span><span class="st">"Share"</span>,
        <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan 2016 Census, xtab via CMHC"</span>)</pre></body></html></div>
-<p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
