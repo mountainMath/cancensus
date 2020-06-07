@@ -42,6 +42,7 @@ authors:
 template:
   params:
     ganalytics: UA-107390160-3
+    bootswatch: simplex
   opengraph:
     image:
       src: 'https://mountainmath.github.io/cancensus/logo.png'
