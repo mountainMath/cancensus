@@ -239,15 +239,17 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
-#' @param use_cache If set to TRUE, data will be read from a local cache, if
-#'   available. If set to FALSE (the default), query the API for the data, and
-#'   refresh the local cache with the result.
+#' @param use_cache If set to TRUE (the dfault), data will be read from a temporary local cache for the
+#'   duration of the R session, if
+#'   available. If set to FALSE, query the API for the data, and
+#'   refresh the temporary cache with the result.
 #' @param quiet When TRUE, suppress messages and warnings.
 #'
 #' @return
 #'
 #' Returns a data frame with a column \code{dataset} containing the code for the
-#' dataset, and a column \code{description} describing it.
+#' dataset, a column \code{description} describing it, and a \code{geo_dataset} column
+#' identifying the geography dataset the data is based on..
 #'
 #' @export
 #'
@@ -255,8 +257,8 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 #'
 #' # List available datasets in CensusMapper
 #' list_census_datasets()
-list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
-  cache_file <- cache_path("datasets.rda")
+list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
+  cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
@@ -270,7 +272,7 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     save(result, file = cache_file)
     result
   } else {
-    if (!quiet) message("Reading dataset list from local cache.")
+    if (!quiet) message("Reading dataset list from temporary cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
     if (!quiet && is.null(last_updated) ||

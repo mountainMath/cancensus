@@ -4,18 +4,20 @@
 \alias{list_census_datasets}
 \title{Query the CensusMapper API for available datasets.}
 \usage{
-list_census_datasets(use_cache = FALSE, quiet = FALSE)
+list_census_datasets(use_cache = TRUE, quiet = FALSE)
 }
 \arguments{
-\item{use_cache}{If set to TRUE, data will be read from a local cache, if
-available. If set to FALSE (the default), query the API for the data, and
-refresh the local cache with the result.}
+\item{use_cache}{If set to TRUE (the dfault), data will be read from a temporary local cache for the
+duration of the R session, if
+available. If set to FALSE, query the API for the data, and
+refresh the temporary cache with the result.}
 
 \item{quiet}{When TRUE, suppress messages and warnings.}
 }
 \value{
 Returns a data frame with a column \code{dataset} containing the code for the
-dataset, and a column \code{description} describing it.
+dataset, a column \code{description} describing it, and a \code{geo_dataset} column
+identifying the geography dataset the data is based on..
 }
 \description{
 Query the CensusMapper API for available datasets.

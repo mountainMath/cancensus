@@ -1,0 +1,106 @@
+---
+title: "Annual T1FF Taxfiler Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Taxfiler_Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = nzchar(Sys.getenv("COMPILE_VIG"))
+)
+```
+
+```{r setup, message = FALSE, warning = FALSE}
+library(cancensus)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+CRA T1FF Taxfiler data provides an annual look at some basic demographic variables.
+
+This dataset contains information on
+* individual income
+* government transfers
+* family income
+* family composition
+* taxfilers by age groups
+* taxfilers and dependants by age groups
+* marital status and select other demographic variables
+
+
+As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.
+
+The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is "v_TX2017_786" and that for all families is "v_TX2017_607", and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy. 
+
+```{r, message = FALSE, warning = FALSE}
+years <- seq(2006,2017)
+all_families <- setNames(paste0("v_TX",years,"_607"),paste0(years,"_Families"))
+low_income_families <- setNames(paste0("v_TX",years,"_786"),paste0(years,"_CFLIM-AT")) 
+all_vectors <- c(all_families,low_income_families)
+```
+
+The data comes on varying census geographies, depending on the year. But we won't have to worry too much about this if we just grab the data via `get_census` year by year. It will pick the appropriate census geographies for us.
+
+```{r, message = FALSE, warning = FALSE}
+plot_data <- all_vectors %>% 
+  as.character() %>% 
+  gsub("^v_","",.)%>% 
+  gsub("_\\d+$","",.) %>%
+  unique %>%
+  sort %>%
+  lapply(function(dataset) {
+    vectors <- all_vectors[grepl(dataset,all_vectors)]
+    d <- get_census(dataset,regions=list(CMA="59933"),vectors = vectors,
+                    geo_format = 'sf', level="CT", quiet = TRUE) %>%
+      select(c("GeoUID",names(vectors))) %>%
+      pivot_longer(cols = matches("\\d{4}"),names_to = c("Year",".value"),names_pattern = "(\\d{4})_(.+)")
+  }) %>%
+  bind_rows() %>%
+  sf::st_sf() %>%
+  mutate(share=`CFLIM-AT`/Families)
+```
+
+Here we also re-organized the data by year. All that's left is to plot the data, one year at a time.
+
+```{r, message = FALSE, warning = FALSE}
+ggplot(plot_data,aes(fill=share)) +
+  geom_sf(size=0.1,color="white") +
+  facet_wrap("Year") +
+  scale_fill_viridis_c(labels=scales::percent,option = "inferno",
+                       trans="log",breaks = c(0.05,0.1,0.2,0.4)) +
+  coord_sf(datum=NA,xlim=c(-123.4, -122.5), ylim=c(49.01, 49.4)) +
+  labs(title="Share of census families in low income",fill="Share",
+       caption="StatCan CRA Taxfiler Data, via CMHC")
+```
+
+We may be tempted to re-arrange the data to create timelines, but we have to be careful as census geographies change over time. 
+
+```{r}
+geo_data <- plot_data %>% 
+  filter(Year==2011) %>% 
+  select(GeoUID)
+values_data <-  plot_data %>%
+  sf::st_set_geometry(NULL) %>%
+  select(GeoUID,Year,share) %>%
+  filter(Year %in% seq(2006,2011)) %>%
+  pivot_wider(id_cols = GeoUID,values_from = share,names_from = Year) %>%
+  mutate(change=`2011`-`2006`)
+  
+geo_data %>%
+  left_join(values_data,by="GeoUID") %>%
+  ggplot(aes(fill=change)) +
+  geom_sf(size=0.1) +
+  scale_fill_gradient2(labels=scales::percent) +
+  #scale_fill_viridis_c(labels=scales::percent,option = "inferno") +
+  coord_sf(datum=NA,xlim=c(-123.4, -122.5), ylim=c(49.01, 49.4)) +
+  labs(title="Change in share of census families in low income 2006-2011",fill="Percentage\npoint change",caption="StatCan CRA Taxfiler Data, via CMHC")
+```
+
+Analyzing change over longer timelines that span changes in census geometries involves more work, the [tongfen package](https://mountainmath.github.io/tongfen/index.html) facilitates this and provides a convenient interface for generating timelines spanning geometries from several census years.
+
