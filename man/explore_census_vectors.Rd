@@ -9,7 +9,8 @@ explore_census_vectors()
 \description{
 Finding the right Census variables or regions can be complicated.
 \code{explore_census_vectors()} will open a new browser page or tab to the interactive
-Census variable and region tool built on the [Censusmapper.ca website](https://censusmapper.ca/api)
+Census variable and region tool built on the Censusmapper.ca website at
+\code{\link{https://censusmapper.ca/api}}.
 }
 \examples{
 \dontrun{

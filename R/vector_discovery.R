@@ -53,8 +53,8 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #'
 #' @description Query the available list of Census vectors based on their label and return
 #' details including vector code. Default search behaviour expects an exact match, but
-#' keyword or semantic searches can be used instead by setting \code{query_type="keyword"} or
-#' \code{query_type = "semantic"} instead. Keyword search is useful when looking to explore
+#' keyword or semantic searches can be used instead by setting \code{query_type='keyword'} or
+#' \code{query_type = 'semantic'} instead. Keyword search is useful when looking to explore
 #' Census vectors based on broad themes like "income" or "language". Keyword search seperates
 #' the query into unigrams and returns Census vectors with matching words, ranked by incidence
 #' of matches. Semantic search is designed for more precise searches while allowing room for error
@@ -65,15 +65,15 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' Some census vectors return population counts segmented by \code{Female} and \code{Male} populations, in
 #' addition to a total aggregate. By default, query matches will return matches for the \code{Total}
 #' aggregation, but can optionally return only the \code{Female} or \code{Male} aggregations by adding
-#' \code{type = "female"} or \code{type = "male"} as a parameter.
+#' \code{type = 'female'} or \code{type = 'male'} as a parameter.
 #'
-#' @param query The term or phrase to search for e.g. \code{"Oji-cree"}.
+#' @param query The term or phrase to search for e.g. \code{'Oji-cree'}.
 #' Search queries are case insensitive.
-#' @param dataset The dataset to query for available vectors, e.g. \code{"CA16"}.
+#' @param dataset The dataset to query for available vectors, e.g. \code{'CA16'}.
 #' To see a list of available datasets: \code{list_census_datasets()}
-#' @param type One of \code{all}, \code{'total'}, \code{'male'} or \code{'female'}.
+#' @param type One of \code{'all'}, \code{'total'}, \code{'male'} or \code{'female'}.
 #' If specified, only return aggregations of specified `type`. By default, only
-#' the \code{total} aggregation will be returned.
+#' the \code{'total'} aggregation will be returned.
 #' @param query_type One of \code{exact}, \code{'semantic'} or \code{'keyword'}.
 #' By default, assumes exact string matching, but the alternatives may be better
 #' options in some cases. See description section for more details on query types.
@@ -254,7 +254,8 @@ keyword_search <- function(query_terms, census_vector_list) {
 #'
 #' @description Finding the right Census variables or regions can be complicated.
 #' \code{explore_census_vectors()} will open a new browser page or tab to the interactive
-#' Census variable and region tool built on the [Censusmapper.ca website](https://censusmapper.ca/api)
+#' Census variable and region tool built on the Censusmapper.ca website at
+#' \code{\link{https://censusmapper.ca/api}}.
 #'
 #' @export
 #'

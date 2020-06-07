@@ -7,15 +7,15 @@
 find_census_vectors(query, dataset, type = "all", query_type = "exact")
 }
 \arguments{
-\item{query}{The term or phrase to search for e.g. \code{"Oji-cree"}.
+\item{query}{The term or phrase to search for e.g. \code{'Oji-cree'}.
 Search queries are case insensitive.}
 
-\item{dataset}{The dataset to query for available vectors, e.g. \code{"CA16"}.
+\item{dataset}{The dataset to query for available vectors, e.g. \code{'CA16'}.
 To see a list of available datasets: \code{list_census_datasets()}}
 
-\item{type}{One of \code{all}, \code{'total'}, \code{'male'} or \code{'female'}.
+\item{type}{One of \code{'all'}, \code{'total'}, \code{'male'} or \code{'female'}.
 If specified, only return aggregations of specified `type`. By default, only
-the \code{total} aggregation will be returned.}
+the \code{'total'} aggregation will be returned.}
 
 \item{query_type}{One of \code{exact}, \code{'semantic'} or \code{'keyword'}.
 By default, assumes exact string matching, but the alternatives may be better
@@ -24,8 +24,8 @@ options in some cases. See description section for more details on query types.}
 \description{
 Query the available list of Census vectors based on their label and return
 details including vector code. Default search behaviour expects an exact match, but
-keyword or semantic searches can be used instead by setting \code{query_type="keyword"} or
-\code{query_type = "semantic"} instead. Keyword search is useful when looking to explore
+keyword or semantic searches can be used instead by setting \code{query_type='keyword'} or
+\code{query_type = 'semantic'} instead. Keyword search is useful when looking to explore
 Census vectors based on broad themes like "income" or "language". Keyword search seperates
 the query into unigrams and returns Census vectors with matching words, ranked by incidence
 of matches. Semantic search is designed for more precise searches while allowing room for error
@@ -36,7 +36,7 @@ Levenshtein distance approach.
 Some census vectors return population counts segmented by \code{Female} and \code{Male} populations, in
 addition to a total aggregate. By default, query matches will return matches for the \code{Total}
 aggregation, but can optionally return only the \code{Female} or \code{Male} aggregations by adding
-\code{type = "female"} or \code{type = "male"} as a parameter.
+\code{type = 'female'} or \code{type = 'male'} as a parameter.
 }
 \examples{
 find_census_vectors('Oji-cree', dataset = 'CA16', type = 'total', query_type = 'exact')
