@@ -20,7 +20,11 @@ If specified, only return variables of specified `level`.}
 \item{...}{Further arguments passed on to \code{\link{list_census_regions}}.}
 }
 \description{
-Query the CensusMapper API for regions with names matching a searchterm.
+Runs a query against the CensusMapper API to retrieve region data with
+names matching specific queries. Users can optionally specify the target geography level
+(e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
+\code{explore_census_vectors()} will launch the interactive region selection tool on
+the Censusmapper site in a new web page or tab.
 }
 \examples{
 search_census_regions('Victoria', 'CA16')

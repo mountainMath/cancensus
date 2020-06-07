@@ -75,6 +75,12 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 
 #' Query the CensusMapper API for regions with names matching a searchterm.
 #'
+#' @description Runs a query against the CensusMapper API to retrieve region data with
+#' names matching specific queries. Users can optionally specify the target geography level
+#' (e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
+#' \code{explore_census_vectors()} will launch the interactive region selection tool on
+#' the Censusmapper site in a new web page or tab.
+#'
 #' @param searchterm The term to search for e.g. \code{"Victoria"}.
 #' Search terms are case insensitive. If unable to find a given search term,
 #' this function will suggest the correct spelling to use when possible.

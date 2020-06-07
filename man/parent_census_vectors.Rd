@@ -4,7 +4,7 @@
 \alias{parent_census_vectors}
 \title{List all parent variables from vector hierarchies given either a list of Census
 variables returned by
-\code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.}
+\code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.}
 \usage{
 parent_census_vectors(vector_list)
 }
@@ -15,7 +15,7 @@ as returned from \code{list_census_vectors}.}
 \description{
 List all parent variables from vector hierarchies given either a list of Census
 variables returned by
-\code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.
+\code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.
 }
 \examples{
 # Query parent vectors directly using vector identifier
