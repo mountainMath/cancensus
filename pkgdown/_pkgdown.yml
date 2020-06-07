@@ -22,13 +22,18 @@ reference:
     - label_vectors
     - child_census_vectors
     - parent_census_vectors
+
 articles:
-  - title : Extending Cancensus
-    contents: Making_maps_with_cancensus
-  - title : Dwellings by document type cross tabulation
-    contents: Dwellings_by_document_type_cross_tabulation
-  - title : Annual T1FF Taxfiler Data
-    contents: Taxfiler_Data
+    - title: Extending Cancensus
+      navbar: ~
+      contents:
+      - Making_maps_with_cancensus
+    - title: Additional datasets
+      navbar: ~
+      contents:
+      - Dwellings_by_document_type_cross_tabulation
+      - Taxfiler_Data
+
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca
