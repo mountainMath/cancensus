@@ -265,6 +265,7 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
+    names(result) <- c("dataset","description","geo_dataset")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
