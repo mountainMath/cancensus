@@ -1,4 +1,4 @@
-pandoc: 2.3.1
+pandoc: 2.9.2.1
 pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
@@ -6,7 +6,7 @@ articles:
   Making_maps_with_cancensus: Making_maps_with_cancensus.html
   Taxfiler_Data: Taxfiler_Data.html
   cancensus: cancensus.html
-last_built: 2020-06-07T11:14Z
+last_built: 2020-06-13T18:34Z
 urls:
   reference: https://mountainmath.github.io/cancensus/index.html/reference
   article: https://mountainmath.github.io/cancensus/index.html/articles

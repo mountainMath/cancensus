@@ -196,7 +196,7 @@ get_census." />
 <span class='co'># of 20 random Census Subdivisions, in Census 2016.</span>
 <span class='no'>regions</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='list_census_regions.html'>list_census_regions</a></span>(<span class='st'>"CA16"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>level</span> <span class='kw'>==</span> <span class='st'>"CSD"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample.html'>sample_n</a></span>(<span class='fl'>20</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample_n.html'>sample_n</a></span>(<span class='fl'>20</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>as_census_region_list</span>()
 
 <span class='no'>occupied</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(<span class='st'>"CA16"</span>, <span class='kw'>regions</span> <span class='kw'>=</span> <span class='no'>regions</span>,

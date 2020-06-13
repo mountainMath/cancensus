@@ -106,7 +106,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Taxfiler_Data_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Additional datasets: Annual T1FF taxfiler data</h1>
@@ -185,7 +185,7 @@
 <span class="co">#&gt;  9 v_TX20… Total % in a… Percent… v_TX2017_1    Average of … Tax data 2017; Ind…</span>
 <span class="co">#&gt; 10 v_TX20… Total All pe… Number   &lt;NA&gt;          Additive     Tax data 2017; Ind…</span>
 <span class="co">#&gt; # … with 808 more rows</span></pre></body></html></div>
-<p>This particular dataset has pver 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets.</p>
+<p>This particular dataset has over 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">years</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">2006</span>,<span class="fl">2017</span>)
 <span class="no">all_families</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"v_TX"</span>,<span class="no">years</span>,<span class="st">"_607"</span>),<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">years</span>,<span class="st">"_Families"</span>))
 <span class="no">low_income_families</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"v_TX"</span>,<span class="no">years</span>,<span class="st">"_786"</span>),<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">years</span>,<span class="st">"_CFLIM-AT"</span>))
@@ -229,7 +229,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">change</span><span class="kw">=</span><span class="no">`2011`</span>-<span class="no">`2006`</span>)
 
 <span class="no">geo_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/join.html">left_join</a></span>(<span class="no">values_data</span>,<span class="kw">by</span><span class="kw">=</span><span class="st">"GeoUID"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">values_data</span>,<span class="kw">by</span><span class="kw">=</span><span class="st">"GeoUID"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">fill</span><span class="kw">=</span><span class="no">change</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span>(<span class="kw">size</span><span class="kw">=</span><span class="fl">0.1</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient2</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +

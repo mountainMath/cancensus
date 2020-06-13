@@ -2,7 +2,7 @@
 title: "Additional datasets: Annual T1FF taxfiler data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Taxfiler_Data}
+  %\VignetteIndexEntry{Additional datasets: Annual T1FF taxfiler data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -54,7 +54,7 @@ And, as an example, available data vectors for one such T1FF dataset.
 ```{r, message=FALSE, warning=FALSE}
 list_census_vectors('TX2017')
 ```
-This particular dataset has pver 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. 
+This particular dataset has over 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. 
 ```{r, message = FALSE, warning = FALSE}
 years <- seq(2006,2017)
 all_families <- setNames(paste0("v_TX",years,"_607"),paste0(years,"_Families"))

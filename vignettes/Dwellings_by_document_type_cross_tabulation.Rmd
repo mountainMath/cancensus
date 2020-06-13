@@ -3,7 +3,7 @@ title: "Additional datasets: Structural type of dwelling by document type"
 output: rmarkdown::html_vignette
 mainfont: Roboto
 vignette: >
-  %\VignetteIndexEntry{Dwellings_by_document_type_cross_tabulation}
+  %\VignetteIndexEntry{Additional datasets: Structural type of dwelling by document type}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,6 +11,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  message = FALSE, 
+  warning = FALSE,
   comment = "#>",
   eval = nzchar(Sys.getenv("COMPILE_VIG"))
 )
@@ -39,21 +41,29 @@ library(tidyr)
 library(ggplot2)
 ```
 In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code `CA16xSD` for the Toronto Census subdivision with the standard Statistics Canada region code `3520005`. For more background on searching for Census geographical regions, see `?list_census_regions()` or the [Get started with cancensus vignette](https://mountainmath.github.io/cancensus/articles/cancensus.html).
-```{r, message = FALSE, warning = FALSE}
-# Select all variables matching this pattern - 
-# Jens, can you explain what this regex is doing? 
+```{r}
+# Select all variables base variables, this gives us total counts by structural type of dwelling
 vars <- list_census_vectors("CA16xSD") %>% 
-  filter(grepl("_\\d$",vector))
+  filter(is.na(parent_vector))
 variables <- setNames(vars$vector,vars$label)
 
-# Simplify the code below. It's too concise for a vignette. 
+variables
+```
+
+The named vector labels the census variables we are about to query.
+
+```{r}
+# Separate out the individual dwelling types
+dwelling_types <- setdiff(names(variables),"Total dwellings")
+
+# Grab the census data and compute shares for each dwelling type
 census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), vectors = variables, quiet = TRUE) %>%
-  pivot_longer(setdiff(names(variables),"Total dwellings")) %>%
-  mutate(share=value/sum(value))
+  pivot_longer(cols = all_of(dwelling_types)) %>%
+  mutate(share=value/`Total dwellings`)
 ```
 
 To visualize what this looks like on a bar chart:
-```{r, message = FALSE, warning = FALSE}
+```{r}
 ggplot(census_data,aes(x=reorder(name,share),y=share)) +
   geom_bar(stat="identity",fill="steelblue") +
   coord_flip() +
@@ -62,16 +72,15 @@ ggplot(census_data,aes(x=reorder(name,share),y=share)) +
        x=NULL,y=NULL,caption="StatCan 2016 Census, xtab via CMHC")
 ```
 
-As with regular Census data, all data can be retrieved as spatial data. 
-```{r, message = FALSE, warning = FALSE}
-# Select relevant variables
-vars <- list_census_vectors("CA16xSD") %>% 
-  filter(grepl("_\\d$",vector))
-variables <- setNames(vars$vector,vars$label)
+As with regular Census data, all data can be retrieved as spatial data. Sometimes it's easier to use the CensusMapper API interface to search for and select the variables we are interested in. The `explore_census_vectors()` function opens a browser with the variable selection tool, we determine that "v_CA16xSD_1" and "v_CA16xSD_28" are the variables enumerating all dwellings and all unoccupied dwellings, respectively.
+
+```{r}
+# Use explore_census_vectors() to browse and select variables of interest
+vars <- c(Total="v_CA16xSD_1", Unoccupied="v_CA16xSD_28")
 
 # Retrieve data with attached geography
 census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), level="CT", quiet = TRUE, geo_format = "sf",
-                          vectors = c(Total="v_CA16xSD_1", Unoccupied="v_CA16xSD_28"),use_cache = FALSE) %>%
+                          vectors = vars,use_cache = FALSE) %>%
   mutate(share=Unoccupied/Total)
 
 # Visualize
