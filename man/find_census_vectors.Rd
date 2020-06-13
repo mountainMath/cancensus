@@ -4,7 +4,7 @@
 \alias{find_census_vectors}
 \title{Query the CensusMapper API for vectors using exact, semantic, or keyword search}
 \usage{
-find_census_vectors(query, dataset, type = "all", query_type = "exact")
+find_census_vectors(query, dataset, type = "all", query_type = "exact", ...)
 }
 \arguments{
 \item{query}{The term or phrase to search for e.g. \code{'Oji-cree'}.
@@ -20,6 +20,13 @@ the \code{'total'} aggregation will be returned.}
 \item{query_type}{One of \code{exact}, \code{'semantic'} or \code{'keyword'}.
 By default, assumes exact string matching, but the alternatives may be better
 options in some cases. See description section for more details on query types.}
+
+\item{interactive}{Set to \code{TRUE} by default, determines how keyword search works.
+Keyword search will return the best matching results; however, if there are additional
+matching keywords it will prompt the user with an option to show the additional results.
+This can be manually overridden by setting \code{interactive=FALSE}, which will result in
+only the top matched results showing up, which might be useful if this function is used in
+automated scripts.}
 }
 \description{
 Query the available list of Census vectors based on their label and return

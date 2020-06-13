@@ -77,6 +77,12 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' @param query_type One of \code{exact}, \code{'semantic'} or \code{'keyword'}.
 #' By default, assumes exact string matching, but the alternatives may be better
 #' options in some cases. See description section for more details on query types.
+#' @param interactive Set to \code{TRUE} by default, determines how keyword search works.
+#' Keyword search will return the best matching results; however, if there are additional
+#' matching keywords it will prompt the user with an option to show the additional results.
+#' This can be manually overridden by setting \code{interactive=FALSE}, which will result in
+#' only the top matched results showing up, which might be useful if this function is used in
+#' automated scripts.
 #'
 #' @export
 #'
@@ -102,7 +108,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' find_census_vectors('ukrainian origin', dataset = 'CA16', type = 'total', query_type = 'keyword')
 #'
 #' }
-find_census_vectors <- function(query, dataset, type = "all", query_type = "exact") {
+find_census_vectors <- function(query, dataset, type = "all", query_type = "exact", ...) {
   type = tolower(type)
   query_type = tolower(query_type)
 
@@ -133,7 +139,7 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
     semantic_search(query, census_vector_list = census_vector_list)
 
   } else if (query_type == "keyword") {
-    keyword_search(query, census_vector_list = census_vector_list)
+    keyword_search(query, census_vector_list = census_vector_list, ...)
   }
 }
 
@@ -206,7 +212,7 @@ semantic_search <- function(query_terms, census_vector_list) {
 #' @keywords Internal
 #' @noRd
 #' @noMd
-keyword_search <- function(query_terms, census_vector_list) {
+keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) {
   sample_vector_list <- census_vector_list$details
   vector_words <- strsplit(gsub("\\s+"," ",gsub("[[:punct:]]"," ",tolower(sample_vector_list))), split = " ")
   clean_vector_list <- lapply(vector_words, function(x) paste(unique(x), collapse = " "))
@@ -231,8 +237,9 @@ keyword_search <- function(query_terms, census_vector_list) {
     other_res <-
       census_vector_list[which(census_vector_list$details %in% res_df[which(res_df$n_match != max(res_df$n_match)), ]$results), ]
     if (length(res_df$results) == length(top_res$vector))
-      top_res
-    else if (length(other_res$vector) > 0){
+      return(top_res)
+    else if (!interactive) {return(top_res)}
+    else if (length(other_res$vector) > 0 & interactive){
       print(top_res)
       show_more <-
         utils::menu(
