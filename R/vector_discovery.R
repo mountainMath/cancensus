@@ -210,12 +210,12 @@ keyword_search <- function(query_terms, census_vector_list) {
   sample_vector_list <- census_vector_list$details
   vector_words <- strsplit(gsub("\\s+"," ",gsub("[[:punct:]]"," ",tolower(sample_vector_list))), split = " ")
   clean_vector_list <- lapply(vector_words, function(x) paste(unique(x), collapse = " "))
-  #return(clean_vector_list)
+
   query_words <- paste(unlist(strsplit(tolower(query_terms), "[^a-z]+")), collapse = "|")
   index_matches <- grep(query_words, clean_vector_list, ignore.case = TRUE)
-  #print(index_matches)
+
   ret_matches <- clean_vector_list[index_matches]
-  #print(ret_matches)
+
   if (length(ret_matches) == 0) {
     warning(
       "No matches found. Please check spelling and try again or consider using semantic search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors()",
@@ -225,7 +225,7 @@ keyword_search <- function(query_terms, census_vector_list) {
     res <- regmatches(ret_matches, gregexpr(paste0("\\<",gsub("\\|","\\\\>|\\\\<",query_words),"\\>"), ret_matches, ignore.case = TRUE))
     res_df <-
       data.frame(results = sample_vector_list[index_matches], n_match = lengths(res))
-    #return(arrange(as_tibble(res_df), desc(n_match))) for checking
+
     top_res <-
       census_vector_list[which(census_vector_list$details %in% res_df[which(res_df$n_match == max(res_df$n_match)), ]$results), ]
     other_res <-
@@ -250,21 +250,57 @@ keyword_search <- function(query_terms, census_vector_list) {
   }
 }
 
-#' Interactively browse Census variable and region on Censusmapper.ca in a new browser window
+#' Interactively browse Census variables and regions on Censusmapper.ca in a new browser window
 #'
 #' @description Finding the right Census variables or regions can be complicated.
-#' \code{explore_census_vectors()} will open a new browser page or tab to the interactive
-#' Census variable and region tool built on the Censusmapper.ca website at
-#' \code{\link{https://censusmapper.ca/api}}.
+#' \code{explore_census_vectors(dataset)} and \code{explore_census_regions(dataset)} will open a
+#' new browser page or tab to an interactive Census variable and region exploration and selection
+#' tool on the Censusmapper.ca website at \code{\link{https://censusmapper.ca/api}}. Interactive
+#' tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.
+#'
+#' @param dataset The dataset to query for available vectors, e.g. \code{'CA16'}.
+#' Interactive tools available for the CA16, CA11, CA06, and CA01 Census datasets and
+#' geographies.
 #'
 #' @export
 #'
 #' @examples
 #'\dontrun{
 #'
-#' explore_census_vectors()
+#' explore_census_vectors(dataset = "CA16")
+#'
+#' explore_census_regions(dataset = "CA11")
+#'
 #' }
-explore_census_vectors <- function() {
+explore_census_vectors <- function(dataset = "CA16") {
   message("Opening interactive census variable explorer at censusmapper.ca/api in the browser")
-  utils::browseURL("https://censusmapper.ca/api")
+  utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_variable"))
 }
+
+#' Interactively browse Census variables and regions on Censusmapper.ca in a new browser window
+#'
+#' @description Finding the right Census variables or regions can be complicated.
+#' \code{explore_census_vectors(dataset)} and \code{explore_census_regions(dataset)} will open a
+#' new browser page or tab to an interactive Census variable and region exploration and selection
+#' tool on the Censusmapper.ca website at \code{\link{https://censusmapper.ca/api}}. Interactive
+#' tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.
+#'
+#' @param dataset The dataset to query for available vectors, e.g. \code{'CA16'}.
+#' Interactive tools available for the CA16, CA11, CA06, and CA01 Census datasets and
+#' geographies.
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'
+#' explore_census_vectors(dataset = "CA16")
+#'
+#' explore_census_regions(dataset = "CA11")
+#'
+#' }
+explore_census_regions <- function(dataset = "CA16") {
+  message("Opening interactive census region explorer at censusmapper.ca/api in the browser")
+  utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_region"))
+}
+
