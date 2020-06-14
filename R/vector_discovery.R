@@ -77,12 +77,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' @param query_type One of \code{exact}, \code{'semantic'} or \code{'keyword'}.
 #' By default, assumes exact string matching, but the alternatives may be better
 #' options in some cases. See description section for more details on query types.
-#' @param interactive Set to \code{TRUE} by default, determines how keyword search works.
-#' Keyword search will return the best matching results; however, if there are additional
-#' matching keywords it will prompt the user with an option to show the additional results.
-#' This can be manually overridden by setting \code{interactive=FALSE}, which will result in
-#' only the top matched results showing up, which might be useful if this function is used in
-#' automated scripts.
+#' @param ... Other arguments passed to internal functions.
 #'
 #' @export
 #'
@@ -132,7 +127,7 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
   if (query_type == "exact") {
     result <- census_vector_list[grep(query, census_vector_list$details, ignore.case = TRUE), ]
     if(length(result$vector)>1) result else {
-      warning("No exact matches found. Please check spelling and try again or consider using semantic or keyword search.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors()",
+      warning("No exact matches found. Please check spelling and try again or consider using semantic or keyword search.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
               call. = FALSE)
     }
   } else if (query_type == "semantic") {
@@ -182,7 +177,7 @@ semantic_search <- function(query_terms, census_vector_list) {
 
   if(min(lev_dist_df) > 2 | is.infinite(min(lev_dist_df))) {
     warning(
-      "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors()",
+      "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
       call. = FALSE
     )} else {
       res <- sample_vector_list[grep(ordered_ngram_count[sapply(seq_along(ncol(lev_dist_df)),
@@ -209,6 +204,13 @@ semantic_search <- function(query_terms, census_vector_list) {
 #' separates the query into n-grams and relies on string distance measurement using a generalized
 #' Levenshtein distance approach.
 #'
+#' @param interactive Set to \code{TRUE} by default, determines how keyword search works.
+#' Keyword search will return the best matching results; however, if there are additional
+#' matching keywords it will prompt the user with an option to show the additional results.
+#' This can be manually overridden by setting \code{interactive=FALSE}, which will result in
+#' only the top matched results showing up, which might be useful if this function is used in
+#' automated scripts.
+#'
 #' @keywords Internal
 #' @noRd
 #' @noMd
@@ -224,7 +226,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
 
   if (length(ret_matches) == 0) {
     warning(
-      "No matches found. Please check spelling and try again or consider using semantic search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors()",
+      "No matches found. Please check spelling and try again or consider using semantic search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
       call. = FALSE
     )
   } else {
@@ -262,7 +264,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
 #' @description Finding the right Census variables or regions can be complicated.
 #' \code{explore_census_vectors(dataset)} and \code{explore_census_regions(dataset)} will open a
 #' new browser page or tab to an interactive Census variable and region exploration and selection
-#' tool on the Censusmapper.ca website at \code{\link{https://censusmapper.ca/api}}. Interactive
+#' tool on the \href{https://censusmapper.ca/api}{Censusmapper.ca website}. Interactive
 #' tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.
 #'
 #' @param dataset The dataset to query for available vectors, e.g. \code{'CA16'}.
@@ -289,7 +291,7 @@ explore_census_vectors <- function(dataset = "CA16") {
 #' @description Finding the right Census variables or regions can be complicated.
 #' \code{explore_census_vectors(dataset)} and \code{explore_census_regions(dataset)} will open a
 #' new browser page or tab to an interactive Census variable and region exploration and selection
-#' tool on the Censusmapper.ca website at \code{\link{https://censusmapper.ca/api}}. Interactive
+#' tool on the \href{https://censusmapper.ca/api}{Censusmapper.ca website}. Interactive
 #' tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.
 #'
 #' @param dataset The dataset to query for available vectors, e.g. \code{'CA16'}.

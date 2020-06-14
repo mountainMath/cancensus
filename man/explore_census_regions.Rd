@@ -15,7 +15,7 @@ geographies.}
 Finding the right Census variables or regions can be complicated.
 \code{explore_census_vectors(dataset)} and \code{explore_census_regions(dataset)} will open a
 new browser page or tab to an interactive Census variable and region exploration and selection
-tool on the Censusmapper.ca website at \code{\link{https://censusmapper.ca/api}}. Interactive
+tool on the \href{https://censusmapper.ca/api}{Censusmapper.ca website}. Interactive
 tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.
 }
 \examples{

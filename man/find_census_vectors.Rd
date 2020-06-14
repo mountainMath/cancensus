@@ -21,12 +21,7 @@ the \code{'total'} aggregation will be returned.}
 By default, assumes exact string matching, but the alternatives may be better
 options in some cases. See description section for more details on query types.}
 
-\item{interactive}{Set to \code{TRUE} by default, determines how keyword search works.
-Keyword search will return the best matching results; however, if there are additional
-matching keywords it will prompt the user with an option to show the additional results.
-This can be manually overridden by setting \code{interactive=FALSE}, which will result in
-only the top matched results showing up, which might be useful if this function is used in
-automated scripts.}
+\item{...}{Other arguments passed to internal functions.}
 }
 \description{
 Query the available list of Census vectors based on their label and return
