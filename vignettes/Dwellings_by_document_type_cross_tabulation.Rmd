@@ -41,7 +41,11 @@ library(tidyr)
 library(ggplot2)
 ```
 In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code `CA16xSD` for the Toronto Census subdivision with the standard Statistics Canada region code `3520005`. For more background on searching for Census geographical regions, see `?list_census_regions()` or the [Get started with cancensus vignette](https://mountainmath.github.io/cancensus/articles/cancensus.html).
+
 ```{r}
+# Attribution for the dataset to be used in graphs
+attribution <- attribution_for_datasets("CA16xSD")
+
 # Select all variables base variables, this gives us total counts by structural type of dwelling
 vars <- list_census_vectors("CA16xSD") %>% 
   filter(is.na(parent_vector))
@@ -69,7 +73,7 @@ ggplot(census_data,aes(x=reorder(name,share),y=share)) +
   coord_flip() +
   scale_y_continuous(labels=scales::percent) +
   labs(title="City of Toronto dwelling units by structural type",
-       x=NULL,y=NULL,caption="StatCan 2016 Census, xtab via CMHC")
+       x=NULL,y=NULL,caption=attribution)
 ```
 
 As with regular Census data, all data can be retrieved as spatial data. Sometimes it's easier to use the CensusMapper API interface to search for and select the variables we are interested in. The `explore_census_vectors()` function opens a browser with the variable selection tool, we determine that "v_CA16xSD_1" and "v_CA16xSD_28" are the variables enumerating all dwellings and all unoccupied dwellings, respectively.
@@ -90,5 +94,5 @@ ggplot(census_data,aes(fill=share)) +
   coord_sf(datum=NA) +
   labs(title="City of Toronto dwellings unoccupied on census day",
        fill="Share",
-       x=NULL,y=NULL,caption="StatCan 2016 Census, xtab via CMHC")
+       x=NULL,y=NULL,caption=attribution)
 ```

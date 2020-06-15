@@ -61,7 +61,11 @@ This particular dataset has over 800 individual vectors. The vector codes follow
 While the geography varies across Census periods, the call to `get_census` will automatically attach the correct geography for each annual dataset. We pick four years to look at low income families.
 
 ```{r}
-plot_data <- c(2006,2011,2014,2017) %>%
+years <- c(2006,2011,2014,2017)
+# Attribution for the dataset to be used in graphs
+attribution <- attribution_for_datasets(paste0("TX",years))
+
+plot_data <- years %>%
   lapply(function(year) {
     dataset <- paste0("TX",year)
     vectors <- c("Families"=paste0("v_",dataset,"_607"),
@@ -86,7 +90,7 @@ ggplot(plot_data,aes(fill=share)) +
                        trans="log",breaks = c(0.05,0.1,0.2,0.4)) +
   coord_sf(datum=NA,xlim=c(-123.4, -122.5), ylim=c(49.01, 49.4)) +
   labs(title="Share of census families in low income",fill="Share",
-       caption="StatCan CRA Taxfiler Data, via CMHC")
+       caption=attribution)
 ```
 
 We may be tempted to re-arrange the data to create timelines, but we have to be careful as census geographies change over time. Inspecting the dataset tables at the top informs us that the 2006 through 2011 data all come on the common 2006 census geography, so the 2006 and 2011 tax data are directly comparable.
@@ -107,7 +111,7 @@ ggplot(change_data,aes(fill=change)) +
   scale_fill_gradient2(labels=scales::percent) +
   #scale_fill_viridis_c(labels=scales::percent,option = "inferno") +
   coord_sf(datum=NA,xlim=c(-123.4, -122.5), ylim=c(49.01, 49.4)) +
-  labs(title="Change in share of census families in low income 2006-2011",fill="Percentage\npoint change",caption="StatCan CRA Taxfiler Data, via CMHC")
+  labs(title="Change in share of census families in low income 2006-2011",fill="Percentage\npoint change",caption=attribution_for_datasets(paste0("TX",c(2006,2011))))
 ```
 
 Analyzing change over longer timelines that span changes in Census geometries involves more work, the [tongfen package](https://mountainmath.github.io/tongfen/index.html) facilitates this and provides a convenient interface for generating timelines spanning geometries from several Census years.

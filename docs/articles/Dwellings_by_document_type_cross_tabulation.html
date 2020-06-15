@@ -141,7 +141,10 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)</pre></body></html></div>
 <p>In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code <code>CA16xSD</code> for the Toronto Census subdivision with the standard Statistics Canada region code <code>3520005</code>. For more background on searching for Census geographical regions, see <code>?list_census_regions()</code> or the <a href="https://mountainmath.github.io/cancensus/articles/cancensus.html">Get started with cancensus vignette</a>.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Select all variables base variables, this gives us total counts by structural type of dwelling</span>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Attribution for the dataset to be used in graphs</span>
+<span class="no">attribution</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/attribution_for_datasets.html">attribution_for_datasets</a></span>(<span class="st">"CA16xSD"</span>)
+
+<span class="co"># Select all variables base variables, this gives us total counts by structural type of dwelling</span>
 <span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">parent_vector</span>))
 <span class="no">variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="no">vars</span>$<span class="no">vector</span>,<span class="no">vars</span>$<span class="no">label</span>)
@@ -179,7 +182,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span>() +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"City of Toronto dwelling units by structural type"</span>,
-       <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan 2016 Census, xtab via CMHC"</span>)</pre></body></html></div>
+       <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="no">attribution</span>)</pre></body></html></div>
 <p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>As with regular Census data, all data can be retrieved as spatial data. Sometimes it’s easier to use the CensusMapper API interface to search for and select the variables we are interested in. The <code>explore_census_vectors()</code> function opens a browser with the variable selection tool, we determine that “v_CA16xSD_1” and “v_CA16xSD_28” are the variables enumerating all dwellings and all unoccupied dwellings, respectively.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># Use explore_census_vectors() to browse and select variables of interest</span>
@@ -197,7 +200,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span>(<span class="kw">datum</span><span class="kw">=</span><span class="fl">NA</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"City of Toronto dwellings unoccupied on census day"</span>,
        <span class="kw">fill</span><span class="kw">=</span><span class="st">"Share"</span>,
-       <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="st">"StatCan 2016 Census, xtab via CMHC"</span>)</pre></body></html></div>
+       <span class="kw">x</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">y</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">caption</span><span class="kw">=</span><span class="no">attribution</span>)</pre></body></html></div>
 <p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 </div>
   </div>

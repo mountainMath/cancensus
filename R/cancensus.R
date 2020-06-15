@@ -248,8 +248,10 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 #' @return
 #'
 #' Returns a data frame with a column \code{dataset} containing the code for the
-#' dataset, a column \code{description} describing it, and a \code{geo_dataset} column
-#' identifying the geography dataset the data is based on..
+#' dataset, a column \code{description} describing it, a \code{geo_dataset} column
+#' identifying the geography dataset the data is based on, a \code{attribution} column
+#' with an attribtuion string, a \code{reference} column with a reference identifier, and
+#' a \code{reference_url} column with a link to reference materials.
 #'
 #' @export
 #'
@@ -267,7 +269,7 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
-    names(result) <- c("dataset","description","geo_dataset")
+    #names(result) <- c("dataset","description","geo_dataset")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -282,6 +284,47 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     }
     result
   }
+}
+
+#' Get attribution for datasets
+#'
+#' @param datasets Vector of dataset identifiers
+#'
+#' @return
+#'
+#' Returns a string to be used as attribution for the given datasets.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Attribution string for the 2006 and 2016 census datasets
+#' attribution_for_datasets(c('CA06','CA16'))
+attribution_for_datasets <- function(datasets){
+  attribution <-list_census_datasets(quiet=TRUE) %>%
+    dplyr::filter(.data$dataset %in% datasets) %>%
+    dplyr::pull(.data$attribution)
+
+  commons <- gsub("\\d{4}","\\\\\\d{4}",attribution) %>%
+    unique()
+
+  commons %>% lapply(function(c){
+    matches <- attribution[grepl(paste0("^",c,"$"),attribution)]
+
+    #years <- stringr::str_extract(matches, "\\d{4}") %>% sort()
+    # avoid stringr dependency
+    parts <- strsplit(c, split = "\\\\d\\{4\\}") %>%
+      unlist()
+    years <- matches
+    for (p in parts){
+      years <- gsub(p,"",years)
+    }
+
+    year_string <- paste0(years,collapse=", ")
+    gsub("\\d{4}",paste0(years,collapse=", "),matches[[1]])
+  }) %>%
+    unlist() %>%
+    paste0(collapse="; ")
 }
 
 

@@ -181,19 +181,19 @@
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <p>To view all available datasets, run <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 26 x 3</span>
-<span class="co">#&gt;    dataset description                                               geo_dataset</span>
-<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                                                     &lt;chr&gt;      </span>
-<span class="co">#&gt;  1 CA01    2001 Canada Census                                        CA01       </span>
-<span class="co">#&gt;  2 CA06    2006 Canada Census                                        CA06       </span>
-<span class="co">#&gt;  3 CA11    2011 Canada Census and NHS                                CA11       </span>
-<span class="co">#&gt;  4 CA16    2016 Canada Census                                        CA16       </span>
-<span class="co">#&gt;  5 CA01xSD 2001 Canada Census xtab - Structural type by Document ty… CA01       </span>
-<span class="co">#&gt;  6 CA06xSD 2006 Canada Census xtab - Structural type by Document ty… CA06       </span>
-<span class="co">#&gt;  7 CA11xSD 2011 Canada Census xtab - Structural type by Document ty… CA11       </span>
-<span class="co">#&gt;  8 CA16xSD 2016 Canada Census xtab - Structural type by Document ty… CA16       </span>
-<span class="co">#&gt;  9 TX2000  2000 Taxfiler data, via CMHC                              CA01       </span>
-<span class="co">#&gt; 10 TX2001  2001 Taxfiler data, via CMHC                              CA01       </span>
+<span class="co">#&gt; # A tibble: 26 x 6</span>
+<span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
+<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            </span>
+<span class="co">#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
+<span class="co">#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…</span>
+<span class="co">#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…</span>
 <span class="co">#&gt; # … with 16 more rows</span></pre></body></html></div>
 <p>As other Census datasets become available via the CensusMapper API, they will be listed as output when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
