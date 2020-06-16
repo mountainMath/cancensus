@@ -5,7 +5,7 @@
 #'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
-#' tool at \url{https://censusmapper.ca/api}.
+#' tool at \url{https://censusmapper.ca/api} by calling \code{explore_census_vectors()}
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.

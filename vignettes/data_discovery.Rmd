@@ -1,0 +1,184 @@
+---
+title: "Data discovery"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data discovery}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(cancensus)
+```
+
+# Census datasets
+
+`cancensus` can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+
+Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), `cancensus` now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
+```{r}
+list_census_datasets()
+```
+
+# Variable vectors
+
+```{r echo=FALSE}
+library(ggplot2)
+library(dplyr)
+ca16 <- list_census_vectors("CA16")
+ca11 <- list_census_vectors("CA11")
+ca06 <- list_census_vectors("CA06")
+ca01 <- list_census_vectors("CA01")
+
+tibble(dataset = c("CA16","CA11","CA06","CA01"), vectors = c(length(ca16$vector), length(ca11$vector),
+                                                             length(ca06$vector), length(ca01$vector))) %>% 
+  ggplot(., aes(x = dataset, y = vectors)) +
+  geom_col() +
+  theme_minimal() +
+  theme(panel.grid = element_blank()) +
+  labs(x = "Census dataset", y = "",
+       title = "Total number of unique variable vectors by Census dataset") +
+  scale_y_continuous(labels = scales::comma)
+```
+The Census datasets that the `cancensus` package provides access to are rich in detail but they can be complex to navigate. There are thousands of variable vectors, including separate vector indicators for aggregations split by `Total`, `Female`, and `Male` populations. As a result, the total number of vectors per dataset is significant, ranging from 1,715 in the `CA01` dataset to 6,623 in the `CA16` one. 
+
+## View available Census variable vectors
+
+```{r message=FALSE, warning=FALSE}
+list_census_vectors('CA16')
+```
+`list_census_vectors(dataset)` retrieves an index of all available vectors for a given dataset from the Censusmapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes `v_{dataset}_{index}`. This is the code by which vectors are identified through the Censusmapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the Censusmapper API. 
+
+## Searching for Census variable vectors
+
+Due to the large number of Census variables it can be hard to find the right data. There is a function for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the `query_type` argument when calling `find_census_variables()` function. 
+
+Note that variable search is optimized for the Census variables in the main Census datasets. While searches generally work for variables in additional datasets such as cross-tabs and taxfiler data, they have not been extensively tested against these datasets. 
+
+### Exact search
+
+Exact search uses exact string matching. It is best used when you know exactly the term you are looking for, and is not robust to spelling errors. 
+```{r, warning=TRUE, message=TRUE}
+find_census_vectors("Oji-cree", dataset = "CA16", type = "total", query_type = "exact")
+```
+This, on the other hand, will return a warning. 
+```{r, warning=TRUE, message=TRUE}
+find_census_vectors("Ojib-cree", dataset = "CA16", type = "total", query_type = "exact")
+```
+Unless otherwise specified, `find_census_vectors()` will use exact search as the default option. 
+
+### Keyword search
+
+Keyword search is meant to be used when you know the approximate subject matter of the variable without knowing the exact variable you are looking for. Under the hood, keyword search splits the query and vector details into unique unigram tokens and then looks for the vectors with the greatest number of matches. 
+```{r, warning=TRUE, message=TRUE}
+find_census_vectors('commute mode', dataset = 'CA16', type = 'female', query_type = 'keyword', interactive = FALSE)
+```
+Keyword search will show all results that have the highest number of unique keyword matches. What happens if there are other keyword matches that have fewer total matches? By default, the function argument is set as `interactive = TRUE`, which will prompt the user with a console menu option to see the rest of the matches or not. If using `find_census_vectors()` in a script or reproducible documentation, we recommend setting this argument to `interactive = FALSE`. 
+
+### Semantic search
+
+Semantic search works best with phrases. Rather than the decontextualized unigrams of keyword search, semantic search splits queries and vector details into n-grams and finds matches using approximate string distances based on the generalized Levenshtein distance. 
+```{r}
+find_census_vectors("after tax incomes", dataset = "CA16", type = "total", query_type = "semantic")
+```
+Semantic search is more robust to spelling and punctuation issues that may come up with exact search. For example, while this throws a warning:
+```{r, warning=TRUE, message=TRUE}
+find_census_vectors("ojib cree", dataset = "CA16", type = "total", query_type = "exact")
+```
+This will find the correct Census vector. 
+```{r, warning=TRUE, message=TRUE}
+find_census_vectors('ojib cree', dataset = 'CA16', type = 'total', query_type = 'semantic')
+```
+Results are ordered by string proximity if there are multiple possible matches. 
+
+# Census regions
+
+## Standard Geographical Classification 
+
+Statistics Canada uses an official classification of geographic areas known as the [Standard Geographical Classification (SGC)](https://www.statcan.gc.ca/eng/subjects/standard/sgc/2016/introduction), which is updated periodically. The latest version is based on the 2016 Census. Geographic classification codes are standardized across Statistics Canada products, including the Census as well as any other Statistics Canada dataset. In practice, this means that the region ID for the Vancouver Census subdivision is 5915022 across all products. In `cancensus` the region ID code is used to identify the appropriate spatial vector data to retrieve alongside Census data. These region IDs have a predictable structure, where provinces are two digits, Census divisions are 4 digits (including 2 for the province), and Census subdivisions have 7 digits (including 2 for the province, and 2 for the Census division). 
+```{r echo=FALSE}
+tibble(PR = c(35,35,35), CD = c(NA, 18, 18), CSD = c(NA, NA, 013), name = c("Ontario","Durham (Regional municipality","Oshawa (City)"))
+```
+These levels are hierarchical and complete in that a province is split in Census divisions, which are then split into Census subdivisions. 
+
+Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DAs) are not named or listed but have unique identifying codes derived from their parent Census subdivision.  
+```{r echo=FALSE}
+list_census_regions('CA16') %>% 
+  group_by(level) %>% 
+  tally()
+```
+There is also an additional region, with the id `01` and the level code `C` which represents all of Canada as a whole. 
+
+### A note on Census Metropolitan Areas and Census Agglomerations
+
+Data can also be extracted at the Census Metropolitan Area (CMA) or Census Agglomeration (CA) level, which is derived from a variant of the SGC known as the Statistical Area Classification. Hierarchically, CMAs and CAs represent a collection of constituent Census subdivisions.  
+
+A Census metropolitan area consists of adjacent municipalities with a defined core with a total population of at least 100,000 of which 50,000 or more must live in the core based on Census data. Adjacent municipalities must have a high degree of integration with the core, which Statistics Canada measures based on the commuting flows indicated in Census data. Census Agglomeration areas have to have a core population above 10,000. 
+
+All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada's Census Dictionary article for [Census metropolitan areas (CMA) and census agglomerations (CA)](https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm). 
+
+## Viewing available Census regions
+
+For any valid Census dataset, you can view all available Census regions by calling `list_census_regions(dataset)`. This will retrieve the `region` code, the `name`, and the `level` code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels.
+```{r}
+list_census_regions('CA16')
+```
+There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. 
+```{r echo=FALSE, paged.print=TRUE}
+geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", 
+                 "CD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
+                 "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
+                 "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
+                 "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
+                 "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
+                 "CSD", "CSD", "CSD", "CSD")
+  status_code <- c("CDR", "CT", "CTY", "DIS", "DM", "MRC", "RD", "REG", "RM", "TÉ", "TER", 
+            "UC", "C", "CC", "CG", "CN", "COM", "CT", "CU", "CV", "CY", "DM", "HAM", 
+            "ID", "IGD", "IM", "IRI", "LGD", "LOT", "M", "MD", "MÉ", "MU", "NH", "NL", 
+            "NO", "NV", "P", "PE", "RCR", "RDA", "RGM", "RM", "RV", "S-É", "SA", "SC", 
+            "SÉ", "SET", "SG", "SM", "SNO", "SV", "T", "TC", "TI", "TK", "TL", "TP", 
+            "TV", "V", "VC", "VK", "VL", "VN")
+  status <- c("Census division / Division de recensement", "County / Comté", "County", 
+              "District", "District municipality", "Municipalité régionale de comté", 
+              "Regional district", "Region", "Regional municipality", "Territoire équivalent", 
+              "Territory / Territoire", "United counties", "City / Cité", "Chartered community", 
+              "Community government", "Crown colony / Colonie de la couronne", "Community", 
+              "Canton (municipalité de)", "Cantons unis (municipalité de)", "City / Ville", 
+              "City", "District municipality", "Hamlet", "Improvement district", 
+              "Indian government district", "Island municipality", 
+              "Indian reserve / Réserve indienne", "Local government district", 
+              "Township and royalty", "Municipality / Municipalité", "Municipal district", 
+              "Municipalité", "Municipality", "Northern hamlet", "Nisga'a land", 
+              "Unorganized / Non organisé", "Northern village", 
+              "Parish / Paroisse (municipalité de)", "Paroisse (municipalité de)", 
+              "Rural community / Communauté rurale", "Regional district electoral area", 
+              "Regional municipality", "Rural municipality", "Resort village", 
+              "Indian settlement / Établissement indien", "Special area", 
+              "Subdivision of county municipality / Subdivision municipalité de comté", 
+              "Settlement / Établissement", "Settlement", 
+              "Self-government / Autonomie gouvernementale", "Specialized municipality", 
+              "Subdivision of unorganized / Subdivision non organisée", "Summer village", 
+              "Town", "Terres réservées aux Cris", "Terre inuite", 
+              "Terres réservées aux Naskapis", "Teslin land", "Township", "Town / Ville", 
+              "Ville", "Village cri", "Village naskapi", "Village", "Village nordique")
+  dplyr::tibble(geography = geography, status_code = status_code, status = status)
+```
+
+## Searching through named Census regions
+
+We can also search through all named geographies. This will return any geographies that have a name that matches or partially matches the search query. 
+```{r}
+search_census_regions("Vancouver","CA16")
+```
+
+# Exploring Census variable vectors and regions interactively
+
+Sometimes it can be easier to find the right vectors or regions by exploring the layout and hierarchy of Census data. This is especially true when we are not sure of what information is available or are not sure where to start. Finding the right Census geographic code on a map will be easier for some than using named search. This is also handy if we want to assemble a custom aggregation of region codes at different hierarchies. To facilitate this, we have included a couple of convenience functions that take you directly to an interactive tool with variable and region details on the Censusmapper website. To explore the hierarchical variable structure of a given dataset, say the 2006 Census, running `explore_census_vectors(dataset = "CA06")`. To view Census geography on an interactive map, there is `explore_census_geography(dataset = "CA16")`. As usual, vectors and geographies for different Census datasets can be retrieved by using the appropriate dataset code for the `dataset` argument. 

@@ -11,11 +11,16 @@ reference:
   - contents:
     - get_census
     - get_census_geometry
+  - title: Data discovery
+  - contents:
     - list_census_datasets
     - list_census_regions
     - as_census_region_list
     - list_census_vectors
+    - find_census_vectors
     - search_census_regions
+    - explore_census_vectors
+    - explore_census_regions
     - search_census_vectors
   - title: Working with Census data
   - contents:
