@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • cancensus</title>
+<title>Get attribution for datasets — dataset_attribution • cancensus</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,7 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Get attribution for datasets — dataset_attribution" />
+<meta property="og:description" content="Get attribution for datasets" />
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta property="og:image:alt" content="cancensus" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -82,7 +83,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -153,152 +154,37 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Get attribution for datasets</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/cancensus.R'><code>R/cancensus.R</code></a></small>
+    <div class="hidden name"><code>dataset_attribution.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Get attribution for datasets</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>dataset_attribution</span>(<span class='no'>datasets</span>)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-retrieving-census-data" class="hasAnchor"><a href="#section-retrieving-census-data" class="anchor"></a>Retrieving Census data</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="get_census.html">get_census()</a></code> <code><a href="get_census.html">get_census_geometry()</a></code> </p>
-        </td>
-        <td><p>Access to Canadian census data through the CensusMapper API</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-data-discovery" class="hasAnchor"><a href="#section-data-discovery" class="anchor"></a>Data discovery</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="list_census_datasets.html">list_census_datasets()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available datasets.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_census_regions.html">list_census_regions()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available regions in a given dataset.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as_census_region_list.html">as_census_region_list()</a></code> </p>
-        </td>
-        <td><p>Convert a (suitably filtered) data frame from
-<code>list_census_regions</code> to a list suitable for passing to
-<code>get_census</code>.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_census_vectors.html">list_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available vectors for a given dataset.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="find_census_vectors.html">find_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for vectors using exact, semantic, or keyword search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="search_census_regions.html">search_census_regions()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="explore_census_vectors.html">explore_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="explore_census_regions.html">explore_census_regions()</a></code> </p>
-        </td>
-        <td><p>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for vectors with descriptions matching a search term or phrase (deprecated)</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-working-with-census-data" class="hasAnchor"><a href="#section-working-with-census-data" class="anchor"></a>Working with Census data</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="label_vectors.html">label_vectors()</a></code> </p>
-        </td>
-        <td><p>Return Census variable names and labels as a tidy data frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="child_census_vectors.html">child_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all child variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="parent_census_vectors.html">parent_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all parent variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dataset_attribution.html">dataset_attribution()</a></code> </p>
-        </td>
-        <td><p>Get attribution for datasets</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>datasets</th>
+      <td><p>Vector of dataset identifiers</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Returns a string to be used as attribution for the given datasets.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='co'># Attribution string for the 2006 and 2016 census datasets</span>
+<span class='fu'>dataset_attribution</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'CA06'</span>,<span class='st'>'CA16'</span>))</div><div class='output co'>#&gt; [1] "StatCan 2006, 2016 Census"</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

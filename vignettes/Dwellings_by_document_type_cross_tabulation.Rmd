@@ -44,7 +44,7 @@ In this example, we want to retrieve the custom structural dwelling cross-tab fo
 
 ```{r}
 # Attribution for the dataset to be used in graphs
-attribution <- attribution_for_datasets("CA16xSD")
+attribution <- dataset_attribution("CA16xSD")
 
 # Select all variables base variables, this gives us total counts by structural type of dwelling
 vars <- list_census_vectors("CA16xSD") %>% 

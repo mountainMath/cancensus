@@ -179,7 +179,7 @@
 <a href="#census-datasets" class="anchor"></a>Census Datasets</h2>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
-<p>To view all available datasets, run <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
+<p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all available datasets alongside their metadata.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
 <span class="co">#&gt; # A tibble: 26 x 6</span>
 <span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
@@ -200,7 +200,7 @@
 <div id="census-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#census-regions" class="anchor"></a>Census Regions</h2>
-<p>Census data is aggregated at multiple <a href="###%20Census%20Geographic%20Levels">geographic levels</a>. Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census division (CD), and census subdivision (CSD) are defined as named census regions.</p>
+<p>Census data is aggregated at multiple <a href="###%20Census%20Geographic%20Levels">geographic levels</a>. Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census agglomeration (CA), census division (CD), and census subdivision (CSD) are defined as named census regions.</p>
 <p>Canadian Census geography can change in between Census periods. <strong>cancensus</strong> provides a function, <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>, to display all named census regions and their corresponding id for a given census dataset.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">"CA16"</span>)
 <span class="co">#&gt; # A tibble: 5,504 x 8</span>
@@ -250,29 +250,34 @@
 <tr class="odd">
 <td>CMA</td>
 <td>Census Metropolitan Area</td>
-<td align="center">49</td>
+<td align="center">35</td>
 </tr>
 <tr class="even">
+<td>CA</td>
+<td>Census Agglomeration</td>
+<td align="center">14</td>
+</tr>
+<tr class="odd">
 <td>CD</td>
 <td>Census Division</td>
 <td align="center">287</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>CSD</td>
 <td>Census Subdivision</td>
 <td align="center">713</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>CT</td>
 <td>Census Tracts</td>
 <td align="center">5621</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>DA</td>
 <td>Dissemination Area</td>
 <td align="center">56589</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Regions</td>
 <td>Named Census Region</td>
 <td align="center"></td>
@@ -324,23 +329,31 @@
 <div id="variable-search" class="section level2">
 <h2 class="hasAnchor">
 <a href="#variable-search" class="anchor"></a>Variable search</h2>
-<p>Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. To help with that, this package includes a built-in vector search tool to help find specific variables.</p>
+<p>Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. There is a function, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code>, for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the <code>query_type</code> argument when calling <code>find_census_variables()</code> function.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austrian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;   vector   type   label units parent_vector aggregation details                 </span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;fct&gt;  &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;                   </span>
-<span class="co">#&gt; 1 v_CA16_… Total  Aust… Numb… v_CA16_4089   Additive    CA 2016 Census; 25% Dat…</span>
-<span class="co">#&gt; 2 v_CA16_… Male   Aust… Numb… v_CA16_4090   Additive    CA 2016 Census; 25% Dat…</span>
-<span class="co">#&gt; 3 v_CA16_… Female Aust… Numb… v_CA16_4091   Additive    CA 2016 Census; 25% Dat…</span></pre></body></html></div>
-<p>Knowing exactly how to spell the right variable can be tricky, but this search function relies on fuzzy searching so if it is unable to find an exact match of your search term, it will provide some helpful alternatives. In this case, searching for “Austraian” origin will show search terms for the vectors for both Austrian and Australian origins.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austraian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 2 x 1</span>
-<span class="co">#&gt;   `Similarly named objects`</span>
-<span class="co">#&gt;   &lt;chr&gt;                    </span>
-<span class="co">#&gt; 1 Austrian                 </span>
-<span class="co">#&gt; 2 Australian</span></pre></body></html></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australia"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
+<span class="co">#&gt; # A tibble: 2 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_38… Total Austral… 25% Data; Citizenship and Immigration; Total - Sele…</span>
+<span class="co">#&gt; 2 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
+
+
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australia origin"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"semantic"</span>)
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australian ethnic"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"keyword"</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span></pre></body></html></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span></pre></body></html></div>
 </div>
 <div id="managing-variable-hierarchy" class="section level2">
 <h2 class="hasAnchor">
