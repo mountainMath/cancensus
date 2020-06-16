@@ -126,7 +126,7 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
   }
   if (query_type == "exact") {
     result <- census_vector_list[grep(query, census_vector_list$details, ignore.case = TRUE), ]
-    if(length(result$vector)>1) result else {
+    if(length(result$vector)>=1) result else {
       warning("No exact matches found. Please check spelling and try again or consider using semantic or keyword search.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
               call. = FALSE)
     }

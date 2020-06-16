@@ -96,7 +96,7 @@ Additional parameters for advanced options can be viewed by running `?get_census
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
 
-To view all available datasets, run `list_census_datasets()`.
+The function `list_census_datasets()` will show all available datasets alongside their metadata.
 
 ```{r list datasets, message=FALSE, warning=FALSE}
 list_census_datasets()
@@ -106,7 +106,7 @@ As other Census datasets become available via the CensusMapper API, they will be
 
 ## Census Regions
 
-Census data is aggregated at multiple [geographic levels](### Census Geographic Levels). Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census division (CD), and census subdivision (CSD) are defined as named census regions. 
+Census data is aggregated at multiple [geographic levels](### Census Geographic Levels). Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census agglomeration (CA), census division (CD), and census subdivision (CSD) are defined as named census regions. 
 
 Canadian Census geography can change in between Census periods. **cancensus** provides a function, `list_census_regions(dataset)`, to display all named census regions and their corresponding id for a given census dataset. 
 
@@ -134,7 +134,8 @@ Census data accessible through **cancensus** comes is available in a number of d
 | --------|-------------------------------|:--------------------:|
 | C       | Canada (total)                | 1                    |
 | PR      | Provinces/Territories         | 13                   |
-| CMA     | Census Metropolitan Area      | 49                   |
+| CMA     | Census Metropolitan Area      | 35                   |
+| CA      | Census Agglomeration          | 14                   |
 | CD      | Census Division               | 287                  |
 | CSD     | Census Subdivision            | 713                  |
 | CT      | Census Tracts                 | 5621                 |
@@ -171,19 +172,21 @@ For each variable (vector) in that Census dataset, this shows:
 
 ## Variable search
 
-Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. To help with that, this package includes a built-in vector search  tool to help find specific variables. 
+Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. There is a function, `find_census_vectors()`, for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the `query_type` argument when calling `find_census_variables()` function. 
 
 ```{r search_vectors1, message=FALSE, warning=FALSE}
 # Find the variable indicating the number of people of Austrian ethnic origin
-search_census_vectors("Austrian", dataset = 'CA16')
+find_census_vectors("Australia", dataset = "CA16", type = "total", query_type = "exact")
+
+
+find_census_vectors("Australia origin", dataset = "CA16", type = "total", query_type = "semantic")
+find_census_vectors("Australian ethnic", dataset = "CA16", type = "total", query_type = "keyword")
 ```
 
-Knowing exactly how to spell the right variable can be tricky, but this search function relies on fuzzy searching so if it is unable to find an exact match of your search term, it will provide some helpful alternatives. In this case, searching for "Austraian" origin will show search terms for the vectors for both Austrian and Australian origins. 
-
-```{r search_vectors2, message=FALSE, warning=FALSE}
-# Find the variable indicating the number of people of Austrian ethnic origin
-search_census_vectors("Austraian", dataset = 'CA16')
+```{r}
+find_census_vectors("Australian", dataset = "CA16", type = "total", query_type = "exact")
 ```
+
 
 ## Managing variable hierarchy 
 

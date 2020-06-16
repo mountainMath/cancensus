@@ -27,6 +27,7 @@ Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), `
 ```{r}
 list_census_datasets()
 ```
+The `list_census_datasets()` function also provides additional background like series reference code, catalogue reference, and attribution details. 
 
 # Variable vectors
 
@@ -59,7 +60,7 @@ list_census_vectors('CA16')
 
 ## Searching for Census variable vectors
 
-Due to the large number of Census variables it can be hard to find the right data. There is a function for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the `query_type` argument when calling `find_census_variables()` function. 
+Due to the large number of Census variables it can be hard to find the right data. There is a function for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the `query_type` argument when calling `find_census_vectors()` function. 
 
 Note that variable search is optimized for the Census variables in the main Census datasets. While searches generally work for variables in additional datasets such as cross-tabs and taxfiler data, they have not been extensively tested against these datasets. 
 

@@ -64,7 +64,7 @@ list_census_regions("CA16")
 list_census_vectors("CA16")
 ```
 
-There is also an interactive tool that is available at [CensusMapper API call generator](https://censusmapper.ca/api) to visually select regions and variables and generate code for the API call.
+There is also an interactive tool that is available at the [CensusMapper API](https://censusmapper.ca/api) to visually select regions and variables and generate code for the API call. Calling `explore_census_vectors(dataset = "CA16")` or `explore_census_regions(dataset = "CA16")` will open a new browser window to this interactive tool, preconfigured for whichever Census dataset is set as an argument. 
 
 ### Getting the data
 

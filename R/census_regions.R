@@ -60,6 +60,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
       dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
+    result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     result
   } else {
     if (!quiet) message("Reading regions list from local cache.")
@@ -70,6 +71,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
       warning(paste("Cached regions list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
+    result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     result
   }
 }

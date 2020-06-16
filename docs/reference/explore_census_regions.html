@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Query the CensusMapper API for available datasets. — list_census_datasets • cancensus</title>
+<title>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window — explore_census_regions • cancensus</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,12 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Query the CensusMapper API for available datasets. — list_census_datasets" />
-<meta property="og:description" content="Query the CensusMapper API for available datasets." />
+<meta property="og:title" content="Interactively browse Census variables and regions on Censusmapper.ca in a new browser window — explore_census_regions" />
+<meta property="og:description" content="Finding the right Census variables or regions can be complicated.
+explore_census_vectors(dataset) and explore_census_regions(dataset) will open a
+new browser page or tab to an interactive Census variable and region exploration and selection
+tool on the Censusmapper.ca website. Interactive
+tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies." />
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta property="og:image:alt" content="cancensus" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -156,58 +160,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Query the CensusMapper API for available datasets.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/cancensus.R'><code>R/cancensus.R</code></a></small>
-    <div class="hidden name"><code>list_census_datasets.Rd</code></div>
+    <h1>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/vector_discovery.R'><code>R/vector_discovery.R</code></a></small>
+    <div class="hidden name"><code>explore_census_regions.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Query the CensusMapper API for available datasets.</p>
+    <p>Finding the right Census variables or regions can be complicated.
+<code><a href='explore_census_vectors.html'>explore_census_vectors(dataset)</a></code> and <code>explore_census_regions(dataset)</code> will open a
+new browser page or tab to an interactive Census variable and region exploration and selection
+tool on the <a href='https://censusmapper.ca/api'>Censusmapper.ca website</a>. Interactive
+tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographies.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_census_datasets</span>(<span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>explore_census_regions</span>(<span class='kw'>dataset</span> <span class='kw'>=</span> <span class='st'>"CA16"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>use_cache</th>
-      <td><p>If set to TRUE (the dfault), data will be read from a temporary local cache for the
-duration of the R session, if
-available. If set to FALSE, query the API for the data, and
-refresh the temporary cache with the result.</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>When TRUE, suppress messages and warnings.</p></td>
+      <th>dataset</th>
+      <td><p>The dataset to query for available vectors, e.g. <code>'CA16'</code>.
+Interactive tools available for the CA16, CA11, CA06, and CA01 Census datasets and
+geographies.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>Returns a data frame with a column <code>dataset</code> containing the code for the
-dataset, a column <code>description</code> describing it, a <code>geo_dataset</code> column
-identifying the geography dataset the data is based on, a <code>attribution</code> column
-with an attribtuion string, a <code>reference</code> column with a reference identifier, and
-a <code>reference_url</code> column with a link to reference materials.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># List available datasets in CensusMapper</span>
-<span class='fu'>list_census_datasets</span>()</div><div class='output co'>#&gt; <span class='message'>Reading dataset list from temporary cache.</span></div><div class='output co'>#&gt; # A tibble: 26 x 6
-#&gt;    dataset description     geo_dataset attribution   reference reference_url    
-#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            
-#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…
-#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…
-#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…
-#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…
-#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…
-#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…
-#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…
-#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…
-#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…
-#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…
-#&gt; # … with 16 more rows</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+
+<span class='fu'><a href='explore_census_vectors.html'>explore_census_vectors</a></span>(<span class='kw'>dataset</span> <span class='kw'>=</span> <span class='st'>"CA16"</span>)
+
+<span class='fu'>explore_census_regions</span>(<span class='kw'>dataset</span> <span class='kw'>=</span> <span class='st'>"CA11"</span>)
+
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

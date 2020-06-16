@@ -16,6 +16,9 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/child_census_vectors.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/explore_census_regions.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/explore_census_vectors.html</loc>
   </url>
   <url>
@@ -56,5 +59,8 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/cancensus.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
   </url>
 </urlset>
