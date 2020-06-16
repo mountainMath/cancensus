@@ -36,6 +36,7 @@
 #' @examples
 #' list_census_regions('CA16')
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
+  dataset = toupper(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
   #cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
