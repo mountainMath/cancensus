@@ -49,7 +49,11 @@
   
 
 <meta property="og:title" content="Query the CensusMapper API for regions with names matching a searchterm. — search_census_regions" />
-<meta property="og:description" content="Query the CensusMapper API for regions with names matching a searchterm." />
+<meta property="og:description" content="Runs a query against the CensusMapper API to retrieve region data with
+names matching specific queries. Users can optionally specify the target geography level
+(e.g. level = 'CMA', level = 'CSD', etc.). Alternatively, calling
+explore_census_vectors() will launch the interactive region selection tool on
+the Censusmapper site in a new web page or tab." />
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta property="og:image:alt" content="cancensus" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -147,7 +151,11 @@
     </div>
 
     <div class="ref-description">
-    <p>Query the CensusMapper API for regions with names matching a searchterm.</p>
+    <p>Runs a query against the CensusMapper API to retrieve region data with
+names matching specific queries. Users can optionally specify the target geography level
+(e.g. <code>level = 'CMA'</code>, <code>level = 'CSD'</code>, etc.). Alternatively, calling
+<code><a href='explore_census_vectors.html'>explore_census_vectors()</a></code> will launch the interactive region selection tool on
+the Censusmapper site in a new web page or tab.</p>
     </div>
 
     <pre class="usage"><span class='fu'>search_census_regions</span>(<span class='no'>searchterm</span>, <span class='no'>dataset</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='no'>...</span>)</pre>

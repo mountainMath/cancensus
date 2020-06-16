@@ -169,7 +169,20 @@
           <p><code><a href="get_census.html">get_census()</a></code> <code><a href="get_census.html">get_census_geometry()</a></code> </p>
         </td>
         <td><p>Access to Canadian census data through the CensusMapper API</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data-discovery" class="hasAnchor"><a href="#section-data-discovery" class="anchor"></a>Data discovery</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="list_census_datasets.html">list_census_datasets()</a></code> </p>
@@ -190,15 +203,27 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="find_census_vectors.html">find_census_vectors()</a></code> </p>
+        </td>
+        <td><p>Query the CensusMapper API for vectors using exact, semantic, or keyword search</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="search_census_regions.html">search_census_regions()</a></code> </p>
         </td>
         <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="explore_census_vectors.html">explore_census_vectors()</a></code> </p>
+        </td>
+        <td><p>Interactively browse Census variable and region on Censusmapper.ca in a new browser window</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
         </td>
-        <td><p>Query the CensusMapper API for vectors with descriptions matching a searchterm.</p></td>
+        <td><p>Query the CensusMapper API for vectors with descriptions matching a search term or phrase (deprecated)</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -225,7 +250,7 @@
         </td>
         <td><p>List all child variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
+<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
       </tr><tr>
         
         <td>
@@ -233,7 +258,7 @@ variables returned by
         </td>
         <td><p>List all parent variables from vector hierarchies given either a list of Census
 variables returned by
-<code>list_census_vectors</code> or <code>search_census_vectors</code>, or a direct string reference to the vector code.</p></td>
+<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
       </tr>
     </tbody>
     </table>

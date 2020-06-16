@@ -31,3 +31,12 @@ dataset_from_vector_list <- function(vector_list){
   }
   dataset
 }
+
+# To activate later
+# valid_datasets <- c("CA01","CA06","CA11","CA16",
+#                     "CA01xSD", "CA06xSD", "CA11xSD", "CA16xSD",
+#                     "TX2000", "TX2001", "TX2002", "TX2003", "TX2004",
+#                     "TX2005", "TX2006", "TX2007", "TX2008", "TX2009",
+#                     "TX2010", "TX2011", "TX2012", "TX2013", "TX2014", "TX2015", "TX2016", "TX2017")
+
+
