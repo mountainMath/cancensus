@@ -1,3 +1,17 @@
+# cancensus 0.3.0
+
+## Major changes
+- Fully redesigned variable search using `find_census_vectors()` and deprecation of `search_census_vectors(). See the [Data discovery: resources for finding available and relevant data vignette](https://mountainmath.github.io/cancensus/articles/data_discovery.html) for additional information.
+- Census Agglomerations with defined geographies and Census tracts are separated from CMAs when calling `list_census_regions()`
+- Additional metadata for catalogue information and attribution is returned when calling `list_census_datasets()`
+- New functions `explore_census_regions` and `explore_census_vectors` which open a browser page towards the interactive discovery and selection tools on the [Censusmapper website](https://censusmapper.ca/api)
+- New function `attribution_for_dataset` which provides accurate attribution information for citation and visualizations for a given dataset.
+- Additional datasets: T1FF taxfiler data and dwelling type crosstabs, made available by CMHC. For more info, see the new vignettes for these datasets: [Additional datasets: Structural type of dwelling by document type](https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html), [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html). 
+
+## Minor changes
+- Updated internal usage of dependent packages to avoid deprecated functions and warnings
+- Additional minor fixes to efficiency improvements
+
 # cancensus 0.2.2
 
 ## Minor changes

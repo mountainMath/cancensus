@@ -91,8 +91,12 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("
 We'd love to feature examples of work or projects that use cancensus.
 
 ### Vignettes 
+
 * [Getting started with cancensus](https://mountainmath.github.io/cancensus/articles/cancensus.html)
 * [Making maps with cancensus](https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html)
+* [Data discovery: resources for finding available and relevant data](https://mountainmath.github.io/cancensus/articles/data_discovery.html)
+* [Additional datasets: Structural type of dwelling by document type](https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html)
+* [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
 ### Contributing
 
@@ -104,7 +108,7 @@ We'd love to feature examples of work or projects that use cancensus.
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.2.2.
+  access, retrieve, and work with Canadian Census data and geography. v0.3.0.
 
 
 A BibTeX entry for LaTeX users is
@@ -113,7 +117,7 @@ A BibTeX entry for LaTeX users is
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
     year = {2020},
-    note = {R package version 0.2.2},
+    note = {R package version 0.3.0},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```

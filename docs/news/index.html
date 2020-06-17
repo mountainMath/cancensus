@@ -95,7 +95,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3</span>
       </span>
     </div>
 
@@ -162,13 +162,41 @@
       <small>Source: <a href='https://github.com/mountainMath/cancensus/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="cancensus-0-3-0" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#cancensus-0-3-0" class="anchor"></a>cancensus 0.3.0<small> Unreleased </small>
+</h1>
+<div id="major-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<ul>
+<li>Fully redesigned variable search using <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> and deprecation of `search_census_vectors(). See the <a href="https://mountainmath.github.io/cancensus/articles/data_discovery.html">Data discovery: resources for finding available and relevant data vignette</a> for additional information.</li>
+<li>Census Agglomerations with defined geographies and Census tracts are separated from CMAs when calling <code><a href="../reference/list_census_regions.html">list_census_regions()</a></code>
+</li>
+<li>Additional metadata for catalogue information and attribution is returned when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>
+</li>
+<li>New functions <code>explore_census_regions</code> and <code>explore_census_vectors</code> which open a browser page towards the interactive discovery and selection tools on the <a href="https://censusmapper.ca/api">Censusmapper website</a>
+</li>
+<li>New function <code>attribution_for_dataset</code> which provides accurate attribution information for citation and visualizations for a given dataset.</li>
+<li>Additional datasets: T1FF taxfiler data and dwelling type crosstabs, made available by CMHC. For more info, see the new vignettes for these datasets: <a href="https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>, <a href="https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>.</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<ul>
+<li>Updated internal usage of dependent packages to avoid deprecated functions and warnings</li>
+<li>Additional minor fixes to efficiency improvements</li>
+</ul>
+</div>
+</div>
     <div id="cancensus-0-2-2" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.2">
 <a href="#cancensus-0-2-2" class="anchor"></a>cancensus 0.2.2<small> 2020-05-12 </small>
 </h1>
-<div id="minor-changes" class="section level2">
+<div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>More efficient conversion between <code>sp</code> and <code>sf</code> spatial objects</li>
 <li>Fixes issue occasionally reported when reading large GeoJSON objects as noted in <a href="https://github.com/mountainMath/cancensus/issues/138" class="uri">https://github.com/mountainMath/cancensus/issues/138</a>
@@ -183,9 +211,9 @@
 <h1 class="page-header" data-toc-text="0.2.1">
 <a href="#cancensus-0-2-1" class="anchor"></a>cancensus 0.2.1<small> 2020-03-05 </small>
 </h1>
-<div id="minor-changes-1" class="section level2">
+<div id="minor-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Minor documentation improvements</li>
 <li>Allow for search by vector identifier</li>
@@ -198,9 +226,9 @@
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#cancensus-0-2-0" class="anchor"></a>cancensus 0.2.0<small> 2019-07-28 </small>
 </h1>
-<div id="major-changes" class="section level2">
+<div id="major-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Added a <code>max_leaves_option</code> for the <code>search_census_vectors</code> function. Adds functionality to set maximum depth for child census vectors, i.e. <code>max_level=NA</code> as an additional parameter. Then e.g. <code>max_level=1</code> would only get direct children and no grandchildren.</li>
 <li>Resolved issues with mislabelled CD UID for CSD level data</li>
@@ -209,9 +237,9 @@
 <code>get_census_geography</code> is now soft deprecated and rolled into the standard <code>get_census</code> with parameters</li>
 </ul>
 </div>
-<div id="minor-changes-2" class="section level2">
+<div id="minor-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-3" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Minor documentation improvements</li>
 <li>Soften dependency on <code>readr</code> package</li>
@@ -223,17 +251,17 @@
 <h1 class="page-header" data-toc-text="0.1.8">
 <a href="#cancensus-0-1-8" class="anchor"></a>cancensus 0.1.8<small> 2018-11-20 </small>
 </h1>
-<div id="major-changes-1" class="section level2">
+<div id="major-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-1" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-2" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Remove dependency on development versions of <code>sf</code> and <code>ggplot2</code> packages</li>
 <li>Add feature allowing for named vector retrieval</li>
 </ul>
 </div>
-<div id="minor-changes-3" class="section level2">
+<div id="minor-changes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-3" class="anchor"></a>Minor Changes</h2>
+<a href="#minor-changes-4" class="anchor"></a>Minor Changes</h2>
 <ul>
 <li>Vignette updates</li>
 <li>Calls that retrieve only geography will now return geographic hierarchy information as well</li>
@@ -254,9 +282,9 @@
 <h1 class="page-header" data-toc-text="0.1.7">
 <a href="#cancensus-0-1-7" class="anchor"></a>cancensus 0.1.7<small> 2018-02-04 </small>
 </h1>
-<div id="major-changes-2" class="section level2">
+<div id="major-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-2" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-3" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Set default caching to <code><a href="https://rdrr.io/r/base/tempfile.html">tempdir()</a></code>
 </li>
@@ -269,16 +297,16 @@
 <h1 class="page-header" data-toc-text="0.1.6">
 <a href="#cancensus-0-1-6" class="anchor"></a>cancensus 0.1.6<small> 2018-01-24 </small>
 </h1>
-<div id="major-changes-3" class="section level2">
+<div id="major-changes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-3" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-4" class="anchor"></a>Major changes</h2>
 <ul>
 <li>First released on CRAN</li>
 </ul>
 </div>
-<div id="minor-changes-4" class="section level2">
+<div id="minor-changes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-4" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-5" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Ensured that data frames were <code>sf</code>-class data frames if option <code>sf</code> was selected for spatial data.</li>
 </ul>
@@ -295,9 +323,9 @@
 <h1 class="page-header" data-toc-text="0.1.5">
 <a href="#cancensus-0-1-5" class="anchor"></a>cancensus 0.1.5<small> Unreleased </small>
 </h1>
-<div id="major-changes-4" class="section level2">
+<div id="major-changes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-4" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-5" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Added pkgdown documentation</li>
@@ -305,9 +333,9 @@
 </li>
 </ul>
 </div>
-<div id="minor-changes-5" class="section level2">
+<div id="minor-changes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-5" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-6" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Default behaviour for <code><a href="../reference/list_census_vectors.html">list_census_vectors()</a></code> changed to have <code>quiet = TRUE</code>
 </li>
@@ -318,18 +346,18 @@
 <h1 class="page-header" data-toc-text="0.1.0">
 <a href="#cancensus-0-1-0" class="anchor"></a>cancensus 0.1.0<small> Unreleased </small>
 </h1>
-<div id="major-changes-5" class="section level2">
+<div id="major-changes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-5" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-6" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Added vector and geography search and discovery capabilities</li>
 <li>Improved performance</li>
 <li>Error and API issue messaging</li>
 </ul>
 </div>
-<div id="minor-changes-6" class="section level2">
+<div id="minor-changes-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-6" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-7" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Reduced package dependencies</li>
 </ul>
@@ -339,9 +367,9 @@
 <h1 class="page-header" data-toc-text="0.0.1">
 <a href="#cancensus-0-0-1" class="anchor"></a>cancensus 0.0.1<small> Unreleased </small>
 </h1>
-<div id="major-changes-6" class="section level2">
+<div id="major-changes-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes-6" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-7" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Initial release</li>
 </ul>
