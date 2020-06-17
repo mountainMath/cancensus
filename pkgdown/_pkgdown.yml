@@ -33,6 +33,10 @@ articles:
       navbar: ~
       contents:
       - Making_maps_with_cancensus
+    - title: Search and data discovery
+      navbar: ~
+      contents:
+      - data_discovery
     - title: Additional datasets
       navbar: ~
       contents:

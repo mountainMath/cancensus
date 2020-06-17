@@ -78,6 +78,9 @@
       <a href="../articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
     </li>
     <li>
+      <a href="../articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
     </li>
     <li>
@@ -106,10 +109,11 @@
 
       
 
-      </header><script src="Taxfiler_Data_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Additional datasets: Annual T1FF taxfiler data</h1>
+            <h3 class="subtitle">Dataset background and example usage</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/Taxfiler_Data.Rmd"><code>vignettes/Taxfiler_Data.Rmd</code></a></small>
@@ -147,10 +151,28 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">sf</span>)</pre></body></html></div>
 <p>To see all available T1FF datasets and their reference codes we can use <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"Taxfiler"</span>,<span class="no">description</span>))
-<span class="co">#&gt; # A tibble: 0 x 6</span>
-<span class="co">#&gt; # … with 6 variables: dataset &lt;chr&gt;, description &lt;chr&gt;, geo_dataset &lt;chr&gt;,</span>
-<span class="co">#&gt; #   attribution &lt;chr&gt;, reference &lt;chr&gt;, reference_url &lt;chr&gt;</span></pre></body></html></div>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span>(<span class="st">"taxfiler"</span>,<span class="no">description</span>))
+<span class="co">#&gt; # A tibble: 18 x 6</span>
+<span class="co">#&gt;    dataset description   geo_dataset attribution    reference reference_url     </span>
+<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;             </span>
+<span class="co">#&gt;  1 TX2000  2000 T1FF ta… CA01        StatCan 2000 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  2 TX2001  2001 T1FF ta… CA01        StatCan 2001 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  3 TX2002  2002 T1FF ta… CA01        StatCan 2002 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  4 TX2003  2003 T1FF ta… CA01        StatCan 2003 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  5 TX2004  2004 T1FF ta… CA01        StatCan 2004 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  6 TX2005  2005 T1FF ta… CA01        StatCan 2005 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  7 TX2006  2006 T1FF ta… CA06        StatCan 2006 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  8 TX2007  2007 T1FF ta… CA06        StatCan 2007 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt;  9 TX2008  2008 T1FF ta… CA06        StatCan 2008 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 10 TX2009  2009 T1FF ta… CA06        StatCan 2009 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 11 TX2010  2010 T1FF ta… CA06        StatCan 2010 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 12 TX2011  2011 T1FF ta… CA06        StatCan 2011 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 13 TX2012  2012 T1FF ta… CA11        StatCan 2012 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 14 TX2013  2013 T1FF ta… CA11        StatCan 2013 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 15 TX2014  2014 T1FF ta… CA11        StatCan 2014 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 16 TX2015  2015 T1FF ta… CA11        StatCan 2015 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 17 TX2016  2016 T1FF ta… CA16        StatCan 2016 … 72-212-X  https://www150.st…</span>
+<span class="co">#&gt; 18 TX2017  2017 T1FF ta… CA16        StatCan 2017 … 72-212-X  https://www150.st…</span></pre></body></html></div>
 <p>And, as an example, available data vectors for one such T1FF dataset.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">'TX2017'</span>)
 <span class="co">#&gt; # A tibble: 818 x 7</span>
@@ -171,7 +193,7 @@
 <p>While the geography varies across Census periods, the call to <code>get_census</code> will automatically attach the correct geography for each annual dataset. We pick four years to look at low income families.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">years</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2006</span>,<span class="fl">2011</span>,<span class="fl">2014</span>,<span class="fl">2017</span>)
 <span class="co"># Attribution for the dataset to be used in graphs</span>
-<span class="no">attribution</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"TX"</span>,<span class="no">years</span>))
+<span class="no">attribution</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://mountainmath.github.io/cancensus/index.html/reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"TX"</span>,<span class="no">years</span>))
 
 <span class="no">plot_data</span> <span class="kw">&lt;-</span> <span class="no">years</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw">function</span>(<span class="no">year</span>) {
@@ -212,7 +234,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient2</a></span>(<span class="kw">labels</span><span class="kw">=</span><span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>) +
   <span class="co">#scale_fill_viridis_c(labels=scales::percent,option = "inferno") +</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span>(<span class="kw">datum</span><span class="kw">=</span><span class="fl">NA</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">123.4</span>, -<span class="fl">122.5</span>), <span class="kw">ylim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">49.01</span>, <span class="fl">49.4</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Change in share of census families in low income 2006-2011"</span>,<span class="kw">fill</span><span class="kw">=</span><span class="st">"Percentage\npoint change"</span>,<span class="kw">caption</span><span class="kw">=</span><span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"TX"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2006</span>,<span class="fl">2011</span>))))</pre></body></html></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Change in share of census families in low income 2006-2011"</span>,<span class="kw">fill</span><span class="kw">=</span><span class="st">"Percentage\npoint change"</span>,<span class="kw">caption</span><span class="kw">=</span><span class="fu"><a href="https://mountainmath.github.io/cancensus/index.html/reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"TX"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2006</span>,<span class="fl">2011</span>))))</pre></body></html></div>
 <p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>Analyzing change over longer timelines that span changes in Census geometries involves more work, the <a href="https://mountainmath.github.io/tongfen/index.html">tongfen package</a> facilitates this and provides a convenient interface for generating timelines spanning geometries from several Census years.</p>
 </div>

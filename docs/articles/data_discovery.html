@@ -78,6 +78,9 @@
       <a href="../articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
     </li>
     <li>
+      <a href="../articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
     </li>
     <li>
@@ -106,10 +109,12 @@
 
       
 
-      </header><script src="data_discovery_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
+      </header><link href="data_discovery_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="data_discovery_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Data discovery</h1>
+            <h3 class="subtitle">Resources for finding available and relevant data</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/data_discovery.Rmd"><code>vignettes/data_discovery.Rmd</code></a></small>
@@ -119,57 +124,51 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="no"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span>$<span class="fu">set</span>(<span class="kw">warning</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">message</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cancensus</span>)
-<span class="co">#&gt; Census data is currently stored temporarily.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  In order to speed up performance, reduce API quota usage, and reduce unnecessary network calls, please set up a persistent cache directory by setting options(cancensus.cache_path = '&lt;path to cancensus cache directory&gt;')</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  You may add this option, together with your API key, to your .Rprofile.</span></pre></body></html></div>
 <div id="census-datasets" class="section level1">
 <h1 class="hasAnchor">
 <a href="#census-datasets" class="anchor"></a>Census datasets</h1>
 <p><code>cancensus</code> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <code>cancensus</code> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 26 x 6</span>
-<span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
-<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            </span>
-<span class="co">#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
-<span class="co">#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; # … with 16 more rows</span></pre></body></html></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()</pre></body></html></div>
+<pre><code>## # A tibble: 26 x 6
+##    dataset description     geo_dataset attribution   reference reference_url    
+##    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            
+##  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…
+##  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…
+##  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…
+##  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…
+##  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…
+##  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…
+##  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…
+##  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…
+##  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…
+## 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…
+## # … with 16 more rows</code></pre>
 <p>The <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> function also provides additional background like series reference code, catalogue reference, and attribution details.</p>
 </div>
 <div id="variable-vectors" class="section level1">
 <h1 class="hasAnchor">
 <a href="#variable-vectors" class="anchor"></a>Variable vectors</h1>
-<p><img src="data_discovery_files/figure-html/unnamed-chunk-3-1.png" width="700"> The Census datasets that the <code>cancensus</code> package provides access to are rich in detail but they can be complex to navigate. There are thousands of variable vectors, including separate vector indicators for aggregations split by <code>Total</code>, <code>Female</code>, and <code>Male</code> populations. As a result, the total number of vectors per dataset is significant, ranging from 1,715 in the <code>CA01</code> dataset to 6,623 in the <code>CA16</code> one.</p>
+<p><img src="data_discovery_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p>The Census datasets that the <code>cancensus</code> package provides access to are rich in detail but they can be complex to navigate. There are thousands of variable vectors, including separate vector indicators for aggregations split by <code>Total</code>, <code>Female</code>, and <code>Male</code> populations. As a result, the total number of vectors per dataset is significant, ranging from 1,715 in the <code>CA01</code> dataset to 6,623 in the <code>CA16</code> one.</p>
 <div id="view-available-census-variable-vectors" class="section level2">
 <h2 class="hasAnchor">
 <a href="#view-available-census-variable-vectors" class="anchor"></a>View available Census variable vectors</h2>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 6,623 x 7</span>
-<span class="co">#&gt;    vector  type   label       units parent_vector aggregation  details          </span>
-<span class="co">#&gt;    &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;       &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;            </span>
-<span class="co">#&gt;  1 v_CA16… Total  Population… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  2 v_CA16… Total  Population… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  3 v_CA16… Total  Population… Numb… &lt;NA&gt;          Average of … CA 2016 Census; …</span>
-<span class="co">#&gt;  4 v_CA16… Total  Total priv… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  5 v_CA16… Total  Private dw… Numb… v_CA16_404    Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  6 v_CA16… Total  Population… Ratio &lt;NA&gt;          Average of … CA 2016 Census; …</span>
-<span class="co">#&gt;  7 v_CA16… Total  Land area … Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  8 v_CA16… Total  Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt;  9 v_CA16… Male   Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt; 10 v_CA16… Female Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …</span>
-<span class="co">#&gt; # … with 6,613 more rows</span></pre></body></html></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">'CA16'</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 6,623 x 7
+##    vector  type   label       units parent_vector aggregation  details          
+##    &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;       &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;            
+##  1 v_CA16… Total  Population… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+##  2 v_CA16… Total  Population… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+##  3 v_CA16… Total  Population… Numb… &lt;NA&gt;          Average of … CA 2016 Census; …
+##  4 v_CA16… Total  Total priv… Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+##  5 v_CA16… Total  Private dw… Numb… v_CA16_404    Additive     CA 2016 Census; …
+##  6 v_CA16… Total  Population… Ratio &lt;NA&gt;          Average of … CA 2016 Census; …
+##  7 v_CA16… Total  Land area … Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+##  8 v_CA16… Total  Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+##  9 v_CA16… Male   Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+## 10 v_CA16… Female Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
+## # … with 6,613 more rows</code></pre>
 <p><code><a href="../reference/list_census_vectors.html">list_census_vectors(dataset)</a></code> retrieves an index of all available vectors for a given dataset from the Censusmapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes <code>v_{dataset}_{index}</code>. This is the code by which vectors are identified through the Censusmapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the Censusmapper API.</p>
 </div>
 <div id="searching-for-census-variable-vectors" class="section level2">
@@ -181,74 +180,74 @@
 <h3 class="hasAnchor">
 <a href="#exact-search" class="anchor"></a>Exact search</h3>
 <p>Exact search uses exact string matching. It is best used when you know exactly the term you are looking for, and is not robust to spelling errors.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Oji-cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
-<span class="co">#&gt; # A tibble: 4 x 4</span>
-<span class="co">#&gt;   vector     type  label   details                                              </span>
-<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;   &lt;chr&gt;                                                </span>
-<span class="co">#&gt; 1 v_CA16_626 Total Oji-Cr… Language; Total - Mother tongue for the total popula…</span>
-<span class="co">#&gt; 2 v_CA16_14… Total Oji-Cr… Language; Total - Language spoken most often at home…</span>
-<span class="co">#&gt; 3 v_CA16_26… Total Oji-Cr… 25% Data; Total - Knowledge of languages for the pop…</span>
-<span class="co">#&gt; 4 v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Oji-cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 4 x 4
+##   vector     type  label   details                                              
+##   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;   &lt;chr&gt;                                                
+## 1 v_CA16_626 Total Oji-Cr… Language; Total - Mother tongue for the total popula…
+## 2 v_CA16_14… Total Oji-Cr… Language; Total - Language spoken most often at home…
+## 3 v_CA16_26… Total Oji-Cr… 25% Data; Total - Knowledge of languages for the pop…
+## 4 v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</code></pre>
 <p>This, on the other hand, will return a warning.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Ojib-cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
-<span class="co">#&gt; Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span>
-<span class="co">#&gt; See ?find_census_vectors() for more details.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></pre></body></html></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Ojib-cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)</pre></body></html></div>
+<pre><code>## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.
+## See ?find_census_vectors() for more details.
+## 
+## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</code></pre>
 <p>Unless otherwise specified, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> will use exact search as the default option.</p>
 </div>
 <div id="keyword-search" class="section level3">
 <h3 class="hasAnchor">
 <a href="#keyword-search" class="anchor"></a>Keyword search</h3>
 <p>Keyword search is meant to be used when you know the approximate subject matter of the variable without knowing the exact variable you are looking for. Under the hood, keyword search splits the query and vector details into unique unigram tokens and then looks for the vectors with the greatest number of matches.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'commute mode'</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'female'</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">'keyword'</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="co">#&gt; # A tibble: 7 x 4</span>
-<span class="co">#&gt;   vector   type   label                          details                        </span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;fct&gt;  &lt;chr&gt;                          &lt;chr&gt;                          </span>
-<span class="co">#&gt; 1 v_CA16_… Female Total - Main mode of commutin… 25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 2 v_CA16_… Female Car, truck, van - as a driver  25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 3 v_CA16_… Female Car, truck, van - as a passen… 25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 4 v_CA16_… Female Public transit                 25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 5 v_CA16_… Female Walked                         25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 6 v_CA16_… Female Bicycle                        25% Data; Commute; Total - Mai…</span>
-<span class="co">#&gt; 7 v_CA16_… Female Other method                   25% Data; Commute; Total - Mai…</span></pre></body></html></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'commute mode'</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'female'</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">'keyword'</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 7 x 4
+##   vector   type   label                          details                        
+##   &lt;chr&gt;    &lt;fct&gt;  &lt;chr&gt;                          &lt;chr&gt;                          
+## 1 v_CA16_… Female Total - Main mode of commutin… 25% Data; Commute; Total - Mai…
+## 2 v_CA16_… Female Car, truck, van - as a driver  25% Data; Commute; Total - Mai…
+## 3 v_CA16_… Female Car, truck, van - as a passen… 25% Data; Commute; Total - Mai…
+## 4 v_CA16_… Female Public transit                 25% Data; Commute; Total - Mai…
+## 5 v_CA16_… Female Walked                         25% Data; Commute; Total - Mai…
+## 6 v_CA16_… Female Bicycle                        25% Data; Commute; Total - Mai…
+## 7 v_CA16_… Female Other method                   25% Data; Commute; Total - Mai…</code></pre>
 <p>Keyword search will show all results that have the highest number of unique keyword matches. What happens if there are other keyword matches that have fewer total matches? By default, the function argument is set as <code>interactive = TRUE</code>, which will prompt the user with a console menu option to see the rest of the matches or not. If using <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> in a script or reproducible documentation, we recommend setting this argument to <code>interactive = FALSE</code>.</p>
 </div>
 <div id="semantic-search" class="section level3">
 <h3 class="hasAnchor">
 <a href="#semantic-search" class="anchor"></a>Semantic search</h3>
 <p>Semantic search works best with phrases. Rather than the decontextualized unigrams of keyword search, semantic search splits queries and vector details into n-grams and finds matches using approximate string distances based on the generalized Levenshtein distance.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"after tax incomes"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"semantic"</span>)
-<span class="co">#&gt; # A tibble: 56 x 4</span>
-<span class="co">#&gt;    vector   type  label                          details                        </span>
-<span class="co">#&gt;    &lt;chr&gt;    &lt;fct&gt; &lt;chr&gt;                          &lt;chr&gt;                          </span>
-<span class="co">#&gt;  1 v_CA16_… Total Number of after-tax income re… Income; Individuals; Total - I…</span>
-<span class="co">#&gt;  2 v_CA16_… Total Median after-tax income in 20… Income; Individuals; Total - I…</span>
-<span class="co">#&gt;  3 v_CA16_… Total Percentage with after-tax inc… Income; Individuals; Total - I…</span>
-<span class="co">#&gt;  4 v_CA16_… Total Total - After-tax income grou… Income; Individuals; Total - A…</span>
-<span class="co">#&gt;  5 v_CA16_… Total Without after-tax income       Income; Individuals; Total - A…</span>
-<span class="co">#&gt;  6 v_CA16_… Total With after-tax income          Income; Individuals; Total - A…</span>
-<span class="co">#&gt;  7 v_CA16_… Total Under $10,000 (including loss) Income; Individuals; Total - A…</span>
-<span class="co">#&gt;  8 v_CA16_… Total $10,000 to $19,999             Income; Individuals; Total - A…</span>
-<span class="co">#&gt;  9 v_CA16_… Total $20,000 to $29,999             Income; Individuals; Total - A…</span>
-<span class="co">#&gt; 10 v_CA16_… Total $30,000 to $39,999             Income; Individuals; Total - A…</span>
-<span class="co">#&gt; # … with 46 more rows</span></pre></body></html></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"after tax incomes"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"semantic"</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 56 x 4
+##    vector   type  label                          details                        
+##    &lt;chr&gt;    &lt;fct&gt; &lt;chr&gt;                          &lt;chr&gt;                          
+##  1 v_CA16_… Total Number of after-tax income re… Income; Individuals; Total - I…
+##  2 v_CA16_… Total Median after-tax income in 20… Income; Individuals; Total - I…
+##  3 v_CA16_… Total Percentage with after-tax inc… Income; Individuals; Total - I…
+##  4 v_CA16_… Total Total - After-tax income grou… Income; Individuals; Total - A…
+##  5 v_CA16_… Total Without after-tax income       Income; Individuals; Total - A…
+##  6 v_CA16_… Total With after-tax income          Income; Individuals; Total - A…
+##  7 v_CA16_… Total Under $10,000 (including loss) Income; Individuals; Total - A…
+##  8 v_CA16_… Total $10,000 to $19,999             Income; Individuals; Total - A…
+##  9 v_CA16_… Total $20,000 to $29,999             Income; Individuals; Total - A…
+## 10 v_CA16_… Total $30,000 to $39,999             Income; Individuals; Total - A…
+## # … with 46 more rows</code></pre>
 <p>Semantic search is more robust to spelling and punctuation issues that may come up with exact search. For example, while this throws a warning:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"ojib cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
-<span class="co">#&gt; Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span>
-<span class="co">#&gt; See ?find_census_vectors() for more details.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></pre></body></html></div>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"ojib cree"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)</pre></body></html></div>
+<pre><code>## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.
+## See ?find_census_vectors() for more details.
+## 
+## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</code></pre>
 <p>This will find the correct Census vector.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'ojib cree'</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'total'</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">'semantic'</span>)
-<span class="co">#&gt; Multiple possible matches. Results ordered by closeness.</span>
-<span class="co">#&gt; # A tibble: 4 x 4</span>
-<span class="co">#&gt;   vector     type  label   details                                              </span>
-<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;   &lt;chr&gt;                                                </span>
-<span class="co">#&gt; 1 v_CA16_626 Total Oji-Cr… Language; Total - Mother tongue for the total popula…</span>
-<span class="co">#&gt; 2 v_CA16_14… Total Oji-Cr… Language; Total - Language spoken most often at home…</span>
-<span class="co">#&gt; 3 v_CA16_26… Total Oji-Cr… 25% Data; Total - Knowledge of languages for the pop…</span>
-<span class="co">#&gt; 4 v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</span></pre></body></html></div>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'ojib cree'</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'total'</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">'semantic'</span>)</pre></body></html></div>
+<pre><code>## Multiple possible matches. Results ordered by closeness.</code></pre>
+<pre><code>## # A tibble: 4 x 4
+##   vector     type  label   details                                              
+##   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;   &lt;chr&gt;                                                
+## 1 v_CA16_626 Total Oji-Cr… Language; Total - Mother tongue for the total popula…
+## 2 v_CA16_14… Total Oji-Cr… Language; Total - Language spoken most often at home…
+## 3 v_CA16_26… Total Oji-Cr… 25% Data; Total - Knowledge of languages for the pop…
+## 4 v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</code></pre>
 <p>Results are ordered by string proximity if there are multiple possible matches.</p>
 </div>
 </div>
@@ -260,88 +259,80 @@
 <h2 class="hasAnchor">
 <a href="#standard-geographical-classification" class="anchor"></a>Standard Geographical Classification</h2>
 <p>Statistics Canada uses an official classification of geographic areas known as the <a href="https://www.statcan.gc.ca/eng/subjects/standard/sgc/2016/introduction">Standard Geographical Classification (SGC)</a>, which is updated periodically. The latest version is based on the 2016 Census. Geographic classification codes are standardized across Statistics Canada products, including the Census as well as any other Statistics Canada dataset. In practice, this means that the region ID for the Vancouver Census subdivision is 5915022 across all products. In <code>cancensus</code> the region ID code is used to identify the appropriate spatial vector data to retrieve alongside Census data. These region IDs have a predictable structure, where provinces are two digits, Census divisions are 4 digits (including 2 for the province), and Census subdivisions have 7 digits (including 2 for the province, and 2 for the Census division).</p>
-<pre><code>#&gt; # A tibble: 3 x 4
-#&gt;      PR    CD   CSD name                         
-#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                        
-#&gt; 1    35    NA    NA Ontario                      
-#&gt; 2    35    18    NA Durham (Regional municipality
-#&gt; 3    35    18    13 Oshawa (City)</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##      PR    CD   CSD name                         
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                        
+## 1    35    NA    NA Ontario                      
+## 2    35    18    NA Durham (Regional municipality
+## 3    35    18    13 Oshawa (City)</code></pre>
 <p>These levels are hierarchical and complete in that a province is split in Census divisions, which are then split into Census subdivisions.</p>
 <p>Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DAs) are not named or listed but have unique identifying codes derived from their parent Census subdivision.</p>
-<pre><code>#&gt; # A tibble: 6 x 2
-#&gt;   level     n
-#&gt;   &lt;chr&gt; &lt;int&gt;
-#&gt; 1 C         1
-#&gt; 2 CA       14
-#&gt; 3 CD      293
-#&gt; 4 CMA      35
-#&gt; 5 CSD    5148
-#&gt; 6 PR       13</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   level     n
+##   &lt;chr&gt; &lt;int&gt;
+## 1 C         1
+## 2 CA       14
+## 3 CD      293
+## 4 CMA      35
+## 5 CSD    5148
+## 6 PR       13</code></pre>
 <p>There is also an additional region, with the id <code>01</code> and the level code <code>C</code> which represents all of Canada as a whole.</p>
 <div id="a-note-on-census-metropolitan-areas-and-census-agglomerations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#a-note-on-census-metropolitan-areas-and-census-agglomerations" class="anchor"></a>A note on Census Metropolitan Areas and Census Agglomerations</h3>
 <p>Data can also be extracted at the Census Metropolitan Area (CMA) or Census Agglomeration (CA) level, which is derived from a variant of the SGC known as the Statistical Area Classification. Hierarchically, CMAs and CAs represent a collection of constituent Census subdivisions.</p>
 <p>A Census metropolitan area consists of adjacent municipalities with a defined core with a total population of at least 100,000 of which 50,000 or more must live in the core based on Census data. Adjacent municipalities must have a high degree of integration with the core, which Statistics Canada measures based on the commuting flows indicated in Census data. Census Agglomeration areas have to have a core population above 10,000.</p>
-<p>All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada’s Census Dictionary article for <a href="https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm">Census metropolitan areas (CMA) and census agglomerations (CA)</a>.</p>
+<p>All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada’s Census Dictionary article for <a href="https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm">Census metropolitan areas (CMA) and census agglomerations (CA)</a>. All CMAs and some CAs have data at the Census tract level, but most CAs do not. The 2016 Census has 35 CMAs and 14 CAs with Census tracts that have their own defined geography. There are a further 106 CAs without Census tracts that do not have their own distinctly defined geographies.</p>
 </div>
 </div>
 <div id="viewing-available-census-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#viewing-available-census-regions" class="anchor"></a>Viewing available Census regions</h2>
-<p>For any valid Census dataset, you can view all available Census regions by calling <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>. This will retrieve the <code>region</code> code, the <code>name</code>, and the <code>level</code> code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 5,504 x 8</span>
-<span class="co">#&gt;    region name              level     pop municipal_status CMA_UID CD_UID PR_UID</span>
-<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; </span>
-<span class="co">#&gt;  1 01     Canada            C      3.52e7 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  2 35     Ontario           PR     1.34e7 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  3 24     Quebec            PR     8.16e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  4 59     British Columbia  PR     4.65e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  5 48     Alberta           PR     4.07e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  6 46     Manitoba          PR     1.28e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  7 47     Saskatchewan      PR     1.10e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  8 12     Nova Scotia       PR     9.24e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt;  9 13     New Brunswick     PR     7.47e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt; 10 10     Newfoundland and… PR     5.20e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  </span>
-<span class="co">#&gt; # … with 5,494 more rows</span></pre></body></html></div>
-<p>There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names.</p>
-<pre><code>#&gt; # A tibble: 65 x 3
-#&gt;    geography status_code status                                   
-#&gt;    &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;                                    
-#&gt;  1 CD        CDR         Census division / Division de recensement
-#&gt;  2 CD        CT          County / Comté                           
-#&gt;  3 CD        CTY         County                                   
-#&gt;  4 CD        DIS         District                                 
-#&gt;  5 CD        DM          District municipality                    
-#&gt;  6 CD        MRC         Municipalité régionale de comté          
-#&gt;  7 CD        RD          Regional district                        
-#&gt;  8 CD        REG         Region                                   
-#&gt;  9 CD        RM          Regional municipality                    
-#&gt; 10 CD        TÉ          Territoire équivalent                    
-#&gt; # … with 55 more rows</code></pre>
+<p>For any valid Census dataset, you can view all available Census regions by calling <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>. This will retrieve the <code>region</code> code, the <code>name</code>, and the <code>level</code> code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels. All CMAs are included with their own defined geography, as well as those CAs which have their own Census tracts.</p>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">'CA16'</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 5,504 x 8
+##    region name              level     pop municipal_status CMA_UID CD_UID PR_UID
+##    &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; 
+##  1 01     Canada            C      3.52e7 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  2 35     Ontario           PR     1.34e7 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  3 24     Quebec            PR     8.16e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  4 59     British Columbia  PR     4.65e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  5 48     Alberta           PR     4.07e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  6 46     Manitoba          PR     1.28e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  7 47     Saskatchewan      PR     1.10e6 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  8 12     Nova Scotia       PR     9.24e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+##  9 13     New Brunswick     PR     7.47e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+## 10 10     Newfoundland and… PR     5.20e5 &lt;NA&gt;             &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;  
+## # … with 5,494 more rows</code></pre>
+There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. CAs with Census tracts and defined geography have the code K, while those without have type code D.
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["geography"],"name":[1],"type":["chr"],"align":["left"]},{"label":["status_code"],"name":[2],"type":["chr"],"align":["left"]},{"label":["status"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"CD","2":"CDR","3":"Census division / Division de recensement"},{"1":"CD","2":"CT","3":"County / Comté"},{"1":"CD","2":"CTY","3":"County"},{"1":"CD","2":"DIS","3":"District"},{"1":"CD","2":"DM","3":"District municipality"},{"1":"CD","2":"MRC","3":"Municipalité régionale de comté"},{"1":"CD","2":"RD","3":"Regional district"},{"1":"CD","2":"REG","3":"Region"},{"1":"CD","2":"RM","3":"Regional municipality"},{"1":"CD","2":"TÉ","3":"Territoire équivalent"},{"1":"CD","2":"TER","3":"Territory / Territoire"},{"1":"CD","2":"UC","3":"United counties"},{"1":"CSD","2":"C","3":"City / Cité"},{"1":"CSD","2":"CC","3":"Chartered community"},{"1":"CSD","2":"CG","3":"Community government"},{"1":"CSD","2":"CN","3":"Crown colony / Colonie de la couronne"},{"1":"CSD","2":"COM","3":"Community"},{"1":"CSD","2":"CT","3":"Canton (municipalité de)"},{"1":"CSD","2":"CU","3":"Cantons unis (municipalité de)"},{"1":"CSD","2":"CV","3":"City / Ville"},{"1":"CSD","2":"CY","3":"City"},{"1":"CSD","2":"DM","3":"District municipality"},{"1":"CSD","2":"HAM","3":"Hamlet"},{"1":"CSD","2":"ID","3":"Improvement district"},{"1":"CSD","2":"IGD","3":"Indian government district"},{"1":"CSD","2":"IM","3":"Island municipality"},{"1":"CSD","2":"IRI","3":"Indian reserve / Réserve indienne"},{"1":"CSD","2":"LGD","3":"Local government district"},{"1":"CSD","2":"LOT","3":"Township and royalty"},{"1":"CSD","2":"M","3":"Municipality / Municipalité"},{"1":"CSD","2":"MD","3":"Municipal district"},{"1":"CSD","2":"MÉ","3":"Municipalité"},{"1":"CSD","2":"MU","3":"Municipality"},{"1":"CSD","2":"NH","3":"Northern hamlet"},{"1":"CSD","2":"NL","3":"Nisga'a land"},{"1":"CSD","2":"NO","3":"Unorganized / Non organisé"},{"1":"CSD","2":"NV","3":"Northern village"},{"1":"CSD","2":"P","3":"Parish / Paroisse (municipalité de)"},{"1":"CSD","2":"PE","3":"Paroisse (municipalité de)"},{"1":"CSD","2":"RCR","3":"Rural community / Communauté rurale"},{"1":"CSD","2":"RDA","3":"Regional district electoral area"},{"1":"CSD","2":"RGM","3":"Regional municipality"},{"1":"CSD","2":"RM","3":"Rural municipality"},{"1":"CSD","2":"RV","3":"Resort village"},{"1":"CSD","2":"S-É","3":"Indian settlement / Établissement indien"},{"1":"CSD","2":"SA","3":"Special area"},{"1":"CSD","2":"SC","3":"Subdivision of county municipality / Subdivision municipalité de comté"},{"1":"CSD","2":"SÉ","3":"Settlement / Établissement"},{"1":"CSD","2":"SET","3":"Settlement"},{"1":"CSD","2":"SG","3":"Self-government / Autonomie gouvernementale"},{"1":"CSD","2":"SM","3":"Specialized municipality"},{"1":"CSD","2":"SNO","3":"Subdivision of unorganized / Subdivision non organisée"},{"1":"CSD","2":"SV","3":"Summer village"},{"1":"CSD","2":"T","3":"Town"},{"1":"CSD","2":"TC","3":"Terres réservées aux Cris"},{"1":"CSD","2":"TI","3":"Terre inuite"},{"1":"CSD","2":"TK","3":"Terres réservées aux Naskapis"},{"1":"CSD","2":"TL","3":"Teslin land"},{"1":"CSD","2":"TP","3":"Township"},{"1":"CSD","2":"TV","3":"Town / Ville"},{"1":"CSD","2":"V","3":"Ville"},{"1":"CSD","2":"VC","3":"Village cri"},{"1":"CSD","2":"VK","3":"Village naskapi"},{"1":"CSD","2":"VL","3":"Village"},{"1":"CSD","2":"VN","3":"Village nordique"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 <div id="searching-through-named-census-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#searching-through-named-census-regions" class="anchor"></a>Searching through named Census regions</h2>
 <p>We can also search through all named geographies. This will return any geographies that have a name that matches or partially matches the search query.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span>(<span class="st">"Vancouver"</span>,<span class="st">"CA16"</span>)
-<span class="co">#&gt; # A tibble: 7 x 8</span>
-<span class="co">#&gt;   region  name               level    pop municipal_status CMA_UID CD_UID PR_UID</span>
-<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; </span>
-<span class="co">#&gt; 1 59933   Vancouver          CMA   2.46e6 B                &lt;NA&gt;    &lt;NA&gt;   59    </span>
-<span class="co">#&gt; 2 5915    Greater Vancouver  CD    2.46e6 RD               &lt;NA&gt;    &lt;NA&gt;   59    </span>
-<span class="co">#&gt; 3 5915022 Vancouver          CSD   6.31e5 CY               59933   5915   59    </span>
-<span class="co">#&gt; 4 5915046 North Vancouver    CSD   8.59e4 DM               59933   5915   59    </span>
-<span class="co">#&gt; 5 5915051 North Vancouver    CSD   5.29e4 CY               59933   5915   59    </span>
-<span class="co">#&gt; 6 5915055 West Vancouver     CSD   4.25e4 DM               59933   5915   59    </span>
-<span class="co">#&gt; 7 5915020 Greater Vancouver… CSD   1.61e4 RDA              59933   5915   59</span></pre></body></html></div>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span>(<span class="st">"Vancouver"</span>,<span class="st">"CA16"</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 7 x 8
+##   region  name               level    pop municipal_status CMA_UID CD_UID PR_UID
+##   &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; 
+## 1 59933   Vancouver          CMA   2.46e6 B                &lt;NA&gt;    &lt;NA&gt;   59    
+## 2 5915    Greater Vancouver  CD    2.46e6 RD               &lt;NA&gt;    &lt;NA&gt;   59    
+## 3 5915022 Vancouver          CSD   6.31e5 CY               59933   5915   59    
+## 4 5915046 North Vancouver    CSD   8.59e4 DM               59933   5915   59    
+## 5 5915051 North Vancouver    CSD   5.29e4 CY               59933   5915   59    
+## 6 5915055 West Vancouver     CSD   4.25e4 DM               59933   5915   59    
+## 7 5915020 Greater Vancouver… CSD   1.61e4 RDA              59933   5915   59</code></pre>
 </div>
 </div>
 <div id="exploring-census-variable-vectors-and-regions-interactively" class="section level1">
 <h1 class="hasAnchor">
 <a href="#exploring-census-variable-vectors-and-regions-interactively" class="anchor"></a>Exploring Census variable vectors and regions interactively</h1>
-<p>Sometimes it can be easier to find the right vectors or regions by exploring the layout and hierarchy of Census data. This is especially true when we are not sure of what information is available or are not sure where to start. Finding the right Census geographic code on a map will be easier for some than using named search. This is also handy if we want to assemble a custom aggregation of region codes at different hierarchies. To facilitate this, we have included a couple of convenience functions that take you directly to an interactive tool with variable and region details on the Censusmapper website. To explore the hierarchical variable structure of a given dataset, say the 2006 Census, running <code><a href="../reference/explore_census_vectors.html">explore_census_vectors(dataset = "CA06")</a></code>. To view Census geography on an interactive map, there is <code>explore_census_geography(dataset = "CA16")</code>. As usual, vectors and geographies for different Census datasets can be retrieved by using the appropriate dataset code for the <code>dataset</code> argument.</p>
+<p>Sometimes it can be easier to find the right vectors or regions by exploring the layout and hierarchy of Census data. This is especially true when we are not sure of what information is available or are not sure where to start. Finding the right Census geographic code on a map will be easier for some than using named search. This is also handy if we want to assemble a custom aggregation of region codes at different hierarchies.</p>
+<p>To facilitate this, we have included a couple of convenience functions that take you directly to an interactive tool with variable and region details on the Censusmapper website. To explore the hierarchical variable structure of a given dataset, say the 2006 Census, running <code><a href="../reference/explore_census_vectors.html">explore_census_vectors(dataset = "CA06")</a></code>. To view Census geography on an interactive map, there is <code><a href="../reference/explore_census_regions.html">explore_census_regions(dataset = "CA16")</a></code>. As usual, vectors and geographies for different Census datasets can be retrieved by using the appropriate dataset code for the <code>dataset</code> argument.</p>
 </div>
   </div>
 

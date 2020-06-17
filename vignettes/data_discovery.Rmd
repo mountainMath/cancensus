@@ -1,20 +1,15 @@
 ---
 title: "Data discovery"
+subtitle: "Resources for finding available and relevant data"
 output: rmarkdown::html_vignette
+mainfont: Roboto
 vignette: >
   %\VignetteIndexEntry{Data discovery}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-```{r setup}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 library(cancensus)
 ```
@@ -49,6 +44,7 @@ tibble(dataset = c("CA16","CA11","CA06","CA01"), vectors = c(length(ca16$vector)
        title = "Total number of unique variable vectors by Census dataset") +
   scale_y_continuous(labels = scales::comma)
 ```
+
 The Census datasets that the `cancensus` package provides access to are rich in detail but they can be complex to navigate. There are thousands of variable vectors, including separate vector indicators for aggregations split by `Total`, `Female`, and `Male` populations. As a result, the total number of vectors per dataset is significant, ranging from 1,715 in the `CA01` dataset to 6,623 in the `CA16` one. 
 
 ## View available Census variable vectors
@@ -124,15 +120,15 @@ Data can also be extracted at the Census Metropolitan Area (CMA) or Census Agglo
 
 A Census metropolitan area consists of adjacent municipalities with a defined core with a total population of at least 100,000 of which 50,000 or more must live in the core based on Census data. Adjacent municipalities must have a high degree of integration with the core, which Statistics Canada measures based on the commuting flows indicated in Census data. Census Agglomeration areas have to have a core population above 10,000. 
 
-All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada's Census Dictionary article for [Census metropolitan areas (CMA) and census agglomerations (CA)](https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm). 
+All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada's Census Dictionary article for [Census metropolitan areas (CMA) and census agglomerations (CA)](https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm). All CMAs and some CAs have data at the Census tract level, but most CAs do not. The 2016 Census has 35 CMAs and 14 CAs with Census tracts that have their own defined geography. There are a further 106 CAs without Census tracts that do not have their own distinctly defined geographies. 
 
 ## Viewing available Census regions
 
-For any valid Census dataset, you can view all available Census regions by calling `list_census_regions(dataset)`. This will retrieve the `region` code, the `name`, and the `level` code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels.
+For any valid Census dataset, you can view all available Census regions by calling `list_census_regions(dataset)`. This will retrieve the `region` code, the `name`, and the `level` code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels. All CMAs are included with their own defined geography, as well as those CAs which have their own Census tracts.
 ```{r}
 list_census_regions('CA16')
 ```
-There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. 
+There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. CAs with Census tracts and defined geography have the code K, while those without have type code D. 
 ```{r echo=FALSE, paged.print=TRUE}
 geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", 
                  "CD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
@@ -170,7 +166,9 @@ geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD",
               "Town", "Terres réservées aux Cris", "Terre inuite", 
               "Terres réservées aux Naskapis", "Teslin land", "Township", "Town / Ville", 
               "Ville", "Village cri", "Village naskapi", "Village", "Village nordique")
-  dplyr::tibble(geography = geography, status_code = status_code, status = status)
+  codes_table <- dplyr::tibble(geography = geography, status_code = status_code, status = status)
+  rmarkdown::paged_table(codes_table)
+
 ```
 
 ## Searching through named Census regions
@@ -182,4 +180,6 @@ search_census_regions("Vancouver","CA16")
 
 # Exploring Census variable vectors and regions interactively
 
-Sometimes it can be easier to find the right vectors or regions by exploring the layout and hierarchy of Census data. This is especially true when we are not sure of what information is available or are not sure where to start. Finding the right Census geographic code on a map will be easier for some than using named search. This is also handy if we want to assemble a custom aggregation of region codes at different hierarchies. To facilitate this, we have included a couple of convenience functions that take you directly to an interactive tool with variable and region details on the Censusmapper website. To explore the hierarchical variable structure of a given dataset, say the 2006 Census, running `explore_census_vectors(dataset = "CA06")`. To view Census geography on an interactive map, there is `explore_census_geography(dataset = "CA16")`. As usual, vectors and geographies for different Census datasets can be retrieved by using the appropriate dataset code for the `dataset` argument. 
+Sometimes it can be easier to find the right vectors or regions by exploring the layout and hierarchy of Census data. This is especially true when we are not sure of what information is available or are not sure where to start. Finding the right Census geographic code on a map will be easier for some than using named search. This is also handy if we want to assemble a custom aggregation of region codes at different hierarchies. 
+
+To facilitate this, we have included a couple of convenience functions that take you directly to an interactive tool with variable and region details on the Censusmapper website. To explore the hierarchical variable structure of a given dataset, say the 2006 Census, running `explore_census_vectors(dataset = "CA06")`. To view Census geography on an interactive map, there is `explore_census_regions(dataset = "CA16")`. As usual, vectors and geographies for different Census datasets can be retrieved by using the appropriate dataset code for the `dataset` argument. 

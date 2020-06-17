@@ -1,6 +1,8 @@
 ---
 title: "Additional datasets: Annual T1FF taxfiler data"
+subtitle: "Dataset background and example usage"
 output: rmarkdown::html_vignette
+mainfont: Roboto
 vignette: >
   %\VignetteIndexEntry{Additional datasets: Annual T1FF taxfiler data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -50,7 +52,7 @@ To see all available T1FF datasets and their reference codes we can use `list_ce
 
 ```{r}
 list_census_datasets() %>% 
-  filter(grepl("Taxfiler",description))
+  filter(grepl("taxfiler",description))
 ```
 And, as an example, available data vectors for one such T1FF dataset.
 ```{r}

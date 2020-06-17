@@ -178,15 +178,10 @@ Each Census dataset features numerous variables making it a bit of a challenge t
 # Find the variable indicating the number of people of Austrian ethnic origin
 find_census_vectors("Australia", dataset = "CA16", type = "total", query_type = "exact")
 
-
 find_census_vectors("Australia origin", dataset = "CA16", type = "total", query_type = "semantic")
+
 find_census_vectors("Australian ethnic", dataset = "CA16", type = "total", query_type = "keyword", interactive = FALSE)
 ```
-
-```{r}
-find_census_vectors("Australian", dataset = "CA16", type = "total", query_type = "exact")
-```
-
 
 ## Managing variable hierarchy 
 

@@ -78,6 +78,9 @@
       <a href="../articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
     </li>
     <li>
+      <a href="../articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
     </li>
     <li>
@@ -106,11 +109,10 @@
 
       
 
-      </header><script src="cancensus_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cancensus</h1>
-                        <h4 class="author"></h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/cancensus.Rmd"><code>vignettes/cancensus.Rmd</code></a></small>
@@ -338,18 +340,13 @@
 <span class="co">#&gt; 1 v_CA16_38… Total Austral… 25% Data; Citizenship and Immigration; Total - Sele…</span>
 <span class="co">#&gt; 2 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
 
-
 <span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australia origin"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"semantic"</span>)
 <span class="co">#&gt; # A tibble: 1 x 4</span>
 <span class="co">#&gt;   vector     type  label    details                                             </span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
 <span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
+
 <span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australian ethnic"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"keyword"</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="co">#&gt; # A tibble: 1 x 4</span>
-<span class="co">#&gt;   vector     type  label    details                                             </span>
-<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
-<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span></pre></body></html></div>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
 <span class="co">#&gt; # A tibble: 1 x 4</span>
 <span class="co">#&gt;   vector     type  label    details                                             </span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
@@ -359,7 +356,7 @@
 <h2 class="hasAnchor">
 <a href="#managing-variable-hierarchy" class="anchor"></a>Managing variable hierarchy</h2>
 <p>Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using <code>parent_census_vectors</code> on a vector list.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">vector</span> <span class="kw">==</span> <span class="st">"v_CA16_4092"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span>()
 <span class="co">#&gt; # A tibble: 3 x 7</span>
@@ -369,7 +366,7 @@
 <span class="co">#&gt; 2 v_CA16… Total European origi… Numb… v_CA16_3999   Additive    CA 2016 Census;…</span>
 <span class="co">#&gt; 3 v_CA16… Total Total - Ethnic… Numb… &lt;NA&gt;          Additive    CA 2016 Census;…</span></pre></body></html></div>
 <p>Sometimes we want to traverse the hierarchy in the opposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
 <span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
 <span class="co">#&gt; # A tibble: 6 x 7</span>
 <span class="co">#&gt;   vector  type   label        units parent_vector aggregation details           </span>
@@ -381,7 +378,7 @@
 <span class="co">#&gt; 5 v_CA16… Male   Northern Eu… Numb… v_CA16_4123   Additive    CA 2016 Census; 2…</span>
 <span class="co">#&gt; 6 v_CA16… Female Northern Eu… Numb… v_CA16_4124   Additive    CA 2016 Census; 2…</span></pre></body></html></div>
 <p>The search result shows that the vector <strong>v_CA16_4092</strong> represents the aggregate for all Northern European origins. The <code>child_census_vectors</code> function can return a list of its constituent underlying variables.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># Show all child variable leaves</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Show all child variable leaves</span>
 <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">vector</span> <span class="kw">==</span> <span class="st">"v_CA16_4122"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span>(<span class="kw">leaves</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="co">#&gt; # A tibble: 6 x 7</span>

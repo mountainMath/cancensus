@@ -1,5 +1,6 @@
 ---
 title: "Additional datasets: Structural type of dwelling by document type"
+subtitle: "Dataset background and example usage"
 output: rmarkdown::html_vignette
 mainfont: Roboto
 vignette: >
