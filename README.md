@@ -71,13 +71,12 @@ There is also an interactive tool that is available at the [CensusMapper API](ht
 **cancensus** can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, **cancensus** returns tidy tabular data only, but has options to return spatial data objects in either [**sf**](https://cran.r-project.org/package=sf) or [**sp**](https://cran.r-project.org/package=sp) formats. 
 ```
 # Return data only
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 
 # Return an sf-class data frame
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
-
-# Return a SpatialPolygonsDataFrame
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
 ```
 **cancensus** attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded,  **cancensus** will instead access the locally cached equivalent. 
 
@@ -125,9 +124,11 @@ A BibTeX entry for LaTeX users is
 
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). 
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus).
 
 Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
+
+The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining cenusus variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
 ### Statistics Canada Attribution
 

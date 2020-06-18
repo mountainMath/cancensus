@@ -182,13 +182,12 @@ list_census_vectors("CA16")</a></code></pre>
 <a href="#getting-the-data" class="anchor"></a>Getting the data</h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp"><strong>sp</strong></a> formats.</p>
 <pre><code># Return data only
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 
 # Return an sf-class data frame
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
-
-# Return a SpatialPolygonsDataFrame
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")</code></pre>
+census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")</code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
 <div id="examples-of-work-using-cancensus" class="section level3">
@@ -242,6 +241,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data">socio-economic data repository</a> with thousands of data tables available for public access.</p>
 <p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus">Github</a>.</p>
 <p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
+<p>The <a href="https://mountainmath.github.io/tongfen/index.html">tongfen package</a> automates the task of obtaining cenusus variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen">Github</a>.</p>
 </div>
 <div id="statistics-canada-attribution" class="section level3">
 <h3 class="hasAnchor">

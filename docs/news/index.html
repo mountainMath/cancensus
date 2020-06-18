@@ -162,9 +162,9 @@
       <small>Source: <a href='https://github.com/mountainMath/cancensus/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="cancensus-0-3-0" class="section level1">
+    <div id="cancensus-030" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
-<a href="#cancensus-0-3-0" class="anchor"></a>cancensus 0.3.0<small> Unreleased </small>
+<a href="#cancensus-030" class="anchor"></a>cancensus 0.3.0<small> Unreleased </small>
 </h1>
 <div id="major-changes" class="section level2">
 <h2 class="hasAnchor">
@@ -179,6 +179,8 @@
 </li>
 <li>New function <code>attribution_for_dataset</code> which provides accurate attribution information for citation and visualizations for a given dataset.</li>
 <li>Additional datasets: T1FF taxfiler data and dwelling type crosstabs, made available by CMHC. For more info, see the new vignettes for these datasets: <a href="https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>, <a href="https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>.</li>
+<li>
+<code><a href="../reference/get_census_geometry.html">get_census_geometry()</a></code> is now hard-deprecated and will stop the program flow. Use <code><a href="../reference/get_census.html">get_census()</a></code> instead.</li>
 </ul>
 </div>
 <div id="minor-changes" class="section level2">
@@ -190,9 +192,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-2-2" class="section level1">
+    <div id="cancensus-022" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.2">
-<a href="#cancensus-0-2-2" class="anchor"></a>cancensus 0.2.2<small> 2020-05-12 </small>
+<a href="#cancensus-022" class="anchor"></a>cancensus 0.2.2<small> 2020-05-12 </small>
 </h1>
 <div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
@@ -207,9 +209,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-2-1" class="section level1">
+    <div id="cancensus-021" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.1">
-<a href="#cancensus-0-2-1" class="anchor"></a>cancensus 0.2.1<small> 2020-03-05 </small>
+<a href="#cancensus-021" class="anchor"></a>cancensus 0.2.1<small> 2020-03-05 </small>
 </h1>
 <div id="minor-changes-2" class="section level2">
 <h2 class="hasAnchor">
@@ -222,15 +224,15 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-2-0" class="section level1">
+    <div id="cancensus-020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
-<a href="#cancensus-0-2-0" class="anchor"></a>cancensus 0.2.0<small> 2019-07-28 </small>
+<a href="#cancensus-020" class="anchor"></a>cancensus 0.2.0<small> 2019-07-28 </small>
 </h1>
 <div id="major-changes-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
-<li>Added a <code>max_leaves_option</code> for the <code>search_census_vectors</code> function. Adds functionality to set maximum depth for child census vectors, i.e. <code>max_level=NA</code> as an additional parameter. Then e.g. <code>max_level=1</code> would only get direct children and no grandchildren.</li>
+<li>Added a <code>max_leaves_option</code> for the <code>search_census_vectors</code> function. Adds functionality to set maximum depth for child census vectors, i.e. <code>max_level=NA</code> as an additional parameter. Then e.g. <code>max_level=1</code> would only get direct children and no grandchildren.</li>
 <li>Resolved issues with mislabelled CD UID for CSD level data</li>
 <li>Improve reliability of character/numeric alignments for geographic UIDS</li>
 <li>
@@ -247,9 +249,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-1-8" class="section level1">
+    <div id="cancensus-018" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.8">
-<a href="#cancensus-0-1-8" class="anchor"></a>cancensus 0.1.8<small> 2018-11-20 </small>
+<a href="#cancensus-018" class="anchor"></a>cancensus 0.1.8<small> 2018-11-20 </small>
 </h1>
 <div id="major-changes-2" class="section level2">
 <h2 class="hasAnchor">
@@ -278,9 +280,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-1-7" class="section level1">
+    <div id="cancensus-017" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.7">
-<a href="#cancensus-0-1-7" class="anchor"></a>cancensus 0.1.7<small> 2018-02-04 </small>
+<a href="#cancensus-017" class="anchor"></a>cancensus 0.1.7<small> 2018-02-04 </small>
 </h1>
 <div id="major-changes-3" class="section level2">
 <h2 class="hasAnchor">
@@ -293,9 +295,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-1-6" class="section level1">
+    <div id="cancensus-016" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.6">
-<a href="#cancensus-0-1-6" class="anchor"></a>cancensus 0.1.6<small> 2018-01-24 </small>
+<a href="#cancensus-016" class="anchor"></a>cancensus 0.1.6<small> 2018-01-24 </small>
 </h1>
 <div id="major-changes-4" class="section level2">
 <h2 class="hasAnchor">
@@ -319,9 +321,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-1-5" class="section level1">
+    <div id="cancensus-015" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.5">
-<a href="#cancensus-0-1-5" class="anchor"></a>cancensus 0.1.5<small> Unreleased </small>
+<a href="#cancensus-015" class="anchor"></a>cancensus 0.1.5<small> Unreleased </small>
 </h1>
 <div id="major-changes-5" class="section level2">
 <h2 class="hasAnchor">
@@ -342,9 +344,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-1-0" class="section level1">
+    <div id="cancensus-010" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.0">
-<a href="#cancensus-0-1-0" class="anchor"></a>cancensus 0.1.0<small> Unreleased </small>
+<a href="#cancensus-010" class="anchor"></a>cancensus 0.1.0<small> Unreleased </small>
 </h1>
 <div id="major-changes-6" class="section level2">
 <h2 class="hasAnchor">
@@ -363,9 +365,9 @@
 </ul>
 </div>
 </div>
-    <div id="cancensus-0-0-1" class="section level1">
+    <div id="cancensus-001" class="section level1">
 <h1 class="page-header" data-toc-text="0.0.1">
-<a href="#cancensus-0-0-1" class="anchor"></a>cancensus 0.0.1<small> Unreleased </small>
+<a href="#cancensus-001" class="anchor"></a>cancensus 0.0.1<small> Unreleased </small>
 </h1>
 <div id="major-changes-7" class="section level2">
 <h2 class="hasAnchor">

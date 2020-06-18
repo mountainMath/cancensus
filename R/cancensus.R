@@ -16,7 +16,6 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
-#' @param ... Further arguments passed to \code{get_census}.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada
@@ -34,11 +33,6 @@
 #'
 #' # Query the API for data on dwellings in Vancouver, at the census subdivision
 #' # level, and return the associated geography files in \code{sf} format:
-#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                           level='CSD', geo_format = "sf")
-#'
-#' # Make the same query, but return geography in \code{sp} format:
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CSD', geo_format = "sf")
@@ -225,12 +219,38 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   return(result)
 }
 
-#' @rdname get_census
+#' Deprecated, use `get_census` instead
+#'
+#' @description
+#' This function will be removed in future versions.
+#'
+#' @param dataset A CensusMapper dataset identifier.
+#' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
+#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
+#' @param ... Further arguments passed to \code{get_census}.
+#'
+#' @source Census data and boundary geographies are reproduced and distributed on
+#' an "as is" basis with the permission of Statistics Canada (Statistics Canada
+#' 2006; 2011; 2016).
+#'
+#' @export
+#'
+#' @examples
+#' # Query the API for data geographies in Vancouver, at the census subdivision
+#' # level:
+#' \dontrun{
+#' # Query the API for geographies in Vancouver, at the census subdivision
+#' # level, and return the associated geography files in \code{sf} format:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           level='CSD', geo_format = "sf")
+#'}
 #' @export
 #' @keywords internal
 get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
   .Deprecated("get_census")
-  return(get_census(dataset=dataset, regions=regions, level=level, vectors=c(), geo_format=geo_format, ...))
+  stop("This function is no longer supported.")
+  #return(get_census(dataset=dataset, regions=regions, level=level, geo_format=geo_format, ...))
 }
 
 # This is the set of valid census aggregation levels, also used in the named

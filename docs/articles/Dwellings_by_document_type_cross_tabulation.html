@@ -109,7 +109,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Dwellings_by_document_type_cross_tabulation_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Additional datasets: Structural type of dwelling by document type</h1>
@@ -146,7 +146,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)</pre></body></html></div>
 <p>In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code <code>CA16xSD</code> for the Toronto Census subdivision with the standard Statistics Canada region code <code>3520005</code>. For more background on searching for Census geographical regions, see <code>?list_census_regions()</code> or the <a href="https://mountainmath.github.io/cancensus/articles/cancensus.html">Get started with cancensus vignette</a>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Attribution for the dataset to be used in graphs</span>
-<span class="no">attribution</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://mountainmath.github.io/cancensus/index.html/reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="st">"CA16xSD"</span>)
+<span class="no">attribution</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span>(<span class="st">"CA16xSD"</span>)
 
 <span class="co"># Select all variables base variables, this gives us total counts by structural type of dwelling</span>
 <span class="no">vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16xSD"</span>) <span class="kw">%&gt;%</span>

@@ -7,6 +7,7 @@
 - New functions `explore_census_regions` and `explore_census_vectors` which open a browser page towards the interactive discovery and selection tools on the [Censusmapper website](https://censusmapper.ca/api)
 - New function `attribution_for_dataset` which provides accurate attribution information for citation and visualizations for a given dataset.
 - Additional datasets: T1FF taxfiler data and dwelling type crosstabs, made available by CMHC. For more info, see the new vignettes for these datasets: [Additional datasets: Structural type of dwelling by document type](https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html), [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html). 
+- `get_census_geometry()` is now hard-deprecated and will stop the program flow. Use `get_census()` instead.
 
 ## Minor changes
 - Updated internal usage of dependent packages to avoid deprecated functions and warnings
