@@ -13,7 +13,22 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/child_census_vectors.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/dataset_attribution.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/explore_census_regions.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/explore_census_vectors.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/find_census_vectors.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_census.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_census_geometry.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/label_vectors.html</loc>
@@ -37,9 +52,18 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/search_census_vectors.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Dwellings_by_document_type_cross_tabulation.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Taxfiler_Data.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/cancensus.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
   </url>
 </urlset>

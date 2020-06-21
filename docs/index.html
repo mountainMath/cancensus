@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -56,7 +56,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3</span>
       </span>
     </div>
 
@@ -74,8 +74,26 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="articles/index.html">Articles</a>
+      <a href="articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
+    </li>
+    <li>
+      <a href="articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
+      <a href="articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
+    </li>
+    <li>
+      <a href="articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -157,20 +175,19 @@ list_census_regions("CA16")
 
 # To view available Census variables for the 2016 Census
 list_census_vectors("CA16")</a></code></pre>
-<p>There is also an interactive tool that is available at <a href="https://censusmapper.ca/api">CensusMapper API call generator</a> to visually select regions and variables and generate code for the API call.</p>
+<p>There is also an interactive tool that is available at the <a href="https://censusmapper.ca/api">CensusMapper API</a> to visually select regions and variables and generate code for the API call. Calling <code><a href="reference/explore_census_vectors.html">explore_census_vectors(dataset = "CA16")</a></code> or <code><a href="reference/explore_census_regions.html">explore_census_regions(dataset = "CA16")</a></code> will open a new browser window to this interactive tool, preconfigured for whichever Census dataset is set as an argument.</p>
 </div>
 <div id="getting-the-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#getting-the-data" class="anchor"></a>Getting the data</h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp"><strong>sp</strong></a> formats.</p>
 <pre><code># Return data only
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
 
 # Return an sf-class data frame
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
-
-# Return a SpatialPolygonsDataFrame
-census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sp")</code></pre>
+census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), 
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")</code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
 <div id="examples-of-work-using-cancensus" class="section level3">
@@ -190,6 +207,9 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <ul>
 <li><a href="https://mountainmath.github.io/cancensus/articles/cancensus.html">Getting started with cancensus</a></li>
 <li><a href="https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html">Making maps with cancensus</a></li>
+<li><a href="https://mountainmath.github.io/cancensus/articles/data_discovery.html">Data discovery: resources for finding available and relevant data</a></li>
+<li><a href="https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a></li>
+<li><a href="https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a></li>
 </ul>
 </div>
 <div id="contributing" class="section level3">
@@ -205,13 +225,13 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <a href="#cite-cancensus" class="anchor"></a>Cite <strong>cancensus</strong>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.2.2.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.3.0.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
     year = {2020},
-    note = {R package version 0.2.2},
+    note = {R package version 0.3.0},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
 </div>
@@ -221,6 +241,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"), vectors=
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data">socio-economic data repository</a> with thousands of data tables available for public access.</p>
 <p>The <a href="https://mountainmath.github.io/cansim/index.html">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus">Github</a>.</p>
 <p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
+<p>The <a href="https://mountainmath.github.io/tongfen/index.html">tongfen package</a> automates the task of obtaining cenusus variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen">Github</a>.</p>
 </div>
 <div id="statistics-canada-attribution" class="section level3">
 <h3 class="hasAnchor">

@@ -10,20 +10,39 @@ reference:
   - title: Retrieving Census data
   - contents:
     - get_census
-    - get_census_geometry
+    #- get_census_geometry # deprecated function, removed from online docs
+  - title: Data discovery
+  - contents:
     - list_census_datasets
     - list_census_regions
+    - as_census_region_list
     - list_census_vectors
+    - find_census_vectors
     - search_census_regions
+    - explore_census_vectors
+    - explore_census_regions
     - search_census_vectors
   - title: Working with Census data
   - contents:
     - label_vectors
     - child_census_vectors
     - parent_census_vectors
+    - dataset_attribution
 articles:
-  - title : Extending Cancensus
-    contents: Making_maps_with_cancensus
+    - title: Extending Cancensus
+      navbar: ~
+      contents:
+      - Making_maps_with_cancensus
+    - title: Search and data discovery
+      navbar: ~
+      contents:
+      - data_discovery
+    - title: Additional datasets
+      navbar: ~
+      contents:
+      - Dwellings_by_document_type_cross_tabulation
+      - Taxfiler_Data
+
 authors:
   Jens von Bergmann:
     href: https://mountainmath.ca
@@ -32,6 +51,7 @@ authors:
 template:
   params:
     ganalytics: UA-107390160-3
+    bootswatch: simplex
   opengraph:
     image:
       src: 'https://mountainmath.github.io/cancensus/logo.png'

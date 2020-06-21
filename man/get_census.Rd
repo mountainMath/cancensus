@@ -2,7 +2,6 @@
 % Please edit documentation in R/cancensus.R
 \name{get_census}
 \alias{get_census}
-\alias{get_census_geometry}
 \title{Access to Canadian census data through the CensusMapper API}
 \source{
 Census data and boundary geographies are reproduced and distributed on
@@ -21,8 +20,6 @@ get_census(
   quiet = FALSE,
   api_key = getOption("cancensus.api_key")
 )
-
-get_census_geometry(dataset, regions, level = NA, geo_format = "sf", ...)
 }
 \arguments{
 \item{dataset}{A CensusMapper dataset identifier.}
@@ -42,8 +39,6 @@ get_census_geometry(dataset, regions, level = NA, geo_format = "sf", ...)
 \item{quiet}{When TRUE, suppress messages and warnings.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
-
-\item{...}{Further arguments passed to \code{get_census}.}
 }
 \description{
 This function allows convenient access to Canadian census data and boundary
@@ -52,7 +47,7 @@ files through the CensusMapper API. An API key is required to retrieve data.
 \details{
 For help selecting regions and vectors, see \code{\link{list_census_regions}}
 and \code{\link{list_census_vectors}}, or check out the interactive selection
-tool at \url{https://censusmapper.ca/api}.
+tool at \url{https://censusmapper.ca/api} by calling \code{explore_census_vectors()}
 }
 \examples{
 # Query the API for data on dwellings in Vancouver, at the census subdivision
@@ -68,11 +63,6 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
                           level='CSD', geo_format = "sf")
 
-# Make the same query, but return geography in \code{sp} format:
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-                          level='CSD', geo_format = "sf")
-
 # Make the same query, but this time drop descriptive vector names:
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
@@ -82,4 +72,3 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 label_vectors(census_data)
 }
 }
-\keyword{internal}

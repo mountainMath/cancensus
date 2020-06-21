@@ -36,6 +36,7 @@
 #' @examples
 #' list_census_regions('CA16')
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
+  dataset = toupper(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
   #cache_file <- cache_path(dataset, "_regions.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -59,6 +60,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
       dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
+    result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     result
   } else {
     if (!quiet) message("Reading regions list from local cache.")
@@ -69,11 +71,18 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
       warning(paste("Cached regions list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
+    result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     result
   }
 }
 
 #' Query the CensusMapper API for regions with names matching a searchterm.
+#'
+#' @description Runs a query against the CensusMapper API to retrieve region data with
+#' names matching specific queries. Users can optionally specify the target geography level
+#' (e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
+#' \code{explore_census_vectors()} will launch the interactive region selection tool on
+#' the Censusmapper site in a new web page or tab.
 #'
 #' @param searchterm The term to search for e.g. \code{"Victoria"}.
 #' Search terms are case insensitive. If unable to find a given search term,
@@ -166,3 +175,74 @@ as_census_region_list <- function(tbl) {
   names(regions) <- nested$level
   regions
 }
+
+
+#' Lookup a municipal geography type from code - BETA
+#'
+#' @description Retrieved Census divisions and subdivisions include a code indicating the
+#' municipality type or municipal status. There are 12 CD and 53 CSD distinct status
+#' codes based on official designations used by provinces, territories, and federal
+#' authorities. These are often used to distinguish Census divisions and subdivisions
+#' with similar or identical names. Using \code{muni_status(code)} provides
+#' some additional context in understanding the specific type referenced by the code.
+#' For additional information consult the latest data dictionaries for relevant geographic levels.
+#' Information for CSDs is at
+#' \url{https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo012-eng.cfm} and
+#' for CDs at \url{https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo008-eng.cfm}.
+#'
+#' @param code code/municipality status.
+#'
+#'
+#'
+#' @examples
+#' muni_status("C")
+#' muni_status("RD")
+#' muni_status("CT")
+#' muni_status("CV")
+#'
+# muni_status = function(code) {
+#   geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD",
+#                  "CD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
+#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
+#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
+#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
+#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
+#                  "CSD", "CSD", "CSD", "CSD")
+#   status_code <- c("CDR", "CT", "CTY", "DIS", "DM", "MRC", "RD", "REG", "RM", "TÉ", "TER",
+#             "UC", "C", "CC", "CG", "CN", "COM", "CT", "CU", "CV", "CY", "DM", "HAM",
+#             "ID", "IGD", "IM", "IRI", "LGD", "LOT", "M", "MD", "MÉ", "MU", "NH", "NL",
+#             "NO", "NV", "P", "PE", "RCR", "RDA", "RGM", "RM", "RV", "S-É", "SA", "SC",
+#             "SÉ", "SET", "SG", "SM", "SNO", "SV", "T", "TC", "TI", "TK", "TL", "TP",
+#             "TV", "V", "VC", "VK", "VL", "VN")
+#   status <- c("Census division / Division de recensement", "County / Comté", "County",
+#               "District", "District municipality", "Municipalité régionale de comté",
+#               "Regional district", "Region", "Regional municipality", "Territoire équivalent",
+#               "Territory / Territoire", "United counties", "City / Cité", "Chartered community",
+#               "Community government", "Crown colony / Colonie de la couronne", "Community",
+#               "Canton (municipalité de)", "Cantons unis (municipalité de)", "City / Ville",
+#               "City", "District municipality", "Hamlet", "Improvement district",
+#               "Indian government district", "Island municipality",
+#               "Indian reserve / Réserve indienne", "Local government district",
+#               "Township and royalty", "Municipality / Municipalité", "Municipal district",
+#               "Municipalité", "Municipality", "Northern hamlet", "Nisga'a land",
+#               "Unorganized / Non organisé", "Northern village",
+#               "Parish / Paroisse (municipalité de)", "Paroisse (municipalité de)",
+#               "Rural community / Communauté rurale", "Regional district electoral area",
+#               "Regional municipality", "Rural municipality", "Resort village",
+#               "Indian settlement / Établissement indien", "Special area",
+#               "Subdivision of county municipality / Subdivision municipalité de comté",
+#               "Settlement / Établissement", "Settlement",
+#               "Self-government / Autonomie gouvernementale", "Specialized municipality",
+#               "Subdivision of unorganized / Subdivision non organisée", "Summer village",
+#               "Town", "Terres réservées aux Cris", "Terre inuite",
+#               "Terres réservées aux Naskapis", "Teslin land", "Township", "Town / Ville",
+#               "Ville", "Village cri", "Village naskapi", "Village", "Village nordique")
+#   muni_types <- data.frame(geography = geography, status_code = status_code, status = status)
+#   result <- muni_types[muni_types$status_code == code,]
+#   return(result)
+#   if(nrow(result)>0) result else {
+#     stop(paste0('There is no Census division or subdivision or municipality status with code "',
+#                 code,'"'),
+#          call. = FALSE)
+#   }
+# }

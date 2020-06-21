@@ -81,7 +81,7 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
 
 #' List all parent variables from vector hierarchies given either a list of Census
 #' variables returned by
-#' \code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.
+#' \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.
 #'
 #' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
 #' as returned from \code{list_census_vectors}.
@@ -128,7 +128,7 @@ parent_census_vectors <- function(vector_list){
 
 #' List all child variables from vector hierarchies given either a list of Census
 #' variables returned by
-#' \code{list_census_vectors} or \code{search_census_vectors}, or a direct string reference to the vector code.
+#' \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.
 #'
 #' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
 #'   as returned from \code{list_census_vectors}.
@@ -187,55 +187,4 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
     attr(vector_list, "dataset") <- dataset
   }
   return(vector_list)
-}
-
-#' Query the CensusMapper API for vectors with descriptions matching a searchterm.
-#'
-#' @param searchterm The term to search for e.g. \code{"Ojibway"}.
-#' Search terms are case insensitive. If unable to find a given search term,
-#' this function will suggest the correct spelling to use when possible.
-#' @param dataset The dataset to query for available vectors, e.g.
-#'   \code{"CA16"}.
-#' @param type One of \code{NA}, \code{'Total'}, \code{'Male'} or \code{'Female'}.
-#' If specified, only return variables of specified `type`.
-#' @param ... Further arguments passed on to \code{\link{list_census_vectors}}.
-#'
-#' @export
-#'
-#' @examples
-#' search_census_vectors('Ojibway', 'CA16')
-#'\dontrun{
-#' # This will return a warning that no match was found, but will suggest similar terms.
-#' search_census_vectors('Ojibwe', 'CA16', 'Total')
-#' }
-search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
-  #to do: add caching of vector list here
-  veclist <- list_census_vectors(dataset, ...)
-  result <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
-
-  # filter by type if needed
-  if (!is.na(type) && length(rownames(result)) > 0) {
-    result <- result[result$type==type,]
-  }
-
-  # Check if searchterm returned anything
-  if (length(rownames(result)) > 0 ) {
-    attr(result, "dataset") <- dataset
-    return(result)
-  }
-  # If nothing matches, throw a warning and suggested alternatives.
-  # If no suggested alternatives because the typo is too egregious, throw an error.
-  else {
-    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
-    # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
-    names(hintlist) <- "Similarly named objects"
-    #
-    if (length(hintlist) > 0) {
-      warning("No results found. Please use accurate spelling. See above for list of variables with similar named terms.")
-      print(hintlist)
-    } else {
-      stop("No results found.")
-    }
-  }
 }

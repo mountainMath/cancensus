@@ -5,7 +5,7 @@
 #'
 #' For help selecting regions and vectors, see \code{\link{list_census_regions}}
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
-#' tool at \url{https://censusmapper.ca/api}.
+#' tool at \url{https://censusmapper.ca/api} by calling \code{explore_census_vectors()}
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
@@ -16,7 +16,6 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
-#' @param ... Further arguments passed to \code{get_census}.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada
@@ -34,11 +33,6 @@
 #'
 #' # Query the API for data on dwellings in Vancouver, at the census subdivision
 #' # level, and return the associated geography files in \code{sf} format:
-#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-#'                           level='CSD', geo_format = "sf")
-#'
-#' # Make the same query, but return geography in \code{sp} format:
 #' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CSD', geo_format = "sf")
@@ -225,12 +219,38 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   return(result)
 }
 
-#' @rdname get_census
+#' Deprecated, use `get_census` instead
+#'
+#' @description
+#' This function will be removed in future versions.
+#'
+#' @param dataset A CensusMapper dataset identifier.
+#' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
+#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame}} object (requires the \code{rgdal} package).
+#' @param ... Further arguments passed to \code{get_census}.
+#'
+#' @source Census data and boundary geographies are reproduced and distributed on
+#' an "as is" basis with the permission of Statistics Canada (Statistics Canada
+#' 2006; 2011; 2016).
+#'
+#' @export
+#'
+#' @examples
+#' # Query the API for data geographies in Vancouver, at the census subdivision
+#' # level:
+#' \dontrun{
+#' # Query the API for geographies in Vancouver, at the census subdivision
+#' # level, and return the associated geography files in \code{sf} format:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           level='CSD', geo_format = "sf")
+#'}
 #' @export
 #' @keywords internal
 get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
   .Deprecated("get_census")
-  return(get_census(dataset=dataset, regions=regions, level=level, vectors=c(), geo_format=geo_format, ...))
+  stop("This function is no longer supported.")
+  #return(get_census(dataset=dataset, regions=regions, level=level, geo_format=geo_format, ...))
 }
 
 # This is the set of valid census aggregation levels, also used in the named
@@ -239,15 +259,19 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
-#' @param use_cache If set to TRUE, data will be read from a local cache, if
-#'   available. If set to FALSE (the default), query the API for the data, and
-#'   refresh the local cache with the result.
+#' @param use_cache If set to TRUE (the dfault), data will be read from a temporary local cache for the
+#'   duration of the R session, if
+#'   available. If set to FALSE, query the API for the data, and
+#'   refresh the temporary cache with the result.
 #' @param quiet When TRUE, suppress messages and warnings.
 #'
 #' @return
 #'
 #' Returns a data frame with a column \code{dataset} containing the code for the
-#' dataset, and a column \code{description} describing it.
+#' dataset, a column \code{description} describing it, a \code{geo_dataset} column
+#' identifying the geography dataset the data is based on, a \code{attribution} column
+#' with an attribtuion string, a \code{reference} column with a reference identifier, and
+#' a \code{reference_url} column with a link to reference materials.
 #'
 #' @export
 #'
@@ -255,8 +279,8 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
 #'
 #' # List available datasets in CensusMapper
 #' list_census_datasets()
-list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
-  cache_file <- cache_path("datasets.rda")
+list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
+  cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for available datasets...")
     response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
@@ -265,11 +289,12 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
+    #names(result) <- c("dataset","description","geo_dataset")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
   } else {
-    if (!quiet) message("Reading dataset list from local cache.")
+    if (!quiet) message("Reading dataset list from temporary cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
     if (!quiet && is.null(last_updated) ||
@@ -279,6 +304,47 @@ list_census_datasets <- function(use_cache = FALSE, quiet = FALSE) {
     }
     result
   }
+}
+
+#' Get attribution for datasets
+#'
+#' @param datasets Vector of dataset identifiers
+#'
+#' @return
+#'
+#' Returns a string to be used as attribution for the given datasets.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Attribution string for the 2006 and 2016 census datasets
+#' dataset_attribution(c('CA06','CA16'))
+dataset_attribution <- function(datasets){
+  attribution <-list_census_datasets(quiet=TRUE) %>%
+    dplyr::filter(.data$dataset %in% datasets) %>%
+    dplyr::pull(.data$attribution)
+
+  commons <- gsub("\\d{4}","\\\\\\d{4}",attribution) %>%
+    unique()
+
+  commons %>% lapply(function(c){
+    matches <- attribution[grepl(paste0("^",c,"$"),attribution)]
+
+    #years <- stringr::str_extract(matches, "\\d{4}") %>% sort()
+    # avoid stringr dependency
+    parts <- strsplit(c, split = "\\\\d\\{4\\}") %>%
+      unlist()
+    years <- matches
+    for (p in parts){
+      years <- gsub(p,"",years)
+    }
+
+    year_string <- paste0(years,collapse=", ")
+    gsub("\\d{4}",paste0(years,collapse=", "),matches[[1]])
+  }) %>%
+    unlist() %>%
+    paste0(collapse="; ")
 }
 
 
@@ -375,14 +441,10 @@ transform_geo <- function(g, level) {
   as_character=append(append(as_character,as_numeric),as_integer)
 
   g <- g %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_character),
-                     dplyr::funs(as.character)) %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_numeric),
-                     dplyr::funs(as.numeric))  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_integer),
-                     dplyr::funs(as.integer))  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_factor),
-                     dplyr::funs(as.factor))
+    dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_numeric), as.numeric)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.integer)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor)
 
   # Change names
   # Standard table

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3</span>
       </span>
     </div>
 
@@ -67,8 +67,26 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="../articles/index.html">Articles</a>
+      <a href="../articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
+    </li>
+    <li>
+      <a href="../articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
+      <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
+    </li>
+    <li>
+      <a href="../articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -91,10 +109,11 @@
 
       
 
-      </header><div class="row">
+      </header><script src="cancensus_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cancensus</h1>
+                        <h4 class="author"></h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/cancensus.Rmd"><code>vignettes/cancensus.Rmd</code></a></small>
@@ -163,28 +182,28 @@
 <a href="#census-datasets" class="anchor"></a>Census Datasets</h2>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
-<p>To view all available datasets, run <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
+<p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all available datasets alongside their metadata.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 26 x 2</span>
-<span class="co">#&gt;    dataset description                                                         </span>
-<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                                                               </span>
-<span class="co">#&gt;  1 CA01    2001 Canada Census                                                  </span>
-<span class="co">#&gt;  2 CA06    2006 Canada Census                                                  </span>
-<span class="co">#&gt;  3 CA11    2011 Canada Census and NHS                                          </span>
-<span class="co">#&gt;  4 CA16    2016 Canada Census                                                  </span>
-<span class="co">#&gt;  5 CA01xSD 2001 Canada Census xtab - Structural type by Document type, via CMHC</span>
-<span class="co">#&gt;  6 CA06xSD 2006 Canada Census xtab - Structural type by Document type, via CMHC</span>
-<span class="co">#&gt;  7 CA11xSD 2011 Canada Census xtab - Structural type by Document type, via CMHC</span>
-<span class="co">#&gt;  8 CA16xSD 2016 Canada Census xtab - Structural type by Document type, via CMHC</span>
-<span class="co">#&gt;  9 TX2000  2000 Taxfiler data, via CMHC                                        </span>
-<span class="co">#&gt; 10 TX2001  2001 Taxfiler data, via CMHC                                        </span>
+<span class="co">#&gt; # A tibble: 26 x 6</span>
+<span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
+<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            </span>
+<span class="co">#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
+<span class="co">#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…</span>
+<span class="co">#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…</span>
 <span class="co">#&gt; # … with 16 more rows</span></pre></body></html></div>
 <p>As other Census datasets become available via the CensusMapper API, they will be listed as output when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
 <div id="census-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#census-regions" class="anchor"></a>Census Regions</h2>
-<p>Census data is aggregated at multiple <a href="###%20Census%20Geographic%20Levels">geographic levels</a>. Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census division (CD), and census subdivision (CSD) are defined as named census regions.</p>
+<p>Census data is aggregated at multiple <a href="###%20Census%20Geographic%20Levels">geographic levels</a>. Census geographies at the national (C), provincial (PR), census metropolitan area (CMA), census agglomeration (CA), census division (CD), and census subdivision (CSD) are defined as named census regions.</p>
 <p>Canadian Census geography can change in between Census periods. <strong>cancensus</strong> provides a function, <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>, to display all named census regions and their corresponding id for a given census dataset.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">"CA16"</span>)
 <span class="co">#&gt; # A tibble: 5,504 x 8</span>
@@ -234,29 +253,34 @@
 <tr class="odd">
 <td>CMA</td>
 <td>Census Metropolitan Area</td>
-<td align="center">49</td>
+<td align="center">35</td>
 </tr>
 <tr class="even">
+<td>CA</td>
+<td>Census Agglomeration</td>
+<td align="center">14</td>
+</tr>
+<tr class="odd">
 <td>CD</td>
 <td>Census Division</td>
 <td align="center">287</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>CSD</td>
 <td>Census Subdivision</td>
 <td align="center">713</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>CT</td>
 <td>Census Tracts</td>
 <td align="center">5621</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>DA</td>
 <td>Dissemination Area</td>
 <td align="center">56589</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Regions</td>
 <td>Named Census Region</td>
 <td align="center"></td>
@@ -308,29 +332,32 @@
 <div id="variable-search" class="section level2">
 <h2 class="hasAnchor">
 <a href="#variable-search" class="anchor"></a>Variable search</h2>
-<p>Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. To help with that, this package includes a built-in vector search tool to help find specific variables.</p>
+<p>Each Census dataset features numerous variables making it a bit of a challenge to find the exact variable you are looking for. There is a function, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code>, for searching through Census variable metadata in a few different ways. There are three types of searches possible using this function: exact search, which simply looks for exact string matches for a given query against the vector dataset; keyword search, which breaks vector metadata into unigram tokens and then tries to find the vectors with the greatest number of unique matches; and, semantic search which works better with search phrases and has tolerance for inexact searches. Switching between search modes is done using the <code>query_type</code> argument when calling <code>find_census_variables()</code> function.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austrian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;   vector   type   label units parent_vector aggregation details                 </span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;fct&gt;  &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;                   </span>
-<span class="co">#&gt; 1 v_CA16_… Total  Aust… Numb… v_CA16_4089   Additive    CA 2016 Census; 25% Dat…</span>
-<span class="co">#&gt; 2 v_CA16_… Male   Aust… Numb… v_CA16_4090   Additive    CA 2016 Census; 25% Dat…</span>
-<span class="co">#&gt; 3 v_CA16_… Female Aust… Numb… v_CA16_4091   Additive    CA 2016 Census; 25% Dat…</span></pre></body></html></div>
-<p>Knowing exactly how to spell the right variable can be tricky, but this search function relies on fuzzy searching so if it is unable to find an exact match of your search term, it will provide some helpful alternatives. In this case, searching for “Austraian” origin will show search terms for the vectors for both Austrian and Australian origins.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span>
-<span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Austraian"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 2 x 1</span>
-<span class="co">#&gt;   `Similarly named objects`</span>
-<span class="co">#&gt;   &lt;chr&gt;                    </span>
-<span class="co">#&gt; 1 Austrian                 </span>
-<span class="co">#&gt; 2 Australian</span></pre></body></html></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australia"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"exact"</span>)
+<span class="co">#&gt; # A tibble: 2 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_38… Total Austral… 25% Data; Citizenship and Immigration; Total - Sele…</span>
+<span class="co">#&gt; 2 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
+
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australia origin"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"semantic"</span>)
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span>
+
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Australian ethnic"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"total"</span>, <span class="kw">query_type</span> <span class="kw">=</span> <span class="st">"keyword"</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   vector     type  label    details                                             </span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;                                               </span>
+<span class="co">#&gt; 1 v_CA16_48… Total Austral… 25% Data; Minority / Origin; Total - Ethnic origin …</span></pre></body></html></div>
 </div>
 <div id="managing-variable-hierarchy" class="section level2">
 <h2 class="hasAnchor">
 <a href="#managing-variable-hierarchy" class="anchor"></a>Managing variable hierarchy</h2>
 <p>Census variables are frequently hierarchical. As an example, consider the variable for the number of people of Austrian ethnic background. We can select that vector and quickly look up its entire hierarchy using <code>parent_census_vectors</code> on a vector list.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">vector</span> <span class="kw">==</span> <span class="st">"v_CA16_4092"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span>()
 <span class="co">#&gt; # A tibble: 3 x 7</span>
@@ -340,7 +367,7 @@
 <span class="co">#&gt; 2 v_CA16… Total European origi… Numb… v_CA16_3999   Additive    CA 2016 Census;…</span>
 <span class="co">#&gt; 3 v_CA16… Total Total - Ethnic… Numb… &lt;NA&gt;          Additive    CA 2016 Census;…</span></pre></body></html></div>
 <p>Sometimes we want to traverse the hierarchy in the opposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
 <span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
 <span class="co">#&gt; # A tibble: 6 x 7</span>
 <span class="co">#&gt;   vector  type   label        units parent_vector aggregation details           </span>
@@ -352,7 +379,7 @@
 <span class="co">#&gt; 5 v_CA16… Male   Northern Eu… Numb… v_CA16_4123   Additive    CA 2016 Census; 2…</span>
 <span class="co">#&gt; 6 v_CA16… Female Northern Eu… Numb… v_CA16_4124   Additive    CA 2016 Census; 2…</span></pre></body></html></div>
 <p>The search result shows that the vector <strong>v_CA16_4092</strong> represents the aggregate for all Northern European origins. The <code>child_census_vectors</code> function can return a list of its constituent underlying variables.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># Show all child variable leaves</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Show all child variable leaves</span>
 <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">vector</span> <span class="kw">==</span> <span class="st">"v_CA16_4122"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span>(<span class="kw">leaves</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="co">#&gt; # A tibble: 6 x 7</span>
