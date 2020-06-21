@@ -4,6 +4,7 @@ General update of package. Changes include:
 - New search and metadata functionalities
 - Expanded API data coverage
 - New vignettes and docs
+- Checked on win-release and win-dev
 
 ## Update - v.0.2.2
 
