@@ -1,3 +1,10 @@
+## Update - v.0.3.0
+
+General update of package. Changes include:
+- New search and metadata functionalities
+- Expanded API data coverage
+- New vignettes and docs
+
 ## Update - v.0.2.2
 
 Minor update of package. Changes include:
@@ -13,7 +20,7 @@ Minor update of package. Changes include:
 - Minor documentation improvements
 - Allow for search by vector identifier
 - Allow child and parent vector retrieval by vector identifier
-- Add fucntionality for future tax data release
+- Add functionality for future tax data release
 
 ## Update - v.0.2.0
 
