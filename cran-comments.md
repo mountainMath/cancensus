@@ -1,3 +1,9 @@
+## Update - v.0.3.1
+
+Addressing warning and note in CRAN checks from upload v.0.3.0
+- Vignette chunk with encoding and output issues causing WARNING will only compile locally for use in web documentation and now will not be compiled externally as it did not contain any crucial information and was used for additional detail. 
+- Fixed missing package NOTE in rd xref
+
 ## Update - v.0.3.0
 
 General update of package. Changes include:
