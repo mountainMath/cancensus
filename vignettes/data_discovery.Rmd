@@ -130,7 +130,7 @@ list_census_regions('CA16')
 ```
 There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. CAs with Census tracts and defined geography have the code K, while those without have type code D. 
 ```{r echo=FALSE, paged.print=TRUE}
-if(Sys.getenv("COMPILE_VIG")) {
+if(Sys.getenv("COMPILE_VIG")=="TRUE") {
   geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", 
                    "CD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
                    "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", 
