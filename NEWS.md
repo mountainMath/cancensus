@@ -1,3 +1,8 @@
+# cancensus 0.3.1
+
+## Minor changes
+- CRAN check issues
+
 # cancensus 0.3.0
 
 ## Major changes
