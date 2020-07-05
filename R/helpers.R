@@ -32,6 +32,26 @@ dataset_from_vector_list <- function(vector_list){
   dataset
 }
 
+cancensus_na_strings <- c("x", "F", "...", "..", "-","N","*","**")
+
+as.num = function(x, na.strings = cancensus_na_strings) {
+  stopifnot(is.character(x))
+  na = x %in% na.strings
+  x[na] = 0
+  x = as.numeric(x)
+  x[na] = NA_real_
+  x
+}
+
+as.int = function(x, na.strings = cancensus_na_strings) {
+  stopifnot(is.character(x))
+  na = x %in% na.strings
+  x[na] = 0
+  x = as.integer(x)
+  x[na] = NA_integer_
+  x
+}
+
 # To activate later
 # valid_datasets <- c("CA01","CA06","CA11","CA16",
 #                     "CA01xSD", "CA06xSD", "CA11xSD", "CA16xSD",

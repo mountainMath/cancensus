@@ -115,26 +115,16 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..", "-","N","*","**")
 
-      as.num = function(x, na.strings = "NA") {
-        stopifnot(is.character(x))
-        na = x %in% na.strings
-        x[na] = 0
-        x = as.numeric(x)
-        x[na] = NA_real_
-        x
-      }
 
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
-          readr::read_csv(na = na_strings,
+          readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c")) %>%
           dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]),
-                           as.num,na.strings=na_strings) %>%
+                             names(.)[grepl("v_",names(.))]), as.num) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       } else {
@@ -143,8 +133,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble(.name_repair = "minimal") %>%
           dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]),
-                           as.num,na.strings=na_strings) %>%
+                             names(.)[grepl("v_",names(.))]), as.num) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       }
@@ -188,8 +177,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       geos
     } else if (!is.na(geo_format)) {
       # the sf object needs to be first in join to retain all spatial information
-      dplyr::select(result, -.data$Population, -.data$Dwellings,
-                    -.data$Households, -.data$Type) %>%
+      to_remove <- setdiff(dplyr::intersect(names(geos),names(result)),"GeoUID")
+      dplyr::select(result, -dplyr::one_of(to_remove)) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
     }
   }
@@ -443,7 +432,7 @@ transform_geo <- function(g, level) {
   g <- g %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_numeric), as.numeric)  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.integer)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.int)  %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor)
 
   # Change names
