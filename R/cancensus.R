@@ -9,7 +9,7 @@
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
-#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package).
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
@@ -81,7 +81,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
-    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', or 'DA'")
+    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
   }
 
   # Check that we can read the requested geo format.
@@ -255,7 +255,7 @@ get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", 
 
 # This is the set of valid census aggregation levels, also used in the named
 # elements of the `regions` parameter.
-VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
+VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", 'EA', "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
@@ -464,7 +464,7 @@ transform_geo <- function(g, level) {
       c('ruid','CT_UID'),
       c('rguid','CMA_UID'))
   }
-  if (level=='DA') {
+  if (level=='DA'|level=='EA') {
     name_change <- name_change %>% rbind(
       c('rpid','CSD_UID'),
       c('rgid','CD_UID'),

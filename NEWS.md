@@ -1,3 +1,8 @@
+# cancensus 0.3.2
+
+## Minor changes
+- Support for 1996 census
+
 # cancensus 0.3.1
 
 ## Minor changes

@@ -12,8 +12,8 @@ Access, retrieve, and work with Canadian Census data and geography.
 * Download data and Census geography in tidy and analysis-ready format
 * Convenience tools for searching for and working with Census regions and variable hierarchies
 * Provides Census geography in multiple R spatial formats
-* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, and Dissemination Areas
-* Provides data for the 2016, 2011, 2006, and 2001 Census releases
+* Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, Dissemination Areas, Enumeration Areas (for 1996), and Dissemination Blocks (for 2001-2016)
+* Provides data for the 2016, 2011, 2006, 2001, and 1996 Census releases
 * Access to taxfiler data at the Census Tract level for tax years 2000 through 2017
  
 ### Reference

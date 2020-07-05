@@ -56,6 +56,8 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
         grepl("^3.", add) ~ gsub(".", ", ", gsub("^3\\.", "Median of ", add),
                                  fixed = TRUE),
         grepl("^4.", add) ~ gsub(".", ", ", gsub("^4\\.", "Average to ", add),
+                                 fixed = TRUE),
+        grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
                                  fixed = TRUE)
       )) %>%
       dplyr::select(.data$vector, .data$type, .data$label, .data$units,

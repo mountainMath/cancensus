@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -109,10 +109,11 @@
 
       
 
-      </header><script src="cancensus_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="cancensus_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cancensus</h1>
+                        <h4 class="author"></h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/master/vignettes/cancensus.Rmd"><code>vignettes/cancensus.Rmd</code></a></small>
@@ -183,20 +184,20 @@
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all available datasets alongside their metadata.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 26 x 6</span>
+<span class="co">#&gt; # A tibble: 27 x 6</span>
 <span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            </span>
-<span class="co">#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
-<span class="co">#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; # … with 16 more rows</span></pre></body></html></div>
+<span class="co">#&gt;  1 CA1996  1996 Canada Ce… CA1996      StatCan 1996… 92-351-U  https://www150.s…</span>
+<span class="co">#&gt;  2 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  3 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  4 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
+<span class="co">#&gt;  5 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  6 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  7 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  8 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  9 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt; 10 TX2000  2000 T1FF taxf… CA1996      StatCan 2000… 72-212-X  https://www150.s…</span>
+<span class="co">#&gt; # … with 17 more rows</span></pre></body></html></div>
 <p>As other Census datasets become available via the CensusMapper API, they will be listed as output when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
 <div id="census-regions" class="section level2">

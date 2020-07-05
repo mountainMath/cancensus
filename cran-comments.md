@@ -1,3 +1,7 @@
+## Update - v.0.3.2
+
+Add functionality for 1996 census
+
 ## Update - v.0.3.1
 
 Addressing warning and note in CRAN checks from upload v.0.3.0
