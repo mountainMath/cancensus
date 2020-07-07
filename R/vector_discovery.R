@@ -120,9 +120,9 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
   census_vector_list <- list_census_vectors(dataset)[, c("vector", "type", "label","details")]
   census_vector_list$details <- gsub("^(.*)Census; |100% data; ","",census_vector_list$details)
   # filter by type if provided
-  if (type %in% c("Total", "Male", "Female"))
+  if (any(type %in% c("Total", "Male", "Female")))
   {
-    census_vector_list <- census_vector_list[census_vector_list$type == type, ]
+    census_vector_list <- census_vector_list[census_vector_list$type %in% type, ]
   }
   if (query_type == "exact") {
     result <- census_vector_list[grep(query, census_vector_list$details, ignore.case = TRUE), ]
