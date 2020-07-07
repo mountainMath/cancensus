@@ -109,7 +109,7 @@
 
       
 
-      </header><script src="data_discovery_files/header-attrs-2.2/header-attrs.js"></script><link href="data_discovery_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+      </header><script src="data_discovery_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="data_discovery_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="data_discovery_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -127,8 +127,8 @@
 <div id="census-datasets" class="section level1">
 <h1 class="hasAnchor">
 <a href="#census-datasets" class="anchor"></a>Census datasets</h1>
-<p><code>cancensus</code> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
-<p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <code>cancensus</code> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
+<p><code>cancensus</code> can access Statistics Canada Census data for the 1996, 2001, 2006 Censuses, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
+<p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <code>cancensus</code> now includes additional Census-linked datasets as open-data releases. These include annual tax-filer data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()</pre></body></html></div>
 <pre><code>## # A tibble: 27 x 6
 ##    dataset description     geo_dataset attribution   reference reference_url    
@@ -169,7 +169,7 @@
 ##  9 v_CA16… Male   Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
 ## 10 v_CA16… Female Total - Age Numb… &lt;NA&gt;          Additive     CA 2016 Census; …
 ## # … with 6,613 more rows</code></pre>
-<p><code><a href="../reference/list_census_vectors.html">list_census_vectors(dataset)</a></code> retrieves an index of all available vectors for a given dataset from the Censusmapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes <code>v_{dataset}_{index}</code>. This is the code by which vectors are identified through the Censusmapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the Censusmapper API.</p>
+<p><code><a href="../reference/list_census_vectors.html">list_census_vectors(dataset)</a></code> retrieves an index of all available vectors for a given dataset from the CensusMapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes <code>v_{dataset}_{index}</code>. This is the code by which vectors are identified through the CensusMapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the CensusMapper API.</p>
 </div>
 <div id="searching-for-census-variable-vectors" class="section level2">
 <h2 class="hasAnchor">
@@ -266,7 +266,7 @@
 ## 2    35    18    NA Durham (Regional municipality
 ## 3    35    18    13 Oshawa (City)</code></pre>
 <p>These levels are hierarchical and complete in that a province is split in Census divisions, which are then split into Census subdivisions.</p>
-<p>Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DAs) are not named or listed but have unique identifying codes derived from their parent Census subdivision.</p>
+<p>Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DA, EA, and DB) are not named or listed but have unique identifying codes derived from their parent Census subdivision.</p>
 <pre><code>## # A tibble: 6 x 2
 ##   level     n
 ##   &lt;chr&gt; &lt;int&gt;
@@ -283,6 +283,13 @@
 <p>Data can also be extracted at the Census Metropolitan Area (CMA) or Census Agglomeration (CA) level, which is derived from a variant of the SGC known as the Statistical Area Classification. Hierarchically, CMAs and CAs represent a collection of constituent Census subdivisions.</p>
 <p>A Census metropolitan area consists of adjacent municipalities with a defined core with a total population of at least 100,000 of which 50,000 or more must live in the core based on Census data. Adjacent municipalities must have a high degree of integration with the core, which Statistics Canada measures based on the commuting flows indicated in Census data. Census Agglomeration areas have to have a core population above 10,000.</p>
 <p>All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada’s Census Dictionary article for <a href="https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm">Census metropolitan areas (CMA) and census agglomerations (CA)</a>. All CMAs and some CAs have data at the Census tract level, but most CAs do not. The 2016 Census has 35 CMAs and 14 CAs with Census tracts that have their own defined geography. There are a further 106 CAs without Census tracts that do not have their own distinctly defined geographies.</p>
+</div>
+<div id="aside-dissemination-areas-blocks-and-enumeration-areas" class="section level3">
+<h3 class="hasAnchor">
+<a href="#aside-dissemination-areas-blocks-and-enumeration-areas" class="anchor"></a>Aside: dissemination areas, blocks, and enumeration areas</h3>
+<p><a href="https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/da-ad/def-eng.htm">Dissemination areas</a> (DA) are the smallest atomic geographic unit at which all census data is captured. DAs cover the entirety of Canada and follow the boundaries of census subdivisions and census tracts. While inter-census geographic stability is not guaranteed, they generally tend to be as stable as the census tracts and census subdivisions that they make up. In addition to census boundaries, DAs will generally follow natural boundaries created by other spatial features like roads, railways, water features, and designed to be spatially compact and with a target population around 400-700 persons. The 2016 census data has 56,589 distinct DAs.</p>
+<p><a href="https://www12.statcan.gc.ca/English/census01/products/reference/dict/geo024.htm">Enumeration areas</a> (EA) were the DA equivalent for censuses prior to 2001. Similar to DAs, EAs were used to as the basic level at which census data was collected. They do not necessarily correspond accurately to DAs in data from 2001 onwards.</p>
+<p><a href="https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/db-id/def-eng.htm">Dissemination block</a> (DB) level data is available for the 2001-2016 datasets. DBs are essentially city blocks, bounded by intersecting streets and therefore are largely the product of road networks at the time of the census. The geographies and identification codes of DBs are not necessarily stable over time. DBs are split whenever they intersect with boundaries of higher geographic levels in such a way as to ensure that they can be aggregated upwards precisely. DBs only provide data for population, dwelling counts, and number of households (from 2006 onwards) without any additional characteristic data. DBs with population under 15 have their population counts adjusted for privacy. For the 2016 census, there are close to half a million DB distinct regions.</p>
 </div>
 </div>
 <div id="viewing-available-census-regions" class="section level2">
