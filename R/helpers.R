@@ -52,8 +52,8 @@ as.int = function(x, na.strings = cancensus_na_strings) {
   x
 }
 
-# To activate later
-# valid_datasets <- c("CA01","CA06","CA11","CA16",
+# List of eligible datasets
+# VALID_DATASETS <- c("CA1996","CA01","CA06","CA11","CA16",
 #                     "CA01xSD", "CA06xSD", "CA11xSD", "CA16xSD",
 #                     "TX2000", "TX2001", "TX2002", "TX2003", "TX2004",
 #                     "TX2005", "TX2006", "TX2007", "TX2008", "TX2009",

@@ -16,9 +16,9 @@ library(cancensus)
 
 # Census datasets
 
-`cancensus` can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+`cancensus` can access Statistics Canada Census data for the 1996, 2001, 2006 Censuses, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
 
-Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), `cancensus` now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
+Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), `cancensus` now includes additional Census-linked datasets as open-data releases. These include annual tax-filer data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
 ```{r}
 list_census_datasets()
 ```
@@ -33,9 +33,12 @@ ca16 <- list_census_vectors("CA16")
 ca11 <- list_census_vectors("CA11")
 ca06 <- list_census_vectors("CA06")
 ca01 <- list_census_vectors("CA01")
+ca96 <- list_census_vectors("CA1996")
 
-tibble(dataset = c("CA16","CA11","CA06","CA01"), vectors = c(length(ca16$vector), length(ca11$vector),
-                                                             length(ca06$vector), length(ca01$vector))) %>% 
+tibble(dataset = c("CA16","CA11","CA06","CA01","CA1996"), 
+       vectors = c(length(ca16$vector), length(ca11$vector),
+                   length(ca06$vector), length(ca01$vector),
+                   length(ca96$vector))) %>% 
   ggplot(., aes(x = dataset, y = vectors)) +
   geom_col() +
   theme_minimal() +
@@ -52,7 +55,7 @@ The Census datasets that the `cancensus` package provides access to are rich in 
 ```{r message=FALSE, warning=FALSE}
 list_census_vectors('CA16')
 ```
-`list_census_vectors(dataset)` retrieves an index of all available vectors for a given dataset from the Censusmapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes `v_{dataset}_{index}`. This is the code by which vectors are identified through the Censusmapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the Censusmapper API. 
+`list_census_vectors(dataset)` retrieves an index of all available vectors for a given dataset from the CensusMapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes `v_{dataset}_{index}`. This is the code by which vectors are identified through the CensusMapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the CensusMapper API. 
 
 ## Searching for Census variable vectors
 
@@ -106,7 +109,7 @@ tibble(PR = c(35,35,35), CD = c(NA, 18, 18), CSD = c(NA, NA, 013), name = c("Ont
 ```
 These levels are hierarchical and complete in that a province is split in Census divisions, which are then split into Census subdivisions. 
 
-Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DAs) are not named or listed but have unique identifying codes derived from their parent Census subdivision.  
+Geographies have standardized names for the province, Census division, and Census subdivision levels, as well as Census metropolitan areas and Census agglomerations. Lower geographic levels such as Census tracts or dissemination areas (DA, EA, and DB) are not named or listed but have unique identifying codes derived from their parent Census subdivision.  
 ```{r echo=FALSE}
 list_census_regions('CA16') %>% 
   group_by(level) %>% 
@@ -121,6 +124,14 @@ Data can also be extracted at the Census Metropolitan Area (CMA) or Census Agglo
 A Census metropolitan area consists of adjacent municipalities with a defined core with a total population of at least 100,000 of which 50,000 or more must live in the core based on Census data. Adjacent municipalities must have a high degree of integration with the core, which Statistics Canada measures based on the commuting flows indicated in Census data. Census Agglomeration areas have to have a core population above 10,000. 
 
 All CMAs and CAs consist of Census subdivisions but not all Census subdivisions are a subset of a CMA or a CA. For more details on CMAs and CAs, consult Statistics Canada's Census Dictionary article for [Census metropolitan areas (CMA) and census agglomerations (CA)](https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm). All CMAs and some CAs have data at the Census tract level, but most CAs do not. The 2016 Census has 35 CMAs and 14 CAs with Census tracts that have their own defined geography. There are a further 106 CAs without Census tracts that do not have their own distinctly defined geographies. 
+
+### Aside: dissemination areas, blocks, and enumeration areas
+
+[Dissemination areas](https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/da-ad/def-eng.htm) (DA) are the smallest atomic geographic unit at which all census data is captured. DAs cover the entirety of Canada and follow the boundaries of census subdivisions and census tracts. While inter-census geographic stability is not guaranteed, they generally tend to be as stable as the census tracts and census subdivisions that they make up. In addition to census boundaries, DAs will generally follow natural boundaries created by other spatial features like roads, railways, water features, and designed to be spatially compact and with a target population around 400-700 persons. The 2016 census data has 56,589 distinct DAs. 
+
+[Enumeration areas](https://www12.statcan.gc.ca/English/census01/products/reference/dict/geo024.htm) (EA) were the DA equivalent for censuses prior to 2001. Similar to DAs, EAs were used to as the basic level at which census data was collected. They do not necessarily correspond accurately to DAs in data from 2001 onwards. 
+
+[Dissemination block](https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/db-id/def-eng.htm) (DB) level data is available for the 2001-2016 datasets. DBs are essentially city blocks, bounded by intersecting streets and therefore are largely the product of road networks at the time of the census. The geographies and identification codes of DBs are not necessarily stable over time. DBs are split whenever they intersect with boundaries of higher geographic levels in such a way as to ensure that they can be aggregated upwards precisely. DBs only provide data for population, dwelling counts, and number of households (from 2006 onwards) without any additional characteristic data. DBs with population under 15 have their population counts adjusted for privacy. For the 2016 census, there are close to half a million DB distinct regions. 
 
 ## Viewing available Census regions
 

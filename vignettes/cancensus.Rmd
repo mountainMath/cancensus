@@ -29,7 +29,7 @@ As Statistics Canada does not provide direct API access to Census data, **cancen
 
 ## API Key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
 
 To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
 
@@ -92,7 +92,7 @@ Additional parameters for advanced options can be viewed by running `?get_census
 
 ## Census Datasets
 
-**cancensus** can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, and 2016 . You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
 
@@ -130,19 +130,21 @@ census_data <- get_census(dataset='CA16', regions=list(CMA=c("59933","35535")),
 
 Census data accessible through **cancensus** comes is available in a number of different aggregation levels including: 
 
-| Code    | Description                   | Count in Census 2016 |
-| --------|-------------------------------|:--------------------:|
-| C       | Canada (total)                | 1                    |
-| PR      | Provinces/Territories         | 13                   |
-| CMA     | Census Metropolitan Area      | 35                   |
-| CA      | Census Agglomeration          | 14                   |
-| CD      | Census Division               | 287                  |
-| CSD     | Census Subdivision            | 713                  |
-| CT      | Census Tracts                 | 5621                 |
-| DA      | Dissemination Area            | 56589                |
-| Regions | Named Census Region           |                      |
+| Code    | Description                    | Count in Census 2016 |
+| --------|--------------------------------|:--------------------:|
+| C       | Canada (total)                 | 1                    |
+| PR      | Provinces/Territories          | 13                   |
+| CMA     | Census Metropolitan Area       | 35                   |
+| CA      | Census Agglomeration           | 14                   |
+| CD      | Census Division                | 287                  |
+| CSD     | Census Subdivision             | 713                  |
+| CT      | Census Tracts                  | 5621                 |
+| DA      | Dissemination Area             | 56589                |
+| EA      | Enumeration Area (1996 only)   | -                    |
+| DB      | Dissemination Block (2001-2016)| 489676               |
+| Regions | Named Census Region            |                      |
 
-Selecting `regions = "59933"` and `level = "CT"` will return data for all 478 census tracts in the Vancouver Census Metropolitan Area. Selecting `level = "DA"` will return data for all 3450 dissemination areas. Working with CT and DA level data significantly increases the size of data downloads and API usage. **cancensus** relies on local data caching to reduce usage and load times. 
+Selecting `regions = "59933"` and `level = "CT"` will return data for all 478 census tracts in the Vancouver Census Metropolitan Area. Selecting `level = "DA"` will return data for all 3450 dissemination areas and selecting `level = "DB"` will retrieve data for 15,197 dissemination block. Working with CT, DA, EA, and especially DB level data significantly increases the size of data downloads and API usage. To help minimize additional overhead, **cancensus** supports local data caching to reduce usage and load times. 
 
 Setting `level = "Regions"` will produce data strictly for the selected region without any tiling of data at lower census aggregation levels levels. 
 
@@ -197,7 +199,7 @@ Sometimes we want to traverse the hierarchy in the opposite direction. This is f
 
 ```{r child_vectors1, message=FALSE, warning=FALSE}
 # Find the variable indicating the Northern European aggregate
-search_census_vectors("Northern European", dataset = 'CA16')
+find_census_vectors("Northern European", dataset = "CA16", type = "Total")
 ```
 
 The search result shows that the vector **v_CA16_4092** represents the aggregate for all Northern European origins. The `child_census_vectors` function can return a list of its constituent underlying variables.

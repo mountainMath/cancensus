@@ -54,11 +54,11 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
-    if (!quiet) warning(paste("passing `regions` as a character vector is",
+    if (!quiet) warning(paste("Passing `regions` as a character vector is",
                               "depreciated, and will be removed in future",
                               "versions"))
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
-    stop("regions must be composed of valid census aggregation levels.")
+    stop("Regions must be composed of valid census aggregation levels.")
   } else {
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
@@ -319,9 +319,6 @@ dataset_attribution <- function(datasets){
 
   commons %>% lapply(function(c){
     matches <- attribution[grepl(paste0("^",c,"$"),attribution)]
-
-    #years <- stringr::str_extract(matches, "\\d{4}") %>% sort()
-    # avoid stringr dependency
     parts <- strsplit(c, split = "\\\\d\\{4\\}") %>%
       unlist()
     years <- matches
@@ -335,8 +332,6 @@ dataset_attribution <- function(datasets){
     unlist() %>%
     paste0(collapse="; ")
 }
-
-
 
 #' Return Census variable names and labels as a tidy data frame
 #'
