@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@
 <div id="api-key" class="section level2">
 <h2 class="hasAnchor">
 <a href="#api-key" class="anchor"></a>API Key</h2>
-<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free; however, API requests are limited in volume. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
+<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
 <p>To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code><a href="https://rdrr.io/r/base/options.html">options(cancensus.api_key = "your_api_key")</a></code>.</p>
 </div>
 <div id="installing-cancensus" class="section level2">
@@ -179,24 +179,24 @@
 <div id="census-datasets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#census-datasets" class="anchor"></a>Census Datasets</h2>
-<p><strong>cancensus</strong> can access Statistics Canada Census data for the 2001 Census, the 2006 Census, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
+<p><strong>cancensus</strong> can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, and 2016 . You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all available datasets alongside their metadata.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-<span class="co">#&gt; # A tibble: 26 x 6</span>
+<span class="co">#&gt; # A tibble: 27 x 6</span>
 <span class="co">#&gt;    dataset description     geo_dataset attribution   reference reference_url    </span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            </span>
-<span class="co">#&gt;  1 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  2 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  3 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
-<span class="co">#&gt;  4 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  5 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">#&gt;  6 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">#&gt;  7 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  8 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">#&gt;  9 TX2000  2000 T1FF taxf… CA01        StatCan 2000… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; 10 TX2001  2001 T1FF taxf… CA01        StatCan 2001… 72-212-X  https://www150.s…</span>
-<span class="co">#&gt; # … with 16 more rows</span></pre></body></html></div>
+<span class="co">#&gt;  1 CA1996  1996 Canada Ce… CA1996      StatCan 1996… 92-351-U  https://www150.s…</span>
+<span class="co">#&gt;  2 CA01    2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  3 CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  4 CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
+<span class="co">#&gt;  5 CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  6 CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">#&gt;  7 CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">#&gt;  8 CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt;  9 CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">#&gt; 10 TX2000  2000 T1FF taxf… CA1996      StatCan 2000… 72-212-X  https://www150.s…</span>
+<span class="co">#&gt; # … with 17 more rows</span></pre></body></html></div>
 <p>As other Census datasets become available via the CensusMapper API, they will be listed as output when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
 <div id="census-regions" class="section level2">
@@ -280,13 +280,23 @@
 <td align="center">56589</td>
 </tr>
 <tr class="odd">
+<td>EA</td>
+<td>Enumeration Area (1996 only)</td>
+<td align="center">-</td>
+</tr>
+<tr class="even">
+<td>DB</td>
+<td>Dissemination Block (2001-2016)</td>
+<td align="center">489676</td>
+</tr>
+<tr class="odd">
 <td>Regions</td>
 <td>Named Census Region</td>
 <td align="center"></td>
 </tr>
 </tbody>
 </table>
-<p>Selecting <code>regions = "59933"</code> and <code>level = "CT"</code> will return data for all 478 census tracts in the Vancouver Census Metropolitan Area. Selecting <code>level = "DA"</code> will return data for all 3450 dissemination areas. Working with CT and DA level data significantly increases the size of data downloads and API usage. <strong>cancensus</strong> relies on local data caching to reduce usage and load times.</p>
+<p>Selecting <code>regions = "59933"</code> and <code>level = "CT"</code> will return data for all 478 census tracts in the Vancouver Census Metropolitan Area. Selecting <code>level = "DA"</code> will return data for all 3450 dissemination areas and selecting <code>level = "DB"</code> will retrieve data for 15,197 dissemination block. Working with CT, DA, EA, and especially DB level data significantly increases the size of data downloads and API usage. To help minimize additional overhead, <strong>cancensus</strong> supports local data caching to reduce usage and load times.</p>
 <p>Setting <code>level = "Regions"</code> will produce data strictly for the selected region without any tiling of data at lower census aggregation levels levels.</p>
 </div>
 </div>
@@ -367,16 +377,17 @@
 <span class="co">#&gt; 3 v_CA16… Total Total - Ethnic… Numb… &lt;NA&gt;          Additive    CA 2016 Census;…</span></pre></body></html></div>
 <p>Sometimes we want to traverse the hierarchy in the opposite direction. This is frequently required when looking to compare different variable stems that share the same aggregate variable. As an example, if we want to look the total count of Northern European ethnic origin respondents disaggregated by individual countries, it is pretty easy to do so.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># Find the variable indicating the Northern European aggregate</span>
-<span class="fu"><a href="../reference/search_census_vectors.html">search_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">'CA16'</span>)
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;   vector  type   label        units parent_vector aggregation details           </span>
-<span class="co">#&gt;   &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;        &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;             </span>
-<span class="co">#&gt; 1 v_CA16… Total  Northern Eu… Numb… v_CA16_4044   Additive    CA 2016 Census; 2…</span>
-<span class="co">#&gt; 2 v_CA16… Male   Northern Eu… Numb… v_CA16_4045   Additive    CA 2016 Census; 2…</span>
-<span class="co">#&gt; 3 v_CA16… Female Northern Eu… Numb… v_CA16_4046   Additive    CA 2016 Census; 2…</span>
-<span class="co">#&gt; 4 v_CA16… Total  Northern Eu… Numb… v_CA16_4122   Additive    CA 2016 Census; 2…</span>
-<span class="co">#&gt; 5 v_CA16… Male   Northern Eu… Numb… v_CA16_4123   Additive    CA 2016 Census; 2…</span>
-<span class="co">#&gt; 6 v_CA16… Female Northern Eu… Numb… v_CA16_4124   Additive    CA 2016 Census; 2…</span></pre></body></html></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Northern European"</span>, <span class="kw">dataset</span> <span class="kw">=</span> <span class="st">"CA16"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"Total"</span>)
+<span class="co">#&gt; # A tibble: 7 x 4</span>
+<span class="co">#&gt;   vector    type  label                     details                             </span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;fct&gt; &lt;chr&gt;                     &lt;chr&gt;                               </span>
+<span class="co">#&gt; 1 v_CA16_4… Total Northern European origin… 25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 2 v_CA16_4… Total Danish                    25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 3 v_CA16_4… Total Finnish                   25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 4 v_CA16_4… Total Icelandic                 25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 5 v_CA16_4… Total Norwegian                 25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 6 v_CA16_4… Total Swedish                   25% Data; Minority / Origin; Total …</span>
+<span class="co">#&gt; 7 v_CA16_4… Total Northern European origin… 25% Data; Minority / Origin; Total …</span></pre></body></html></div>
 <p>The search result shows that the vector <strong>v_CA16_4092</strong> represents the aggregate for all Northern European origins. The <code>child_census_vectors</code> function can return a list of its constituent underlying variables.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># Show all child variable leaves</span>
 <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">"CA16"</span>) <span class="kw">%&gt;%</span>

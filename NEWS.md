@@ -1,3 +1,12 @@
+# cancensus 0.3.2
+
+## Major changes
+- Support for 1996 census
+- Public availability of dissemination block area level data
+
+## Minor changes
+- Fixes [bug](https://github.com/mountainMath/cancensus/issues/150) in `find_census_vectors()`
+
 # cancensus 0.3.1
 
 ## Minor changes

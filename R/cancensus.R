@@ -9,7 +9,7 @@
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
-#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"} or \code{"DA"}.
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package).
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
@@ -54,11 +54,11 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
-    if (!quiet) warning(paste("passing `regions` as a character vector is",
+    if (!quiet) warning(paste("Passing `regions` as a character vector is",
                               "depreciated, and will be removed in future",
                               "versions"))
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
-    stop("regions must be composed of valid census aggregation levels.")
+    stop("Regions must be composed of valid census aggregation levels.")
   } else {
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
@@ -81,7 +81,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
-    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', or 'DA'")
+    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
   }
 
   # Check that we can read the requested geo format.
@@ -115,26 +115,16 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::GET(url)
       }
       handle_cm_status_code(response, NULL)
-      na_strings <- c("x", "F", "...", "..", "-","N","*","**")
 
-      as.num = function(x, na.strings = "NA") {
-        stopifnot(is.character(x))
-        na = x %in% na.strings
-        x[na] = 0
-        x = as.numeric(x)
-        x[na] = NA_real_
-        x
-      }
 
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
-          readr::read_csv(na = na_strings,
+          readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c")) %>%
           dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]),
-                           as.num,na.strings=na_strings) %>%
+                             names(.)[grepl("v_",names(.))]), as.num) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       } else {
@@ -143,8 +133,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble(.name_repair = "minimal") %>%
           dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]),
-                           as.num,na.strings=na_strings) %>%
+                             names(.)[grepl("v_",names(.))]), as.num) %>%
           dplyr::mutate(Type = as.factor(.data$Type),
                         `Region Name` = as.factor(.data$`Region Name`))
       }
@@ -188,8 +177,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       geos
     } else if (!is.na(geo_format)) {
       # the sf object needs to be first in join to retain all spatial information
-      dplyr::select(result, -.data$Population, -.data$Dwellings,
-                    -.data$Households, -.data$Type) %>%
+      to_remove <- setdiff(dplyr::intersect(names(geos),names(result)),"GeoUID")
+      dplyr::select(result, -dplyr::one_of(to_remove)) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
     }
   }
@@ -255,7 +244,7 @@ get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", 
 
 # This is the set of valid census aggregation levels, also used in the named
 # elements of the `regions` parameter.
-VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", "DB")
+VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "CT", "DA", 'EA', "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
@@ -330,9 +319,6 @@ dataset_attribution <- function(datasets){
 
   commons %>% lapply(function(c){
     matches <- attribution[grepl(paste0("^",c,"$"),attribution)]
-
-    #years <- stringr::str_extract(matches, "\\d{4}") %>% sort()
-    # avoid stringr dependency
     parts <- strsplit(c, split = "\\\\d\\{4\\}") %>%
       unlist()
     years <- matches
@@ -346,8 +332,6 @@ dataset_attribution <- function(datasets){
     unlist() %>%
     paste0(collapse="; ")
 }
-
-
 
 #' Return Census variable names and labels as a tidy data frame
 #'
@@ -443,7 +427,7 @@ transform_geo <- function(g, level) {
   g <- g %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_numeric), as.numeric)  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.integer)  %>%
+    dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.int)  %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor)
 
   # Change names
@@ -464,7 +448,7 @@ transform_geo <- function(g, level) {
       c('ruid','CT_UID'),
       c('rguid','CMA_UID'))
   }
-  if (level=='DA') {
+  if (level=='DA'|level=='EA') {
     name_change <- name_change %>% rbind(
       c('rpid','CSD_UID'),
       c('rgid','CD_UID'),
