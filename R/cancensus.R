@@ -196,7 +196,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     attr(result, "census_vectors") <- census_vectors
     if (labels == "short" | !is.null(names(vectors))) {
       if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
-      else {names(result) <- gsub(":.*","",names(result))}
+      else {result <- rename(result,!!!setNames(names(.),gsub(":.*","",names(.))))}
       if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
     }
   }
