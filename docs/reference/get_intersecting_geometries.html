@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • cancensus</title>
+<title>Get identifiers for census regions interesecting a geometry — get_intersecting_geometries • cancensus</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,7 +48,12 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Get identifiers for census regions interesecting a geometry — get_intersecting_geometries" />
+<meta property="og:description" content="This function returns a list of regions that intersect a give geometry. It is useful for example when
+one is interested in census data for a particular geographic region that does not coincide with
+well-known census geometries. The returned value can be used as the regions parameter in get_census
+to get corresponding census geographies and variables that cover the give geometry.
+This function requires advanced CensusMapper API access." />
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta property="og:image:alt" content="cancensus" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -82,7 +87,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -156,152 +161,76 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Get identifiers for census regions interesecting a geometry</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mountainMath/cancensus/blob/master/R/intersect_geometry.R'><code>R/intersect_geometry.R</code></a></small>
+    <div class="hidden name"><code>get_intersecting_geometries.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>This function returns a list of regions that intersect a give geometry. It is useful for example when
+one is interested in census data for a particular geographic region that does not coincide with
+well-known census geometries. The returned value can be used as the <code>regions</code> parameter in <code>get_census</code>
+to get corresponding census geographies and variables that cover the give geometry.</p>
+<p>This function requires advanced CensusMapper API access.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>get_intersecting_geometries</span>(
+  <span class='no'>dataset</span>,
+  <span class='no'>level</span>,
+  <span class='no'>geometry</span>,
+  <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>api_key</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"cancensus.api_key"</span>)
+)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-retrieving-census-data" class="hasAnchor"><a href="#section-retrieving-census-data" class="anchor"></a>Retrieving Census data</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="get_census.html">get_census()</a></code> </p>
-        </td>
-        <td><p>Access to Canadian census data through the CensusMapper API</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-data-discovery" class="hasAnchor"><a href="#section-data-discovery" class="anchor"></a>Data discovery</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="list_census_datasets.html">list_census_datasets()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available datasets.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_census_regions.html">list_census_regions()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available regions in a given dataset.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as_census_region_list.html">as_census_region_list()</a></code> </p>
-        </td>
-        <td><p>Convert a (suitably filtered) data frame from
-<code>list_census_regions</code> to a list suitable for passing to
-<code>get_census</code>.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_census_vectors.html">list_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for available vectors for a given dataset.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="find_census_vectors.html">find_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for vectors using exact, semantic, or keyword search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="search_census_regions.html">search_census_regions()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for regions with names matching a searchterm.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="explore_census_vectors.html">explore_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="explore_census_regions.html">explore_census_regions()</a></code> </p>
-        </td>
-        <td><p>Interactively browse Census variables and regions on Censusmapper.ca in a new browser window</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
-        </td>
-        <td><p>Query the CensusMapper API for vectors with descriptions matching a search term or phrase (deprecated)</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-working-with-census-data" class="hasAnchor"><a href="#section-working-with-census-data" class="anchor"></a>Working with Census data</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="label_vectors.html">label_vectors()</a></code> </p>
-        </td>
-        <td><p>Return Census variable names and labels as a tidy data frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="child_census_vectors.html">child_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all child variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="parent_census_vectors.html">parent_census_vectors()</a></code> </p>
-        </td>
-        <td><p>List all parent variables from vector hierarchies given either a list of Census
-variables returned by
-<code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dataset_attribution.html">dataset_attribution()</a></code> </p>
-        </td>
-        <td><p>Get attribution for datasets</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dataset</th>
+      <td><p>A CensusMapper dataset identifier.</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>The census aggregation level to retrieve. One of <code>"Regions"</code>, <code>"PR"</code>, <code>"CMA"</code>, <code>"CD"</code>, <code>"CSD"</code>, <code>"CT"</code>, <code>"DA"</code>, <code>"EA"</code> (for 1996 census), or <code>"DB"</code> (for 2001-2016 censuses)..</p></td>
+    </tr>
+    <tr>
+      <th>geometry</th>
+      <td><p>An <code>sf</code> or <code>sfc</code> object</p></td>
+    </tr>
+    <tr>
+      <th>use_cache</th>
+      <td><p>If set to TRUE (the default) data will be read from the local cache if available.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>When TRUE, suppress messages and warnings.</p></td>
+    </tr>
+    <tr>
+      <th>api_key</th>
+      <td><p>An API key for the CensusMapper API. Defaults to <code><a href='https://rdrr.io/r/base/options.html'>options()</a></code> and then the <code>CM_API_KEY</code> environment variable.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Census data and boundary geographies are reproduced and distributed on
+an "as is" basis with the permission of Statistics Canada (Statistics Canada
+1996; 2001; 2006; 2011; 2016).</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Query the API for the census tract contain the coordinates [-123.25149, 49.27026]</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>point_geo</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sf/man/sfc.html'>st_sfc</a></span>(<span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sf/man/st.html'>st_point</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>123.25149</span>, <span class='fl'>49.27026</span>)),<span class='kw'>crs</span><span class='kw'>=</span><span class='fl'>4326</span>)
+<span class='no'>regions</span> <span class='kw'>&lt;-</span> <span class='fu'>get_intersecting_geometries</span>(<span class='kw'>dataset</span> <span class='kw'>=</span> <span class='st'>'CA16'</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>'CT'</span>, <span class='kw'>geometry</span> <span class='kw'>=</span> <span class='no'>point_geo</span>)
+<span class='no'>census_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='no'>regions</span>,
+                          <span class='kw'>vectors</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
+                          <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CT'</span>)
+
+}</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

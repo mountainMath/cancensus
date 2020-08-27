@@ -6,6 +6,10 @@ cancensus_base_url <- function(){
   url
 }
 
+robust_api_key <- function(api_key){
+  api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+}
+
 clean_vector_list <- function(vector_list,dataset=NULL){
   if (!("data.frame") %in% class(vector_list)) {
     if (class(vector_list)=="character") {
@@ -52,11 +56,41 @@ as.int = function(x, na.strings = cancensus_na_strings) {
   x
 }
 
-# List of eligible datasets
-# VALID_DATASETS <- c("CA1996","CA01","CA06","CA11","CA16",
-#                     "CA01xSD", "CA06xSD", "CA11xSD", "CA16xSD",
-#                     "TX2000", "TX2001", "TX2002", "TX2003", "TX2004",
-#                     "TX2005", "TX2006", "TX2007", "TX2008", "TX2009",
-#                     "TX2010", "TX2011", "TX2012", "TX2013", "TX2014", "TX2015", "TX2016", "TX2017")
 
+install_api_key <- function(key, overwrite = FALSE, install = FALSE){
+  if (install) {
+    home <- Sys.getenv("HOME")
+    renv <- file.path(home, ".Renviron")
+    if(file.exists(renv)){
+      # Backup original .Renviron before doing anything else here.
+    }
+    if(!file.exists(renv)){
+      file.create(renv)
+    }
+    else{
+      file.copy(renv, file.path(home, ".Renviron_backup"))
+      if(isTRUE(overwrite)){
+        message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
+        oldenv=readLines(renv)
+        newenv <- oldenv[-grep("CM_API_KEY", oldenv)]
+        writeLines(newenv, renv, sep = "\n")
+      }
+      else{
+        tv <- readLines(renv)
+        if(any(grepl("CM_API_KEY",tv))){
+          stop("A CM_API_KEY already exists. You can overwrite it with the argument overwrite=TRUE", call.=FALSE)
+        }
+      }
+    }
+
+    keyconcat <- paste0("CM_API_KEY='", key, "'")
+    # Append API key to .Renviron file
+    write(keyconcat, renv, sep = "\n", append = TRUE)
+    message('Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CM_API_KEY"). \nTo use now, restart R or run `readRenviron("~/.Renviron")`')
+    return(key)
+  } else {
+    message("To install your API key for use in future sessions, run this function with `install = TRUE`.")
+    Sys.setenv(CM_API_KEY = key)
+  }
+}
 

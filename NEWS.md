@@ -1,3 +1,11 @@
+# cancensus 0.3.3
+
+## Major changes
+- `get_intersecting_geometry` function for experimental access-restricted CensusMapper endpoint
+
+## Minor changes
+- Fixes various warnings due to recent changes in tibble and dplyr.
+
 # cancensus 0.3.2
 
 ## Major changes

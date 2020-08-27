@@ -1,3 +1,8 @@
+# Update - v.0.3.3
+
+- `get_intersecting_geometry` function for experimental access-restricted CensusMapper endpoint
+- Fixes various warnings due to recent changes in tibble and dplyr.
+
 ## Update - v.0.3.2
 
 - Add functionality for 1996 census and more refined geographies

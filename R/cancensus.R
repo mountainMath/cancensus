@@ -18,8 +18,7 @@
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
-#' an "as is" basis with the permission of Statistics Canada (Statistics Canada
-#' 2006; 2011; 2016).
+#' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
 #'
 #' @export
 #'
@@ -46,7 +45,7 @@
 #' label_vectors(census_data)
 #'}
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
-  api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+  api_key <- robust_api_key(api_key)
   have_api_key <- !is.null(api_key)
   result <- NULL
 
