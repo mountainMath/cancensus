@@ -22,6 +22,7 @@ reference:
     - explore_census_vectors
     - explore_census_regions
     - search_census_vectors
+    - get_intersecting_geometries
   - title: Working with Census data
   - contents:
     - label_vectors

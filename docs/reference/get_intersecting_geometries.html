@@ -49,10 +49,11 @@
   
 
 <meta property="og:title" content="Get identifiers for census regions interesecting a geometry — get_intersecting_geometries" />
-<meta property="og:description" content="This function returns a list of regions that intersect a give geometry. It is useful for example when
-one is interested in census data for a particular geographic region that does not coincide with
-well-known census geometries. The returned value can be used as the regions parameter in get_census
-to get corresponding census geographies and variables that cover the give geometry.
+<meta property="og:description" content="This function returns a list of regions that intersect a given geometry input. This list of regions can be used
+directly to query census when one is interested in census data for a particular geographic region that does
+not coincide with defined census geometries. The returned value can be used as the regions
+parameter in get_census to get corresponding census geographies and variables that cover the give geometry.
+Input spatial objects can be any sf or sfc class objects such as POINT, MULTIPOINT or POLYGON.
 This function requires advanced CensusMapper API access." />
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png" />
 <meta property="og:image:alt" content="cancensus" />
@@ -169,20 +170,22 @@ This function requires advanced CensusMapper API access." />
     </div>
 
     <div class="ref-description">
-    <p>This function returns a list of regions that intersect a give geometry. It is useful for example when
-one is interested in census data for a particular geographic region that does not coincide with
-well-known census geometries. The returned value can be used as the <code>regions</code> parameter in <code>get_census</code>
-to get corresponding census geographies and variables that cover the give geometry.</p>
+    <p>This function returns a list of regions that intersect a given geometry input. This list of regions can be used
+directly to query census when one is interested in census data for a particular geographic region that does
+not coincide with defined census geometries. The returned value can be used as the <code>regions</code>
+parameter in <a href='get_census.html'>get_census</a> to get corresponding census geographies and variables that cover the give geometry.
+Input spatial objects can be any <code>sf</code> or <code>sfc</code> class objects such as <code>POINT</code>, <code>MULTIPOINT</code> or <code>POLYGON</code>.</p>
 <p>This function requires advanced CensusMapper API access.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_intersecting_geometries</span>(
-  <span class='no'>dataset</span>,
-  <span class='no'>level</span>,
-  <span class='no'>geometry</span>,
-  <span class='kw'>use_cache</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>api_key</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"cancensus.api_key"</span>)
+  <span class='kw'>dataset</span>,
+  <span class='kw'>level</span>,
+  <span class='kw'>geometry</span>,
+  simplified = <span class='fl'>FALSE</span>,
+  use_cache = <span class='fl'>TRUE</span>,
+  quiet = <span class='fl'>FALSE</span>,
+  api_key = <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"cancensus.api_key"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -198,11 +201,15 @@ to get corresponding census geographies and variables that cover the give geomet
     </tr>
     <tr>
       <th>geometry</th>
-      <td><p>An <code>sf</code> or <code>sfc</code> object</p></td>
+      <td><p>An <code>sf</code> or <code>sfc</code> class object</p></td>
+    </tr>
+    <tr>
+      <th>simplified</th>
+      <td><p>If <code>TRUE</code> will return a region list compatible with <a href='get_census.html'>get_census</a>, otherwise will return a character vector of matching region ids.</p></td>
     </tr>
     <tr>
       <th>use_cache</th>
-      <td><p>If set to TRUE (the default) data will be read from the local cache if available.</p></td>
+      <td><p>If set to <code>TRUE</code> (the default) data will be read from the local cache if available.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -221,15 +228,24 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 1996; 2001; 2006; 2011; 2016).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Query the API for the census tract contain the coordinates [-123.25149, 49.27026]</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>point_geo</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sf/man/sfc.html'>st_sfc</a></span>(<span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sf/man/st.html'>st_point</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>123.25149</span>, <span class='fl'>49.27026</span>)),<span class='kw'>crs</span><span class='kw'>=</span><span class='fl'>4326</span>)
-<span class='no'>regions</span> <span class='kw'>&lt;-</span> <span class='fu'>get_intersecting_geometries</span>(<span class='kw'>dataset</span> <span class='kw'>=</span> <span class='st'>'CA16'</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>'CT'</span>, <span class='kw'>geometry</span> <span class='kw'>=</span> <span class='no'>point_geo</span>)
-<span class='no'>census_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(<span class='kw'>dataset</span><span class='kw'>=</span><span class='st'>'CA16'</span>, <span class='kw'>regions</span><span class='kw'>=</span><span class='no'>regions</span>,
-                          <span class='kw'>vectors</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
-                          <span class='kw'>level</span><span class='kw'>=</span><span class='st'>'CT'</span>)
+    <pre class="examples"><div class='input'>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># Example using a POINT-class object from a pair of lat/lon coordinates</span>
+<span class='kw'>point_geo</span> <span class='op'>&lt;-</span> <span class='kw'>sf</span>::<span class='fu'><a href='https://rdrr.io/pkg/sf/man/sfc.html'>st_sfc</a></span>(<span class='kw'>sf</span>::<span class='fu'><a href='https://rdrr.io/pkg/sf/man/st.html'>st_point</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>123.25149</span>, <span class='fl'>49.27026</span>)), crs=<span class='fl'>4326</span>)
+<span class='kw'>regions</span> <span class='op'>&lt;-</span> <span class='fu'>get_intersecting_geometries</span>(dataset = <span class='st'>'CA16'</span>, level = <span class='st'>'CT'</span>, geometry = <span class='kw'>point_geo</span>)
+<span class='kw'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(dataset=<span class='st'>'CA16'</span>, regions=<span class='kw'>regions</span>,
+                          vectors=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
+                          level=<span class='st'>'CT'</span>)
 
-}</div></pre>
+<span class='co'># Example using a POLYGON-class object from a bounding box with four coordinates</span>
+<span class='kw'>poly_geo</span> <span class='op'>&lt;-</span> <span class='kw'>sf</span>::<span class='fu'><a href='https://rdrr.io/pkg/sf/man/st_as_sfc.html'>st_as_sfc</a></span>(<span class='kw'>sf</span>::<span class='fu'><a href='https://rdrr.io/pkg/sf/man/st_bbox.html'>st_bbox</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(ymin = <span class='fl'>49.25</span>, ymax = <span class='fl'>49.30</span>,
+                          xmin = <span class='op'>-</span><span class='fl'>123.25</span>, xmax = <span class='op'>-</span><span class='fl'>123.30</span>)), crs = <span class='fl'>4326</span>)
+<span class='kw'>regions</span> <span class='op'>&lt;-</span> <span class='fu'>get_intersecting_geometries</span>(dataset = <span class='st'>'CA16'</span>, level = <span class='st'>'CT'</span>, geometry = <span class='kw'>poly_geo</span>)
+<span class='kw'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='get_census.html'>get_census</a></span>(dataset=<span class='st'>'CA16'</span>, regions=<span class='kw'>regions</span>,
+                         vectors=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>), level=<span class='st'>'CT'</span>)
+
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -245,7 +261,7 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

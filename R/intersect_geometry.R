@@ -1,17 +1,19 @@
 #' Get identifiers for census regions interesecting a geometry
 #'
 #' @description
-#' This function returns a list of regions that intersect a give geometry. It is useful for example when
-#' one is interested in census data for a particular geographic region that does not coincide with
-#' well-known census geometries. The returned value can be used as the \code{regions} parameter in \code{get_census}
-#' to get corresponding census geographies and variables that cover the give geometry.
+#' This function returns a list of regions that intersect a given geometry input. This list of regions can be used
+#' directly to query census when one is interested in census data for a particular geographic region that does
+#' not coincide with defined census geometries. The returned value can be used as the \code{regions}
+#' parameter in \link{get_census} to get corresponding census geographies and variables that cover the give geometry.
+#' Input spatial objects can be any \code{sf} or \code{sfc} class objects such as \code{POINT}, \code{MULTIPOINT} or \code{POLYGON}.
 #'
 #' This function requires advanced CensusMapper API access.
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..
-#' @param geometry An \code{sf} or \code{sfc} object
-#' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
+#' @param geometry An \code{sf} or \code{sfc} class object
+#' @param simplified If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.
+#' @param use_cache If set to \code{TRUE} (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #'
@@ -22,16 +24,24 @@
 #' @export
 #'
 #' @examples
-#' # Query the API for the census tract contain the coordinates [-123.25149, 49.27026]
+#'
 #' \dontrun{
-#' point_geo <- sf::st_sfc(sf::st_point(c(-123.25149, 49.27026)),crs=4326)
+#' # Example using a POINT-class object from a pair of lat/lon coordinates
+#' point_geo <- sf::st_sfc(sf::st_point(c(-123.25149, 49.27026)), crs=4326)
 #' regions <- get_intersecting_geometries(dataset = 'CA16', level = 'CT', geometry = point_geo)
 #' census_data <- get_census(dataset='CA16', regions=regions,
 #'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
 #'                           level='CT')
 #'
+#' # Example using a POLYGON-class object from a bounding box with four coordinates
+#' poly_geo <- sf::st_as_sfc(sf::st_bbox(c(ymin = 49.25, ymax = 49.30,
+#'                           xmin = -123.25, xmax = -123.30)), crs = 4326)
+#' regions <- get_intersecting_geometries(dataset = 'CA16', level = 'CT', geometry = poly_geo)
+#' census_data <- get_census(dataset='CA16', regions=regions,
+#'                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CT')
+#'
 #'}
-get_intersecting_geometries <- function(dataset, level, geometry,
+get_intersecting_geometries <- function(dataset, level, geometry, simplified = FALSE,
                                         use_cache = TRUE, quiet = FALSE,
                                         api_key=getOption("cancensus.api_key")) {
   api_key <- robust_api_key(api_key)
@@ -86,5 +96,6 @@ get_intersecting_geometries <- function(dataset, level, geometry,
     # Load `result` object from cache.
     load(file = data_file)
   }
+  if(simplified) {result <- c(as.character(result))}
   result
 }
