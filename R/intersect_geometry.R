@@ -74,6 +74,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
                  level=level,
+                 area=sf::st_area(geometry) %>% as.numeric(),
                  geometry=geo,
                  api_key=api_key)
     response <- if (!quiet) {
