@@ -58,6 +58,12 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     geometry <- sf::st_union(geometry)
   }
 
+  crs=sf::st_crs(geometry)$epsg
+
+  if (is.na(crs) || crs!=4326) {
+    geometry <- geometry %>% st_transform(4326)
+  }
+
   geo <- geojsonsf::sfc_geojson(geometry)
 
   param_string <- paste0("dataset=", dataset,
