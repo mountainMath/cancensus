@@ -17,7 +17,7 @@ get_census(
   labels = "detailed",
   use_cache = TRUE,
   quiet = FALSE,
-  api_key = getOption("cancensus.api_key")
+  api_key = Sys.getenv("CM_API_KEY")
 )
 }
 \arguments{

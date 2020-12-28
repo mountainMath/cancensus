@@ -15,7 +15,8 @@ robust_api_key <- function(api_key){
 # Append arguments to the path of the local cache directory.
 cache_path <- function(...) {
   cache_dir <- Sys.getenv("CM_CACHE_PATH")
-  if (is.null(cache_dir)) cache_dir <- getOption("cancensus.cache_path")
+  if (nchar(cache_dir)==0) cache_dir <- getOption("cancensus.cache_path")
+  if (is.null(cache_dir) | nchar(cache_dir)==0) cache_dir <- tempdir()
   if (!is.character(cache_dir)) {
     stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
          .call = FALSE)
@@ -119,4 +120,14 @@ cm_no_cache_path_message <- paste(
   "You may add this environment varianble to your .Renviron",
   "or add this option, together with your API key, to your .Rprofile.\n\n"
 )
+
+
+#' A dataset with code table summaries for census data
+#' @name CODES_TABLE
+#' @docType data
+#' @author derived from StatCan definitions
+#' @references \url{https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo012-eng.cfm}
+#' @keywords data
+NULL
+
 

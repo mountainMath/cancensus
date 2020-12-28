@@ -471,7 +471,7 @@ transform_geo <- function(g, level) {
   }
 
   used_names <- name_change %>%
-    dplyr::filter(old %in% names(g))
+    dplyr::filter(.data$old %in% names(g))
 
   if (nrow(used_names)>0) g <- g %>%
     dplyr::rename(!!!setNames(used_names$old,used_names$new))
@@ -493,7 +493,7 @@ transform_geo <- function(g, level) {
 
   if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
     # Cache in tmp dir by default.
-    options(cancensus.cache_path = tempdir())
+    #options(cancensus.cache_path = tempdir())
     packageStartupMessage(cm_no_cache_path_message)
   }
 }
