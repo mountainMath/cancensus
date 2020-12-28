@@ -43,7 +43,7 @@
 #'}
 get_intersecting_geometries <- function(dataset, level, geometry, simplified = FALSE,
                                         use_cache = TRUE, quiet = FALSE,
-                                        api_key=getOption("cancensus.api_key")) {
+                                        api_key=Sys.getenv("CM_API_KEY")) {
   api_key <- robust_api_key(api_key)
   have_api_key <- !is.null(api_key)
   result <- NULL
@@ -61,7 +61,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
   crs=sf::st_crs(geometry)$epsg
 
   if (is.na(crs) || crs!=4326) {
-    geometry <- geometry %>% st_transform(4326)
+    geometry <- geometry %>% sf::st_transform(4326)
   }
 
   geo <- geojsonsf::sfc_geojson(geometry)

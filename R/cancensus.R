@@ -44,7 +44,8 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed",
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
   api_key <- robust_api_key(api_key)
   have_api_key <- !is.null(api_key)
   result <- NULL
@@ -67,15 +68,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if(as.character(options("cancensus.cache_path"))==tempdir()) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
-    message(
-      paste(
-        "Census data is currently stored temporarily.\n\n",
-        "In order to speed up performance, reduce API quota usage, and reduce",
-        "unnecessary network calls, please set up a persistent cache directory by",
-        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
-        "You may add this option, together with your API key, to your .Rprofile.\n\n"
-      )
-    )
+    message(cm_no_cache_path_message)
   }
 
   # Check if the aggregation level is valid.
@@ -103,8 +96,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
-                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
+                   "options(cancensus.api_key = '<your API key>') to set one."))
       }
       url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
       response <- if (!quiet) {
@@ -153,8 +146,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     geo_file <- cache_path(geo_base_name, ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
-                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
+                   "options(cancensus.api_key = '<your API key>') to set one."))
       }
       url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
                     api_key)
@@ -476,11 +469,12 @@ transform_geo <- function(g, level) {
   if (level=='PR') {
     name_change <- name_change %>% rbind(c('rpid','C_UID'))
   }
-  old_names <- names(g)
-  for (x in intersect(old_names,name_change$old)) {
-    old_names[old_names==x]<-name_change$new[name_change$old==x]
-  }
-  names(g)<-old_names
+
+  used_names <- name_change %>%
+    dplyr::filter(old %in% names(g))
+
+  if (nrow(used_names)>0) g <- g %>%
+    dplyr::rename(!!!setNames(used_names$old,used_names$new))
 
   to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
   if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
@@ -488,33 +482,19 @@ transform_geo <- function(g, level) {
   return(g)
 }
 
-# Append arguments to the path of the local cache directory.
-cache_path <- function(...) {
-  cache_dir <- getOption("cancensus.cache_path")
-  if (!is.character(cache_dir)) {
-    stop("Corrupt 'cancensus.cache_path' option. Must be a path.",
-         .call = FALSE)
-  }
-  if (!file.exists(cache_dir)) {
-    dir.create(cache_dir, showWarnings = FALSE)
-  }
-  paste0(cache_dir, "/", ...)
-}
+
 
 .onAttach <- function(libname, pkgname) {
-  if (!"cancensus.api_key" %in% names(options())) {
+ # if (!"cancensus.api_key" %in% names(options())) {
     # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
-    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
-  }
+#    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
+#  }
 
-  if (!"cancensus.cache_path" %in% names(options())) {
+
+  if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
     # Cache in tmp dir by default.
     options(cancensus.cache_path = tempdir())
-    packageStartupMessage(paste("Census data is currently stored temporarily.\n\n",
-                  "In order to speed up performance, reduce API quota usage, and reduce",
-                  "unnecessary network calls, please set up a persistent cache directory by",
-                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
-                  "You may add this option, together with your API key, to your .Rprofile."))
+    packageStartupMessage(cm_no_cache_path_message)
   }
 }
 

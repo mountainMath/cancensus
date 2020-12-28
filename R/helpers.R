@@ -8,6 +8,22 @@ cancensus_base_url <- function(){
 
 robust_api_key <- function(api_key){
   api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+  api_key <- if (is.null(api_key) && !is.null(getOption("cancensus.api_key"))) { getOption("cancensus.api_key") } else { api_key }
+  api_key
+}
+
+# Append arguments to the path of the local cache directory.
+cache_path <- function(...) {
+  cache_dir <- Sys.getenv("CM_CACHE_PATH")
+  if (is.null(cache_dir)) cache_dir <- getOption("cancensus.cache_path")
+  if (!is.character(cache_dir)) {
+    stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
+         .call = FALSE)
+  }
+  if (!file.exists(cache_dir)) {
+    dir.create(cache_dir, showWarnings = FALSE)
+  }
+  file.path(cache_dir, paste0(...))
 }
 
 clean_vector_list <- function(vector_list,dataset=NULL){
@@ -93,4 +109,14 @@ install_api_key <- function(key, overwrite = FALSE, install = FALSE){
     Sys.setenv(CM_API_KEY = key)
   }
 }
+
+cm_no_cache_path_message <- paste(
+  "Census data is currently stored temporarily.\n\n",
+  "In order to speed up performance, reduce API quota usage, and reduce",
+  "unnecessary network calls, please set up a persistent cache directory by",
+  "setting the environment variable CM_CACHE_PATH= '<path to cancensus cache directory>' or ",
+  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
+  "You may add this environment varianble to your .Renviron",
+  "or add this option, together with your API key, to your .Rprofile.\n\n"
+)
 
