@@ -40,7 +40,7 @@ jobs:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+      CM_API_KEY: ${{ secrets.CM_API_KEY }}
       COMPILE_VIG: ${{ secrets.COMPILE_VIG }}
 
     steps:
