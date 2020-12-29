@@ -43,6 +43,10 @@ articles:
       contents:
       - Dwellings_by_document_type_cross_tabulation
       - Taxfiler_Data
+    - title: Finding intersecting geometries from custom data
+      navbar: ~
+      contents:
+      - intersecting_geometries
 
 authors:
   Jens von Bergmann:

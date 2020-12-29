@@ -4,6 +4,12 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/index.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/CODES_TABLE.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/COV_SKYTRAIN_STATIONS.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/as_census_region_list.html</loc>
   </url>
   <url>
@@ -68,5 +74,8 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/intersecting_geometries.html</loc>
   </url>
 </urlset>

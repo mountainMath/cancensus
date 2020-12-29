@@ -1,0 +1,65 @@
+---
+title: "Finding intersecting geometries from custom data"
+subtitle: "Bring custom data and identify corresponding census geographies"
+output: rmarkdown::html_vignette
+mainfont: Roboto
+vignette: >
+  %\VignetteIndexEntry{Finding intersecting geometries from custom data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  comment = "#>",
+  eval = nzchar(Sys.getenv("COMPILE_VIG"))
+)
+```
+
+```{r setup}
+library(cancensus)
+library(dplyr)
+library(ggplot2)
+library(sf)
+```
+
+One frequent use case in working with census data is to pull data for specific areas one is intersted in that don't necessarily correspond to census boundaries that are known up-front. Users might already have geospatial data that cover the extent of an area of interest.
+
+As an example, consider we are interested in understanding the tenure split in census tracts near skytrain stations in Vancouver. The `COV_SKYTRAIN_STATIONS` dataset that ships with the package is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. We are interested in census tracts within 800m of these stations.
+
+```{r}
+cov_stations <- COV_SKYTRAIN_STATIONS %>%
+  st_transform(26910) %>%
+  st_buffer(800) %>%
+  st_transform(4326)
+```
+
+We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) within the 800m buffer.
+
+```{r}
+station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry = cov_stations)
+station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_stations)
+```
+
+These return a list of census geo identifiers suitable for use in the `get_census` 'region' argument.
+
+```{r}
+station_city <-  get_census("CA16", regions = station_city_ids, geo_format = 'sf')
+station_cts <-   get_census("CA16", regions = station_ct_ids, geo_format = 'sf')
+```
+
+To understand how these relate we plot the data.
+
+```{r}
+ggplot(station_city) +
+  geom_sf(fill=NA) +
+  geom_sf(data=station_cts,fill="steelblue") +
+  geom_sf(data=cov_stations,fill="brown",alpha=0.5) +
+  coord_sf(datum=NA)
+```
+
+We could have requested census variables of interest to better understand the neighbourhood of the skytrain stations. Or we might want to esimate values of census variables within station catchments, in which case the `tongfen_estimate` method of the [`tongfen` package](https://mountainmath.github.io/tongfen/index.html) might be useful.
+

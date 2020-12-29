@@ -131,4 +131,12 @@ cm_no_cache_path_message <- paste(
 #' @keywords data
 NULL
 
+#' A dataset City of Vancouver skytrain station locations
+#' @name COV_SKYTRAIN_STATIONS
+#' @docType data
+#' @author City of Vancouver Open Data
+#' @references \url{https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/}
+#' @keywords data
+NULL
+
 
