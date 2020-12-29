@@ -31,17 +31,14 @@ One frequent use case in working with census data is to pull data for specific a
 As an example, consider we are interested in understanding the tenure split in census tracts near skytrain stations in Vancouver. The `COV_SKYTRAIN_STATIONS` dataset that ships with the package is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. We are interested in census tracts within 800m of these stations.
 
 ```{r}
-cov_stations <- COV_SKYTRAIN_STATIONS %>%
-  st_transform(26910) %>%
-  st_buffer(800) %>%
-  st_transform(4326)
+cov_station_buffers <- COV_SKYTRAIN_STATIONS 
 ```
 
 We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) within the 800m buffer.
 
 ```{r}
-station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry = cov_stations)
-station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_stations)
+station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry = cov_station_buffers)
+station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_station_buffers)
 ```
 
 These return a list of census geo identifiers suitable for use in the `get_census` 'region' argument.
@@ -57,9 +54,27 @@ To understand how these relate we plot the data.
 ggplot(station_city) +
   geom_sf(fill=NA) +
   geom_sf(data=station_cts,fill="steelblue") +
-  geom_sf(data=cov_stations,fill="brown",alpha=0.5) +
-  coord_sf(datum=NA)
+  geom_sf(data=cov_station_buffers,fill="brown",alpha=0.5) +
+  coord_sf(datum=NA) +
+  labs(title="CTs covered by City of Vancouver skytrain station catchments",
+       caption="StatCan Census 2016")
 ```
+
+To get a closer match we can cut out the dissemination areas intersecting the station catchemnts.
+
+```{r}
+station_das <-   get_intersecting_geometries("CA16", level = "DA", geometry = cov_station_buffers) %>% 
+  get_census("CA16", regions = ., geo_format = 'sf')
+
+ggplot(station_city) +
+  geom_sf(fill=NA) +
+  geom_sf(data=station_das,fill="steelblue") +
+  geom_sf(data=cov_station_buffers,fill="brown",alpha=0.5) +
+  coord_sf(datum=NA) +
+  labs(title="DAs covered by City of Vancouver skytrain station catchments",
+       caption="StatCan Census 2016")
+```
+
 
 We could have requested census variables of interest to better understand the neighbourhood of the skytrain stations. Or we might want to esimate values of census variables within station catchments, in which case the `tongfen_estimate` method of the [`tongfen` package](https://mountainmath.github.io/tongfen/index.html) might be useful.
 
