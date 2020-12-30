@@ -32,9 +32,7 @@ As an example, consider we are interested in understanding the tenure split in c
 
 ```{r}
 cov_station_buffers <- COV_SKYTRAIN_STATIONS %>%
-  st_transform(26910) %>%
-  st_buffer(800) %>%
-  st_transform(4326)
+  st_set_crs(4326) # needed for ubuntu with old GDAL
 ```
 
 We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) within the 800m buffer.
