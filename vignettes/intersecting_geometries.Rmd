@@ -31,7 +31,7 @@ One frequent use case in working with census data is to pull data for specific a
 As an example, consider we are interested in understanding the tenure split in census tracts near skytrain stations in Vancouver. The `COV_SKYTRAIN_STATIONS` dataset that ships with the package is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. We are interested in census tracts within 800m of these stations.
 
 ```{r}
-cov_station_buffers <- COV_SKYTRAIN_STATIONS %>% st_crs(4326)
+cov_station_buffers <- COV_SKYTRAIN_STATIONS %>% st_set_crs(4326)
 ```
 
 We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) within the 800m buffer.
