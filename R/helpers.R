@@ -54,7 +54,7 @@ dataset_from_vector_list <- function(vector_list){
   dataset
 }
 
-cancensus_na_strings <- c("x", "F", "...", "..", "-","N","*","**")
+cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 
 as.num = function(x, na.strings = cancensus_na_strings) {
   stopifnot(is.character(x))

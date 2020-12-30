@@ -87,11 +87,17 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
-    param_string <- paste0("regions=", regions,
+    params <- list(regions=as.character(regions),
+                   vectors=jsonlite::toJSON(vectors),
+                   level=level,
+                   dataset=dataset,
+                   api_key=api_key)
+    param_string <- paste0("regions=", as.character(regions),
                            # Convert vectors to a JSON list.
                            "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
     if (is.na(geo_format)) param_string=paste0(param_string,"&geo_hierarchy=true")
+    if (is.na(geo_format)) params["geo_hierarchy"]="true"
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
@@ -99,12 +105,12 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
                    "options(cancensus.api_key = '<your API key>') to set one."))
       }
-      url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
+      url <- paste0(base_url, "data.csv")
       response <- if (!quiet) {
         message("Querying CensusMapper API...")
-        httr::GET(url, httr::progress())
+        httr::POST(url, httr::progress(), body=params)
       } else {
-        httr::GET(url)
+        httr::POST(url, body=params)
       }
       handle_cm_status_code(response, NULL)
 
@@ -114,21 +120,19 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           readr::read_csv(na = cancensus_na_strings,
-                          col_types = list(.default = "c")) %>%
-          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]), as.num) %>%
-          dplyr::mutate(Type = as.factor(.data$Type),
-                        `Region Name` = as.factor(.data$`Region Name`))
+                          col_types = list(.default = "c"))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble(.name_repair = "minimal") %>%
-          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]), as.num) %>%
-          dplyr::mutate(Type = as.factor(.data$Type),
-                        `Region Name` = as.factor(.data$`Region Name`))
+          dplyr::as_tibble(.name_repair = "minimal")
       }
+      result <- result %>%
+        dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                           names(.)[grepl("v_",names(.))]), as.num) %>%
+        dplyr::mutate(Type = as.factor(.data$Type),
+                      `Region Name` = as.factor(.data$`Region Name`))
+
       if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
@@ -140,6 +144,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
   if (!is.na(geo_format)) {
+    params <- list(regions=regions,
+                   level=level,
+                   dataset=dataset,
+                   api_key=api_key)
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
     geo_base_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
@@ -149,13 +157,12 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
                    "options(cancensus.api_key = '<your API key>') to set one."))
       }
-      url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
-                    api_key)
+      url <- paste0(base_url, "geo.geojson")
       response <- if (!quiet) {
         message("Querying CensusMapper API...")
-        httr::GET(url, httr::progress())
+        httr::POST(url, httr::progress(),body=params)
       } else {
-        httr::GET(url)
+        httr::POST(url,body=params)
       }
       handle_cm_status_code(response, NULL)
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
@@ -414,7 +421,7 @@ transform_geo <- function(g, level) {
   as_numeric=c("a","nrr")
   as_factor=c("t")
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
-  as_character=append(append(as_character,as_numeric),as_integer)
+  #as_character=c(as_character,as_numeric,as_integer)
 
   g <- g %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
