@@ -34,6 +34,7 @@ library(sf)
 
 ```{r}
 cov_station_buffers <- COV_SKYTRAIN_STATIONS %>%
+  st_set_crs(4326) %>% # needed for Ubuntu or systems with old GDAL
   st_transform(26910) %>% # using a projected coordinate system to draw our buffers 
   st_buffer(800) %>% 
   st_transform(4326) # and reproject back into lat/lon
