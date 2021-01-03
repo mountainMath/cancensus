@@ -23,7 +23,7 @@ A frequent application of census data is to evaluate values for specific areas t
 
 ## A simple example
 
-As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the `COV_SKYTRAIN_STATIONS` dataset that ships with the package and is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. For our example we are interested in census tracts within 800m of these stations.
+As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the `COV_SKYTRAIN_STATIONS` dataset that ships with the package and is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. For our example we are interested in census tracts within 800m of these stations, which ships with the package.
 
 ```{r setup}
 library(cancensus)
@@ -34,10 +34,7 @@ library(sf)
 
 ```{r}
 cov_station_buffers <- COV_SKYTRAIN_STATIONS %>%
-  st_set_crs(4326) %>% # needed for Ubuntu or systems with old GDAL
-  st_transform(3348) %>% # using a projected coordinate system to draw our buffers 
-  st_buffer(800) %>% 
-  st_transform(4326) # and reproject back into lat/lon
+  st_set_crs(4326)  # needed for Ubuntu or systems with old GDAL
 ```
 
 We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) that intersect the 800m station buffer objects. 
@@ -47,12 +44,13 @@ station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry 
 station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_station_buffers)
 ```
 
-These return a list of census geographic identifiers suitable for use in the 'region' argument in `get_census`.
+These return a list of census geographic identifiers suitable for use in the 'region' argument in `get_census`. We may be interested in the transit to work mode share in each of these buffers.
 
 ```{r}
-station_city <-  get_census("CA16", regions = station_city_ids, geo_format = 'sf') %>% 
+variables <- c(mode_base="v_CA16_5792",transit="v_CA16_5801",walk="v_CA16_5804")
+station_city <-  get_census("CA16", regions = station_city_ids, vectors = variables, geo_format = 'sf') %>% 
   filter(name == "Vancouver (CY)")
-station_cts <-   get_census("CA16", regions = station_ct_ids, geo_format = 'sf')
+station_cts <-   get_census("CA16", regions = station_ct_ids, vectors = variables, geo_format = 'sf')
 ```
 
 To understand how these relate we plot the data.
@@ -60,10 +58,12 @@ To understand how these relate we plot the data.
 ```{r}
 ggplot(station_city) +
   geom_sf(fill=NA) +
-  geom_sf(data=station_cts,fill="steelblue") +
-  geom_sf(data=cov_station_buffers,fill="brown",alpha=0.5) +
+  geom_sf(data=station_cts,aes(fill=((walk+transit)/mode_base))) +
+  geom_sf(data=cov_station_buffers,fill=NA,alpha=0.5,color="steelblue") +
+  scale_fill_viridis_c(option="magma",labels=scales::percent) +
   coord_sf(datum=NA) +
   labs(title="CTs within City of Vancouver skytrain station catchments",
+       fill="Walk or\ntransit\nto work",
        caption="StatCan Census 2016")
 ```
 
@@ -71,74 +71,21 @@ To get a closer match we can cut out the dissemination areas intersecting the st
 
 ```{r}
 station_das <-   get_intersecting_geometries("CA16", level = "DA", geometry = cov_station_buffers) %>% 
-  get_census("CA16", regions = ., geo_format = 'sf')
+  get_census("CA16", regions = ., vectors=variables, geo_format = 'sf')
 
 ggplot(station_city) +
   geom_sf(fill=NA) +
-  geom_sf(data=station_das,fill="steelblue") +
-  geom_sf(data=cov_station_buffers,fill="brown",alpha=0.5) +
+  geom_sf(data=station_das,aes(fill=((walk+transit)/mode_base))) +
+  geom_sf(data=cov_station_buffers,fill=NA,alpha=0.5,color="steelblue") +
+  scale_fill_viridis_c(option="magma",labels=scales::percent) +
   coord_sf(datum=NA) +
-  labs(title="DAs covered by City of Vancouver skytrain station catchments",
+  labs(title="DAs within City of Vancouver skytrain station catchments",
+       fill="Walk or\ntransit\nto work",
        caption="StatCan Census 2016")
+
 ```
 
-## A more complicated example: change in population 2005-2015 
-
-Suppose we want to compare the total population change in these areas over the ten year period between the 2006 and 2016 censuses. This is straightforward to do so and simply requires extending the above with some common spatial operations. Here what we do is create a custom function that looks up the intersecting geometry for a given area, one station buffer at a time, and returns the relevant dissemination areas. 
-
-```{r message=FALSE, warning=FALSE}
-library(purrr)
-
-get_station_das <- function(selected_station, selected_year) {
-  station_geography <- cov_station_buffers %>% filter(station == selected_station)
-  da <- get_intersecting_geometries(selected_year, level = "DA", station_geography) %>% 
-    get_census(selected_year, regions = ., geo_format = 'sf')
-  da %>% 
-    mutate(station = selected_station,
-           year = selected_year)
-}
-
-station_16 = map2_df(cov_station_buffers$station, "CA16", get_station_das)
-station_06 = map2_df(cov_station_buffers$station, "CA06", get_station_das)
-stations_comp <- bind_rows(station_16, station_06)
-```
-
-With the associated DAs of each station, the rest is pretty straightforward. We want to aggregate the DAs and their population data for each station for each census year. 
-
-```{r}
-decade_change <- stations_comp %>% 
-  group_by(station, year) %>% 
-  summarise(pop = sum(Population)) %>% 
-  group_by(station) %>% 
-  mutate(change = last(pop)-first(pop)) %>% 
-  filter(year == "CA16")
-
-ggplot(decade_change, aes(x = reorder(station, change), y = change)) +
-  geom_bar(stat = "identity") + 
-  coord_flip() +
-  labs(x = "Vancouver Skytrain Station", y = 'Change in pop, 2005-2015',
-       title = 'Change in population by Skytrain station',
-       subtitle = 'Census 2006 to Census 2020, 800m catchment area')
-```
-
-We can also show this as a map:
-
-```{r}
-ggplot() +
-  geom_sf(data = decade_change) + 
-  geom_sf(data = cov_station_buffers %>% 
-            left_join(decade_change %>% 
-                        select(station, change) %>% 
-                        st_drop_geometry()), aes(fill = change), alpha = 0.5) +
-  geom_sf(data = COV_SKYTRAIN_STATIONS %>% 
-            left_join(decade_change %>% 
-                        select(station, change) %>% 
-                        st_drop_geometry()), aes(colour = change)) +
-  scale_fill_viridis_c() +
-  scale_colour_viridis_c() +
-  coord_sf(datum=NA)
-```
 ## Addendum
 
-For those wanting to estimate values of census variables strictly within catchments areas,  rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The `tongfen_estimate` method from the [`tongfen` package](https://mountainmath.github.io/tongfen/index.html) is useful in this case. This is a related package that is designed to work in tandem with `cancensus` in order to facilitate census geography aggregation and dealing with the modifiable areal unit problem (MAUP).
+We may take this further by estimate values of census variables strictly within catchments areas. Rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The `tongfen_estimate` method from the [`tongfen` package](https://mountainmath.github.io/tongfen/index.html) is useful in this case. This is a related package that is designed to work in tandem with `cancensus` in order to facilitate census geography aggregation and is designed to make census data comparable across several censuses.
 

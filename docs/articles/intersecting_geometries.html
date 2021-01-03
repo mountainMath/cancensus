@@ -131,7 +131,7 @@
 <div id="a-simple-example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-simple-example" class="anchor"></a>A simple example</h2>
-<p>As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the <code>COV_SKYTRAIN_STATIONS</code> dataset that ships with the package and is derived from the <a href="https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/">City of Vancouver Open Data portal</a> and contains their locations. For our example we are interested in census tracts within 800m of these stations.</p>
+<p>As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the <code>COV_SKYTRAIN_STATIONS</code> dataset that ships with the package and is derived from the <a href="https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/">City of Vancouver Open Data portal</a> and contains their locations. For our example we are interested in census tracts within 800m of these stations, which ships with the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus">cancensus</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
@@ -139,10 +139,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="va">cov_station_buffers</span> <span class="op">&lt;-</span> <span class="va">COV_SKYTRAIN_STATIONS</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_set_crs</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># needed for Ubuntu or systems with old GDAL</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">26910</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># using a projected coordinate system to draw our buffers </span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_buffer</a></span><span class="op">(</span><span class="fl">800</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span> <span class="co"># and reproject back into lat/lon</span></pre></div>
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_set_crs</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>  <span class="co"># needed for Ubuntu or systems with old GDAL</span></pre></div>
 <p>We then use the <code>get_intersecting_geometries</code> call to obtain the list of municipalities (CSDs) and census tracts (CTs) that intersect the 800m station buffer objects.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>station_city_ids <span class="ot">&lt;-</span> <span class="fu">get_intersecting_geometries</span>(<span class="st">"CA16"</span>, <span class="at">level =</span> <span class="st">"CSD"</span>, <span class="at">geometry =</span> cov_station_buffers)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -160,737 +157,165 @@
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">800</span> B     </span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">800</span> B     </span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">800</span> B</span></code></pre></div>
-<p>These return a list of census geographic identifiers suitable for use in the ‘region’ argument in <code>get_census</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>station_city <span class="ot">&lt;-</span>  <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> station_city_ids, <span class="at">geo_format =</span> <span class="st">'sf'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"Vancouver (CY)"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>station_cts <span class="ot">&lt;-</span>   <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> station_ct_ids, <span class="at">geo_format =</span> <span class="st">'sf'</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<p>These return a list of census geographic identifiers suitable for use in the ‘region’ argument in <code>get_census</code>. We may be interested in the transit to work mode share in each of these buffers.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">mode_base=</span><span class="st">"v_CA16_5792"</span>,<span class="at">transit=</span><span class="st">"v_CA16_5801"</span>,<span class="at">walk=</span><span class="st">"v_CA16_5804"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>station_city <span class="ot">&lt;-</span>  <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> station_city_ids, <span class="at">vectors =</span> variables, <span class="at">geo_format =</span> <span class="st">'sf'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"Vancouver (CY)"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">24</span> kB     </span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">24</span> kB     </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">28</span> kB     </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">28</span> kB     </span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB</span></code></pre></div>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>station_cts <span class="ot">&lt;-</span>   <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> station_ct_ids, <span class="at">vectors =</span> variables, <span class="at">geo_format =</span> <span class="st">'sf'</span>)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">1.8</span> kB     </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB     </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">41</span> kB</span></code></pre></div>
 <p>To understand how these relate we plot the data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_cts</span>,fill<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="st">"brown"</span>,alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_cts</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"CTs within City of Vancouver skytrain station catchments"</span>,
+       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,
        caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></pre></div>
 <p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>To get a closer match we can cut out the dissemination areas intersecting the station catchment areas.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>station_das <span class="ot">&lt;-</span>   <span class="fu">get_intersecting_geometries</span>(<span class="st">"CA16"</span>, <span class="at">level =</span> <span class="st">"DA"</span>, <span class="at">geometry =</span> cov_station_buffers) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> ., <span class="at">geo_format =</span> <span class="st">'sf'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_census</span>(<span class="st">"CA16"</span>, <span class="at">regions =</span> ., <span class="at">vectors=</span>variables, <span class="at">geo_format =</span> <span class="st">'sf'</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.7</span> kB     </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.7</span> kB     </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">20</span> kB     </span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">36</span> kB     </span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">53</span> kB     </span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">69</span> kB     </span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">76</span> kB     </span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">76</span> kB     </span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">80</span> kB     </span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">80</span> kB     </span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">16</span> kB     </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">32</span> kB     </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">48</span> kB     </span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">65</span> kB     </span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">81</span> kB     </span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">81</span> kB     </span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">81</span> kB     </span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">81</span> kB     </span>
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(station_city) <span class="sc">+</span></span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>station_das,<span class="at">fill=</span><span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>cov_station_buffers,<span class="at">fill=</span><span class="st">"brown"</span>,<span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"DAs covered by City of Vancouver skytrain station catchments"</span>,</span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">"StatCan Census 2016"</span>)</span></code></pre></div>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB     </span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">84</span> kB</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(station_city) <span class="sc">+</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>station_das,<span class="fu">aes</span>(<span class="at">fill=</span>((walk<span class="sc">+</span>transit)<span class="sc">/</span>mode_base))) <span class="sc">+</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>cov_station_buffers,<span class="at">fill=</span><span class="cn">NA</span>,<span class="at">alpha=</span><span class="fl">0.5</span>,<span class="at">color=</span><span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option=</span><span class="st">"magma"</span>,<span class="at">labels=</span>scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill=</span><span class="st">"Walk or</span><span class="sc">\n</span><span class="st">transit</span><span class="sc">\n</span><span class="st">to work"</span>,</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">"StatCan Census 2016"</span>)</span></code></pre></div>
 <p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
-<div id="a-more-complicated-example-change-in-population-2005-2015" class="section level2">
+<div id="addendum" class="section level2">
 <h2 class="hasAnchor">
-<a href="#a-more-complicated-example-change-in-population-2005-2015" class="anchor"></a>A more complicated example: change in population 2005-2015</h2>
-<p>Suppose we want to compare the total population change in these areas over the ten year period between the 2006 and 2016 censuses. This is straightforward to do so and simply requires extending the above with some common spatial operations. Here what we do is create a custom function that looks up the intersecting geometry for a given area, one station buffer at a time, and returns the relevant dissemination areas.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>get_station_das <span class="ot">&lt;-</span> <span class="cf">function</span>(selected_station, selected_year) {</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  station_geography <span class="ot">&lt;-</span> cov_station_buffers <span class="sc">%&gt;%</span> <span class="fu">filter</span>(station <span class="sc">==</span> selected_station)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  da <span class="ot">&lt;-</span> <span class="fu">get_intersecting_geometries</span>(selected_year, <span class="at">level =</span> <span class="st">"DA"</span>, station_geography) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">get_census</span>(selected_year, <span class="at">regions =</span> ., <span class="at">geo_format =</span> <span class="st">'sf'</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  da <span class="sc">%&gt;%</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">station =</span> selected_station,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">year =</span> selected_year)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>station_16 <span class="ot">=</span> <span class="fu">map2_df</span>(cov_station_buffers<span class="sc">$</span>station, <span class="st">"CA16"</span>, get_station_das)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.9</span> kB     </span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">440</span> B     </span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.9</span> kB     </span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">360</span> B     </span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.9</span> kB     </span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">240</span> B     </span>
-<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.2</span> kB     </span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">8</span> kB     </span>
-<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.7</span> kB     </span>
-<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.5</span> kB     </span>
-<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.3</span> kB     </span>
-<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.1</span> kB     </span>
-<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">420</span> B     </span>
-<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.6</span> kB     </span>
-<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-252"><a href="#cb7-252" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-253"><a href="#cb7-253" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">210</span> B     </span>
-<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.4</span> kB     </span>
-<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-266"><a href="#cb7-266" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-267"><a href="#cb7-267" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.3</span> kB     </span>
-<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">460</span> B     </span>
-<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">12</span> kB     </span>
-<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB     </span>
-<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB     </span>
-<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB     </span>
-<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB     </span>
-<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB     </span>
-<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">8.7</span> kB</span>
-<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a>station_06 <span class="ot">=</span> <span class="fu">map2_df</span>(cov_station_buffers<span class="sc">$</span>station, <span class="st">"CA06"</span>, get_station_das)</span>
-<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-300"><a href="#cb7-300" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-301"><a href="#cb7-301" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-302"><a href="#cb7-302" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-303"><a href="#cb7-303" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-304"><a href="#cb7-304" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-305"><a href="#cb7-305" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-306"><a href="#cb7-306" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-307"><a href="#cb7-307" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-308"><a href="#cb7-308" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-309"><a href="#cb7-309" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-310"><a href="#cb7-310" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-311"><a href="#cb7-311" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.9</span> kB     </span>
-<span id="cb7-312"><a href="#cb7-312" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-313"><a href="#cb7-313" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-314"><a href="#cb7-314" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-315"><a href="#cb7-315" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-316"><a href="#cb7-316" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-317"><a href="#cb7-317" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-318"><a href="#cb7-318" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-319"><a href="#cb7-319" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-320"><a href="#cb7-320" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-321"><a href="#cb7-321" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-322"><a href="#cb7-322" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-323"><a href="#cb7-323" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-324"><a href="#cb7-324" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-325"><a href="#cb7-325" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-326"><a href="#cb7-326" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-327"><a href="#cb7-327" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-328"><a href="#cb7-328" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-329"><a href="#cb7-329" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">340</span> B     </span>
-<span id="cb7-330"><a href="#cb7-330" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-331"><a href="#cb7-331" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-332"><a href="#cb7-332" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-333"><a href="#cb7-333" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-334"><a href="#cb7-334" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-335"><a href="#cb7-335" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.4</span> kB     </span>
-<span id="cb7-336"><a href="#cb7-336" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-337"><a href="#cb7-337" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-338"><a href="#cb7-338" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-339"><a href="#cb7-339" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-340"><a href="#cb7-340" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-341"><a href="#cb7-341" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">180</span> B     </span>
-<span id="cb7-342"><a href="#cb7-342" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-343"><a href="#cb7-343" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-344"><a href="#cb7-344" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-345"><a href="#cb7-345" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-346"><a href="#cb7-346" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-347"><a href="#cb7-347" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.5</span> kB     </span>
-<span id="cb7-348"><a href="#cb7-348" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-349"><a href="#cb7-349" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-350"><a href="#cb7-350" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-351"><a href="#cb7-351" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-352"><a href="#cb7-352" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-353"><a href="#cb7-353" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">300</span> B     </span>
-<span id="cb7-354"><a href="#cb7-354" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-355"><a href="#cb7-355" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-356"><a href="#cb7-356" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-357"><a href="#cb7-357" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-358"><a href="#cb7-358" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-359"><a href="#cb7-359" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-360"><a href="#cb7-360" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-361"><a href="#cb7-361" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.4</span> kB     </span>
-<span id="cb7-362"><a href="#cb7-362" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-363"><a href="#cb7-363" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-364"><a href="#cb7-364" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-365"><a href="#cb7-365" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-366"><a href="#cb7-366" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-367"><a href="#cb7-367" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">320</span> B     </span>
-<span id="cb7-368"><a href="#cb7-368" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-369"><a href="#cb7-369" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-370"><a href="#cb7-370" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-371"><a href="#cb7-371" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-372"><a href="#cb7-372" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-373"><a href="#cb7-373" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-374"><a href="#cb7-374" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-375"><a href="#cb7-375" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.1</span> kB     </span>
-<span id="cb7-376"><a href="#cb7-376" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-377"><a href="#cb7-377" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-378"><a href="#cb7-378" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-379"><a href="#cb7-379" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-380"><a href="#cb7-380" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-381"><a href="#cb7-381" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-382"><a href="#cb7-382" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-383"><a href="#cb7-383" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-384"><a href="#cb7-384" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-385"><a href="#cb7-385" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-386"><a href="#cb7-386" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-387"><a href="#cb7-387" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-388"><a href="#cb7-388" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-389"><a href="#cb7-389" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">6.5</span> kB     </span>
-<span id="cb7-390"><a href="#cb7-390" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-391"><a href="#cb7-391" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-392"><a href="#cb7-392" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-393"><a href="#cb7-393" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-394"><a href="#cb7-394" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-395"><a href="#cb7-395" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-396"><a href="#cb7-396" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-397"><a href="#cb7-397" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-398"><a href="#cb7-398" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-399"><a href="#cb7-399" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-400"><a href="#cb7-400" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-401"><a href="#cb7-401" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-402"><a href="#cb7-402" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-403"><a href="#cb7-403" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-404"><a href="#cb7-404" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-405"><a href="#cb7-405" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-406"><a href="#cb7-406" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-407"><a href="#cb7-407" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-408"><a href="#cb7-408" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-409"><a href="#cb7-409" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">270</span> B     </span>
-<span id="cb7-410"><a href="#cb7-410" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-411"><a href="#cb7-411" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-412"><a href="#cb7-412" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-413"><a href="#cb7-413" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-414"><a href="#cb7-414" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-415"><a href="#cb7-415" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-416"><a href="#cb7-416" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-417"><a href="#cb7-417" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.2</span> kB     </span>
-<span id="cb7-418"><a href="#cb7-418" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-419"><a href="#cb7-419" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-420"><a href="#cb7-420" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-421"><a href="#cb7-421" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-422"><a href="#cb7-422" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-423"><a href="#cb7-423" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">350</span> B     </span>
-<span id="cb7-424"><a href="#cb7-424" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-425"><a href="#cb7-425" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-426"><a href="#cb7-426" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-427"><a href="#cb7-427" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-428"><a href="#cb7-428" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-429"><a href="#cb7-429" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-430"><a href="#cb7-430" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-431"><a href="#cb7-431" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">6</span> kB     </span>
-<span id="cb7-432"><a href="#cb7-432" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-433"><a href="#cb7-433" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-434"><a href="#cb7-434" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-435"><a href="#cb7-435" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-436"><a href="#cb7-436" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-437"><a href="#cb7-437" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-438"><a href="#cb7-438" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-439"><a href="#cb7-439" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-440"><a href="#cb7-440" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-441"><a href="#cb7-441" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-442"><a href="#cb7-442" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-443"><a href="#cb7-443" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-444"><a href="#cb7-444" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-445"><a href="#cb7-445" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">5</span> kB     </span>
-<span id="cb7-446"><a href="#cb7-446" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-447"><a href="#cb7-447" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-448"><a href="#cb7-448" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-449"><a href="#cb7-449" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-450"><a href="#cb7-450" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-451"><a href="#cb7-451" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">480</span> B     </span>
-<span id="cb7-452"><a href="#cb7-452" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-453"><a href="#cb7-453" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-454"><a href="#cb7-454" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-455"><a href="#cb7-455" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-456"><a href="#cb7-456" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-457"><a href="#cb7-457" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-458"><a href="#cb7-458" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-459"><a href="#cb7-459" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.8</span> kB     </span>
-<span id="cb7-460"><a href="#cb7-460" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-461"><a href="#cb7-461" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-462"><a href="#cb7-462" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-463"><a href="#cb7-463" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-464"><a href="#cb7-464" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-465"><a href="#cb7-465" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">200</span> B     </span>
-<span id="cb7-466"><a href="#cb7-466" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-467"><a href="#cb7-467" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-468"><a href="#cb7-468" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-469"><a href="#cb7-469" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-470"><a href="#cb7-470" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-471"><a href="#cb7-471" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">2.9</span> kB     </span>
-<span id="cb7-472"><a href="#cb7-472" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-473"><a href="#cb7-473" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-474"><a href="#cb7-474" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-475"><a href="#cb7-475" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-476"><a href="#cb7-476" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-477"><a href="#cb7-477" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">450</span> B     </span>
-<span id="cb7-478"><a href="#cb7-478" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-479"><a href="#cb7-479" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-480"><a href="#cb7-480" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-481"><a href="#cb7-481" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-482"><a href="#cb7-482" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-483"><a href="#cb7-483" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-484"><a href="#cb7-484" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-485"><a href="#cb7-485" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.2</span> kB     </span>
-<span id="cb7-486"><a href="#cb7-486" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-487"><a href="#cb7-487" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-488"><a href="#cb7-488" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-489"><a href="#cb7-489" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-490"><a href="#cb7-490" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-491"><a href="#cb7-491" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">330</span> B     </span>
-<span id="cb7-492"><a href="#cb7-492" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-493"><a href="#cb7-493" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-494"><a href="#cb7-494" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-495"><a href="#cb7-495" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-496"><a href="#cb7-496" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-497"><a href="#cb7-497" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.1</span> kB     </span>
-<span id="cb7-498"><a href="#cb7-498" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-499"><a href="#cb7-499" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-500"><a href="#cb7-500" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-501"><a href="#cb7-501" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-502"><a href="#cb7-502" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-503"><a href="#cb7-503" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">390</span> B     </span>
-<span id="cb7-504"><a href="#cb7-504" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-505"><a href="#cb7-505" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-506"><a href="#cb7-506" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-507"><a href="#cb7-507" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-508"><a href="#cb7-508" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-509"><a href="#cb7-509" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">5.5</span> kB     </span>
-<span id="cb7-510"><a href="#cb7-510" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-511"><a href="#cb7-511" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-512"><a href="#cb7-512" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-513"><a href="#cb7-513" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-514"><a href="#cb7-514" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-515"><a href="#cb7-515" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">400</span> B     </span>
-<span id="cb7-516"><a href="#cb7-516" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-517"><a href="#cb7-517" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-518"><a href="#cb7-518" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-519"><a href="#cb7-519" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-520"><a href="#cb7-520" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-521"><a href="#cb7-521" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">4.8</span> kB     </span>
-<span id="cb7-522"><a href="#cb7-522" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-523"><a href="#cb7-523" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-524"><a href="#cb7-524" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-525"><a href="#cb7-525" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-526"><a href="#cb7-526" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-527"><a href="#cb7-527" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">230</span> B     </span>
-<span id="cb7-528"><a href="#cb7-528" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-529"><a href="#cb7-529" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-530"><a href="#cb7-530" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-531"><a href="#cb7-531" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-532"><a href="#cb7-532" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-533"><a href="#cb7-533" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.2</span> kB     </span>
-<span id="cb7-534"><a href="#cb7-534" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-535"><a href="#cb7-535" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-536"><a href="#cb7-536" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-537"><a href="#cb7-537" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-538"><a href="#cb7-538" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-539"><a href="#cb7-539" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">250</span> B     </span>
-<span id="cb7-540"><a href="#cb7-540" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-541"><a href="#cb7-541" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-542"><a href="#cb7-542" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-543"><a href="#cb7-543" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-544"><a href="#cb7-544" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-545"><a href="#cb7-545" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.2</span> kB     </span>
-<span id="cb7-546"><a href="#cb7-546" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-547"><a href="#cb7-547" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-548"><a href="#cb7-548" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-549"><a href="#cb7-549" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-550"><a href="#cb7-550" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-551"><a href="#cb7-551" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-552"><a href="#cb7-552" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-553"><a href="#cb7-553" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-554"><a href="#cb7-554" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-555"><a href="#cb7-555" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-556"><a href="#cb7-556" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-557"><a href="#cb7-557" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">9.2</span> kB     </span>
-<span id="cb7-558"><a href="#cb7-558" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-559"><a href="#cb7-559" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-560"><a href="#cb7-560" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-561"><a href="#cb7-561" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-562"><a href="#cb7-562" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-563"><a href="#cb7-563" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="dv">430</span> B     </span>
-<span id="cb7-564"><a href="#cb7-564" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-565"><a href="#cb7-565" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">3.6</span> kB     </span>
-<span id="cb7-566"><a href="#cb7-566" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-567"><a href="#cb7-567" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-568"><a href="#cb7-568" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-569"><a href="#cb7-569" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-570"><a href="#cb7-570" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB     </span>
-<span id="cb7-571"><a href="#cb7-571" aria-hidden="true" tabindex="-1"></a>Downloading<span class="sc">:</span> <span class="fl">7.3</span> kB</span>
-<span id="cb7-572"><a href="#cb7-572" aria-hidden="true" tabindex="-1"></a>stations_comp <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(station_16, station_06)</span></code></pre></div>
-<p>With the associated DAs of each station, the rest is pretty straightforward. We want to aggregate the DAs and their population data for each station for each census year.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">decade_change</span> <span class="op">&lt;-</span> <span class="va">stations_comp</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">station</span>, <span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>pop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">Population</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">station</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>change <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">last</a></span><span class="op">(</span><span class="va">pop</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span><span class="op">(</span><span class="va">pop</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"CA16"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">decade_change</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span><span class="op">(</span><span class="va">station</span>, <span class="va">change</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">change</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Vancouver Skytrain Station"</span>, y <span class="op">=</span> <span class="st">'Change in pop, 2005-2015'</span>,
-       title <span class="op">=</span> <span class="st">'Change in population by Skytrain station'</span>,
-       subtitle <span class="op">=</span> <span class="st">'Census 2006 to Census 2020, 800m catchment area'</span><span class="op">)</span></pre></div>
-<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-<p>We can also show this as a map:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">decade_change</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">cov_station_buffers</span> <span class="op">%&gt;%</span> 
-            <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">decade_change</span> <span class="op">%&gt;%</span> 
-                        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">station</span>, <span class="va">change</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-                        <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">change</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">COV_SKYTRAIN_STATIONS</span> <span class="op">%&gt;%</span> 
-            <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">decade_change</span> <span class="op">%&gt;%</span> 
-                        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">station</span>, <span class="va">change</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-                        <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">change</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_colour_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span></pre></div>
-<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-9-1.png" width="700"> ## Addendum</p>
-<p>For those wanting to estimate values of census variables strictly within catchments areas, rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The <code>tongfen_estimate</code> method from the <a href="https://mountainmath.github.io/tongfen/index.html"><code>tongfen</code> package</a> is useful in this case. This is a related package that is designed to work in tandem with <code>cancensus</code> in order to facilitate census geography aggregation and dealing with the modifiable areal unit problem (MAUP).</p>
+<a href="#addendum" class="anchor"></a>Addendum</h2>
+<p>We may take this further by estimate values of census variables strictly within catchments areas. Rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The <code>tongfen_estimate</code> method from the <a href="https://mountainmath.github.io/tongfen/index.html"><code>tongfen</code> package</a> is useful in this case. This is a related package that is designed to work in tandem with <code>cancensus</code> in order to facilitate census geography aggregation and is designed to make census data comparable across several censuses.</p>
 </div>
   </div>
 
