@@ -85,6 +85,27 @@ ggplot(station_city) +
 
 ```
 
+However, API points for `get_intersecting_geometries` are quite limited at this point, an alternative way to obtain the same data is to first query all DAs withing the CTs identified by the previous `get_intersecting_geometries` call and then filter down to those intersecting the station buffers.
+
+```{r}
+station_das2 <- get_census("CA16", regions = station_ct_ids, vectors=variables, 
+                           geo_format = 'sf', level="DA") %>%
+  sf::st_filter(cov_station_buffers)
+
+ggplot(station_city) +
+  geom_sf(fill=NA) +
+  geom_sf(data=station_das2,aes(fill=((walk+transit)/mode_base))) +
+  geom_sf(data=cov_station_buffers,fill=NA,alpha=0.5,color="steelblue") +
+  scale_fill_viridis_c(option="magma",labels=scales::percent) +
+  coord_sf(datum=NA) +
+  labs(title="DAs within City of Vancouver skytrain station catchments",
+       fill="Walk or\ntransit\nto work",
+       caption="StatCan Census 2016")
+
+```
+
+We may increase the default quotas for the `get_intersecting_geometries` call at some point, but while we throttling API usae and monitor server impacts of the new functionality it may be preferable to use the `get_intersecting_geometries` call for higher level geographies only and add a simple line of clode to do the final bit of filtering in R. 
+
 ## Addendum
 
 We may take this further by estimate values of census variables strictly within catchments areas. Rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The `tongfen_estimate` method from the [`tongfen` package](https://mountainmath.github.io/tongfen/index.html) is useful in this case. This is a related package that is designed to work in tandem with `cancensus` in order to facilitate census geography aggregation and is designed to make census data comparable across several censuses.

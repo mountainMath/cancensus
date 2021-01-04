@@ -7,7 +7,7 @@
 #' parameter in \link{get_census} to get corresponding census geographies and variables that cover the give geometry.
 #' Input spatial objects can be any \code{sf} or \code{sfc} class objects such as \code{POINT}, \code{MULTIPOINT} or \code{POLYGON}.
 #'
-#' This function requires advanced CensusMapper API access.
+#' This function comes with CensusMapper API limits
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..

@@ -41,7 +41,7 @@ not coincide with defined census geometries. The returned value can be used as t
 parameter in \link{get_census} to get corresponding census geographies and variables that cover the give geometry.
 Input spatial objects can be any \code{sf} or \code{sfc} class objects such as \code{POINT}, \code{MULTIPOINT} or \code{POLYGON}.
 
-This function requires advanced CensusMapper API access.
+This function comes with CensusMapper API limits
 }
 \examples{
 
