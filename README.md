@@ -36,13 +36,17 @@ library(cancensus)
 
 ### API key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits.
 
-To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
+The `get_intersecting_geometries` function has a separate API quota. This functionality sets higher demands on server resources than our usual API calls and thus uses separate accounting. For the default user it returns up to 500 region identifiers a day or 5000 per month. This should suffice for most casual use cases, we will continue to monitor the impact on server load and may increase the defaults in the future.
+
+For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).
+
+To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `Sys.setenv(CM_API_KEY = '<your_api_key>')`.
 
 ### Local Cache
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `Sys.setenv(CM_CACHE_PATH = '<local cache path>')`, this enables better control over the data. This option can be stored stored in your .Renviron alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 ### Currently available datasets
 

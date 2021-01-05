@@ -79,13 +79,10 @@ install_api_key <- function(key, overwrite = FALSE, install = FALSE){
   if (install) {
     home <- Sys.getenv("HOME")
     renv <- file.path(home, ".Renviron")
-    if(file.exists(renv)){
-      # Backup original .Renviron before doing anything else here.
-    }
     if(!file.exists(renv)){
       file.create(renv)
-    }
-    else{
+    } else{
+      # Backup original .Renviron before doing anything else here.
       file.copy(renv, file.path(home, ".Renviron_backup"))
       if(isTRUE(overwrite)){
         message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
