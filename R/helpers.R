@@ -102,11 +102,44 @@ install_api_key <- function(key, overwrite = FALSE, install = FALSE){
     # Append API key to .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
     message('Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CM_API_KEY"). \nTo use now, restart R or run `readRenviron("~/.Renviron")`')
-    return(key)
   } else {
     message("To install your API key for use in future sessions, run this function with `install = TRUE`.")
     Sys.setenv(CM_API_KEY = key)
   }
+  key
+}
+
+install_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
+  if (install) {
+    home <- Sys.getenv("HOME")
+    renv <- file.path(home, ".Renviron")
+    if(!file.exists(renv)){
+      file.create(renv)
+    } else{
+      # Backup original .Renviron before doing anything else here.
+      file.copy(renv, file.path(home, ".Renviron_backup"))
+      if(isTRUE(overwrite)){
+        message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
+        oldenv=readLines(renv)
+        newenv <- oldenv[-grep("CM_CACHE_PATH", oldenv)]
+        writeLines(newenv, renv, sep = "\n")
+      } else{
+        tv <- readLines(renv)
+        if(any(grepl("CM_CACHE_PATH",tv))){
+          stop("A CM_CACHE_PATH already exists. You can overwrite it with the argument overwrite=TRUE", call.=FALSE)
+        }
+      }
+    }
+
+    keyconcat <- paste0("CM_CACHE_PATH='", cache_path, "'")
+    # Append cache path .Renviron file
+    write(keyconcat, renv, sep = "\n", append = TRUE)
+    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH"). \nTo use now, restart R or run `readRenviron("~/.Renviron")`')
+  } else {
+    message("To install your cache path for use in future sessions, run this function with `install = TRUE`.")
+    Sys.setenv('CM_CACHE_PATH' = cache_path)
+  }
+  cache_path
 }
 
 cm_no_cache_path_message <- paste(
