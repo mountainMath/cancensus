@@ -11,7 +11,7 @@
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..
-#' @param geometry An \code{sf} or \code{sfc} class object
+#' @param geometry A valid \code{sf} or \code{sfc} class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.
 #' @param simplified If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.
 #' @param use_cache If set to \code{TRUE} (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
