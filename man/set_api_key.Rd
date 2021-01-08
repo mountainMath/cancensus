@@ -7,7 +7,7 @@
 set_api_key(key, overwrite = FALSE, install = FALSE)
 }
 \arguments{
-\item{key}{a Censusmapper API key. For more information on keys see the [API key section](https://mountainmath.github.io/cancensus/index.html#api-key) on the Cancensus home page.}
+\item{key}{a Censusmapper API key. For more information on keys see the \href{https://mountainmath.github.io/cancensus/index.html#api-key}{API key section}}
 
 \item{overwrite}{Option to overwrite any existing Censusmapper keys already stored locally.}
 

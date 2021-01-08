@@ -1,10 +1,10 @@
 # cancensus 0.3.3
 
 ## Major changes
-- Added `get_intersecting_geometry` function to take advantage of new Censusmapper API endpoint
+- Added `get_intersecting_geometry` function to take advantage of new Censusmapper API endpoint. Check out the new [vignette](https://mountainmath.github.io/cancensus/articles/intersecting_geometries.html) detailing how to use it. 
 
 ## Minor changes
-- Slightly reworked how to configure and store user API keys and cache locations. New functions `set_api_key`, `set_cache_path`, `view_api_key`, and `view_cache_path` added.
+- Slightly reworked how to configure and store user API keys and cache locations. New functions `set_api_key`, `set_cache_path`, `show_api_key`, and `show_cache_path` added.
 - Fixes various warnings due to recent changes in tibble and dplyr.
 
 # cancensus 0.3.2

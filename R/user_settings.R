@@ -4,7 +4,7 @@
 #'
 #' @description Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permamently for use across sessions.
 #'
-#' @param key a Censusmapper API key. For more information on keys see the [API key section](https://mountainmath.github.io/cancensus/index.html#api-key) on the Cancensus home page.
+#' @param key a Censusmapper API key. For more information on keys see the \href{https://mountainmath.github.io/cancensus/index.html#api-key}{API key section}
 #' @param overwrite Option to overwrite any existing Censusmapper keys already stored locally.
 #' @param install Option to install permanently for use across sessions.
 #'

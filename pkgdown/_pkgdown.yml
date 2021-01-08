@@ -33,8 +33,8 @@ reference:
   - contents:
     - set_api_key
     - set_cache_path
-    - view_api_key
-    - view_cache_path
+    - show_api_key
+    - show_cache_path
 articles:
     - title: Extending Cancensus
       navbar: ~
