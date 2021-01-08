@@ -36,13 +36,13 @@ library(cancensus)
 
 ### API key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits.
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `Sys.setenv(CM_API_KEY = '<your_api_key>')`.
 
-The `get_intersecting_geometries` function has a separate API quota. This functionality sets higher demands on server resources than our usual API calls and thus uses separate accounting. For the default user it returns up to 500 region identifiers a day or 5000 per month. This should suffice for most casual use cases, we will continue to monitor the impact on server load and may increase the defaults in the future.
+CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.
+
+The new `get_intersecting_geometries` function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This _should_ suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.
 
 For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).
-
-To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `Sys.setenv(CM_API_KEY = '<your_api_key>')`.
 
 ### Local Cache
 

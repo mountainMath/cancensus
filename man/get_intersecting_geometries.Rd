@@ -24,7 +24,7 @@ get_intersecting_geometries(
 
 \item{level}{The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..}
 
-\item{geometry}{An \code{sf} or \code{sfc} class object}
+\item{geometry}{A valid \code{sf} or \code{sfc} class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.}
 
 \item{simplified}{If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.}
 
