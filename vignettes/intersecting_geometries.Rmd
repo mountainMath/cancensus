@@ -27,7 +27,7 @@ The `get_intersecting_geometries()` function is projection agnostic and accepts 
 
 As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the `COV_SKYTRAIN_STATIONS` dataset that ships with the package and is derived from the [City of Vancouver Open Data portal](https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/) and contains their locations. For our example we are interested in census tracts within 800m of these stations, which ships with the package.
 
-```{r setup, message=FALSE, warning=FALSE}
+```{r setup}
 library(cancensus)
 library(dplyr)
 library(ggplot2)
@@ -36,30 +36,34 @@ library(sf)
 
 We load the example data `COV_SKYTRAIN_STATIONS` from the package. 
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 cov_station_buffers <- COV_SKYTRAIN_STATIONS %>%
   st_set_crs(4326)  # needed for Ubuntu or systems with old GDAL but can otherwise be ignored
 ```
 
 We then use the `get_intersecting_geometries` call to obtain the list of municipalities (CSDs) and census tracts (CTs) that intersect the 800m station buffer objects. 
 
-```{r, message=FALSE, warning=FALSE}
-station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry = cov_station_buffers)
-station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_station_buffers)
+```{r}
+station_city_ids <- get_intersecting_geometries("CA16", level = "CSD", geometry = cov_station_buffers,
+                                                quiet=TRUE)
+station_ct_ids <- get_intersecting_geometries("CA16", level = "CT", geometry = cov_station_buffers,
+                                              quiet=TRUE)
 ```
 
 These return a list of census geographic identifiers suitable for use in the 'region' argument in `get_census`. We may be interested in the transit to work mode share in each of these buffers.
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 variables <- c(mode_base="v_CA16_5792",transit="v_CA16_5801",walk="v_CA16_5804")
-station_city <-  get_census("CA16", regions = station_city_ids, vectors = variables, geo_format = 'sf') %>% 
+station_city <-  get_census("CA16", regions = station_city_ids, vectors = variables, 
+                            geo_format = 'sf', quiet=TRUE) %>% 
   filter(name == "Vancouver (CY)")
-station_cts <-   get_census("CA16", regions = station_ct_ids, vectors = variables, geo_format = 'sf')
+station_cts <-   get_census("CA16", regions = station_ct_ids, vectors = variables, 
+                            geo_format = 'sf', quiet=TRUE)
 ```
 
 To understand how these relate we plot the data.
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 ggplot(station_city) +
   geom_sf(fill=NA) +
   geom_sf(data=station_cts,aes(fill=((walk+transit)/mode_base))) +
@@ -73,9 +77,10 @@ ggplot(station_city) +
 
 To get a closer match we can cut out the dissemination areas intersecting the station catchment areas. 
 
-```{r, message=FALSE, warning=FALSE}
-station_das <-   get_intersecting_geometries("CA16", level = "DA", geometry = cov_station_buffers) %>% 
-  get_census("CA16", regions = ., vectors=variables, geo_format = 'sf')
+```{r}
+station_das <-   get_intersecting_geometries("CA16", level = "DA", geometry = cov_station_buffers,
+                                             quiet=TRUE) %>% 
+  get_census("CA16", regions = ., vectors=variables, geo_format = 'sf', quiet=TRUE)
 
 ggplot(station_city) +
   geom_sf(fill=NA) +
@@ -91,9 +96,9 @@ ggplot(station_city) +
 
 However, API points for `get_intersecting_geometries` are quite limited at this point, an alternative way to obtain the same data is to first query all DAs withing the CTs identified by the previous `get_intersecting_geometries` call and then filter down to those intersecting the station buffers.
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 station_das2 <- get_census("CA16", regions = station_ct_ids, vectors=variables, 
-                           geo_format = 'sf', level="DA") %>%
+                           geo_format = 'sf', level="DA", quiet=TRUE) %>%
   sf::st_filter(cov_station_buffers)
 
 ggplot(station_city) +

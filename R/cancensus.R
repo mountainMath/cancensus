@@ -63,13 +63,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
-  # Remind to set cache directory
-
-  if(as.character(options("cancensus.cache_path"))==tempdir()) {
-    # Cache in tmp dir by default.
-    options(cancensus.cache_path = tempdir())
-    message(cm_no_cache_path_message)
-  }
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {

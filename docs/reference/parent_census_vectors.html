@@ -181,7 +181,7 @@ variables returned by
 <code>list_census_vectors</code>, <code>search_census_vectors</code>, <code>find_census_vectors</code>, or a direct string reference to the vector code.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>parent_census_vectors</span>(<span class='kw'>vector_list</span>)</pre>
+    <pre class="usage"><span class='fu'>parent_census_vectors</span><span class='op'>(</span><span class='va'>vector_list</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,25 +196,25 @@ as returned from <code>list_census_vectors</code>.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Query parent vectors directly using vector identifier</span>
-<span class='fu'>parent_census_vectors</span>(<span class='st'>"v_CA16_2519"</span>)
+<span class='fu'>parent_census_vectors</span><span class='op'>(</span><span class='st'>"v_CA16_2519"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 7</span><span>
 #&gt;   vector  type  label           units parent_vector aggregation details         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           
-#&gt; </span><span style='color: #555555;'>1</span><span> v_CA16… Total Total - Low-in… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive    CA 2016 Census;…</div><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+#&gt; </span><span style='color: #555555;'>1</span><span> v_CA16… Total Total - Low-in… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive    CA 2016 Census;…</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Example using multiple vectors coerced into a list</span>
-<span class='fu'>parent_census_vectors</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_2519"</span>,<span class='st'>"v_CA16_2520"</span>,<span class='st'>"v_CA16_2521"</span>))
+<span class='fu'>parent_census_vectors</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_CA16_2519"</span>,<span class='st'>"v_CA16_2520"</span>,<span class='st'>"v_CA16_2521"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># or, equivalently</span>
-<span class='kw'>selected_vectors</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_2519"</span>,<span class='st'>"v_CA16_2520"</span>,<span class='st'>"v_CA16_2521"</span>)
-<span class='fu'>parent_census_vectors</span>(<span class='kw'>selected_vectors</span>)
+<span class='va'>selected_vectors</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_CA16_2519"</span>,<span class='st'>"v_CA16_2520"</span>,<span class='st'>"v_CA16_2521"</span><span class='op'>)</span>
+<span class='fu'>parent_census_vectors</span><span class='op'>(</span><span class='va'>selected_vectors</span><span class='op'>)</span>
 
 <span class='co'># Example using dplyr and piped arguments</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts = <span class='fl'>FALSE</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
-<span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span>(<span class='st'>"CA16"</span>) <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='kw'>vector</span> <span class='op'>==</span> <span class='st'>"v_CA16_2519"</span>) <span class='op'>%&gt;%</span>
-  <span class='fu'>parent_census_vectors</span>()
-}
+<span class='fu'><a href='list_census_vectors.html'>list_census_vectors</a></span><span class='op'>(</span><span class='st'>"CA16"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>vector</span> <span class='op'>==</span> <span class='st'>"v_CA16_2519"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>parent_census_vectors</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

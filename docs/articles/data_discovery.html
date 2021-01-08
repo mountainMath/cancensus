@@ -112,7 +112,8 @@
 
       
 
-      </header><script src="data_discovery_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="data_discovery_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+      </header><script src="data_discovery_files/header-attrs-2.5/header-attrs.js"></script><link href="data_discovery_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="data_discovery_files/anchor-sections-1.0/anchor-sections.js"></script><link href="data_discovery_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="data_discovery_files/pagedtable-1.1/js/pagedtable.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -133,8 +134,7 @@
 <p><code>cancensus</code> can access Statistics Canada Census data for the 1996, 2001, 2006 Censuses, the 2011 Census and National Household Survey, as well as the 2016 Census. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm">website</a>.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <code>cancensus</code> now includes additional Census-linked datasets as open-data releases. These include annual tax-filer data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span>()
-</pre></div>
+<span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 28 x 6
 ##    dataset description     geo_dataset attribution   reference reference_url    
 ##    &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;            
@@ -160,8 +160,7 @@
 <h2 class="hasAnchor">
 <a href="#view-available-census-variable-vectors" class="anchor"></a>View available Census variable vectors</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span>(<span class="st">'CA16'</span>)
-</pre></div>
+<span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'CA16'</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 6,623 x 7
 ##    vector  type   label       units parent_vector aggregation  details          
 ##    &lt;chr&gt;   &lt;fct&gt;  &lt;chr&gt;       &lt;fct&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;            
@@ -188,8 +187,7 @@
 <a href="#exact-search" class="anchor"></a>Exact search</h3>
 <p>Exact search uses exact string matching. It is best used when you know exactly the term you are looking for, and is not robust to spelling errors.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Oji-cree"</span>, dataset = <span class="st">"CA16"</span>, type = <span class="st">"total"</span>, query_type = <span class="st">"exact"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Oji-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 4 x 4
 ##   vector     type  label   details                                              
 ##   &lt;chr&gt;      &lt;fct&gt; &lt;chr&gt;   &lt;chr&gt;                                                
@@ -199,8 +197,7 @@
 ## 4 v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</code></pre>
 <p>This, on the other hand, will return a warning.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"Ojib-cree"</span>, dataset = <span class="st">"CA16"</span>, type = <span class="st">"total"</span>, query_type = <span class="st">"exact"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Ojib-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></pre></div>
 <pre><code>## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.
 ## See ?find_census_vectors() for more details.
 ## 
@@ -212,8 +209,7 @@
 <a href="#keyword-search" class="anchor"></a>Keyword search</h3>
 <p>Keyword search is meant to be used when you know the approximate subject matter of the variable without knowing the exact variable you are looking for. Under the hood, keyword search splits the query and vector details into unique unigram tokens and then looks for the vectors with the greatest number of matches.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'commute mode'</span>, dataset = <span class="st">'CA16'</span>, type = <span class="st">'female'</span>, query_type = <span class="st">'keyword'</span>, interactive = <span class="fl">FALSE</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'commute mode'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 7 x 4
 ##   vector   type   label                          details                        
 ##   &lt;chr&gt;    &lt;fct&gt;  &lt;chr&gt;                          &lt;chr&gt;                          
@@ -231,8 +227,7 @@
 <a href="#semantic-search" class="anchor"></a>Semantic search</h3>
 <p>Semantic search works best with phrases. Rather than the decontextualized unigrams of keyword search, semantic search splits queries and vector details into n-grams and finds matches using approximate string distances based on the generalized Levenshtein distance.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"after tax incomes"</span>, dataset = <span class="st">"CA16"</span>, type = <span class="st">"total"</span>, query_type = <span class="st">"semantic"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 56 x 4
 ##    vector   type  label                          details                        
 ##    &lt;chr&gt;    &lt;fct&gt; &lt;chr&gt;                          &lt;chr&gt;                          
@@ -249,16 +244,14 @@
 ## # … with 46 more rows</code></pre>
 <p>Semantic search is more robust to spelling and punctuation issues that may come up with exact search. For example, while this throws a warning:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">"ojib cree"</span>, dataset = <span class="st">"CA16"</span>, type = <span class="st">"total"</span>, query_type = <span class="st">"exact"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"ojib cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></pre></div>
 <pre><code>## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.
 ## See ?find_census_vectors() for more details.
 ## 
 ## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</code></pre>
 <p>This will find the correct Census vector.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span>(<span class="st">'ojib cree'</span>, dataset = <span class="st">'CA16'</span>, type = <span class="st">'total'</span>, query_type = <span class="st">'semantic'</span>)
-</pre></div>
+<span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></pre></div>
 <pre><code>## Multiple possible matches. Results ordered by closeness.</code></pre>
 <pre><code>## # A tibble: 4 x 4
 ##   vector     type  label   details                                              
@@ -316,8 +309,7 @@
 <a href="#viewing-available-census-regions" class="anchor"></a>Viewing available Census regions</h2>
 <p>For any valid Census dataset, you can view all available Census regions by calling <code><a href="../reference/list_census_regions.html">list_census_regions(dataset)</a></code>. This will retrieve the <code>region</code> code, the <code>name</code>, and the <code>level</code> code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels. All CMAs are included with their own defined geography, as well as those CAs which have their own Census tracts.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span>(<span class="st">'CA16'</span>)
-</pre></div>
+<span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA16'</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 5,504 x 8
 ##    region name              level     pop municipal_status CMA_UID CD_UID PR_UID
 ##    &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; 
@@ -344,8 +336,7 @@ There are 53 CSD and 12 CD municipal status codes based on official designations
 <a href="#searching-through-named-census-regions" class="anchor"></a>Searching through named Census regions</h2>
 <p>We can also search through all named geographies. This will return any geographies that have a name that matches or partially matches the search query.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span>(<span class="st">"Vancouver"</span>,<span class="st">"CA16"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"CA16"</span><span class="op">)</span></pre></div>
 <pre><code>## # A tibble: 7 x 8
 ##   region  name               level    pop municipal_status CMA_UID CD_UID PR_UID
 ##   &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; 
