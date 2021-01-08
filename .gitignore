@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .Rprofile
+.Renviron
 data_cache
 R/local_server_setup.R
 inst/doc

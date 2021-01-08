@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 )
 library(cancensus)
 library(dplyr)
-# options(cancensus.api_key = "your_api_key")
+# set_api_key(<your_api_key>, install = TRUE)
 ```
 # Cancensus and CensusMapper
 
@@ -31,7 +31,7 @@ As Statistics Canada does not provide direct API access to Census data, **cancen
 
 **cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
 
-To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `options(cancensus.api_key = "your_api_key")`.
+To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_api_key(<your_api_key>, install = TRUE)`
 
 ## Installing cancensus
 
@@ -56,9 +56,7 @@ options(cancensus.api_key = "your_api_key")
 options(cancensus.cache_path = "custom cache path")
 ```
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `options(cancensus.cache_path = 'XXX')`, this enables better control over the data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
-
-Setting the API key and the cache path in the `.Rprofile` facilitates the ability to share code without exposing API keys or relying on the local directory structure. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data.. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 # Accessing Census Data
 

@@ -29,6 +29,12 @@ reference:
     - child_census_vectors
     - parent_census_vectors
     - dataset_attribution
+  - title: User settings
+  - contents:
+    - set_api_key
+    - set_cache_path
+    - view_api_key
+    - view_cache_path
 articles:
     - title: Extending Cancensus
       navbar: ~
@@ -43,7 +49,7 @@ articles:
       contents:
       - Dwellings_by_document_type_cross_tabulation
       - Taxfiler_Data
-    - title: Finding intersecting geometries from custom data
+    - title: Combining custom geographies with census data
       navbar: ~
       contents:
       - intersecting_geometries
