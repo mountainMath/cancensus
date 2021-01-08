@@ -44,15 +44,15 @@ articles:
       navbar: ~
       contents:
       - data_discovery
+    - title: Combining custom geographies with census data
+      navbar: ~
+      contents:
+      - intersecting_geometries
     - title: Additional datasets
       navbar: ~
       contents:
       - Dwellings_by_document_type_cross_tabulation
       - Taxfiler_Data
-    - title: Combining custom geographies with census data
-      navbar: ~
-      contents:
-      - intersecting_geometries
 
 authors:
   Jens von Bergmann:
