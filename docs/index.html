@@ -56,7 +56,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
     </li>
     <li>
       <a href="articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
+      <a href="articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
     </li>
     <li>
       <a href="articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -149,13 +152,15 @@ library(cancensus)</a></code></pre>
 <div id="api-key" class="section level3">
 <h3 class="hasAnchor">
 <a href="#api-key" class="anchor"></a>API key</h3>
-<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
-<p>To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code><a href="https://rdrr.io/r/base/options.html">options(cancensus.api_key = "your_api_key")</a></code>.</p>
+<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_api_key(&lt;your_api_key&gt;', install = TRUE)</code>.</p>
+<p>CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.</p>
+<p>The new <code>get_intersecting_geometries</code> function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This <em>should</em> suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.</p>
+<p>For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
 </div>
 <div id="local-cache" class="section level3">
 <h3 class="hasAnchor">
 <a href="#local-cache" class="anchor"></a>Local Cache</h3>
-<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code><a href="https://rdrr.io/r/base/options.html">options(cancensus.cache_path = 'XXX')</a></code>, this enables better control over the data. This option can be stored stored in your .Rprofile alongside your API key. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cache_path(&lt;local cache path&gt;, install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
 </div>
 <div id="currently-available-datasets" class="section level3">
 <h3 class="hasAnchor">
@@ -225,13 +230,13 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"),
 <a href="#cite-cancensus" class="anchor"></a>Cite <strong>cancensus</strong>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.3.2.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2020). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.3.3.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
     year = {2020},
-    note = {R package version 0.3.2},
+    note = {R package version 0.3.3},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
 </div>
@@ -303,6 +308,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"),
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/mountainMath/cancensus"><img src="https://travis-ci.org/mountainMath/cancensus.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="https://github.com/mountainMath/cancensus/actions"><img src="https://github.com/mountainMath/cancensus/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://cran.r-project.org/package=cancensus"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://cranlogs.r-pkg.org/badges/cancensus"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a></li>
 </ul>
@@ -316,7 +322,7 @@ census_data &lt;- get_census(dataset='CA16', regions=list(CMA="59933"),
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

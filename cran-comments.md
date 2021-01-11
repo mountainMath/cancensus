@@ -1,3 +1,9 @@
+# Update - v.0.3.3
+
+- Added `get_intersecting_geometry` function for new CensusMapper endpoint
+- Slightly reworked how to configure and store user API keys and cache locations to make it easier for users to set up. New functions `set_api_key`, `set_cache_path`, `show_api_key`, and `show_cache_path` added.
+- Fixes various warnings due to recent changes in tibble and dplyr.
+
 ## Update - v.0.3.2
 
 - Add functionality for 1996 census and more refined geographies

@@ -15,3 +15,6 @@ images/*
 card_fix.sh
 ^_pkgdown\.yml$
 ^CRAN-RELEASE$
+^\.github$
+^data-raw$
+^data-raw/*

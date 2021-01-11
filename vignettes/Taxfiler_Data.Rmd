@@ -63,7 +63,7 @@ This particular dataset has over 800 individual vectors. The vector codes follow
 While the geography varies across Census periods, the call to `get_census` will automatically attach the correct geography for each annual dataset. We pick four years to look at low income families.
 
 ```{r}
-years <- c(2006,2011,2014,2017)
+years <- c(2006,2011,2014,2018)
 # Attribution for the dataset to be used in graphs
 attribution <- dataset_attribution(paste0("TX",years))
 

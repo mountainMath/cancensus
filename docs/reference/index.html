@@ -95,7 +95,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -125,6 +125,9 @@
     </li>
     <li>
       <a href="../articles/data_discovery.html">Data discovery</a>
+    </li>
+    <li>
+      <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
     </li>
     <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -256,6 +259,12 @@
           <p><code><a href="search_census_vectors.html">search_census_vectors()</a></code> </p>
         </td>
         <td><p>Query the CensusMapper API for vectors with descriptions matching a search term or phrase (deprecated)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_intersecting_geometries.html">get_intersecting_geometries()</a></code> </p>
+        </td>
+        <td><p>Get identifiers for census regions interesecting a geometry</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -298,6 +307,43 @@ variables returned by
         </td>
         <td><p>Get attribution for datasets</p></td>
       </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-user-settings" class="hasAnchor"><a href="#section-user-settings" class="anchor"></a>User settings</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="set_api_key.html">set_api_key()</a></code> </p>
+        </td>
+        <td><p>Set Censusmapper API key</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_cache_path.html">set_cache_path()</a></code> </p>
+        </td>
+        <td><p>Set persistent cancensus cache location</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="show_api_key.html">show_api_key()</a></code> </p>
+        </td>
+        <td><p>View saved Censusmapper API key</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="show_cache_path.html">show_cache_path()</a></code> </p>
+        </td>
+        <td><p>View saved cache directory path</p></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -316,7 +362,7 @@ variables returned by
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

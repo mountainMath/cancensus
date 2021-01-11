@@ -22,12 +22,19 @@ reference:
     - explore_census_vectors
     - explore_census_regions
     - search_census_vectors
+    - get_intersecting_geometries
   - title: Working with Census data
   - contents:
     - label_vectors
     - child_census_vectors
     - parent_census_vectors
     - dataset_attribution
+  - title: User settings
+  - contents:
+    - set_api_key
+    - set_cache_path
+    - show_api_key
+    - show_cache_path
 articles:
     - title: Extending Cancensus
       navbar: ~
@@ -37,6 +44,10 @@ articles:
       navbar: ~
       contents:
       - data_discovery
+    - title: Combining custom geographies with census data
+      navbar: ~
+      contents:
+      - intersecting_geometries
     - title: Additional datasets
       navbar: ~
       contents:

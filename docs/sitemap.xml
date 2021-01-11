@@ -4,6 +4,12 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/index.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/CODES_TABLE.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/COV_SKYTRAIN_STATIONS.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/as_census_region_list.html</loc>
   </url>
   <url>
@@ -31,6 +37,9 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_census_geometry.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_intersecting_geometries.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/label_vectors.html</loc>
   </url>
   <url>
@@ -52,6 +61,18 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/search_census_vectors.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/set_api_key.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/set_cache_path.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_api_key.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_cache_path.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/Dwellings_by_document_type_cross_tabulation.html</loc>
   </url>
   <url>
@@ -65,5 +86,8 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/intersecting_geometries.html</loc>
   </url>
 </urlset>

@@ -18,8 +18,7 @@
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
-#' an "as is" basis with the permission of Statistics Canada (Statistics Canada
-#' 2006; 2011; 2016).
+#' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
 #'
 #' @export
 #'
@@ -45,8 +44,9 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed", use_cache=TRUE, quiet=FALSE, api_key=getOption("cancensus.api_key")) {
-  api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed",
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
+  api_key <- robust_api_key(api_key)
   have_api_key <- !is.null(api_key)
   result <- NULL
 
@@ -63,21 +63,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
-  # Remind to set cache directory
-
-  if(as.character(options("cancensus.cache_path"))==tempdir()) {
-    # Cache in tmp dir by default.
-    options(cancensus.cache_path = tempdir())
-    message(
-      paste(
-        "Census data is currently stored temporarily.\n\n",
-        "In order to speed up performance, reduce API quota usage, and reduce",
-        "unnecessary network calls, please set up a persistent cache directory by",
-        "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
-        "You may add this option, together with your API key, to your .Rprofile.\n\n"
-      )
-    )
-  }
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
@@ -95,24 +80,30 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
-    param_string <- paste0("regions=", regions,
+    params <- list(regions=as.character(regions),
+                   vectors=jsonlite::toJSON(vectors),
+                   level=level,
+                   dataset=dataset,
+                   api_key=api_key)
+    param_string <- paste0("regions=", as.character(regions),
                            # Convert vectors to a JSON list.
                            "&vectors=", jsonlite::toJSON(as.character(vectors)),
                            "&level=", level, "&dataset=", dataset)
     if (is.na(geo_format)) param_string=paste0(param_string,"&geo_hierarchy=true")
+    if (is.na(geo_format)) params["geo_hierarchy"]="true"
     data_file <- cache_path("CM_data_",
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
-                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
+                   "options(cancensus.api_key = '<your API key>') to set one."))
       }
-      url <- paste0(base_url, "data.csv?", param_string, "&api_key=", api_key)
+      url <- paste0(base_url, "data.csv")
       response <- if (!quiet) {
         message("Querying CensusMapper API...")
-        httr::GET(url, httr::progress())
+        httr::POST(url, httr::progress(), body=params)
       } else {
-        httr::GET(url)
+        httr::POST(url, body=params)
       }
       handle_cm_status_code(response, NULL)
 
@@ -122,21 +113,19 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           readr::read_csv(na = cancensus_na_strings,
-                          col_types = list(.default = "c")) %>%
-          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]), as.num) %>%
-          dplyr::mutate(Type = as.factor(.data$Type),
-                        `Region Name` = as.factor(.data$`Region Name`))
+                          col_types = list(.default = "c"))
       } else {
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble(.name_repair = "minimal") %>%
-          dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                             names(.)[grepl("v_",names(.))]), as.num) %>%
-          dplyr::mutate(Type = as.factor(.data$Type),
-                        `Region Name` = as.factor(.data$`Region Name`))
+          dplyr::as_tibble(.name_repair = "minimal")
       }
+      result <- result %>%
+        dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
+                           names(.)[grepl("v_",names(.))]), as.num) %>%
+        dplyr::mutate(Type = as.factor(.data$Type),
+                      `Region Name` = as.factor(.data$`Region Name`))
+
       if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
@@ -148,22 +137,25 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
   if (!is.na(geo_format)) {
+    params <- list(regions=regions,
+                   level=level,
+                   dataset=dataset,
+                   api_key=api_key)
     param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
                            dataset)
     geo_base_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
     geo_file <- cache_path(geo_base_name, ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
-                   "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
+                   "options(cancensus.api_key = '<your API key>') to set one."))
       }
-      url <- paste0(base_url, "geo.geojson?", param_string, "&api_key=",
-                    api_key)
+      url <- paste0(base_url, "geo.geojson")
       response <- if (!quiet) {
         message("Querying CensusMapper API...")
-        httr::GET(url, httr::progress())
+        httr::POST(url, httr::progress(),body=params)
       } else {
-        httr::GET(url)
+        httr::POST(url,body=params)
       }
       handle_cm_status_code(response, NULL)
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
@@ -422,7 +414,7 @@ transform_geo <- function(g, level) {
   as_numeric=c("a","nrr")
   as_factor=c("t")
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
-  as_character=append(append(as_character,as_numeric),as_integer)
+  #as_character=c(as_character,as_numeric,as_integer)
 
   g <- g %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
@@ -477,11 +469,12 @@ transform_geo <- function(g, level) {
   if (level=='PR') {
     name_change <- name_change %>% rbind(c('rpid','C_UID'))
   }
-  old_names <- names(g)
-  for (x in intersect(old_names,name_change$old)) {
-    old_names[old_names==x]<-name_change$new[name_change$old==x]
-  }
-  names(g)<-old_names
+
+  used_names <- name_change %>%
+    dplyr::filter(.data$old %in% names(g))
+
+  if (nrow(used_names)>0) g <- g %>%
+    dplyr::rename(!!!setNames(used_names$old,used_names$new))
 
   to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
   if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
@@ -489,33 +482,19 @@ transform_geo <- function(g, level) {
   return(g)
 }
 
-# Append arguments to the path of the local cache directory.
-cache_path <- function(...) {
-  cache_dir <- getOption("cancensus.cache_path")
-  if (!is.character(cache_dir)) {
-    stop("Corrupt 'cancensus.cache_path' option. Must be a path.",
-         .call = FALSE)
-  }
-  if (!file.exists(cache_dir)) {
-    dir.create(cache_dir, showWarnings = FALSE)
-  }
-  paste0(cache_dir, "/", ...)
-}
+
 
 .onAttach <- function(libname, pkgname) {
-  if (!"cancensus.api_key" %in% names(options())) {
+ # if (!"cancensus.api_key" %in% names(options())) {
     # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
-    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
-  }
+#    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
+#  }
 
-  if (!"cancensus.cache_path" %in% names(options())) {
+
+  if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
     # Cache in tmp dir by default.
-    options(cancensus.cache_path = tempdir())
-    packageStartupMessage(paste("Census data is currently stored temporarily.\n\n",
-                  "In order to speed up performance, reduce API quota usage, and reduce",
-                  "unnecessary network calls, please set up a persistent cache directory by",
-                  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
-                  "You may add this option, together with your API key, to your .Rprofile."))
+    #options(cancensus.cache_path = tempdir())
+    packageStartupMessage(cm_no_cache_path_message)
   }
 }
 

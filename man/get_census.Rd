@@ -5,8 +5,7 @@
 \title{Access to Canadian census data through the CensusMapper API}
 \source{
 Census data and boundary geographies are reproduced and distributed on
-an "as is" basis with the permission of Statistics Canada (Statistics Canada
-2006; 2011; 2016).
+an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
 }
 \usage{
 get_census(
@@ -18,7 +17,7 @@ get_census(
   labels = "detailed",
   use_cache = TRUE,
   quiet = FALSE,
-  api_key = getOption("cancensus.api_key")
+  api_key = Sys.getenv("CM_API_KEY")
 )
 }
 \arguments{
