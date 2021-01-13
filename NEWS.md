@@ -1,4 +1,4 @@
-# cancensus 0.3.3
+# cancensus 0.4.0
 
 ## Major changes
 - Added `get_intersecting_geometry` function to take advantage of new Censusmapper API endpoint. Check out the new [vignette](https://mountainmath.github.io/cancensus/articles/intersecting_geometries.html) detailing how to use it. 
