@@ -18,3 +18,5 @@ card_fix.sh
 ^\.github$
 ^data-raw$
 ^data-raw/*
+^\.renviron
+^\.rprofile
