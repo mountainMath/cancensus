@@ -80,7 +80,7 @@ ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
 
 # Interactive maps with leaflet
 
-The [leaflet](http://leafletjs.com) library is a mainstay behind interactive web maps, and RStudio has [package](https://rstudio.github.io/leaflet/) that allows creation of interactive leaflet maps without having to leave R or use Javascript. 
+The [leaflet](https://leafletjs.com) library is a mainstay behind interactive web maps, and RStudio has [package](https://rstudio.github.io/leaflet/) that allows creation of interactive leaflet maps without having to leave R or use Javascript. 
 
 Leaflet for R can natively read in `sf` or `sp` class objects. Leaflet maps use a tile layer server to generate the base maps on which your data is plotted. There's a number of different base layers available to use, although some require third party API keys. A gallery of available basemaps can be found [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
 ```{r message=FALSE, warning=FALSE, include=FALSE}
