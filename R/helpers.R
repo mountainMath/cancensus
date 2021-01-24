@@ -6,9 +6,13 @@ cancensus_base_url <- function(){
   url
 }
 
+valid_api_key <- function(api_key){
+  !is.null(api_key) && is.character(api_key) && substr(api_key,1,13)=="CensusMapper_"
+}
+
 robust_api_key <- function(api_key){
-  api_key <- if (is.null(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
-  api_key <- if (is.null(api_key) && !is.null(getOption("cancensus.api_key"))) { getOption("cancensus.api_key") } else { api_key }
+  api_key <- if (!valid_api_key(api_key) && nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { api_key }
+  api_key <- if (!valid_api_key(api_key) && !is.null(getOption("cancensus.api_key"))) { getOption("cancensus.api_key") } else { api_key }
   api_key
 }
 

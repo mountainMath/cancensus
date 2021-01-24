@@ -47,7 +47,7 @@
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed",
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
   api_key <- robust_api_key(api_key)
-  have_api_key <- !is.null(api_key)
+  have_api_key <- valid_api_key(api_key)
   result <- NULL
 
   if (is.na(level)) level="Regions"
@@ -163,6 +163,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!quiet) message("Reading geo data from local cache.")
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
+      sf::st_sf() %>% #ust in case
       transform_geo(level)
 
     result <- if (is.null(result)) {
@@ -408,6 +409,57 @@ handle_cm_status_code <- function(response,path){
 }
 
 
+name_change_for_level <- function(level){
+  if (level=='DB') {
+    name_change <- c('DA_UID'='rpid',
+                     'CSD_UID'='rgid',
+                     'CT_UID'='ruid',
+                     'CMA_UID'='rguid')
+  } else  if (level=='DA'|level=='EA') {
+    name_change <- c('CSD_UID'='rpid',
+                     'CD_UID'='rgid',
+                     'CT_UID'='ruid',
+                     'CMA_UID'='rguid')
+  } else if (level=='CT') {
+    name_change <- c('CMA_UID'='rpid',
+                     'PR_UID'='rgid',
+                     'CSD_UID'='ruid',
+                     'CD_UID'='rguid')
+  } else if (level=='CSD') {
+    name_change <- c('CD_UID'='rpid',
+                     'PR_UID'='rgid',
+                     'CMA_UID'='ruid')
+  } else if (level=='CD') {
+    name_change <- c('PR_UID'='rpid',
+                     'C_UID'='rgid')
+  } else if (level=='CMA') {
+    name_change <- c('PR_UID'='rpid',
+                     'C_UID'='rgid')
+  } else if (level=='PR') {
+    name_change <- c('C_UID'='rpid')
+  } else {
+    name_change <- c()
+    warning(paste0("Unknown level ",level))
+  }
+  name_change
+}
+
+base_name_change <- c("GeoUID"="id",
+                      "Shape Area"="a",
+                      "Type"="t",
+                      "Dwellings"="dw",
+                      "Households"="hh",
+                      "Population"="pop",
+                      "Adjusted Population (previous Census)"="pop2",
+                      "NHS Non-Return Rate"="nrr",
+                      "Quality Flags"="q",
+                      "Population 2011"="pop11",
+                      "Population 2016"="pop16",
+                      "Households 2011"="hh11",
+                      "Households 2016"="hh16",
+                      "Dwellings 2011"="dw11",
+                      "Dwellings 2016"="dw16")
+
 # Transform and rename geometry data.
 transform_geo <- function(g, level) {
   as_character=c("id","rpid","rgid","ruid","rguid","q")
@@ -416,68 +468,32 @@ transform_geo <- function(g, level) {
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
   #as_character=c(as_character,as_numeric,as_integer)
 
+  to_remove <- c("rpid","rgid","ruid","rguid")
+  to_rename <- base_name_change[as.character(base_name_change) %in% names(g)]
+
   g <- g %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_character), as.character) %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_numeric), as.numeric)  %>%
     dplyr::mutate_at(dplyr::intersect(names(g), as_integer), as.int)  %>%
-    dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor)
+    dplyr::mutate_at(dplyr::intersect(names(g), as_factor), as.factor) %>%
+    dplyr::rename(!!to_rename)
 
-  # Change names
-  # Standard table
-  name_change <- dplyr::tibble(
-    old=c("id","a" ,"t" ,"dw","hh","pop","pop2","nrr","q","pop11","pop16","hh11","hh16","dw11","dw16"),
-    new=c("GeoUID","Shape Area" ,"Type" ,"Dwellings","Households","Population","Adjusted Population (previous Census)","NHS Non-Return Rate","Quality Flags","Population 2011","Population 2016","Households 2011","Households 2016","Dwellings 2011","Dwellings 2016")
-  )
-  # Geo UID name changes
-  if (level=='Regions') {
-    l=g$t %>% unique()
-    if (length(l)==1) level=l
-  }
-  if (level=='DB') {
-    name_change <- name_change %>% rbind(
-      c('rpid','DA_UID'),
-      c('rgid','CSD_UID'),
-      c('ruid','CT_UID'),
-      c('rguid','CMA_UID'))
-  }
-  if (level=='DA'|level=='EA') {
-    name_change <- name_change %>% rbind(
-      c('rpid','CSD_UID'),
-      c('rgid','CD_UID'),
-      c('ruid','CT_UID'),
-      c('rguid','CMA_UID'))
-  }
-  if (level=='CT') {
-    name_change <- name_change %>% rbind(
-      c('rpid','CMA_UID'),
-      c('rgid','PR_UID'),
-      c('ruid','CSD_UID'),
-      c('rguid','CD_UID'))
-  }
-  if (level=='CSD') {
-    name_change <- name_change %>% rbind(
-      c('rpid','CD_UID'),
-      c('rgid','PR_UID'),
-      c('ruid','CMA_UID'))
-  }
-  if (level=='CD') {
-    name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
-  }
-  if (level=='CMA') {
-    name_change <- name_change %>% rbind(c('rpid','PR_UID'),c('rgid','C_UID'))
-  }
-  if (level=='PR') {
-    name_change <- name_change %>% rbind(c('rpid','C_UID'))
+  if (level != "Regions") {
+    rc <- name_change_for_level(level)[as.character(name_change_for_level(level)) %in% names(g)]
+    if (length(rc)>0) g <- g %>%  dplyr::rename(!!!rc)
+  } else if ("Type" %in% names(g)) {
+    g <- g$Type %>%
+      unique %>%
+      lapply(function(t){
+        g <- g %>%  dplyr::filter(.data$Type==t)
+        rc <- name_change_for_level(t)[as.character(name_change_for_level(t)) %in% names(g)]
+        if (length(rc)>0) g <- g %>% dplyr::rename(!!!rc)
+        g
+      }) %>%
+      do.call(rbind,.) %>%
+      dplyr::select(-dplyr::one_of(to_remove[to_remove %in% names(.)]))
   }
 
-  used_names <- name_change %>%
-    dplyr::filter(.data$old %in% names(g))
-
-  if (nrow(used_names)>0) g <- g %>%
-    dplyr::rename(!!!setNames(used_names$old,used_names$new))
-
-  to_remove <- dplyr::intersect(names(g),c("rpid","rgid","ruid","rguid"))
-  if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
 
   return(g)
 }

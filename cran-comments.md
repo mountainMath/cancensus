@@ -1,3 +1,8 @@
+# Update - v0.4.1
+
+- Fix problem with not picking up api key if not set as environment variable
+- Fix warning when 't' column not present in downloaded data
+
 # Update - v.0.4.0
 
 - Added `get_intersecting_geometry` function for new CensusMapper endpoint
