@@ -95,8 +95,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                             digest::digest(param_string, algo = "md5"), ".rda")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
-                   "options(cancensus.api_key = '<your API key>') to set one."))
+        stop(paste("No API key set. Use set_api_key('<your API ket>`) to set one, or set_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
       }
       url <- paste0(base_url, "data.csv")
       response <- if (!quiet) {
@@ -147,8 +146,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     geo_file <- cache_path(geo_base_name, ".geojson")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use Sys.setenv(CM_API_KEY = '<your API key>') or",
-                   "options(cancensus.api_key = '<your API key>') to set one."))
+        stop(paste("No API key set. Use set_api_key('<your API ket>`) to set one, or set_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
       }
       url <- paste0(base_url, "geo.geojson")
       response <- if (!quiet) {

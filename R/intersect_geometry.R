@@ -45,7 +45,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
                                         use_cache = TRUE, quiet = FALSE,
                                         api_key=Sys.getenv("CM_API_KEY")) {
   api_key <- robust_api_key(api_key)
-  have_api_key <- !is.null(api_key)
+  have_api_key <- valid_api_key(api_key)
   result <- NULL
 
     if ("sf" %in% class(geometry)) {
@@ -74,8 +74,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
 
   if (!use_cache || !file.exists(data_file)) {
     if (!have_api_key) {
-      stop(paste("No API key set. Use options(cancensus.api_key = 'XXX') or",
-                 "Sys.setenv(CM_API_KEY = 'XXX') to set one."))
+      stop(paste("No API key set. Use set_api_key('<your API ket>`) to set one, or set_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
     }
     url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
