@@ -1,8 +1,8 @@
 # cancensus 0.4.1
 
 ## Minor changes
-- Fix problem with not picking up api key if not set as environment variable
-- Fix warning when 't' column not present in downloaded data
+- Fix minor problem where API key wasn't always picked up if not set correctly as environment variable.
+- Fix warning when `t` column not present in downloaded data.
 
 # cancensus 0.4.0
 

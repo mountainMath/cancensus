@@ -1,7 +1,8 @@
 # Update - v0.4.1
 
-- Fix problem with not picking up api key if not set as environment variable
-- Fix warning when 't' column not present in downloaded data
+- CRAN check NOTES regarding marked UTF-8 strings are understood but use of non-ASCII characters is intentional due to bilingual EN/FR source data and metadata from national statistics agency. 
+- Fix minor problem where API key wasn't always picked up if not set correctly as environment variable.
+- Fix warning when `t` column not present in downloaded data.
 
 # Update - v.0.4.0
 
@@ -11,9 +12,9 @@
 
 ## Update - v.0.3.2
 
-- Add functionality for 1996 census and more refined geographies
-- Expanded vignettes
-- Fix minor bugs flagged by users
+- Add functionality for 1996 census and more refined geographies.
+- Expanded vignettes.
+- Fix minor bugs flagged by users.
 
 ## Update - v.0.3.1
 
