@@ -1,3 +1,7 @@
+# Update - v0.4.2
+
+- Fix minor problem where cache path  wasn't always picked up.
+
 # Update - v0.4.1
 
 - CRAN check NOTES regarding marked UTF-8 strings are understood but use of non-ASCII characters is intentional due to bilingual EN/FR source data and metadata from national statistics agency. 

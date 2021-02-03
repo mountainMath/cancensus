@@ -1,3 +1,8 @@
+# cancensus 0.4.2
+
+## Minor changes
+- Fix minor problem where cache path  wasn't always picked up.
+
 # cancensus 0.4.1
 
 ## Minor changes

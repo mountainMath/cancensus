@@ -19,9 +19,11 @@ robust_api_key <- function(api_key){
 # Append arguments to the path of the local cache directory.
 cache_path <- function(...) {
   cache_dir <- Sys.getenv("CM_CACHE_PATH")
-  if (nchar(cache_dir)==0 & !is.null(getOption("cancensus.cache_path"))) {
-    cache_dir <- getOption("cancensus.cache_path")
-  } else cache_dir <- tempdir()
+  if (nchar(cache_dir)==0) {
+    if (!is.null(getOption("cancensus.cache_path"))) {
+      cache_dir <- getOption("cancensus.cache_path")
+    } else cache_dir <- tempdir()
+  }
   if (!is.character(cache_dir)) {
     stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
          .call = FALSE)
