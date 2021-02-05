@@ -6,7 +6,12 @@
 variables returned by
 \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.}
 \usage{
-child_census_vectors(vector_list, leaves_only = FALSE, max_level = NA)
+child_census_vectors(
+  vector_list,
+  leaves_only = FALSE,
+  max_level = NA,
+  keep_parent = FALSE
+)
 }
 \arguments{
 \item{vector_list}{The list of vectors to be used, either a character vector or a filtered tibble
@@ -17,6 +22,8 @@ i.e. vectors that don't have children.}
 
 \item{max_level}{optional, maximum depth to look for child vectors. Default is NA will return all
 child census vectors.}
+
+\item{keep_parent}{optional, keeps the parent vector. Default is FALSE.}
 }
 \description{
 List all child variables from vector hierarchies given either a list of Census

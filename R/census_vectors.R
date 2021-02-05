@@ -137,6 +137,7 @@ parent_census_vectors <- function(vector_list){
 #' i.e. vectors that don't have children.
 #' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
 #' child census vectors.
+#' @param keep_parent optional, keeps the parent vector. Default is FALSE.
 #'
 #' @export
 #'
@@ -161,7 +162,7 @@ parent_census_vectors <- function(vector_list){
 #'   child_census_vectors(TRUE)
 #'}
 #'
-child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
+child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,keep_parent = FALSE){
   vector_list <- clean_vector_list(vector_list)
   base_list <- vector_list
   dataset <- dataset_from_vector_list(vector_list)
@@ -184,6 +185,9 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
     if (leaves_only) {
       vector_list <- vector_list %>%
         dplyr::filter(!(vector %in% list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)$parent_vector))
+    }
+    if (keep_parent) {
+      vector_list <- dplyr::bind_rows(base_list,vector_list)
     }
     attr(vector_list, "dataset") <- dataset
   }
