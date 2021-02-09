@@ -1,13 +1,14 @@
 # cancensus 0.4.2
 
 ## Minor changes
-- Fix minor problem where cache path  wasn't always picked up.
+- Fixed a minor problem where cache path wasn't always picked up
+- Added optional argument `keep_parent` when calling `child_census_vectors()` that retains the input parent variable in the list of result. We found that in many cases user would follow up a call to `child_census_vectors()` with a `bind_rows(...)` to do this, so this should save a step. 
 
 # cancensus 0.4.1
 
 ## Minor changes
-- Fix minor problem where API key wasn't always picked up if not set correctly as environment variable.
-- Fix warning when `t` column not present in downloaded data.
+- Fixed minor problem where API key wasn't always picked up if not set correctly as environment variable.
+- Fixed warning when `t` column not present in downloaded data.
 
 # cancensus 0.4.0
 

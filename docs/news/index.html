@@ -173,7 +173,8 @@
 <h2 class="hasAnchor">
 <a href="#minor-changes" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>Fix minor problem where cache path wasn’t always picked up.</li>
+<li>Fixed a minor problem where cache path wasn’t always picked up</li>
+<li>Added optional argument <code>keep_parent</code> when calling <code><a href="../reference/child_census_vectors.html">child_census_vectors()</a></code> that retains the input parent variable in the list of result. We found that in many cases user would follow up a call to <code><a href="../reference/child_census_vectors.html">child_census_vectors()</a></code> with a <code><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows(...)</a></code> to do this, so this should save a step.</li>
 </ul>
 </div>
 </div>
@@ -185,8 +186,8 @@
 <h2 class="hasAnchor">
 <a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>Fix minor problem where API key wasn’t always picked up if not set correctly as environment variable.</li>
-<li>Fix warning when <code>t</code> column not present in downloaded data.</li>
+<li>Fixed minor problem where API key wasn’t always picked up if not set correctly as environment variable.</li>
+<li>Fixed warning when <code>t</code> column not present in downloaded data.</li>
 </ul>
 </div>
 </div>
