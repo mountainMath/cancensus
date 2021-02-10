@@ -1,6 +1,5 @@
 # cancensus
 
-[![Build Status](https://travis-ci.org/mountainMath/cancensus.svg?branch=master)](https://travis-ci.org/mountainMath/cancensus)
 [![R build status](https://github.com/mountainMath/cancensus/workflows/R-CMD-check/badge.svg)](https://github.com/mountainMath/cancensus/actions)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)

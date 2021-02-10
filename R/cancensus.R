@@ -466,7 +466,6 @@ transform_geo <- function(g, level) {
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
   #as_character=c(as_character,as_numeric,as_integer)
 
-  to_remove <- c("rpid","rgid","ruid","rguid")
   to_rename <- base_name_change[as.character(base_name_change) %in% names(g)]
 
   g <- g %>%
@@ -488,10 +487,11 @@ transform_geo <- function(g, level) {
         if (length(rc)>0) g <- g %>% dplyr::rename(!!!rc)
         g
       }) %>%
-      do.call(rbind,.) %>%
-      dplyr::select(-dplyr::one_of(to_remove[to_remove %in% names(.)]))
+      do.call(rbind,.)
   }
 
+  to_remove <- dplyr::intersect(c("rpid","rgid","ruid","rguid"),names(g))
+  if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
 
   return(g)
 }
