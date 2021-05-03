@@ -1,3 +1,8 @@
+# Update - v0.4.3
+
+- Fixed a problem with `sf` compatibility and `agr` attribute
+- Fixed a problem with querying geographic data for multiple geographic levels
+
 # Update - v0.4.2
 
 - Fixed a minor problem where cache path wasn't always picked up on setting user profile settings.

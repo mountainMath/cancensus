@@ -1,3 +1,9 @@
+# cancensus 0.4.3
+
+## Minor changes
+- Fixed a problem with `sf` compatibility and `agr` attribute
+- Fixed a problem with querying geographic data for multiple geographic levels
+
 # cancensus 0.4.2
 
 ## Minor changes
