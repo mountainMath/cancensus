@@ -69,13 +69,6 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   } else {
     if (!quiet) message("Reading vector information from local cache.")
     load(file = cache_file)
-    #last_updated <- attr(result, "last_updated")
-    #if (!quiet && is.null(last_updated) ||
-    #    difftime(Sys.time(), last_updated, units = "days") > 1) {
-    #  warning(paste("Cached vectors list may be out of date. Set `use_cache =",
-    #                "FALSE` to update it."))
-    #}
-    #attr(result, "dataset") <- dataset # just in case, catching cached legacy datasets
     result
   }
 }
