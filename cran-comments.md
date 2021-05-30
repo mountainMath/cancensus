@@ -2,6 +2,7 @@
 
 - Fixed a problem with `sf` compatibility and `agr` attribute
 - Fixed a problem with querying geographic data for multiple geographic levels
+- Addressed sporadic external site timeout issues flagged in CRAN checks
 
 # Update - v0.4.2
 
