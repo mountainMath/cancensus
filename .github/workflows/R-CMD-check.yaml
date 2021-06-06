@@ -13,6 +13,8 @@ on:
     branches:
       - main
       - master
+  schedule:
+    - cron: "15 15 * * *"
 
 name: R-CMD-check
 
