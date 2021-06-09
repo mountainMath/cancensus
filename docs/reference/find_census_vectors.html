@@ -197,7 +197,7 @@ aggregation, but can optionally return only the <code>Female</code> or <code>Mal
 <code>type = 'female'</code> or <code>type = 'male'</code> as a parameter.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='va'>query</span>, <span class='va'>dataset</span>, type <span class='op'>=</span> <span class='st'>"all"</span>, query_type <span class='op'>=</span> <span class='st'>"exact"</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>find_census_vectors</span>(<span class='kw'>query</span>, <span class='kw'>dataset</span>, type = <span class='st'>"all"</span>, query_type = <span class='st'>"exact"</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -232,7 +232,7 @@ options in some cases. See description section for more details on query types.<
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'Oji-cree'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'total'</span>, query_type <span class='op'>=</span> <span class='st'>'exact'</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'>find_census_vectors</span>(<span class='st'>'Oji-cree'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'total'</span>, query_type = <span class='st'>'exact'</span>)
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 4</span><span>
 #&gt;   vector     type  label   details                                              
 #&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                                                
@@ -240,13 +240,13 @@ options in some cases. See description section for more details on query types.<
 #&gt; </span><span style='color: #BCBCBC;'>2</span><span> v_CA16_14… Total Oji-Cr… Language; Total - Language spoken most often at home…
 #&gt; </span><span style='color: #BCBCBC;'>3</span><span> v_CA16_26… Total Oji-Cr… 25% Data; Total - Knowledge of languages for the pop…
 #&gt; </span><span style='color: #BCBCBC;'>4</span><span> v_CA16_59… Total Oji-Cr… 25% Data; Work; Total - Language used most often at …</div><div class='input'>
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'commuting duration'</span>, dataset <span class='op'>=</span> <span class='st'>'CA11'</span>, type <span class='op'>=</span> <span class='st'>'female'</span>, query_type <span class='op'>=</span> <span class='st'>'keyword'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'commuting duration'</span>, dataset = <span class='st'>'CA11'</span>, type = <span class='st'>'female'</span>, query_type = <span class='st'>'keyword'</span>)
 </div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 2 x 4</span><span>
 #&gt;   vector    type  label                          details                        
 #&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                          
 #&gt; </span><span style='color: #BCBCBC;'>1</span><span> v_CA11N_… Fema… Total employed population age… CA 2011 NHS; Commute; Total em…
 #&gt; </span><span style='color: #BCBCBC;'>2</span><span> v_CA11N_… Fema… Median commuting duration      CA 2011 NHS; Commute; Total em…</div><div class='input'>
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'after tax income'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'total'</span>, query_type <span class='op'>=</span> <span class='st'>'semantic'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'after tax income'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'total'</span>, query_type = <span class='st'>'semantic'</span>)
 </div><div class='output co'>#&gt; <span class='message'>Multiple possible matches. Results ordered by closeness.</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 56 x 4</span><span>
 #&gt;    vector   type  label                          details                        
 #&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                          
@@ -261,21 +261,21 @@ options in some cases. See description section for more details on query types.<
 #&gt; </span><span style='color: #BCBCBC;'> 9</span><span> v_CA16_… Total $20,000 to $29,999             Income; Individuals; Total - A…
 #&gt; </span><span style='color: #BCBCBC;'>10</span><span> v_CA16_… Total $30,000 to $39,999             Income; Individuals; Total - A…
 #&gt; </span><span style='color: #949494;'># … with 46 more rows</span><span></div><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># This incorrect spelling will return a warning that no match was found,</span>
 <span class='co'># but will suggest trying semantic or keyword search.</span>
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'Ojibwey'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'total'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'Ojibwey'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'total'</span>)
 
 <span class='co'># This will find near matches as well</span>
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'Ojibwey'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'total'</span>, query_type <span class='op'>=</span> <span class='st'>"semantic"</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'Ojibwey'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'total'</span>, query_type = <span class='st'>"semantic"</span>)
 
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'commute duration'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'female'</span>, query_type <span class='op'>=</span> <span class='st'>'keyword'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'commute duration'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'female'</span>, query_type = <span class='st'>'keyword'</span>)
 
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'commute duration'</span>, dataset <span class='op'>=</span> <span class='st'>'CA11'</span>, type <span class='op'>=</span> <span class='st'>'all'</span>, query_type <span class='op'>=</span> <span class='st'>'keyword'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'commute duration'</span>, dataset = <span class='st'>'CA11'</span>, type = <span class='st'>'all'</span>, query_type = <span class='st'>'keyword'</span>)
 
-<span class='fu'>find_census_vectors</span><span class='op'>(</span><span class='st'>'ukrainian origin'</span>, dataset <span class='op'>=</span> <span class='st'>'CA16'</span>, type <span class='op'>=</span> <span class='st'>'total'</span>, query_type <span class='op'>=</span> <span class='st'>'keyword'</span><span class='op'>)</span>
+<span class='fu'>find_census_vectors</span>(<span class='st'>'ukrainian origin'</span>, dataset = <span class='st'>'CA16'</span>, type = <span class='st'>'total'</span>, query_type = <span class='st'>'keyword'</span>)
 
-<span class='op'>}</span>
+}
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
