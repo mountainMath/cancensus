@@ -22,8 +22,10 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # List all vectors for a given Census dataset in CensusMapper
 #' list_census_vectors('CA16')
+#' }
 list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {

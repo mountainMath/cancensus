@@ -162,8 +162,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
       sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
-      transform_geo(level) %>%
-      sf::st_sf(agr="constant") # just in case
+       transform_geo(level) #%>%
+      # sf::st_sf(agr="constant") # just in case
 
 
     result <- if (is.null(result)) {
@@ -280,7 +280,6 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
-    #names(result) <- c("dataset","description","geo_dataset")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -505,7 +504,6 @@ transform_geo <- function(g, level) {
         g
       }) %>%
       dplyr::bind_rows()
-      #do.call(rbind,.)
   }
 
   to_remove <- dplyr::intersect(c("rpid","rgid","ruid","rguid"),names(g))
@@ -525,7 +523,6 @@ transform_geo <- function(g, level) {
 
   if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
     # Cache in tmp dir by default.
-    #options(cancensus.cache_path = tempdir())
     packageStartupMessage(cm_no_cache_path_message)
   }
 }
