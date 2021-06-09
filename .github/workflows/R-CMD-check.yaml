@@ -54,6 +54,13 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
       - uses: r-lib/actions/setup-pandoc@v1
+      - name: "[Custom block] [macOS] Install libraries"
+        if: runner.os == 'macOS'
+        run: |
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          # rm '/usr/local/bin/gfortran'
+          brew install udunits
+          # brew install pkg-config gdal proj geos udunits
 
       - name: Query dependencies
         run: |
