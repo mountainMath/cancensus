@@ -96,7 +96,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -145,7 +145,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mountainMath/cancensus/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -171,7 +171,7 @@
     <p>Query the CensusMapper API for available vectors for a given dataset.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_census_vectors</span><span class='op'>(</span><span class='va'>dataset</span>, use_cache <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>list_census_vectors</span>(<span class='kw'>dataset</span>, use_cache = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -207,22 +207,11 @@ all labels within its hierarchical structure.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># List all vectors for a given Census dataset in CensusMapper</span>
-<span class='fu'>list_census_vectors</span><span class='op'>(</span><span class='st'>'CA16'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6,623 x 7</span><span>
-#&gt;    vector  type   label       units parent_vector aggregation  details          
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>            
-#&gt; </span><span style='color: #555555;'> 1</span><span> v_CA16… Total  Population… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 2</span><span> v_CA16… Total  Population… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 3</span><span> v_CA16… Total  Population… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Average of … CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 4</span><span> v_CA16… Total  Total priv… Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 5</span><span> v_CA16… Total  Private dw… Numb… v_CA16_404    Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 6</span><span> v_CA16… Total  Population… Ratio </span><span style='color: #BB0000;'>NA</span><span>            Average of … CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 7</span><span> v_CA16… Total  Land area … Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 8</span><span> v_CA16… Total  Total - Age Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'> 9</span><span> v_CA16… Male   Total - Age Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'>10</span><span> v_CA16… Female Total - Age Numb… </span><span style='color: #BB0000;'>NA</span><span>            Additive     CA 2016 Census; …
-#&gt; </span><span style='color: #555555;'># … with 6,613 more rows</span><span></div></span></pre>
+<span class='fu'>list_census_vectors</span>(<span class='st'>'CA16'</span>)
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

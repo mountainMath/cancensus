@@ -22,8 +22,10 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # List all vectors for a given Census dataset in CensusMapper
 #' list_census_vectors('CA16')
+#' }
 list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
@@ -69,13 +71,6 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   } else {
     if (!quiet) message("Reading vector information from local cache.")
     load(file = cache_file)
-    #last_updated <- attr(result, "last_updated")
-    #if (!quiet && is.null(last_updated) ||
-    #    difftime(Sys.time(), last_updated, units = "days") > 1) {
-    #  warning(paste("Cached vectors list may be out of date. Set `use_cache =",
-    #                "FALSE` to update it."))
-    #}
-    #attr(result, "dataset") <- dataset # just in case, catching cached legacy datasets
     result
   }
 }
@@ -131,12 +126,13 @@ parent_census_vectors <- function(vector_list){
 #' variables returned by
 #' \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.
 #'
-#' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
+#' @param vector_list the list of vectors to be used, either a character vector or a filtered tibble
 #'   as returned from \code{list_census_vectors}.
-#' @param leaves_only Boolean flag to indicate if only leaf vectors should be returned,
-#' i.e. vectors that don't have children.
-#' @param max_level optional, maximum depth to look for child vectors. Default is NA will return all
+#' @param leaves_only boolean flag to indicate if only final leaf vectors should be returned,
+#' i.e. terminal vectors that themselves do not have children.
+#' @param max_level optional, maximum depth to look for child vectors. Default is \code{NA} and will return all
 #' child census vectors.
+#' @param keep_parent optional, also return parent vector in list of results. Default is set to \code{FALSE}.
 #'
 #' @export
 #'
@@ -159,9 +155,14 @@ parent_census_vectors <- function(vector_list){
 #' list_census_vectors("CA16") %>%
 #'   filter(vector == "v_CA16_2510") %>%
 #'   child_census_vectors(TRUE)
+#'
+#' # this will return the equivalent of c("v_CA16_2510", child_census_vectors("v_CA16_2510"))
+#' list_census_vectors("CA16") %>%
+#'   filter(vector == "v_CA16_2510") %>%
+#'   child_census_vectors(TRUE, keep_parent = TRUE)
 #'}
 #'
-child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
+child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,keep_parent = FALSE){
   vector_list <- clean_vector_list(vector_list)
   base_list <- vector_list
   dataset <- dataset_from_vector_list(vector_list)
@@ -184,6 +185,9 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA){
     if (leaves_only) {
       vector_list <- vector_list %>%
         dplyr::filter(!(vector %in% list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)$parent_vector))
+    }
+    if (keep_parent) {
+      vector_list <- dplyr::bind_rows(base_list,vector_list)
     }
     attr(vector_list, "dataset") <- dataset
   }

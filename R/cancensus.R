@@ -161,8 +161,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!quiet) message("Reading geo data from local cache.")
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
-      sf::st_sf() %>% #ust in case
-      transform_geo(level)
+      sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
+       transform_geo(level) #%>%
+      # sf::st_sf(agr="constant") # just in case
+
 
     result <- if (is.null(result)) {
       geos
@@ -174,10 +176,18 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     }
   }
 
-
-  if (!is.na(geo_format) & geo_format=='sf') { # ensure sf format even if library not loaded
-    result <- sf::st_as_sf(result)
+  # ensure sf format even if library not loaded and set agr columns
+  if (!is.na(geo_format) & geo_format=='sf') {
+    numerics <- result %>% dplyr::select_if(function(d)is.numeric(d)|is.integer(d)) %>%
+      names()
+    non_numerics <- setdiff(names(result),c(numerics,"geometry"))
+    agr_cols <- c(setNames(rep_len("aggregate",length(numerics)),numerics),
+                  setNames(rep_len("identity",length(non_numerics)),non_numerics))
+    result <- result %>%
+      #sf::st_sf(agr=agr_cols) # something wrong here, does not work for `Region Name` column. maybe bug in sf?
+      sf::st_sf(agr="constant")
   }
+
 
   if (length(vectors)>0) {
     census_vectors <- names(result)[grep("^v_", names(result))] %>%
@@ -186,8 +196,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       setNames(c("Vector", "Detail"))
     attr(result, "census_vectors") <- census_vectors
     if (labels == "short" | !is.null(names(vectors))) {
-      if (!is.na(geo_format) && geo_format=="sp") {names(result@data) <- gsub(":.*","",names(result@data))}
-      else {result <- result %>% dplyr::rename(!!!setNames(names(.),gsub(":.*","",names(.))))}
+      to_rename <- setNames(names(result),gsub(":.*","",names(result)))
+      to_rename <- to_rename[names(to_rename)!=as.character(to_rename)]
+      if (length(to_rename)>0) result <- result %>% dplyr::rename(!!!to_rename)
       if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
     }
   }
@@ -269,7 +280,6 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
-    #names(result) <- c("dataset","description","geo_dataset")
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result
@@ -435,6 +445,8 @@ name_change_for_level <- function(level){
                      'C_UID'='rgid')
   } else if (level=='PR') {
     name_change <- c('C_UID'='rpid')
+  } else if (level=='C') {
+    name_change <- c()
   } else {
     name_change <- c()
     warning(paste0("Unknown level ",level))
@@ -466,7 +478,6 @@ transform_geo <- function(g, level) {
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")
   #as_character=c(as_character,as_numeric,as_integer)
 
-  to_remove <- c("rpid","rgid","ruid","rguid")
   to_rename <- base_name_change[as.character(base_name_change) %in% names(g)]
 
   g <- g %>%
@@ -485,13 +496,18 @@ transform_geo <- function(g, level) {
       lapply(function(t){
         g <- g %>%  dplyr::filter(.data$Type==t)
         rc <- name_change_for_level(t)[as.character(name_change_for_level(t)) %in% names(g)]
-        if (length(rc)>0) g <- g %>% dplyr::rename(!!!rc)
+        if (length(rc)>0) {
+          g <- g %>%
+            dplyr::rename(!!!rc) %>%
+            dplyr::mutate_at(names(rc),function(d)dplyr::na_if(d,""))
+        }
         g
       }) %>%
-      do.call(rbind,.) %>%
-      dplyr::select(-dplyr::one_of(to_remove[to_remove %in% names(.)]))
+      dplyr::bind_rows()
   }
 
+  to_remove <- dplyr::intersect(c("rpid","rgid","ruid","rguid"),names(g))
+  if (length(to_remove)>0) g <- g %>% dplyr::select(-dplyr::one_of(to_remove))
 
   return(g)
 }
@@ -507,7 +523,6 @@ transform_geo <- function(g, level) {
 
   if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
     # Cache in tmp dir by default.
-    #options(cancensus.cache_path = tempdir())
     packageStartupMessage(cm_no_cache_path_message)
   }
 }

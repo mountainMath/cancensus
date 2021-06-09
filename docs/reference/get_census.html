@@ -97,7 +97,7 @@ files through the CensusMapper API. An API key is required to retrieve data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@ files through the CensusMapper API. An API key is required to retrieve data." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -146,7 +146,7 @@ files through the CensusMapper API. An API key is required to retrieve data." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mountainMath/cancensus/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -173,17 +173,17 @@ files through the CensusMapper API. An API key is required to retrieve data." />
 files through the CensusMapper API. An API key is required to retrieve data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_census</span><span class='op'>(</span>
-  <span class='va'>dataset</span>,
-  <span class='va'>regions</span>,
-  level <span class='op'>=</span> <span class='cn'>NA</span>,
-  vectors <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span>,
-  geo_format <span class='op'>=</span> <span class='cn'>NA</span>,
-  labels <span class='op'>=</span> <span class='st'>"detailed"</span>,
-  use_cache <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  api_key <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"CM_API_KEY"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_census</span>(
+  <span class='kw'>dataset</span>,
+  <span class='kw'>regions</span>,
+  level = <span class='fl'>NA</span>,
+  vectors = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(),
+  geo_format = <span class='fl'>NA</span>,
+  labels = <span class='st'>"detailed"</span>,
+  use_cache = <span class='fl'>TRUE</span>,
+  quiet = <span class='fl'>FALSE</span>,
+  api_key = <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"CM_API_KEY"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,7 +206,7 @@ files through the CensusMapper API. An API key is required to retrieve data.</p>
     </tr>
     <tr>
       <th>geo_format</th>
-      <td><p>By default is set to <code>NA</code> and appends no geographic information. To include geographic information with census data, specify one of either <code>"sf"</code> to return an <code><a href='https://r-spatial.github.io/sf/reference/sf.html'>sf</a></code> object (requires the <code>sf</code> package) or <code>"sp"</code> to return a <code><a href='https://rdrr.io/pkg/sp/man/SpatialPolygonsDataFrame-class.html'>SpatialPolygonsDataFrame-class</a></code> object (requires the <code>rgdal</code> package).</p></td>
+      <td><p>By default is set to <code>NA</code> and appends no geographic information. To include geographic information with census data, specify one of either <code>"sf"</code> to return an <code><a href='https://rdrr.io/pkg/sf/man/sf.html'>sf</a></code> object (requires the <code>sf</code> package) or <code>"sp"</code> to return a <code><a href='https://rdrr.io/pkg/sp/man/SpatialPolygonsDataFrame-class.html'>SpatialPolygonsDataFrame-class</a></code> object (requires the <code>rgdal</code> package).</p></td>
     </tr>
     <tr>
       <th>labels</th>
@@ -239,25 +239,25 @@ tool at <a href='https://censusmapper.ca/api'>https://censusmapper.ca/api</a> by
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Query the API for data on dwellings in Vancouver, at the census subdivision</span>
 <span class='co'># level:</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span><span class='op'>(</span>dataset<span class='op'>=</span><span class='st'>'CA16'</span>, regions<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>CMA<span class='op'>=</span><span class='st'>"59933"</span><span class='op'>)</span>,
-                          vectors<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span><span class='op'>)</span>,
-                          level<span class='op'>=</span><span class='st'>'CSD'</span><span class='op'>)</span>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span>(dataset=<span class='st'>'CA16'</span>, regions=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(CMA=<span class='st'>"59933"</span>),
+                          vectors=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
+                          level=<span class='st'>'CSD'</span>)
 
 <span class='co'># Query the API for data on dwellings in Vancouver, at the census subdivision</span>
 <span class='co'># level, and return the associated geography files in \code{sf} format:</span>
-<span class='va'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span><span class='op'>(</span>dataset<span class='op'>=</span><span class='st'>'CA16'</span>, regions<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>CMA<span class='op'>=</span><span class='st'>"59933"</span><span class='op'>)</span>,
-                          vectors<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span><span class='op'>)</span>,
-                          level<span class='op'>=</span><span class='st'>'CSD'</span>, geo_format <span class='op'>=</span> <span class='st'>"sf"</span><span class='op'>)</span>
+<span class='kw'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span>(dataset=<span class='st'>'CA16'</span>, regions=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(CMA=<span class='st'>"59933"</span>),
+                          vectors=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
+                          level=<span class='st'>'CSD'</span>, geo_format = <span class='st'>"sf"</span>)
 
 <span class='co'># Make the same query, but this time drop descriptive vector names:</span>
-<span class='va'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span><span class='op'>(</span>dataset<span class='op'>=</span><span class='st'>'CA16'</span>, regions<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>CMA<span class='op'>=</span><span class='st'>"59933"</span><span class='op'>)</span>,
-                          vectors<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span><span class='op'>)</span>,
-                          level<span class='op'>=</span><span class='st'>'CSD'</span>, geo_format <span class='op'>=</span> <span class='st'>"sf"</span>, labels<span class='op'>=</span><span class='st'>"short"</span><span class='op'>)</span>
+<span class='kw'>census_data</span> <span class='op'>&lt;-</span> <span class='fu'>get_census</span>(dataset=<span class='st'>'CA16'</span>, regions=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(CMA=<span class='st'>"59933"</span>),
+                          vectors=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v_CA16_408"</span>,<span class='st'>"v_CA16_409"</span>,<span class='st'>"v_CA16_410"</span>),
+                          level=<span class='st'>'CSD'</span>, geo_format = <span class='st'>"sf"</span>, labels=<span class='st'>"short"</span>)
 
 <span class='co'># Get details for truncated vectors:</span>
-<span class='fu'><a href='label_vectors.html'>label_vectors</a></span><span class='op'>(</span><span class='va'>census_data</span><span class='op'>)</span>
-<span class='op'>}</span>
+<span class='fu'><a href='label_vectors.html'>label_vectors</a></span>(<span class='kw'>census_data</span>)
+}
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

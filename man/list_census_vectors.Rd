@@ -32,6 +32,8 @@ Query the CensusMapper API for available vectors for a given dataset.
 }
 \examples{
 
+\dontrun{
 # List all vectors for a given Census dataset in CensusMapper
 list_census_vectors('CA16')
+}
 }

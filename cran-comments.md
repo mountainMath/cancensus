@@ -1,8 +1,19 @@
+# Update - v0.4.3
+
+- Fixed a problem with `sf` compatibility and `agr` attribute
+- Fixed a problem with querying geographic data for multiple geographic levels
+- Addressed sporadic external site timeout issues flagged in CRAN checks
+
+# Update - v0.4.2
+
+- Fixed a minor problem where cache path wasn't always picked up on setting user profile settings.
+- Small functionality tweak to some existing functions
+
 # Update - v0.4.1
 
 - CRAN check NOTES regarding marked UTF-8 strings are understood but use of non-ASCII characters is intentional due to bilingual EN/FR source data and metadata from national statistics agency. 
-- Fix minor problem where API key wasn't always picked up if not set correctly as environment variable.
-- Fix warning when `t` column not present in downloaded data.
+- Fixed minor problem where API key wasn't always picked up if not set correctly as environment variable.
+- Fixed warning when `t` column not present in downloaded data.
 
 # Update - v.0.4.0
 
