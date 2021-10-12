@@ -87,13 +87,15 @@ jobs:
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
 
-      - name: Set binary package option on Windows
+      - name: Install dependencies on Windows
         if: runner.os == 'Windows'
         run: |
-          options("pkgType" = "binary")
+          remotes::install_deps(dependencies = TRUE, type = "binary")
+          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - name: Install dependencies
+      - name: Install dependencies on not Windows
+        if: runner.os != 'Windows'
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
