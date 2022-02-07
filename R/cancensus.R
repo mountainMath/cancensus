@@ -49,6 +49,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
   result <- NULL
+  data_version<-NULL
+  geo_version<-NULL
 
   if (is.na(level)) level="Regions"
 
@@ -105,6 +107,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::POST(url, body=params)
       }
       handle_cm_status_code(response, NULL)
+      data_version <- response$headers$`data-version`
 
 
       # Read the data file and transform to proper data types
@@ -156,6 +159,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         httr::POST(url,body=params)
       }
       handle_cm_status_code(response, NULL)
+      geo_version <- response$headers$`data-version`
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
     } else {
       if (!quiet) message("Reading geo data from local cache.")
