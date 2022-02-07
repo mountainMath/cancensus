@@ -31,8 +31,12 @@ cache_path <- function(...) {
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE)
   }
-  file.path(cache_dir, paste0(...))
+  cache_key <- paste0(...)
+  if (!identical(cache_key, character(0)))
+    cache_dir <- file.path(cache_dir, paste0(...))
+  cache_dir
 }
+
 
 clean_vector_list <- function(vector_list,dataset=NULL){
   if (!("data.frame") %in% class(vector_list)) {

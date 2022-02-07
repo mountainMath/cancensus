@@ -29,6 +29,10 @@ reference:
     - child_census_vectors
     - parent_census_vectors
     - dataset_attribution
+  - title: Managing cached data
+  - contents:
+    - list_cancensus_cache
+    - remove_from_cancensus_cache
   - title: User settings
   - contents:
     - set_api_key
