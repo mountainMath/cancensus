@@ -67,21 +67,21 @@ For performance reasons, and to avoid unnecessarily drawing down API quotas, **c
 
 `get_census` takes as inputs a dataset parameter, a list of specified regions, a vector of Census variables, and a Census geography level. You can specify one of three options for spatial formats: `NA` to return data only, `sf` to return an sf-class data frame, or `sp` to return a SpatialPolygonsDataFrame object. 
 
-```{r get_census example, echo=TRUE, warning=FALSE, message=FALSE, eval = FALSE}
+```{r get_census example, echo=TRUE, warning=FALSE, message=FALSE}
 # Returns a data frame with data only
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-                          level='CSD', use_cache = FALSE, geo_format = NA)
+                          level='CSD', use_cache = FALSE, geo_format = NA, quiet = TRUE)
 
 # Returns data and geography as an sf-class data frame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-                          level='CSD', use_cache = FALSE, geo_format = 'sf')
+                          level='CSD', use_cache = FALSE, geo_format = 'sf', quiet = TRUE)
 
 # Returns a SpatialPolygonsDataFrame object with data and geography
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-                          level='CSD', use_cache = FALSE, geo_format = 'sp')
+                          level='CSD', use_cache = FALSE, geo_format = 'sp', quiet = TRUE)
 ```
 
 **cancensus** utilizes caching to increase speed, minimize API token usage, and to make data available offline. Downloaded data is hashed and stored locally so if a call is made to access the same data, **cancensus** will read the local version instead. To force **cancensus** to refresh the data, specify `use_cache = FALSE` as a parameter for `get_census`. 
@@ -114,14 +114,14 @@ list_census_regions("CA16")
 
 The `regions` parameter in `get_census` requires as input a list of region id strings that correspond to that regions geoid. You can combine different regions together into region lists.
 
-```{r, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # Retrieves Vancouver and Toronto
 list_census_regions('CA16') %>% 
   filter(level == "CMA", name %in% c("Vancouver","Toronto"))
 
 census_data <- get_census(dataset='CA16', regions=list(CMA=c("59933","35535")),
                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
-                          level='CSD', use_cache = FALSE)
+                          level='CSD', use_cache = FALSE, quiet = TRUE)
 ```
 
 ## Census Geographic Levels
