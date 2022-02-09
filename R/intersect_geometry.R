@@ -69,8 +69,9 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
   param_string <- paste0("dataset=", dataset,
                          "&level=", level,
                          "&geometry=", geo)
-  data_file <- cache_path("CM_data_intersect_",
-                          digest::digest(param_string, algo = "md5"), ".rda")
+  data_base_name <- paste0("CM_data_intersect_",digest::digest(param_string, algo = "md5"))
+  data_file <- cache_path(data_base_name, ".rda")
+  meta_file <- paste0(data_file, ".meta")
 
   if (!use_cache || !file.exists(data_file)) {
     if (!have_api_key) {
@@ -92,16 +93,24 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
                  config = httr::accept_json())
     }
     handle_cm_status_code(response, NULL)
+    data_version <- response$headers$`data-version`
 
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON()
     attr(result, "last_updated") <- Sys.time()
     save(result, file = data_file)
+    file_info <- file.info(data_file)
+    metadata <- dplyr::tibble(dataset=dataset,level=level,created_at=Sys.time(),
+                               version=data_version,size=file_info$size)
+    saveRDS(metadata, file = meta_file)
   } else {
     if (!quiet) message("Reading intersection data from local cache.")
     # Load `result` object from cache.
     load(file = data_file)
   }
+
+  touch_metadata(meta_file)
+
   if(simplified) {result <- c(as.character(result))}
   result
 }

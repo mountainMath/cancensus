@@ -1,3 +1,10 @@
+# cancensus - 0.5.0
+
+## Minor changes
+- Added cache metadata
+- overview information on cached data
+- allow selective removing of cached data
+
 # cancensus 0.4.3
 
 ## Minor changes

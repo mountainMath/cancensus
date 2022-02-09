@@ -91,6 +91,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           remotes::install_deps(dependencies = TRUE, type = "binary")
+          remotes::install_cran("lwgeom", dependencies = TRUE, type="binary")
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 

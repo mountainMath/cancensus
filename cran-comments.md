@@ -1,3 +1,9 @@
+# Update - v0.5.0
+
+- Added cache metadata
+- overview information on cached data
+- allow selective removing of cached data
+
 # Update - v0.4.3
 
 - Fixed a problem with `sf` compatibility and `agr` attribute

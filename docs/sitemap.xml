@@ -1,7 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/404.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Dwellings_by_document_type_cross_tabulation.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus_BACKUP_95050.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus_BASE_95050.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus_LOCAL_95050.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus_REMOTE_95050.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Taxfiler_Data.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/cancensus.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/articles/intersecting_geometries.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/authors.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/index.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/news/index.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/CODES_TABLE.html</loc>
@@ -11,6 +59,9 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/as_census_region_list.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/attribution_for_datasets.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/census_vectors.html</loc>
@@ -40,7 +91,13 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_intersecting_geometries.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/label_vectors.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/list_cancensus_cache.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/list_census_datasets.html</loc>
@@ -53,6 +110,9 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/parent_census_vectors.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/remove_from_cancensus_cache.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/search_census_regions.html</loc>
@@ -71,23 +131,5 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_cache_path.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Dwellings_by_document_type_cross_tabulation.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Making_maps_with_cancensus.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/Taxfiler_Data.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/cancensus.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/data_discovery.html</loc>
-  </url>
-  <url>
-    <loc>https://mountainmath.github.io/cancensus/index.html/articles/intersecting_geometries.html</loc>
   </url>
 </urlset>
