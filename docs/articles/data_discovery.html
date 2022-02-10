@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <code>cancensus</code> now includes additional Census-linked datasets as open-data releases. These include annual tax-filer data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 28 × 6</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 29 × 6</span></span>
 <span class="co">##    dataset description     geo_dataset attribution   reference reference_url    </span>
 <span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span>
 <span class="co">## <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Ce… CA1996      StatCan 1996… 92-351-U  https://www150.s…</span>
@@ -138,12 +138,12 @@
 <span class="co">## <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
 <span class="co">## <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Ce… CA11        StatCan 2011… 98-301-X… https://www12.st…</span>
 <span class="co">## <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 6</span> CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 7</span> CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 8</span> CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 9</span> CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
-<span class="co">## <span style="color: #BCBCBC;">10</span> TX2000  2000 T1FF taxf… CA1996      StatCan 2000… 72-212-X  https://www150.s…</span>
-<span class="co">## <span style="color: #949494;"># … with 18 more rows</span></span></code></pre>
+<span class="co">## <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Ce… CA21        StatCan 2021… 98-301-X  https://www150.s…</span>
+<span class="co">## <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Ce… CA01        StatCan 2001… 92-378-X  https://www150.s…</span>
+<span class="co">## <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Ce… CA06        StatCan 2006… 92-566-X  https://www150.s…</span>
+<span class="co">## <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Ce… CA11        StatCan 2011… 98-301-X  https://www150.s…</span>
+<span class="co">## <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Ce… CA16        StatCan 2016… 98-301-X  https://www150.s…</span>
+<span class="co">## <span style="color: #949494;"># … with 19 more rows</span></span></code></pre>
 <p>The <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> function also provides additional background like series reference code, catalogue reference, and attribution details.</p>
 </div>
 <div class="section level1">

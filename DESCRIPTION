@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
 Title: Access, Retrieve, and Work with Canadian Census Data and Geography
-Version: 0.4.3
+Version: 0.5.0
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
@@ -13,7 +13,7 @@ Description: Integrated, convenient, and uniform access to Canadian
     keys are freely available with free registration at <https://censusmapper.ca/api>.
     Census data and boundary geometries are reproduced and distributed on an "as
     is" basis with the permission of Statistics Canada (Statistics Canada 2001; 2006;
-    2011; 2016).
+    2011; 2016; 2021).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: yes
