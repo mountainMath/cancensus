@@ -3,6 +3,7 @@
 ^\.travis\.yml$
 ^cran-comments\.md$
 CRAN-RELEASE
+CRAN-SUBMISSION
 ^docs$
 docs/
 docs/*
@@ -20,3 +21,4 @@ card_fix.sh
 ^data-raw/*
 ^\.renviron
 ^\.rprofile
+
