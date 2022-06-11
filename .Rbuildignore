@@ -22,3 +22,4 @@ card_fix.sh
 ^\.renviron
 ^\.rprofile
 
+^doc$

@@ -118,7 +118,7 @@ A BibTeX entry for LaTeX users is
 ```
   @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
+    title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
     note = {R package version 0.5.0},
     url = {https://mountainmath.github.io/cancensus/},

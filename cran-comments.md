@@ -1,3 +1,7 @@
+# Update - v0.5.1
+
+- Add support for attribute files and geo suite
+
 # Update - v0.5.0
 
 - Added cache metadata

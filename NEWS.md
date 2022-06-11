@@ -1,3 +1,8 @@
+# cancensus - 0.5.1
+
+## Minor changes
+- Add support for attribute files and geo suite
+
 # cancensus - 0.5.0
 
 ## Minor changes

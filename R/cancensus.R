@@ -12,6 +12,10 @@
 #' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package).
+#' @param resolution Resolution of the geographic data. {cancensus} will download simplified geometries by default. For lower level geometries like DB or DA this will be very close to the high resoltion data,
+#' siplification level increases as the geographic aggregation level increases.
+#' If high resolution geometries are required
+#' then this option can be set to 'high'. By default is set to \code{'simplified'}.
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
@@ -44,7 +48,9 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed",
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
+                        resolution = 'simplified',
+                        labels = "detailed",
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
@@ -53,6 +59,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   geo_version<-NULL
 
   if (is.na(level)) level="Regions"
+
+  if (!(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -151,9 +159,12 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     params <- list(regions=regions,
                    level=level,
                    dataset=dataset,
+                   resolution=resolution,
                    api_key=api_key)
-    param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
-                           dataset)
+    param_string <- paste0("regions=", regions,
+                           "&level=", level,
+                           "&dataset=", dataset)
+    if (resolution !="simplified") param_string <- paste0(param_string,"&resolution=",resolution)
     geo_base_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
     geo_file <- cache_path(geo_base_name, ".geojson")
     meta_file <- paste0(geo_file, ".meta")

@@ -56,7 +56,7 @@ set_api_key <- function(key, overwrite = FALSE, install = FALSE){
 #' @description Cancensus provides session caching for retrieved data to increase speeds and reduce API usage. This function will create a persistent cache across sessions.
 #'
 #' @param cache_path a local directory to use for saving cached data
-#' @param overwrite Option to overwrite any existing Censusmapper keys already stored locally.
+#' @param overwrite Option to overwrite any existing cache path already stored locally.
 #' @param install Option to install permanently for use across sessions.
 #'
 #' @export
@@ -103,7 +103,7 @@ set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
 
 #' View saved Censusmapper API key
 #'
-#' @description View saved API key#'
+#' @description View saved API key'
 #'
 #' @export
 show_api_key <- function() {
@@ -112,7 +112,7 @@ show_api_key <- function() {
 
 #' View saved cache directory path
 #'
-#' @description View saved API key#'
+#' @description View saved cache path'
 #'
 #' @export
 show_cache_path <- function() {
