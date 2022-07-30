@@ -69,18 +69,18 @@ For performance reasons, and to avoid unnecessarily drawing down API quotas, **c
 
 ```{r get_census example, echo=TRUE, warning=FALSE, message=FALSE}
 # Returns a data frame with data only
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                          vectors=c("v_CA21_434","v_CA21_435","v_CA21_440"),
                           level='CSD', use_cache = FALSE, geo_format = NA, quiet = TRUE)
 
 # Returns data and geography as an sf-class data frame
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                          vectors=c("v_CA21_434","v_CA21_435","v_CA21_440"),
                           level='CSD', use_cache = FALSE, geo_format = 'sf', quiet = TRUE)
 
 # Returns a SpatialPolygonsDataFrame object with data and geography
-census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                          vectors=c("v_CA21_434","v_CA21_435","v_CA21_440"),
                           level='CSD', use_cache = FALSE, geo_format = 'sp', quiet = TRUE)
 ```
 
@@ -109,18 +109,18 @@ Census data is aggregated at multiple [geographic levels](### Census Geographic 
 Canadian Census geography can change in between Census periods. **cancensus** provides a function, `list_census_regions(dataset)`, to display all named census regions and their corresponding id for a given census dataset. 
 
 ```{r list regions, message=FALSE, warning=FALSE}
-list_census_regions("CA16")
+list_census_regions("CA21")
 ```
 
 The `regions` parameter in `get_census` requires as input a list of region id strings that correspond to that regions geoid. You can combine different regions together into region lists.
 
 ```{r, message=FALSE, warning=FALSE}
 # Retrieves Vancouver and Toronto
-list_census_regions('CA16') %>% 
+list_census_regions('CA21') %>% 
   filter(level == "CMA", name %in% c("Vancouver","Toronto"))
 
-census_data <- get_census(dataset='CA16', regions=list(CMA=c("59933","35535")),
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+census_data <- get_census(dataset='CA21', regions=list(CMA=c("59933","35535")),
+                          vectors=c("v_CA21_434","v_CA21_435","v_CA21_440"),
                           level='CSD', use_cache = FALSE, quiet = TRUE)
 ```
 
@@ -155,7 +155,7 @@ Census data contains thousands of different geographic regions as well as thousa
 Run `list_census_vectors(dataset)` to view all available Census variables for a given dataset. 
 
 ```{r list_vectors, message=FALSE, warning=FALSE}
-list_census_vectors("CA16")
+list_census_vectors("CA21")
 ```
 
 ## Variable characteristics

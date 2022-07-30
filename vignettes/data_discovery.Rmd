@@ -29,16 +29,14 @@ The `list_census_datasets()` function also provides additional background like s
 ```{r echo=FALSE}
 library(ggplot2)
 library(dplyr)
-ca16 <- list_census_vectors("CA16")
-ca11 <- list_census_vectors("CA11")
-ca06 <- list_census_vectors("CA06")
-ca01 <- list_census_vectors("CA01")
-ca96 <- list_census_vectors("CA1996")
+datasets <- c("CA1996","CA01","CA06","CA11","CA16","CA21")
 
-tibble(dataset = c("CA16","CA11","CA06","CA01","CA1996"), 
-       vectors = c(length(ca16$vector), length(ca11$vector),
-                   length(ca06$vector), length(ca01$vector),
-                   length(ca96$vector))) %>% 
+datasets %>%
+  lapply(function(ds){
+    dplyr::tibble(dataset=ds, vectors=nrow(list_census_vectors(ds)))
+  }) %>%
+  bind_rows() %>%
+  mutate(dataset=factor(dataset,levels=datasets)) %>%
   ggplot(., aes(x = dataset, y = vectors)) +
   geom_col() +
   theme_minimal() +
@@ -53,7 +51,7 @@ The Census datasets that the `cancensus` package provides access to are rich in 
 ## View available Census variable vectors
 
 ```{r message=FALSE, warning=FALSE}
-list_census_vectors('CA16')
+list_census_vectors('CA21')
 ```
 `list_census_vectors(dataset)` retrieves an index of all available vectors for a given dataset from the CensusMapper API or local cache if recently called. Each Census variable has a vector code assigned to it with naming pattern that goes `v_{dataset}_{index}`. This is the code by which vectors are identified through the CensusMapper API. In addition the vector code, there is additional information showing population type, aggregation type, label and details, as well as variable hierarchy. This function can also be used to show the variables for additional datasets made accessible through the CensusMapper API. 
 
@@ -137,7 +135,7 @@ All CMAs and CAs consist of Census subdivisions but not all Census subdivisions 
 
 For any valid Census dataset, you can view all available Census regions by calling `list_census_regions(dataset)`. This will retrieve the `region` code, the `name`, and the `level` code indicating the type of geography. Other information includes population, municipal status, as well as parent geographic ids for lower levels. All CMAs are included with their own defined geography, as well as those CAs which have their own Census tracts.
 ```{r}
-list_census_regions('CA16')
+list_census_regions('CA21')
 ```
 There are 53 CSD and 12 CD municipal status codes based on official designations used by provinces, territories, and federal authorities. These are often used to distinguish Census divisions and subdivisions with similar or identical names. CAs with Census tracts and defined geography have the code K, while those without have type code D. 
 ```{r echo=FALSE, paged.print=TRUE}
@@ -150,7 +148,7 @@ if(Sys.getenv("COMPILE_VIG")=="TRUE") {
 
 We can also search through all named geographies. This will return any geographies that have a name that matches or partially matches the search query. 
 ```{r}
-search_census_regions("Vancouver","CA16")
+search_census_regions("Vancouver","CA21")
 ```
 
 # Exploring Census variable vectors and regions interactively
