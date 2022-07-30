@@ -7,5 +7,5 @@
 show_cache_path()
 }
 \description{
-View saved API key#'
+View saved cache path'
 }

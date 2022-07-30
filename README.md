@@ -101,6 +101,32 @@ We'd love to feature examples of work or projects that use cancensus.
 * [Additional datasets: Structural type of dwelling by document type](https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html)
 * [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
+
+### Related packages
+This package is designed to play well with other Canadian data packages, in particular
+
+* [**tongfen**](https://mountainmath.github.io/tongfen/index.html), which solves the problem of making data across several census years comparable,
+* [**cansim**](https://mountainmath.github.io/cansim/index.html), which accesses regular StatCan tables and can be linked to census geographies via the `GeoUID`,and
+* [**cmhc**](https://mountainmath.github.io/cmhc/index.html), which accesses CMHC data and can be linked to census geographies via the `GeoUID`.
+
+Taken together these packages offer a seamless view into important Canadian data.
+
+There are several other jurisdiction where census data is available via R packages, including
+
+* US: [tidycensus](https://walker-data.com/tidycensus/) and [tigris](https://github.com/walkerke/tigris)
+* Brasil: [geobr](https://github.com/ipeaGIT/geobr)
+* Africa: [afrimapr](https://afrimapr.github.io/afrimapr.website/)
+* Brazil: [geobr](https://ipeagit.github.io/geobr/)
+* Chile: [chilemapas](https://pacha.dev/chilemapas/)
+* Czech Republic: [RCzechia](https://github.com/jlacko/RCzechia)
+* Finland: [geofi](https://ropengov.github.io/geofi/)
+* Ghana: [rGhanaCensus](https://cran.r-project.org/web/packages/rGhanaCensus/index.html)
+* Spain: [mapSpain](https://github.com/rOpenSpain/mapSpain/)
+* UK: [geographr](https://github.com/britishredcrosssociety/geographr)
+* Uruguay: [geouy](https://github.com/RichDeto/geouy)
+* Global (political administrative boundaries): [rgeoboundaries](https://github.com/wmgeolab/rgeoboundaries)
+
+
 ### Contributing
 
 * We encourage contributions to improve this project. The best way is through issues and pull requests.
@@ -111,7 +137,7 @@ We'd love to feature examples of work or projects that use cancensus.
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.0.
+  access, retrieve, and work with Canadian Census data and geography. v0.5.1.
 
 
 A BibTeX entry for LaTeX users is
@@ -120,7 +146,7 @@ A BibTeX entry for LaTeX users is
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.0},
+    note = {R package version 0.5.1},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```

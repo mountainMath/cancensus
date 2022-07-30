@@ -9,7 +9,7 @@ set_cache_path(cache_path, overwrite = FALSE, install = FALSE)
 \arguments{
 \item{cache_path}{a local directory to use for saving cached data}
 
-\item{overwrite}{Option to overwrite any existing Censusmapper keys already stored locally.}
+\item{overwrite}{Option to overwrite any existing cache path already stored locally.}
 
 \item{install}{Option to install permanently for use across sessions.}
 }

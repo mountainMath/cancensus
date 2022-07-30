@@ -7,5 +7,5 @@
 show_api_key()
 }
 \description{
-View saved API key#'
+View saved API key'
 }

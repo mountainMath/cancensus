@@ -24,7 +24,7 @@ Imports: digest (>= 0.1),
     httr (>= 1.0.0),
     jsonlite (>= 1.0),
     rlang
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Suggests: knitr,
     ggplot2,
     leaflet,
