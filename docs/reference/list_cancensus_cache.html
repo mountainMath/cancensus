@@ -35,7 +35,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -84,34 +84,37 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">list_cancensus_cache</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">list_cancensus_cache</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="value">
     <h2>Value</h2>
-    <p>tibble with metadata on cached data</p>
+    
+
+<p>tibble with metadata on cached data</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># list add the cached census data</span></span>
-<span class="r-in"><span class="fu">list_cancensus_cache</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 250 × 10</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    path    dataset regions     level vectors  created_at          version   size</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> CM_dat… CA21    <span style="color: #949494;">"</span>[\"{\\\"C… Regi… <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>     2022-02-17 <span style="color: #949494;">22:48:29</span> d.1       <span style="text-decoration: underline;">1</span>886</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> CM_dat… <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>                  <span style="color: #BB0000;">NA</span>         408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> CM_dat… CA16    <span style="color: #949494;">"</span>[\"{\\\"C… DB    <span style="color: #949494;">"</span>[\"Pop… 2022-02-12 <span style="color: #949494;">21:25:31</span> d.1     <span style="text-decoration: underline;">178</span>318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> CM_dat… CA16    <span style="color: #949494;">"</span>[\"{\\\"C… DB    <span style="color: #949494;">"</span>[\"Pop… 2022-02-16 <span style="color: #949494;">16:57:46</span> d.1        972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> CM_dat… CA21    <span style="color: #949494;">"</span>[\"{\\\"C… DB    <span style="color: #949494;">"</span>[\"Pop… 2022-02-14 <span style="color: #949494;">23:59:17</span> d.1      <span style="text-decoration: underline;">73</span>890</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CM_dat… CA06    <span style="color: #949494;">"</span>[\"{\\\"P… Regi… <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>     2022-02-14 <span style="color: #949494;">18:35:23</span> d.1        182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CM_dat… CA16    <span style="color: #949494;">"</span>[\"{\\\"P… Regi… <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>     2022-02-14 <span style="color: #949494;">18:35:23</span> d.1        182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CM_dat… CA21    <span style="color: #949494;">"</span>[\"{\\\"C… PR    <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>     2022-02-14 <span style="color: #949494;">18:40:48</span> d.1        953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> CM_dat… <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>                  <span style="color: #BB0000;">NA</span>       <span style="text-decoration: underline;">10</span>438</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> CM_dat… CA16    <span style="color: #949494;">"</span>[\"{\\\"C… DB    <span style="color: #949494;">"</span>[\"Pop… 2022-02-16 <span style="color: #949494;">10:37:00</span> d.1       <span style="text-decoration: underline;">2</span>646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 240 more rows, and 2 more variables: last_accessed &lt;dttm&gt;,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># list add the cached census data</span></span></span>
+<span class="r-in"><span><span class="fu">list_cancensus_cache</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 922 × 10</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    path         dataset regions level vectors created_at          version   size</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> CM_data_007… CA21    <span style="color: #949494;">"</span>[\"{\… Regi… <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>    2022-02-17 <span style="color: #949494;">22:48:29</span> d.1       <span style="text-decoration: underline;">1</span>886</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> CM_data_009… CA06    <span style="color: #949494;">"</span>[\"{\… DA    <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>    2022-05-21 <span style="color: #949494;">15:28:16</span> d.1       <span style="text-decoration: underline;">1</span>663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> CM_data_00a… CA16    <span style="color: #949494;">"</span>[\"{\… DA    <span style="color: #949494;">"</span>[\"Po… 2022-05-14 <span style="color: #949494;">16:24:07</span> d.1      <span style="text-decoration: underline;">16</span>663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> CM_data_00e… CA21    <span style="color: #949494;">"</span>[\"{\… CT    <span style="color: #949494;">"</span>[\"Po… 2022-05-14 <span style="color: #949494;">17:26:43</span> d.1       <span style="text-decoration: underline;">3</span>411</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> CM_data_016… CA16    <span style="color: #949494;">"</span>[\"{\… DA    <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>    2022-05-21 <span style="color: #949494;">15:28:24</span> d.1       <span style="text-decoration: underline;">1</span>658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CM_data_017… CA21    <span style="color: #949494;">"</span>[\"{\… DA    <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>    2022-03-17 <span style="color: #949494;">14:04:54</span> d.1     <span style="text-decoration: underline;">147</span>234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CM_data_01c… CA16    <span style="color: #949494;">"</span>[\"{\… CT    <span style="color: #949494;">"</span>[\"v_… 2022-07-13 <span style="color: #949494;">15:23:08</span> d.1       <span style="text-decoration: underline;">5</span>258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CM_data_01e… CA21    <span style="color: #949494;">"</span>[\"{\… Regi… <span style="color: #949494;">"</span>[\"v_… 2022-04-29 <span style="color: #949494;">12:20:40</span> d.1        899</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> CM_data_024… CA16    <span style="color: #949494;">"</span>[\"{\… Regi… <span style="color: #949494;">"</span>[\"v_… 2022-04-27 <span style="color: #949494;">23:26:47</span> d.1       <span style="text-decoration: underline;">3</span>603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> CM_data_02b… CA11    <span style="color: #949494;">"</span>[\"{\… Regi… <span style="color: #949494;">"</span>[\"v_… 2022-04-29 <span style="color: #949494;">11:48:58</span> d.1        656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 912 more rows, and 2 more variables: last_accessed &lt;dttm&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   access_count &lt;dbl&gt;</span></span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -126,7 +129,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

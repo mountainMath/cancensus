@@ -40,7 +40,7 @@ This function comes with CensusMapper API limits"><meta property="og:image" cont
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -94,15 +94,15 @@ Input spatial objects can be any <code>sf</code> or <code>sfc</code> class objec
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_intersecting_geometries</span><span class="op">(</span>
-  <span class="va">dataset</span>,
-  <span class="va">level</span>,
-  <span class="va">geometry</span>,
-  simplified <span class="op">=</span> <span class="cn">FALSE</span>,
-  use_cache <span class="op">=</span> <span class="cn">TRUE</span>,
-  quiet <span class="op">=</span> <span class="cn">FALSE</span>,
-  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CM_API_KEY"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_intersecting_geometries</span><span class="op">(</span></span>
+<span>  <span class="va">dataset</span>,</span>
+<span>  <span class="va">level</span>,</span>
+<span>  <span class="va">geometry</span>,</span>
+<span>  simplified <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  use_cache <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CM_API_KEY"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -115,39 +115,52 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
     <h2>Arguments</h2>
     <dl><dt>dataset</dt>
 <dd><p>A CensusMapper dataset identifier.</p></dd>
+
+
 <dt>level</dt>
 <dd><p>The census aggregation level to retrieve. One of <code>"Regions"</code>, <code>"PR"</code>, <code>"CMA"</code>, <code>"CD"</code>, <code>"CSD"</code>, <code>"CT"</code>, <code>"DA"</code>, <code>"EA"</code> (for 1996 census), or <code>"DB"</code> (for 2001-2016 censuses)..</p></dd>
+
+
 <dt>geometry</dt>
 <dd><p>A valid <code>sf</code> or <code>sfc</code> class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.</p></dd>
+
+
 <dt>simplified</dt>
 <dd><p>If <code>TRUE</code> will return a region list compatible with <a href="get_census.html">get_census</a>, otherwise will return a character vector of matching region ids.</p></dd>
+
+
 <dt>use_cache</dt>
 <dd><p>If set to <code>TRUE</code> (the default) data will be read from the local cache if available.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>When TRUE, suppress messages and warnings.</p></dd>
+
+
 <dt>api_key</dt>
 <dd><p>An API key for the CensusMapper API. Defaults to <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> and then the <code>CM_API_KEY</code> environment variable.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Example using a POINT-class object from a pair of lat/lon coordinates</span></span>
-<span class="r-in"><span class="va">point_geo</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_point</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.25149</span>, <span class="fl">49.27026</span><span class="op">)</span><span class="op">)</span>, crs<span class="op">=</span><span class="fl">4326</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu">get_intersecting_geometries</span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">'CT'</span>, geometry <span class="op">=</span> <span class="va">point_geo</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="va">regions</span>,</span>
-<span class="r-in">                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span>
-<span class="r-in">                          level<span class="op">=</span><span class="st">'CT'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example using a POLYGON-class object from a bounding box with four coordinates</span></span>
-<span class="r-in"><span class="va">poly_geo</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sfc.html" class="external-link">st_as_sfc</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">st_bbox</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="fl">49.25</span>, ymax <span class="op">=</span> <span class="fl">49.30</span>,</span>
-<span class="r-in">                          xmin <span class="op">=</span> <span class="op">-</span><span class="fl">123.25</span>, xmax <span class="op">=</span> <span class="op">-</span><span class="fl">123.30</span><span class="op">)</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu">get_intersecting_geometries</span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">'CT'</span>, geometry <span class="op">=</span> <span class="va">poly_geo</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="va">regions</span>,</span>
-<span class="r-in">                         vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CT'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Example using a POINT-class object from a pair of lat/lon coordinates</span></span></span>
+<span class="r-in"><span><span class="va">point_geo</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_point</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.25149</span>, <span class="fl">49.27026</span><span class="op">)</span><span class="op">)</span>, crs<span class="op">=</span><span class="fl">4326</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu">get_intersecting_geometries</span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">'CT'</span>, geometry <span class="op">=</span> <span class="va">point_geo</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="va">regions</span>,</span></span>
+<span class="r-in"><span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          level<span class="op">=</span><span class="st">'CT'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example using a POLYGON-class object from a bounding box with four coordinates</span></span></span>
+<span class="r-in"><span><span class="va">poly_geo</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sfc.html" class="external-link">st_as_sfc</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">st_bbox</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="fl">49.25</span>, ymax <span class="op">=</span> <span class="fl">49.30</span>,</span></span>
+<span class="r-in"><span>                          xmin <span class="op">=</span> <span class="op">-</span><span class="fl">123.25</span>, xmax <span class="op">=</span> <span class="op">-</span><span class="fl">123.30</span><span class="op">)</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu">get_intersecting_geometries</span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">'CT'</span>, geometry <span class="op">=</span> <span class="va">poly_geo</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="va">regions</span>,</span></span>
+<span class="r-in"><span>                         vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CT'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -162,7 +175,7 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

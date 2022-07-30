@@ -23,3 +23,5 @@ card_fix.sh
 ^\.rprofile
 
 ^doc$
+
+^R/geo_suite.R

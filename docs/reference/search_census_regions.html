@@ -39,7 +39,7 @@ the Censusmapper site in a new web page or tab."><meta property="og:image" conte
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -92,7 +92,7 @@ the Censusmapper site in a new web page or tab.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">search_census_regions</span><span class="op">(</span><span class="va">searchterm</span>, <span class="va">dataset</span>, level <span class="op">=</span> <span class="cn">NA</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="va">searchterm</span>, <span class="va">dataset</span>, level <span class="op">=</span> <span class="cn">NA</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,19 +101,26 @@ the Censusmapper site in a new web page or tab.</p>
 <dd><p>The term to search for e.g. <code>"Victoria"</code>.
 Search terms are case insensitive. If unable to find a given search term,
 this function will suggest the correct spelling to use when possible.</p></dd>
+
+
 <dt>dataset</dt>
 <dd><p>The dataset to query for available regions, e.g.
 <code>"CA16"</code>.</p></dd>
+
+
 <dt>level</dt>
 <dd><p>One of <code>NA</code>, <code>'C'</code>, <code>'PR'</code>, <code>'CMA'</code>, <code>'CD'</code>, or <code>'CSD'</code>.
 If specified, only return variables of specified `level`.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments passed on to <code><a href="list_census_regions.html">list_census_regions</a></code>.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victoria'</span>, <span class="st">'CA16'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victoria'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Reading regions list from local cache.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 11 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    region  name              level    pop municipal_status CMA_UID CD_UID PR_UID</span>
@@ -129,14 +136,14 @@ If specified, only return variables of specified `level`.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 4608042 Victoria          CSD     <span style="text-decoration: underline;">1</span>514 RM               <span style="color: #BB0000;">NA</span>      4608   46    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 4601078 Victoria Beach    CSD      398 RM               <span style="color: #BB0000;">NA</span>      4601   46    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> 1102032 Victoria          CSD       74 COM              <span style="color: #BB0000;">NA</span>      1102   11    </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># This will return a warning that no match was found, but will suggest similar named regions.</span></span>
-<span class="r-in"><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victorea'</span>, <span class="st">'CA16'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># This will limit region results to only include CMA level regions</span></span>
-<span class="r-in"><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victoria'</span>, <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">"CMA"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># This will return a warning that no match was found, but will suggest similar named regions.</span></span></span>
+<span class="r-in"><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victorea'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This will limit region results to only include CMA level regions</span></span></span>
+<span class="r-in"><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victoria'</span>, <span class="st">'CA16'</span>, level <span class="op">=</span> <span class="st">"CMA"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -151,7 +158,7 @@ If specified, only return variables of specified `level`.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

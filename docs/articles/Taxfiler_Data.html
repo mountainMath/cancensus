@@ -64,7 +64,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -111,8 +111,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Additional datasets: Annual T1FF taxfiler data</h1>
-            <h3 data-toc-skip class="subtitle">Dataset background and example usage</h3>
+      <h1 data-toc-skip>Additional datasets: Annual T1FF taxfiler
+data</h1>
+            <h3 data-toc-skip class="subtitle">Dataset background and
+example usage</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/HEAD/vignettes/Taxfiler_Data.Rmd" class="external-link"><code>vignettes/Taxfiler_Data.Rmd</code></a></small>
@@ -125,7 +127,12 @@
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/" class="external-link">Canadian Mortgage and Housing Corporation</a> (CMHC), CensusMapper has added and open-sourced annual T1FF taxfiler data which provides an annual look at some basic demographic variables. Data is available via the <code>cancensus</code> package for the years 2001 through 2017. The T1FF dataset contains information on:</p>
+<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/" class="external-link">Canadian Mortgage and Housing
+Corporation</a> (CMHC), CensusMapper has added and open-sourced annual
+T1FF taxfiler data which provides an annual look at some basic
+demographic variables. Data is available via the <code>cancensus</code>
+package for the years 2001 through 2017. The T1FF dataset contains
+information on:</p>
 <ul>
 <li>individual income</li>
 <li>government transfers</li>
@@ -135,114 +142,150 @@
 <li>taxfilers and dependants by age groups</li>
 <li>marital status and select other demographic variables</li>
 </ul>
-<p>The data comes in varying Census geographies, depending on the year. Retrieving any annual dataset via <code>get_census</code> will automatically reference to the correct Census geography and attach the correct spatial boundaries.</p>
-<p>The taxfiler data is organized with consistent internal referencing. The identifier for the number of families in low income in 2017 is “v_TX2017_786” and that for all families is “v_TX2017_607”, and the ones for the other years are given by simply swapping out the year. This makes the variables selection process easy.</p>
+<p>The data comes in varying Census geographies, depending on the year.
+Retrieving any annual dataset via <code>get_census</code> will
+automatically reference to the correct Census geography and attach the
+correct spatial boundaries.</p>
+<p>The taxfiler data is organized with consistent internal referencing.
+The identifier for the number of families in low income in 2017 is
+“v_TX2017_786” and that for all families is “v_TX2017_607”, and the ones
+for the other years are given by simply swapping out the year. This
+makes the variables selection process easy.</p>
 </div>
 <div class="section level2">
-<h2 id="example-usage-constructing-a-multi-year-series-of-families-in-low-income-status">Example usage: constructing a multi-year series of families in low-income status<a class="anchor" aria-label="anchor" href="#example-usage-constructing-a-multi-year-series-of-families-in-low-income-status"></a>
+<h2 id="example-usage-constructing-a-multi-year-series-of-families-in-low-income-status">Example usage: constructing a multi-year series of families in
+low-income status<a class="anchor" aria-label="anchor" href="#example-usage-constructing-a-multi-year-series-of-families-in-low-income-status"></a>
 </h2>
-<p>As an example we will explore a multi-year time series for families in low income. Data on low income families is available for years 2004 and later, we will start with 2006 just so that the data fits on a nice grid.</p>
+<p>As an example we will explore a multi-year time series for families
+in low income. Data on low income families is available for years 2004
+and later, we will start with 2006 just so that the data fits on a nice
+grid.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Packages used for example</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></code></pre></div>
-<p>To see all available T1FF datasets and their reference codes we can use <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
+<code class="sourceCode R"><span><span class="co"># Packages used for example</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></code></pre></div>
+<p>To see all available T1FF datasets and their reference codes we can
+use <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"taxfiler"</span>,<span class="va">description</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 6</span></span>
-<span class="co">#&gt;    dataset description   geo_dataset attribution    reference reference_url     </span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF ta… CA1996      StatCan 2000 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF ta… CA01        StatCan 2001 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF ta… CA01        StatCan 2002 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF ta… CA01        StatCan 2003 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF ta… CA01        StatCan 2004 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF ta… CA01        StatCan 2005 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF ta… CA06        StatCan 2006 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF ta… CA06        StatCan 2007 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF ta… CA06        StatCan 2008 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF ta… CA06        StatCan 2009 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF ta… CA06        StatCan 2010 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF ta… CA06        StatCan 2011 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF ta… CA11        StatCan 2012 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF ta… CA11        StatCan 2013 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF ta… CA11        StatCan 2014 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF ta… CA11        StatCan 2015 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF ta… CA16        StatCan 2016 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF ta… CA16        StatCan 2017 … 72-212-X  https://www150.st…</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF ta… CA16        StatCan 2018 … 72-212-X  https://www150.st…</span></code></pre></div>
-<p>And, as an example, available data vectors for one such T1FF dataset.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"taxfiler"</span>,<span class="va">description</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 6</span></span></span>
+<span><span class="co">#&gt;    dataset description             geo_dataset attribution       refer…¹ refer…²</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF taxfiler data CA1996      StatCan 2000 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF taxfiler data CA01        StatCan 2001 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF taxfiler data CA01        StatCan 2002 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF taxfiler data CA01        StatCan 2003 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF taxfiler data CA01        StatCan 2004 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF taxfiler data CA01        StatCan 2005 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF taxfiler data CA06        StatCan 2006 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF taxfiler data CA06        StatCan 2007 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF taxfiler data CA06        StatCan 2008 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF taxfiler data CA06        StatCan 2009 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF taxfiler data CA06        StatCan 2010 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF taxfiler data CA06        StatCan 2011 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF taxfiler data CA11        StatCan 2012 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF taxfiler data CA11        StatCan 2013 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF taxfiler data CA11        StatCan 2014 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF taxfiler data CA11        StatCan 2015 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF taxfiler data CA16        StatCan 2016 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF taxfiler data CA16        StatCan 2017 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF taxfiler data CA16        StatCan 2018 T1F… 72-212… https:…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​reference, ²​reference_url</span></span></span></code></pre></div>
+<p>And, as an example, available data vectors for one such T1FF
+dataset.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'TX2017'</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 818 × 7</span></span>
-<span class="co">#&gt;    vector      type  label           units  parent_vector aggregation details   </span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_TX2017_1  Total Taxfilers - #   Number <span style="color: #BB0000;">NA</span>            Additive    Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_TX2017_3  Total % 0-24          Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_TX2017_4  Total % 25-44         Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_TX2017_5  Total % 45-64         Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_TX2017_6  Total % 65+           Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_TX2017_7  Total Average - Age   Ratio  v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_TX2017_8  Total % female        Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_TX2017_9  Total % married       Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_TX2017_10 Total % in appt       Perce… v_TX2017_1    Average of… Tax data …</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_TX2017_11 Total All persons - # Number <span style="color: #BB0000;">NA</span>            Additive    Tax data …</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 808 more rows</span></span></code></pre></div>
-<p>This particular dataset has over 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. We can utilized the <a href="https://censusmapper.ca/api/CA16#api_variable" class="external-link">CensusMapper gaphical variable selection interface</a>, which can also be reached by calling <code><a href="../reference/explore_census_vectors.html">explore_census_vectors()</a></code> from the R console. For this example we are interested in low income families and note that the internal CensusMapper vector for all families is of the form *v_TX<year>_607* and that for all families in low income is *v_TX<year>_786*.</year></year></p>
-<p>While the geography varies across Census periods, the call to <code>get_census</code> will automatically attach the correct geography for each annual dataset. We pick four years to look at low income families.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'TX2017'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 818 × 7</span></span></span>
+<span><span class="co">#&gt;    vector      type  label           units              parent…¹ aggre…² details</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_TX2017_1  Total Taxfilers - #   Number             <span style="color: #BB0000;">NA</span>       Additi… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_TX2017_3  Total % 0-24          Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_TX2017_4  Total % 25-44         Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_TX2017_5  Total % 45-64         Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_TX2017_6  Total % 65+           Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_TX2017_7  Total Average - Age   Ratio              v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_TX2017_8  Total % female        Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_TX2017_9  Total % married       Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_TX2017_10 Total % in appt       Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_TX2017_11 Total All persons - # Number             <span style="color: #BB0000;">NA</span>       Additi… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 808 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ²​aggregation</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<p>This particular dataset has over 800 individual vectors. The vector
+codes follow a regular pattern across different years, and we can use
+this to quickly identify all the relevant variables of interest across
+multiple datasets. We can utilized the <a href="https://censusmapper.ca/api/CA16#api_variable" class="external-link">CensusMapper
+gaphical variable selection interface</a>, which can also be reached by
+calling <code><a href="../reference/explore_census_vectors.html">explore_census_vectors()</a></code> from the R console. For
+this example we are interested in low income families and note that the
+internal CensusMapper vector for all families is of the form
+*v_TX<year>_607* and that for all families in low income is
+*v_TX<year>_786*.</year></year></p>
+<p>While the geography varies across Census periods, the call to
+<code>get_census</code> will automatically attach the correct geography
+for each annual dataset. We pick four years to look at low income
+families.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2006</span>,<span class="fl">2011</span>,<span class="fl">2014</span>,<span class="fl">2018</span><span class="op">)</span>
-<span class="co"># Attribution for the dataset to be used in graphs</span>
-<span class="va">attribution</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="va">years</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="va">years</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="va">year</span><span class="op">)</span>
-    <span class="va">vectors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Families"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"v_"</span>,<span class="va">dataset</span>,<span class="st">"_607"</span><span class="op">)</span>,
-                 <span class="st">"CFLIM-AT"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"v_"</span>,<span class="va">dataset</span>,<span class="st">"_786"</span><span class="op">)</span><span class="op">)</span>
-    
-    <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="va">dataset</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,vectors <span class="op">=</span> <span class="va">vectors</span>,
-                    geo_format <span class="op">=</span> <span class="st">'sf'</span>, level<span class="op">=</span><span class="st">"CT"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeoUID"</span>,<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vectors</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year<span class="op">=</span><span class="va">year</span><span class="op">)</span>
-  <span class="op">}</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">`CFLIM-AT`</span><span class="op">/</span><span class="va">Families</span><span class="op">)</span></code></pre></div>
-<p>Here we also re-organized the data by year. All that’s left is to plot the data, one year at a time.</p>
+<code class="sourceCode R"><span><span class="va">years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2006</span>,<span class="fl">2011</span>,<span class="fl">2014</span>,<span class="fl">2018</span><span class="op">)</span></span>
+<span><span class="co"># Attribution for the dataset to be used in graphs</span></span>
+<span><span class="va">attribution</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="va">years</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="va">years</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="va">year</span><span class="op">)</span></span>
+<span>    <span class="va">vectors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Families"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"v_"</span>,<span class="va">dataset</span>,<span class="st">"_607"</span><span class="op">)</span>,</span>
+<span>                 <span class="st">"CFLIM-AT"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"v_"</span>,<span class="va">dataset</span>,<span class="st">"_786"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="va">dataset</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,vectors <span class="op">=</span> <span class="va">vectors</span>,</span>
+<span>                    geo_format <span class="op">=</span> <span class="st">'sf'</span>, level<span class="op">=</span><span class="st">"CT"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeoUID"</span>,<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vectors</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year<span class="op">=</span><span class="va">year</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">`CFLIM-AT`</span><span class="op">/</span><span class="va">Families</span><span class="op">)</span></span></code></pre></div>
+<p>Here we also re-organized the data by year. All that’s left is to
+plot the data, one year at a time.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">plot_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span>,color<span class="op">=</span><span class="st">"white"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="st">"Year"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span>,option <span class="op">=</span> <span class="st">"inferno"</span>,
-                       trans<span class="op">=</span><span class="st">"log"</span>,breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">0.1</span>,<span class="fl">0.2</span>,<span class="fl">0.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.4</span>, <span class="op">-</span><span class="fl">122.5</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49.01</span>, <span class="fl">49.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Share of census families in low income"</span>,fill<span class="op">=</span><span class="st">"Share"</span>,
-       caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">plot_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span>,color<span class="op">=</span><span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="st">"Year"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span>,option <span class="op">=</span> <span class="st">"inferno"</span>,</span>
+<span>                       trans<span class="op">=</span><span class="st">"log"</span>,breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">0.1</span>,<span class="fl">0.2</span>,<span class="fl">0.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.4</span>, <span class="op">-</span><span class="fl">122.5</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49.01</span>, <span class="fl">49.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Share of census families in low income"</span>,fill<span class="op">=</span><span class="st">"Share"</span>,</span>
+<span>       caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>We may be tempted to re-arrange the data to create timelines, but we have to be careful as census geographies change over time. Inspecting the dataset tables at the top informs us that the 2006 through 2011 data all come on the common 2006 census geography, so the 2006 and 2011 tax data are directly comparable.</p>
+<p>We may be tempted to re-arrange the data to create timelines, but we
+have to be careful as census geographies change over time. Inspecting
+the dataset tables at the top informs us that the 2006 through 2011 data
+all come on the common 2006 census geography, so the 2006 and 2011 tax
+data are directly comparable.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">change_data</span> <span class="op">&lt;-</span> <span class="va">plot_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Year</span><span class="op">==</span><span class="fl">2006</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">GeoUID</span>,`2006`<span class="op">=</span><span class="va">share</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">plot_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_set_geometry</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Year</span><span class="op">==</span><span class="fl">2011</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">GeoUID</span>,`2011`<span class="op">=</span><span class="va">share</span><span class="op">)</span>,
-            by<span class="op">=</span><span class="st">"GeoUID"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>change<span class="op">=</span><span class="va">`2011`</span><span class="op">-</span><span class="va">`2006`</span><span class="op">)</span>
-  
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">change_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">change</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradient2</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="co">#scale_fill_viridis_c(labels=scales::percent,option = "inferno") +</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.4</span>, <span class="op">-</span><span class="fl">122.5</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49.01</span>, <span class="fl">49.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Change in share of census families in low income 2006-2011"</span>,fill<span class="op">=</span><span class="st">"Percentage\npoint change"</span>,caption<span class="op">=</span><span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2006</span>,<span class="fl">2011</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">change_data</span> <span class="op">&lt;-</span> <span class="va">plot_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Year</span><span class="op">==</span><span class="fl">2006</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">GeoUID</span>,`2006`<span class="op">=</span><span class="va">share</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">plot_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_set_geometry</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Year</span><span class="op">==</span><span class="fl">2011</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">GeoUID</span>,`2011`<span class="op">=</span><span class="va">share</span><span class="op">)</span>,</span>
+<span>            by<span class="op">=</span><span class="st">"GeoUID"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>change<span class="op">=</span><span class="va">`2011`</span><span class="op">-</span><span class="va">`2006`</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">change_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">change</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradient2</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co">#scale_fill_viridis_c(labels=scales::percent,option = "inferno") +</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">123.4</span>, <span class="op">-</span><span class="fl">122.5</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49.01</span>, <span class="fl">49.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Change in share of census families in low income 2006-2011"</span>,fill<span class="op">=</span><span class="st">"Percentage\npoint change"</span>,caption<span class="op">=</span><span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TX"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2006</span>,<span class="fl">2011</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Taxfiler_Data_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>Analyzing change over longer timelines that span changes in Census geometries involves more work, the <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> facilitates this and provides a convenient interface for generating timelines spanning geometries from several Census years.</p>
+<p>Analyzing change over longer timelines that span changes in Census
+geometries involves more work, the <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen
+package</a> facilitates this and provides a convenient interface for
+generating timelines spanning geometries from several Census years.</p>
 </div>
   </div>
 
@@ -263,7 +306,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

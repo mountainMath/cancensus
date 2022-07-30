@@ -64,7 +64,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -111,8 +111,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Finding intersecting geometries from custom data</h1>
-            <h3 data-toc-skip class="subtitle">Bring custom data and identify corresponding census geographies</h3>
+      <h1 data-toc-skip>Finding intersecting geometries from custom
+data</h1>
+            <h3 data-toc-skip class="subtitle">Bring custom data and
+identify corresponding census geographies</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/HEAD/vignettes/intersecting_geometries.Rmd" class="external-link"><code>vignettes/intersecting_geometries.Rmd</code></a></small>
@@ -122,85 +124,124 @@
 
     
     
-<p>A frequent application of census data is to evaluate values for specific areas that do not necessarily correspond to existing boundaries or administrative units. Census users may have their own defined geographies or other geospatial data of interest and want to be able to quickly and easily identify the collection of census features that correspond to that region.</p>
-<p>The <code><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries()</a></code> function is projection agnostic and accepts any valid <code>sf</code> or <code>sfc</code> class object as input. These objects are then reprojected into lat/lon coordinates on the backend to facilitate the intersecting join on the server-side.</p>
+<p>A frequent application of census data is to evaluate values for
+specific areas that do not necessarily correspond to existing boundaries
+or administrative units. Census users may have their own defined
+geographies or other geospatial data of interest and want to be able to
+quickly and easily identify the collection of census features that
+correspond to that region.</p>
+<p>The <code><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries()</a></code> function is projection
+agnostic and accepts any valid <code>sf</code> or <code>sfc</code> class
+object as input. These objects are then reprojected into lat/lon
+coordinates on the backend to facilitate the intersecting join on the
+server-side.</p>
 <div class="section level2">
 <h2 id="a-simple-example">A simple example<a class="anchor" aria-label="anchor" href="#a-simple-example"></a>
 </h2>
-<p>As an example, suppose we are interested in understanding the housing tenure split in census tracts located near Vancouver Skytrain (rapid transit) stations. We can use the <code>COV_SKYTRAIN_STATIONS</code> dataset that ships with the package and is derived from the <a href="https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/" class="external-link">City of Vancouver Open Data portal</a> and contains their locations. For our example we are interested in census tracts within 800m of these stations, which ships with the package.</p>
+<p>As an example, suppose we are interested in understanding the housing
+tenure split in census tracts located near Vancouver Skytrain (rapid
+transit) stations. We can use the <code>COV_SKYTRAIN_STATIONS</code>
+dataset that ships with the package and is derived from the <a href="https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/" class="external-link">City
+of Vancouver Open Data portal</a> and contains their locations. For our
+example we are interested in census tracts within 800m of these
+stations, which ships with the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></code></pre></div>
-<p>We load the example data <code>COV_SKYTRAIN_STATIONS</code> from the package.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></code></pre></div>
+<p>We load the example data <code>COV_SKYTRAIN_STATIONS</code> from the
+package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cov_station_buffers</span> <span class="op">&lt;-</span> <span class="va">COV_SKYTRAIN_STATIONS</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>  <span class="co"># needed for Ubuntu or systems with old GDAL but can otherwise be ignored</span></code></pre></div>
-<p>We then use the <code>get_intersecting_geometries</code> call to obtain the list of municipalities (CSDs) and census tracts (CTs) that intersect the 800m station buffer objects.</p>
+<code class="sourceCode R"><span><span class="va">cov_station_buffers</span> <span class="op">&lt;-</span> <span class="va">COV_SKYTRAIN_STATIONS</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>  <span class="co"># needed for Ubuntu or systems with old GDAL but can otherwise be ignored</span></span></code></pre></div>
+<p>We then use the <code>get_intersecting_geometries</code> call to
+obtain the list of municipalities (CSDs) and census tracts (CTs) that
+intersect the 800m station buffer objects.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">station_city_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CSD"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,
-                                                quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">station_ct_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CT"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,
-                                              quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>These return a list of census geographic identifiers suitable for use in the ‘region’ argument in <code>get_census</code>. We may be interested in the transit to work mode share in each of these buffers.</p>
+<code class="sourceCode R"><span><span class="va">station_city_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CSD"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<span>                                                quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">station_ct_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CT"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<span>                                              quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>These return a list of census geographic identifiers suitable for use
+in the ‘region’ argument in <code>get_census</code>. We may be
+interested in the transit to work mode share in each of these
+buffers.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mode_base<span class="op">=</span><span class="st">"v_CA16_5792"</span>,transit<span class="op">=</span><span class="st">"v_CA16_5801"</span>,walk<span class="op">=</span><span class="st">"v_CA16_5804"</span><span class="op">)</span>
-<span class="va">station_city</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_city_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, 
-                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"Vancouver (CY)"</span><span class="op">)</span>
-<span class="va">station_cts</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, 
-                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mode_base<span class="op">=</span><span class="st">"v_CA16_5792"</span>,transit<span class="op">=</span><span class="st">"v_CA16_5801"</span>,walk<span class="op">=</span><span class="st">"v_CA16_5804"</span><span class="op">)</span></span>
+<span><span class="va">station_city</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_city_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
+<span>                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"Vancouver (CY)"</span><span class="op">)</span></span>
+<span><span class="va">station_cts</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
+<span>                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>To understand how these relate we plot the data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_cts</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"CTs within City of Vancouver skytrain station catchments"</span>,
-       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,
-       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_cts</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"CTs within City of Vancouver skytrain station catchments"</span>,</span>
+<span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
+<span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>To get a closer match we can cut out the dissemination areas intersecting the station catchment areas.</p>
+<p>To get a closer match we can cut out the dissemination areas
+intersecting the station catchment areas.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">station_das</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"DA"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,
-                                             quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">.</span>, vectors<span class="op">=</span><span class="va">variables</span>, geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_das</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,
-       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,
-       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">station_das</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"DA"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<span>                                             quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">.</span>, vectors<span class="op">=</span><span class="va">variables</span>, geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_das</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,</span>
+<span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
+<span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>However, API points for <code>get_intersecting_geometries</code> are quite limited at this point, an alternative way to obtain the same data is to first query all DAs withing the CTs identified by the previous <code>get_intersecting_geometries</code> call and then filter down to those intersecting the station buffers.</p>
+<p>However, API points for <code>get_intersecting_geometries</code> are
+quite limited at this point, an alternative way to obtain the same data
+is to first query all DAs withing the CTs identified by the previous
+<code>get_intersecting_geometries</code> call and then filter down to
+those intersecting the station buffers.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">station_das2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors<span class="op">=</span><span class="va">variables</span>, 
-                           geo_format <span class="op">=</span> <span class="st">'sf'</span>, level<span class="op">=</span><span class="st">"DA"</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html" class="external-link">st_filter</a></span><span class="op">(</span><span class="va">cov_station_buffers</span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_das2</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,
-       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,
-       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">station_das2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors<span class="op">=</span><span class="va">variables</span>, </span>
+<span>                           geo_format <span class="op">=</span> <span class="st">'sf'</span>, level<span class="op">=</span><span class="st">"DA"</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html" class="external-link">st_filter</a></span><span class="op">(</span><span class="va">cov_station_buffers</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">station_das2</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="op">(</span><span class="op">(</span><span class="va">walk</span><span class="op">+</span><span class="va">transit</span><span class="op">)</span><span class="op">/</span><span class="va">mode_base</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">cov_station_buffers</span>,fill<span class="op">=</span><span class="cn">NA</span>,alpha<span class="op">=</span><span class="fl">0.5</span>,color<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>,labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,</span>
+<span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
+<span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<p>We may increase the default quotas for the <code>get_intersecting_geometries</code> call at some point, but while we throttling API usage and monitor server impacts of the new functionality it may be preferable to use the <code>get_intersecting_geometries</code> call for higher level geographies only and add a few lines of code to do the final bit of filtering in R.</p>
+<p>We may increase the default quotas for the
+<code>get_intersecting_geometries</code> call at some point, but while
+we throttling API usage and monitor server impacts of the new
+functionality it may be preferable to use the
+<code>get_intersecting_geometries</code> call for higher level
+geographies only and add a few lines of code to do the final bit of
+filtering in R.</p>
 </div>
 <div class="section level2">
 <h2 id="addendum">Addendum<a class="anchor" aria-label="anchor" href="#addendum"></a>
 </h2>
-<p>We may take this further by estimate values of census variables strictly within catchments areas. Rather than intersecting, some adjustments for spatial disaggregation and interpolation are needed. The <code>tongfen_estimate</code> method from the <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link"><code>tongfen</code> package</a> is useful in this case. This is a related package that is designed to work in tandem with <code>cancensus</code> in order to facilitate census geography aggregation and is designed to make census data comparable across several censuses.</p>
+<p>We may take this further by estimate values of census variables
+strictly within catchments areas. Rather than intersecting, some
+adjustments for spatial disaggregation and interpolation are needed. The
+<code>tongfen_estimate</code> method from the <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link"><code>tongfen</code>
+package</a> is useful in this case. This is a related package that is
+designed to work in tandem with <code>cancensus</code> in order to
+facilitate census geography aggregation and is designed to make census
+data comparable across several censuses.</p>
 </div>
   </div>
 
@@ -221,7 +262,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

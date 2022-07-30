@@ -39,6 +39,11 @@ reference:
     - set_cache_path
     - show_api_key
     - show_cache_path
+  - title: Data
+  - contents:
+    - CODES_TABLE
+    - COV_SKYTRAIN_STATIONS
+
 articles:
     - title: Extending Cancensus
       navbar: ~

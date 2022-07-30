@@ -411,6 +411,7 @@ label_vectors <-  function(x) {
 #' # Get details for truncated vectors:
 #' census_vectors(census_data)
 #' }
+#' @keywords internal
 #' @export
 census_vectors <-  function(x) {
   warning("census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.")

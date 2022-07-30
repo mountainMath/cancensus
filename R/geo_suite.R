@@ -14,8 +14,9 @@
 #'
 #' @examples
 #' # list add the cached census data
+#' \dontrun{
 #' get_geo_suite("DA","2021")
-#'
+#' }
 #' @export
 get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
   valid_years <- c("2021") #seq(2001,2021,5) %>% as.character()
@@ -29,7 +30,7 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
     stop(paste0("Only levels ",paste0(valid_levels,collapse = ", ")," are supported for GeoSuite"))
   }
   path <- cache_path(paste0("geo_suite_",census_year))
-  file_path <- file.path(path,paste0(level,".csv"))
+  file_path <- file.path(path,"2021_92-150-X_eng",paste0(level,".csv"))
   if (refresh || !dir.exists(path) || !file.exists(file_path)) {
     tmp <- tempfile()
     urls <- c("2016"="https://www12.statcan.gc.ca/census-recensement/2016/geo/ref/geosuite/files-fichiers/GeoSuite_2016_92-150_XBB_eng.zip",
@@ -40,11 +41,10 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
     url <- urls[[census_year]]
     old_timeout <- getOption("timeout")
     options(timeout=10000)
-    utils::download.file(url,destfile=tmp,
-                  mode = "wb")
+    utils::download.file(url,destfile=tmp, mode = "wb")
     options(timeout=old_timeout)
     if (!dir.exists(path)) dir.create(path)
-    if (Sys.info()['sysname']=="Darwin") {
+    if (Sys.info()[['sysname']]=="Darwin") {
       system(paste0("ditto -V -x -k --sequesterRsrc --rsrc ",tmp," ",path))
     } else {
       utils::unzip(tmp,exdir = path)
@@ -84,8 +84,9 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
 #'
 #' @examples
 #' # list add the cached census data
+#' \dontrun{
 #' get_geography_relationship("2021")
-#'
+#' }
 #' @export
 get_geography_relationship <- function(census_year="2021", refresh=FALSE){
   valid_years <- c("2021")
