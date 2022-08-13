@@ -136,9 +136,21 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/set_cache_path.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/set_cancensus_api_key.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/set_cancensus_cache_path.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_api_key.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_cache_path.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_cancensus_api_key.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/show_cancensus_cache_path.html</loc>
   </url>
 </urlset>

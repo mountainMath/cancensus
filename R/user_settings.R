@@ -12,12 +12,12 @@
 #'
 #' @examples
 #'\dontrun{
-#' set_api_key("YOUR_CM_API_KEY")
+#' set_cancensus_api_key("YOUR_CM_API_KEY")
 #'
 #' # This will set the key permanently until ovewritten again
-#' set_api_key("YOUR_CM_API_KEY", install = TRUE)
+#' set_cancensus_api_key("YOUR_CM_API_KEY", install = TRUE)
 #' }
-set_api_key <- function(key, overwrite = FALSE, install = FALSE){
+set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
   if (install) {
     home <- Sys.getenv("HOME")
     renv <- file.path(home, ".Renviron")
@@ -63,12 +63,12 @@ set_api_key <- function(key, overwrite = FALSE, install = FALSE){
 #'
 #' @examples
 #'\dontrun{
-#' set_cache_path("~/cancensus_cache")
+#' set_cancensus_cache_path("~/cancensus_cache")
 #'
 #' # This will set the cache path permanently until ovewritten again
-#' set_cache_path("~/cancensus_cache", install = TRUE)
+#' set_cancensus_cache_path("~/cancensus_cache", install = TRUE)
 #' }
-set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
+set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
   if (install) {
     home <- Sys.getenv("HOME")
     renv <- file.path(home, ".Renviron")
@@ -106,8 +106,16 @@ set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
 #' @description View saved API key'
 #'
 #' @export
-show_api_key <- function() {
-  Sys.getenv('CM_API_KEY')
+#'
+#' @examples
+#' show_cancensus_api_key()
+show_cancensus_api_key <- function() {
+  key <- Sys.getenv('CM_API_KEY')
+  if (key==""){
+    message("No api key path set")
+    key <- NULL
+  }
+  key
 }
 
 #' View saved cache directory path
@@ -115,8 +123,16 @@ show_api_key <- function() {
 #' @description View saved cache path'
 #'
 #' @export
-show_cache_path <- function() {
-  Sys.getenv('CM_CACHE_PATH')
+#'
+#' @examples
+#' show_cancensus_cache_path()
+show_cancensus_cache_path <- function() {
+  path <- Sys.getenv('CM_CACHE_PATH')
+  if (path==""){
+    message("No cache path set")
+    path <- NULL
+  }
+  path
 }
 
 cm_no_cache_path_message <- paste(

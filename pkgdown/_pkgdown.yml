@@ -35,10 +35,10 @@ reference:
     - remove_from_cancensus_cache
   - title: User settings
   - contents:
-    - set_api_key
-    - set_cache_path
-    - show_api_key
-    - show_cache_path
+    - set_cancensus_api_key
+    - set_cancensus_cache_path
+    - show_cancensus_api_key
+    - show_cancensus_cache_path
   - title: Data
   - contents:
     - CODES_TABLE

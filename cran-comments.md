@@ -1,6 +1,6 @@
 # Update - v0.5.1
 
-- Add support for attribute files and geo suite
+- rename get/set cache/api_key functions to avoid name conflicts with other packages
 
 # Update - v0.5.0
 

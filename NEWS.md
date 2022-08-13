@@ -1,7 +1,7 @@
 # cancensus - 0.5.1
 
 ## Minor changes
-- Add support for attribute files and geo suite
+- rename get/set cache/api_key functions to avoid name conflicts with other packages
 
 # cancensus - 0.5.0
 
