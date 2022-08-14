@@ -20,7 +20,7 @@ get_recalled_database <- function(){
   path <- recall_data_path()
   if (!file.exists(path)) {
       url <- paste0(cancensus_base_url(),"/api/v1/recall.csv")
-      download.file(url,path,mode="wb",quiet=TRUE)
+      utils::download.file(url,path,mode="wb",quiet=TRUE)
     }
     data <- readr::read_csv(path,col_types = readr::cols(.default="c"))
     data
@@ -40,15 +40,28 @@ get_recalled_database <- function(){
 list_recalled_cached_data <- function(){
   recall_database <- get_recalled_database()
   cached_data <- list_cancensus_cache()
-  recall_database |>
-    group_by(api_version,dataset,level) |>
-    group_map(~filter(cached_data,
-                      is.na(.y$level) | .y$level==.data$level,
-                      .data$version==.y$api_version,
+  vector_recall <- recall_database %>%
+    dplyr::filter(grepl("^d\\.",.data$api_version)) %>%
+    dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
+    dplyr::group_map(~dplyr::filter(cached_data,
+                      is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
+                      .data$version<=.y$api_version,
                       .data$dataset==.y$dataset,
-                      grepl(paste0(.x$vector,collapse = "|"),.data$vectors))) |>
-    bind_rows() |>
-    ungroup()
+                      grepl(paste0(.x$vector,collapse = "|"),.data$vectors))) %>%
+    dplyr::bind_rows() %>%
+    dplyr::ungroup()
+
+  geo_recall <- recall_database %>%
+    dplyr::filter(grepl("^g\\.",.data$api_version)) %>%
+    dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
+    dplyr::group_map(~dplyr::filter(cached_data,
+                      is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
+                      .data$version<=.y$api_version,
+                      .data$dataset==.y$dataset)) %>%
+    dplyr::bind_rows() %>%
+    dplyr::ungroup()
+
+  dplyr::bind_rows(vector_recall,geo_recall)
 }
 
 

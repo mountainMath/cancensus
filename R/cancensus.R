@@ -141,7 +141,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
       file_info <- file.info(data_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(jsonlite::toJSON(regions)),
+      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
                                  level=level,
                                  vectors=jsonlite::toJSON(as.character(vectors))  %>% as.character(),
                                  created_at=Sys.time(),
@@ -152,7 +152,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # Load `result` object from cache.
       load(file = data_file)
     }
-    touch_metadata(meta_file)
+    touch_metadata(meta_file,params)
   }
 
   if (!is.na(geo_format)) {
@@ -183,7 +183,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       geo_version <- response$headers$`data-version`
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
       file_info <- file.info(geo_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),level=level,created_at=Sys.time(),
+      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
+                                level=level,created_at=Sys.time(),
                          version=data_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
     } else {
@@ -203,7 +204,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       dplyr::select(result, -dplyr::one_of(to_remove)) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
     }
-    touch_metadata(meta_file)
+    touch_metadata(meta_file,params)
   }
 
   # ensure sf format even if library not loaded and set agr columns
