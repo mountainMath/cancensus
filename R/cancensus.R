@@ -185,7 +185,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       file_info <- file.info(geo_file)
       metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
                                 level=level,created_at=Sys.time(),
-                         version=data_version,size=file_info$size)
+                                resolution=resolution,
+                         version=geo_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
     } else {
       if (!quiet) message("Reading geo data from local cache.")

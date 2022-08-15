@@ -10,7 +10,7 @@ touch_metadata <- function(meta_file,params=NULL){
   } else {
     pattern <- basename(meta_file) %>% gsub("\\.meta$","",.)
     path <- dir(cache_path(),pattern = pattern)
-    metadata <- dplyr::tibble(path=path, last_accessed=Sys.time(),access_count=1)
+    metadata <- dplyr::tibble(last_accessed=Sys.time(),access_count=1)
   }
   if (!is.null(params) & !("dataset" %in% names(metadata)) & "dataset" %in% names(params)) {
     metadata$dataset=params$dataset
@@ -21,12 +21,16 @@ touch_metadata <- function(meta_file,params=NULL){
   if (!is.null(params) & !("regions" %in% names(metadata)) & "regions" %in% names(params)) {
     metadata$regions=as.character(params$regions)
   }
+  if (!is.null(params) & !("resolution" %in% names(metadata)) & "resolution" %in% names(params)) {
+    metadata$resolution=as.character(params$resolution)
+  }
   if (!is.null(params) & !("vectors" %in% names(metadata)) & "vectors" %in% names(params)) {
     metadata$vectors=jsonlite::toJSON(as.character(params$vectors))  %>% as.character()
   }
   if (!("version" %in% names(metadata))) {
-    if (grepl("^CM_geo_",metadata$path)) metadata$version="g.1"
-    if (grepl("^CM_data_",metadata$path)) metadata$version="d.1"
+    path <- basename(meta_file)
+    if (grepl("^CM_geo_",path)) metadata$version="g.1"
+    if (grepl("^CM_data_",path)) metadata$version="d.1"
   }
   saveRDS(metadata,file = meta_file)
 }
