@@ -101,6 +101,18 @@ list_cancensus_cache <- function(){
       dplyr::mutate(size=dplyr::coalesce(.data$size,.data$manual_size)) %>%
       dplyr::select(-.data$manual_size)
   }
+
+  for (n in setdiff(metadata_columns_c,names(all))) {
+    all[,n]=NA_character_
+  }
+  # for (n in setdiff(metadata_columns_d,names(metadata))) {
+  #   metadata[,n]=NA
+  # }
+  for (n in setdiff(metadata_columns_n,names(all))) {
+    all[,n]=NA_real_
+  }
+
+
   all
 }
 
