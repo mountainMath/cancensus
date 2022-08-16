@@ -100,6 +100,9 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_intersecting_geometries.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/get_recalled_database.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/index.html</loc>
   </url>
   <url>
@@ -118,10 +121,16 @@
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/list_census_vectors.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/list_recalled_cached_data.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/parent_census_vectors.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/remove_from_cancensus_cache.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/index.html/reference/remove_recalled_chached_data.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/index.html/reference/search_census_regions.html</loc>

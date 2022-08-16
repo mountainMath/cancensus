@@ -33,6 +33,10 @@ reference:
   - contents:
     - list_cancensus_cache
     - remove_from_cancensus_cache
+  - title: Recalled data
+  - contents:
+    - list_recalled_cached_data
+    - remove_recalled_chached_data
   - title: User settings
   - contents:
     - set_cancensus_api_key

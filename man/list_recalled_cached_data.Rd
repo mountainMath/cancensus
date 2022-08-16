@@ -4,7 +4,19 @@
 \alias{list_recalled_cached_data}
 \title{Lists locally cached data that has been recalled}
 \usage{
-list_recalled_cached_data()
+list_recalled_cached_data(
+  cached_data = list_cancensus_cache(),
+  warn_only_once = FALSE
+)
+}
+\arguments{
+\item{cached_data}{List of locally cached data to check for recall, default is `list_cancensus_cache()` in which case
+it will get checked against all locally cached data}
+
+\item{warn_only_once}{Will only warn on first run during each session, `FALSE` by default}
+}
+\value{
+tibble with rows describing locally cached recalled data
 }
 \description{
 Checks the local cached database for recalled data and lists all recalled cached entries

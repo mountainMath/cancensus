@@ -4,7 +4,15 @@
 \alias{get_recalled_database}
 \title{Get recalled data}
 \usage{
-get_recalled_database()
+get_recalled_database(refresh = FALSE, warn_only_once = FALSE)
+}
+\arguments{
+\item{refresh}{Will force refresh of recalled database}
+
+\item{warn_only_once}{Will only warn on first run, `FALSE` by default}
+}
+\value{
+tibble with rows describing recalled data
 }
 \description{
 Grabs recall data from server if needed and returns list of recalled data

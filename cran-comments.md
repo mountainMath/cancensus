@@ -1,5 +1,6 @@
 # Update - v0.5.1
-
+- functionality to detect and remove locally cached data that has been recalled
+- automatic checks that warn if locally cached data has been recalled
 - rename get/set cache/api_key functions to avoid name conflicts with other packages
 
 # Update - v0.5.0

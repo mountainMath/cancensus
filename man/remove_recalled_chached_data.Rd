@@ -6,8 +6,11 @@
 \usage{
 remove_recalled_chached_data()
 }
+\value{
+Storage suze of removed locally cached data that got freed up, number of bytes.
+}
 \description{
-Checks the local cached database for recalled data and remvoves cached data that has been recalled
+Checks the local cached database for recalled data and removes cached data that has been recalled
 }
 \examples{
 \dontrun{

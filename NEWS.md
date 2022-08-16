@@ -1,4 +1,7 @@
 # cancensus - 0.5.1
+## Major changes
+- functionality to detect and remove locally cached data that has been recalled
+- automatic checks that warn if locally cached data has been recalled
 
 ## Minor changes
 - rename get/set cache/api_key functions to avoid name conflicts with other packages

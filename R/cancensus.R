@@ -52,6 +52,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                         resolution = 'simplified',
                         labels = "detailed",
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
+  first_run_checks()
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
   result <- NULL
@@ -126,6 +127,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
+        check_recalled_data_and_warn(meta_file,params)
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
@@ -190,6 +192,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       saveRDS(metadata, file = meta_file)
     } else {
       if (!quiet) message("Reading geo data from local cache.")
+      check_recalled_data_and_warn(meta_file,params)
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
       sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
