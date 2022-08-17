@@ -36,7 +36,7 @@ reference:
   - title: Recalled data
   - contents:
     - list_recalled_cached_data
-    - remove_recalled_chached_data
+    - remove_recalled_cached_data
   - title: User settings
   - contents:
     - set_cancensus_api_key

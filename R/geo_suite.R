@@ -12,6 +12,8 @@
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the geosuite data
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # list add the cached census data
 #' \dontrun{
@@ -81,6 +83,8 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the relationship data
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # list add the cached census data
