@@ -88,7 +88,7 @@ check_recalled_data_and_warn <- function(meta_file,params){
   cached_data<-generate_metadata(meta_file,params)
   recalled_data <- list_recalled_cached_data(cached_data,warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_chached_data()\nto remove recalled data.")
+    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data.")
   }
   d<-NULL
 }
@@ -96,7 +96,7 @@ check_recalled_data_and_warn <- function(meta_file,params){
 check_for_recalled_data_and_warn <- function(){
   recalled_data <- list_recalled_cached_data(warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_chached_data()\nto remove recalled data."))
+    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data."))
   }
   d<-NULL
 }
