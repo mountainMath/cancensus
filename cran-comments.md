@@ -1,7 +1,8 @@
 # Update - v0.5.1
-- functionality to detect and remove locally cached data that has been recalled
-- automatic checks that warn if locally cached data has been recalled
-- rename get/set cache/api_key functions to avoid name conflicts with other packages
+- Added functionality to detect and remove locally cached data that has been recalled by Statistics Canada
+- added automatic checks that warn if locally cached data has been recalled
+- added option to retrieve unsimplified high-resolution geometries 
+- resolved lingering CRAN NOTE 
 
 # Update - v0.5.0
 

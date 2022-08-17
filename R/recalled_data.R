@@ -5,7 +5,7 @@ recall_data_path <- function(){
 }
 
 
-#' Get recalled data
+#' Get metadata for recalled data
 #'
 #' @description
 #' Grabs recall data from server if needed and returns list of recalled data
@@ -18,7 +18,7 @@ recall_data_path <- function(){
 #'
 #' @examples
 #' \dontrun{
-#' check_recalled_data()
+#' get_recalled_database()
 #' }
 get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   problem <- FALSE
@@ -51,7 +51,7 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   data
 }
 
-#' Lists locally cached data that has been recalled
+#' List recalled data stored in local cache
 #'
 #' @description
 #' Checks the local cached database for recalled data and lists all recalled cached entries
@@ -100,19 +100,19 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
 
 
 
-#' Removes locally cached data that has been recalled
+#' Remove recalled data from local cache
 #'
 #' @description
 #' Checks the local cached database for recalled data and removes cached data that has been recalled
 #'
-#' @return Storage suze of removed locally cached data that got freed up, number of bytes.
+#' @return Storage size of removed locally cached data that got freed up in number of bytes.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' remove_recalled_chached_data()
+#' remove_recalled_cached_data()
 #' }
-remove_recalled_chached_data <- function(){
+remove_recalled_cached_data <- function(){
   recalled_data <- list_recalled_cached_data()
   size <- 0
   if (is.null(recalled_data)) {
@@ -120,7 +120,7 @@ remove_recalled_chached_data <- function(){
     size<-remove_from_cancensus_cache(recalled_data$path)
     message(paste0("Removing ",nrow(recalled_data)," datasets totalling ",size," bytes."))
   } else {
-    message("No cached data has been recalled.")
+    message("No recalled data in cached data.")
   }
   size
 }

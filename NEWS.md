@@ -1,10 +1,11 @@
 # cancensus - 0.5.1
 ## Major changes
-- functionality to detect and remove locally cached data that has been recalled
-- automatic checks that warn if locally cached data has been recalled
+- Added functionality to detect and remove locally cached data that has been recalled by Statistics Canada
+- added automatic checks that warn if locally cached data has been recalled
+- added option to retrieve unsimplified high-resolution geometries 
 
 ## Minor changes
-- rename get/set cache/api_key functions to avoid name conflicts with other packages
+- renamed get/set cache/api_key functions to avoid name conflicts with related packages
 
 # cancensus - 0.5.0
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/recalled_data.R
 \name{get_recalled_database}
 \alias{get_recalled_database}
-\title{Get recalled data}
+\title{Get metadata for recalled data}
 \usage{
 get_recalled_database(refresh = FALSE, warn_only_once = FALSE)
 }
@@ -19,7 +19,7 @@ Grabs recall data from server if needed and returns list of recalled data
 }
 \examples{
 \dontrun{
-check_recalled_data()
+get_recalled_database()
 }
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/recalled_data.R
 \name{list_recalled_cached_data}
 \alias{list_recalled_cached_data}
-\title{Lists locally cached data that has been recalled}
+\title{List recalled data stored in local cache}
 \usage{
 list_recalled_cached_data(
   cached_data = list_cancensus_cache(),
