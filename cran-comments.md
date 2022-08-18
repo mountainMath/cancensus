@@ -4,6 +4,7 @@
 - added option to retrieve higher-resolution geometries in `get_census`
 - resolved lingering CRAN NOTE
 - tested with RHUB default flavours
+- resolved broken and relocated links picked up in CRAN pretesting
 
 # Update - v0.5.0
 
