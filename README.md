@@ -47,7 +47,7 @@ For larger quotas, please get in touch with Jens [directly](mailto:jens@censusma
 
 For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
-Starting with version 0.5.1 **cancensus** will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in [CensusMapper](https::/censusmapper.ca). Statistics Canada occasionally detects and corrects errors in their census data releases, and **cancensus** will download a list of recalled data at the first invocation of `get_census()` in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the `remove_recalled_chached_data()` function. If data was cached with **cancenus** versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.
+Starting with version 0.5.1 **cancensus** will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in [CensusMapper](https://censusmapper.ca). Statistics Canada occasionally detects and corrects errors in their census data releases, and **cancensus** will download a list of recalled data at the first invocation of `get_census()` in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the `remove_recalled_chached_data()` function. If data was cached with **cancenus** versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.
 
 ### Currently available datasets
 
@@ -122,9 +122,9 @@ There are several other jurisdiction where census data is available via R packag
 * Chile: [chilemapas](https://pacha.dev/chilemapas/)
 * Czech Republic: [RCzechia](https://github.com/jlacko/RCzechia)
 * Finland: [geofi](https://ropengov.github.io/geofi/)
-* Ghana: [rGhanaCensus](https://cran.r-project.org/web/packages/rGhanaCensus/index.html)
+* Ghana: [rGhanaCensus](https://CRAN.R-project.org/package=rGhanaCensus)
 * Spain: [mapSpain](https://github.com/rOpenSpain/mapSpain/)
-* UK: [geographr](https://github.com/britishredcrosssociety/geographr)
+* UK: [geographr](https://github.com/humaniverse/geographr)
 * Uruguay: [geouy](https://github.com/RichDeto/geouy)
 * Global (political administrative boundaries): [rgeoboundaries](https://github.com/wmgeolab/rgeoboundaries)
 
