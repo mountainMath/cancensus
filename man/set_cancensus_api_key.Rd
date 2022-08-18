@@ -14,13 +14,13 @@ set_cancensus_api_key(key, overwrite = FALSE, install = FALSE)
 \item{install}{Option to install permanently for use across sessions.}
 }
 \description{
-Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permamently for use across sessions.
+Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permanently for use across sessions.
 }
 \examples{
 \dontrun{
 set_cancensus_api_key("YOUR_CM_API_KEY")
 
-# This will set the key permanently until ovewritten again
+# This will set the key permanently until overwritten again
 set_cancensus_api_key("YOUR_CM_API_KEY", install = TRUE)
 }
 }

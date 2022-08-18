@@ -164,7 +164,7 @@ The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automat
 
 ### Statistics Canada Attribution
 
-Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:
+Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:
 
 ```
 Acknowledgment of Source

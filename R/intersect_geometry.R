@@ -1,4 +1,4 @@
-#' Get identifiers for census regions interesecting a geometry
+#' Get identifiers for census regions intersecting a geometry
 #'
 #' @description
 #' This function returns a list of regions that intersect a given geometry input. This list of regions can be used

@@ -2,7 +2,7 @@
 
 #' Set Censusmapper API key
 #'
-#' @description Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permamently for use across sessions.
+#' @description Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permanently for use across sessions.
 #'
 #' @param key a Censusmapper API key. For more information on keys see the \href{https://mountainmath.github.io/cancensus/index.html#api-key}{API key section}
 #' @param overwrite Option to overwrite any existing Censusmapper keys already stored locally.
@@ -14,7 +14,7 @@
 #'\dontrun{
 #' set_cancensus_api_key("YOUR_CM_API_KEY")
 #'
-#' # This will set the key permanently until ovewritten again
+#' # This will set the key permanently until overwritten again
 #' set_cancensus_api_key("YOUR_CM_API_KEY", install = TRUE)
 #' }
 set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){

@@ -284,7 +284,7 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 
 #' Query the CensusMapper API for available datasets.
 #'
-#' @param use_cache If set to TRUE (the dfault), data will be read from a temporary local cache for the
+#' @param use_cache If set to TRUE (the default), data will be read from a temporary local cache for the
 #'   duration of the R session, if
 #'   available. If set to FALSE, query the API for the data, and
 #'   refresh the temporary cache with the result.
@@ -295,7 +295,7 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' Returns a data frame with a column \code{dataset} containing the code for the
 #' dataset, a column \code{description} describing it, a \code{geo_dataset} column
 #' identifying the geography dataset the data is based on, a \code{attribution} column
-#' with an attribtuion string, a \code{reference} column with a reference identifier, and
+#' with an attribution string, a \code{reference} column with a reference identifier, and
 #' a \code{reference_url} column with a link to reference materials.
 #'
 #' @export

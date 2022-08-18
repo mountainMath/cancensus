@@ -18,7 +18,7 @@ Through collaboration with the [Canadian Mortgage and Housing Corporation](https
 * family income
 * family composition
 * taxfilers by age groups
-* taxfilers and dependants by age groups
+* taxfilers and dependents by age groups
 * marital status and select other demographic variables
 
 The data comes in varying Census geographies, depending on the year. Retrieving any annual dataset via `get_census` will automatically reference to the correct Census geography and attach the correct spatial boundaries.
@@ -58,7 +58,7 @@ And, as an example, available data vectors for one such T1FF dataset.
 ```{r}
 list_census_vectors('TX2017')
 ```
-This particular dataset has over 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. We can utilized the [CensusMapper gaphical variable selection interface](https://censusmapper.ca/api/CA16#api_variable), which can also be reached by calling `explore_census_vectors()` from the R console. For this example we are interested in low income families and note that the internal CensusMapper vector for all families is of the form *v_TX<year>_607* and that for all families in low income is *v_TX<year>_786*.
+This particular dataset has over 800 individual vectors. The vector codes follow a regular pattern across different years, and we can use this to quickly identify all the relevant variables of interest across multiple datasets. We can utilized the [CensusMapper graphical variable selection interface](https://censusmapper.ca/api/CA16#api_variable), which can also be reached by calling `explore_census_vectors()` from the R console. For this example we are interested in low income families and note that the internal CensusMapper vector for all families is of the form *v_TX<year>_607* and that for all families in low income is *v_TX<year>_786*.
 
 While the geography varies across Census periods, the call to `get_census` will automatically attach the correct geography for each annual dataset. We pick four years to look at low income families.
 

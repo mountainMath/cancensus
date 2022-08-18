@@ -2,7 +2,7 @@
 % Please edit documentation in R/intersect_geometry.R
 \name{get_intersecting_geometries}
 \alias{get_intersecting_geometries}
-\title{Get identifiers for census regions interesecting a geometry}
+\title{Get identifiers for census regions intersecting a geometry}
 \source{
 Census data and boundary geographies are reproduced and distributed on
 an "as is" basis with the permission of Statistics Canada (Statistics Canada
