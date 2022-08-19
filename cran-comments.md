@@ -1,3 +1,6 @@
+# Update - 0.5.3
+- fixes a bug in the local data recall check
+
 # Update - v0.5.2
 - resolved broken and relocated links picked up in CRAN pretesting
 

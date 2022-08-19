@@ -75,7 +75,7 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
     vector_recall <- recall_database %>%
       dplyr::filter(grepl("^d\\.",.data$api_version)) %>%
       dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-      dplyr::group_map(~dplyr::filter(cached_data,
+      dplyr::group_map(~dplyr::filter(cached_data %>% dplyr::filter(grepl("^d\\.",.data$version)),
                                       is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
                                       .data$version<=.y$api_version,
                                       .data$dataset==.y$dataset,
@@ -86,7 +86,7 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
     geo_recall <- recall_database %>%
       dplyr::filter(grepl("^g\\.",.data$api_version)) %>%
       dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-      dplyr::group_map(~dplyr::filter(cached_data,
+      dplyr::group_map(~dplyr::filter(cached_data %>% dplyr::filter(grepl("^g\\.",.data$version)),
                                       is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
                                       .data$version<=.y$api_version,
                                       .data$dataset==.y$dataset)) %>%
