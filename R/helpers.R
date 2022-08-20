@@ -102,6 +102,7 @@ check_for_recalled_data_and_warn <- function(){
 }
 
 first_run_checks <- function(){
+  # Check caches for recalled data
   path=file.path(tempdir(),"cancensus_first_run_checks.info")
   if (!file.exists(path)) {
     # first time cancensus is run!

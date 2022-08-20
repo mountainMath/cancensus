@@ -11,7 +11,7 @@
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
-#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package).
+#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.
 #' @param resolution Resolution of the geographic data. {cancensus} will download simplified geometries by default. For lower level geometries like DB or DA this will be very close to the high resolution data.
 #' Simplification generally increases as the geographic aggregation level increases.
 #' If high resolution geometries are required
@@ -51,7 +51,10 @@
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
                         resolution = 'simplified',
                         labels = "detailed",
-                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"))
+  {
+
+  # API and data recall checks
   first_run_checks()
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
@@ -59,9 +62,11 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   data_version<-NULL
   geo_version<-NULL
 
+  # Check region selection validity
   if (is.na(level)) level="Regions"
 
-  if (!(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
+  # Check spatial resolution
+  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -74,7 +79,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
-
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
     stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
@@ -85,7 +89,18 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   } else if (!geo_format %in% c("sf", "sp")) {
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
   } else if (!is.na(geo_format) && !requireNamespace("sf", quietly = TRUE)) {
-    stop("the `sf` package is required to return geographies.")
+    stop("The `sf` package is required to return geographies.")
+  }
+
+  # Check if SF is installed when asking for spatial data
+  if(geo_format == "sf" && !("sf" %in% utils::installed.packages())) {
+    if (utils::menu(c("Yes", "No"),
+             title= paste("The `sf` package is required to return geographies. Would you like to install?")) == "1") {
+      utils::install.packages('sf')
+    } else {
+      print("Cancelling installation and retrieving tabular data only.")
+      geo_format <- NA
+    }
   }
 
   base_url=paste0(cancensus_base_url(),"/api/v1/")

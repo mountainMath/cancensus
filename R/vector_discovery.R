@@ -312,4 +312,3 @@ explore_census_regions <- function(dataset = "CA16") {
   message("Opening interactive census region explorer at censusmapper.ca/api in the browser")
   utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_region"))
 }
-

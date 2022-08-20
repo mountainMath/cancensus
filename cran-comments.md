@@ -1,4 +1,5 @@
 # Update - 0.5.3
+- Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out. 
 - fixes a bug in the local data recall check
 
 # Update - v0.5.2
