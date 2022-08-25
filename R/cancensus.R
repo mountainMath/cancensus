@@ -11,7 +11,11 @@
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
-#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package).
+#' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.
+#' @param resolution Resolution of the geographic data. {cancensus} will download simplified geometries by default. For lower level geometries like DB or DA this will be very close to the high resolution data.
+#' Simplification generally increases as the geographic aggregation level increases.
+#' If high resolution geometries are required
+#' then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.
 #' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
@@ -44,15 +48,25 @@
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
 #'}
-get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA, labels = "detailed",
-                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY")) {
+get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
+                        resolution = 'simplified',
+                        labels = "detailed",
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"))
+  {
+
+  # API and data recall checks
+  first_run_checks()
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
   result <- NULL
   data_version<-NULL
   geo_version<-NULL
 
+  # Check region selection validity
   if (is.na(level)) level="Regions"
+
+  # Check spatial resolution
+  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -65,7 +79,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
-
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
     stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
@@ -76,7 +89,18 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   } else if (!geo_format %in% c("sf", "sp")) {
     stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
   } else if (!is.na(geo_format) && !requireNamespace("sf", quietly = TRUE)) {
-    stop("the `sf` package is required to return geographies.")
+    stop("The `sf` package is required to return geographies.")
+  }
+
+  # Check if SF is installed when asking for spatial data
+  if(geo_format == "sf" && !("sf" %in% utils::installed.packages())) {
+    if (utils::menu(c("Yes", "No"),
+             title= paste("The `sf` package is required to return geographies. Would you like to install?")) == "1") {
+      utils::install.packages('sf')
+    } else {
+      print("Cancelling installation and retrieving tabular data only.")
+      geo_format <- NA
+    }
   }
 
   base_url=paste0(cancensus_base_url(),"/api/v1/")
@@ -118,6 +142,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
+        check_recalled_data_and_warn(meta_file,params)
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
@@ -133,7 +158,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
       file_info <- file.info(data_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(jsonlite::toJSON(regions)),
+      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
                                  level=level,
                                  vectors=jsonlite::toJSON(as.character(vectors))  %>% as.character(),
                                  created_at=Sys.time(),
@@ -144,16 +169,19 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # Load `result` object from cache.
       load(file = data_file)
     }
-    touch_metadata(meta_file)
+    touch_metadata(meta_file,params)
   }
 
   if (!is.na(geo_format)) {
     params <- list(regions=regions,
                    level=level,
                    dataset=dataset,
+                   resolution=resolution,
                    api_key=api_key)
-    param_string <- paste0("regions=", regions, "&level=", level, "&dataset=",
-                           dataset)
+    param_string <- paste0("regions=", regions,
+                           "&level=", level,
+                           "&dataset=", dataset)
+    if (resolution !="simplified") param_string <- paste0(param_string,"&resolution=",resolution)
     geo_base_name <- paste0("CM_geo_", digest::digest(param_string, algo = "md5"))
     geo_file <- cache_path(geo_base_name, ".geojson")
     meta_file <- paste0(geo_file, ".meta")
@@ -172,11 +200,14 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       geo_version <- response$headers$`data-version`
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
       file_info <- file.info(geo_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),level=level,created_at=Sys.time(),
-                         version=data_version,size=file_info$size)
+      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
+                                level=level,created_at=Sys.time(),
+                                resolution=resolution,
+                         version=geo_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
     } else {
       if (!quiet) message("Reading geo data from local cache.")
+      check_recalled_data_and_warn(meta_file,params)
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
       sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
@@ -192,7 +223,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       dplyr::select(result, -dplyr::one_of(to_remove)) %>%
         dplyr::inner_join(geos, ., by = "GeoUID")
     }
-    touch_metadata(meta_file)
+    touch_metadata(meta_file,params)
   }
 
   # ensure sf format even if library not loaded and set agr columns
@@ -268,7 +299,7 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 
 #' Query the CensusMapper API for available datasets.
 #'
-#' @param use_cache If set to TRUE (the dfault), data will be read from a temporary local cache for the
+#' @param use_cache If set to TRUE (the default), data will be read from a temporary local cache for the
 #'   duration of the R session, if
 #'   available. If set to FALSE, query the API for the data, and
 #'   refresh the temporary cache with the result.
@@ -279,7 +310,7 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' Returns a data frame with a column \code{dataset} containing the code for the
 #' dataset, a column \code{description} describing it, a \code{geo_dataset} column
 #' identifying the geography dataset the data is based on, a \code{attribution} column
-#' with an attribtuion string, a \code{reference} column with a reference identifier, and
+#' with an attribution string, a \code{reference} column with a reference identifier, and
 #' a \code{reference_url} column with a link to reference materials.
 #'
 #' @export
@@ -400,6 +431,7 @@ label_vectors <-  function(x) {
 #' # Get details for truncated vectors:
 #' census_vectors(census_data)
 #' }
+#' @keywords internal
 #' @export
 census_vectors <-  function(x) {
   warning("census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.")

@@ -2,7 +2,7 @@
 
 #' Set Censusmapper API key
 #'
-#' @description Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permamently for use across sessions.
+#' @description Cancensus requires a free Censusmapper API key to retrieve data. This function helps set the key for either the duration of the session (default) or permanently for use across sessions.
 #'
 #' @param key a Censusmapper API key. For more information on keys see the \href{https://mountainmath.github.io/cancensus/index.html#api-key}{API key section}
 #' @param overwrite Option to overwrite any existing Censusmapper keys already stored locally.
@@ -12,12 +12,12 @@
 #'
 #' @examples
 #'\dontrun{
-#' set_api_key("YOUR_CM_API_KEY")
+#' set_cancensus_api_key("YOUR_CM_API_KEY")
 #'
-#' # This will set the key permanently until ovewritten again
-#' set_api_key("YOUR_CM_API_KEY", install = TRUE)
+#' # This will set the key permanently until overwritten again
+#' set_cancensus_api_key("YOUR_CM_API_KEY", install = TRUE)
 #' }
-set_api_key <- function(key, overwrite = FALSE, install = FALSE){
+set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
   if (install) {
     home <- Sys.getenv("HOME")
     renv <- file.path(home, ".Renviron")
@@ -35,7 +35,7 @@ set_api_key <- function(key, overwrite = FALSE, install = FALSE){
       else{
         tv <- readLines(renv)
         if(any(grepl("CM_API_KEY",tv))){
-          stop("An existing Censusmapper API key is already saved. You can overwrite it with the argument overwrite=TRUE", call.=FALSE)
+          stop("An existing Censusmapper API key is already saved. You can overwrite it with the argument overwrite=TRUE.", call.=FALSE)
         }
       }
     }
@@ -56,19 +56,19 @@ set_api_key <- function(key, overwrite = FALSE, install = FALSE){
 #' @description Cancensus provides session caching for retrieved data to increase speeds and reduce API usage. This function will create a persistent cache across sessions.
 #'
 #' @param cache_path a local directory to use for saving cached data
-#' @param overwrite Option to overwrite any existing Censusmapper keys already stored locally.
+#' @param overwrite Option to overwrite any existing cache path already stored locally.
 #' @param install Option to install permanently for use across sessions.
 #'
 #' @export
 #'
 #' @examples
 #'\dontrun{
-#' set_cache_path("~/cancensus_cache")
+#' set_cancensus_cache_path("~/cancensus_cache")
 #'
 #' # This will set the cache path permanently until ovewritten again
-#' set_cache_path("~/cancensus_cache", install = TRUE)
+#' set_cancensus_cache_path("~/cancensus_cache", install = TRUE)
 #' }
-set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
+set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
   if (install) {
     home <- Sys.getenv("HOME")
     renv <- file.path(home, ".Renviron")
@@ -85,7 +85,7 @@ set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
       } else{
         tv <- readLines(renv)
         if(any(grepl("CM_CACHE_PATH",tv))){
-          stop("A saved cache already exists. You can overwrite it with the argument overwrite=TRUE", call.=FALSE)
+          stop("A saved cache already exists. You can overwrite it with the argument overwrite=TRUE.", call.=FALSE)
         }
       }
     }
@@ -93,9 +93,9 @@ set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
     keyconcat <- paste0("CM_CACHE_PATH='", cache_path, "'")
     # Append cache path .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
-    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH"). \nTo use now, restart R or run `readRenviron("~/.Renviron")`')
+    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH"). \nTo use now, restart R or run readRenviron("~/.Renviron").')
   } else {
-    message("Cache set for duration of session. To permanently add your cache path for use across sessions, run this function with `install = TRUE`.")
+    message("Cache set for duration of session. To permanently add your cache path for use across sessions, run this function with install = TRUE.")
     Sys.setenv('CM_CACHE_PATH' = cache_path)
   }
   cache_path
@@ -103,20 +103,36 @@ set_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
 
 #' View saved Censusmapper API key
 #'
-#' @description View saved API key#'
+#' @description View saved API key'
 #'
 #' @export
-show_api_key <- function() {
-  Sys.getenv('CM_API_KEY')
+#'
+#' @examples
+#' show_cancensus_api_key()
+show_cancensus_api_key <- function() {
+  key <- Sys.getenv('CM_API_KEY')
+  if (key==""){
+    message("No api key path set")
+    key <- NULL
+  }
+  key
 }
 
 #' View saved cache directory path
 #'
-#' @description View saved API key#'
+#' @description View saved cache path'
 #'
 #' @export
-show_cache_path <- function() {
-  Sys.getenv('CM_CACHE_PATH')
+#'
+#' @examples
+#' show_cancensus_cache_path()
+show_cancensus_cache_path <- function() {
+  path <- Sys.getenv('CM_CACHE_PATH')
+  if (path==""){
+    message("No cache path set")
+    path <- NULL
+  }
+  path
 }
 
 cm_no_cache_path_message <- paste(

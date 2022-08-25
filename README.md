@@ -14,7 +14,7 @@ Access, retrieve, and work with Canadian Census data and geography.
 * Provides Census geography in multiple R spatial formats
 * Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, Dissemination Areas, Enumeration Areas (for 1996), and Dissemination Blocks (for 2001-2021)
 * Provides data for the 2021, 2016, 2011, 2006, 2001, and 1996 Census releases
-* Access to taxfiler data at the Census Tract level for tax years 2000 through 2017
+* Access to taxfiler data at the Census Tract level for tax years 2000 through 2018
  
 ### Reference
 
@@ -35,7 +35,7 @@ library(cancensus)
 
 ### API key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_api_key(<your_api_key>', install = TRUE)`.
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key(<your_api_key>', install = TRUE)`.
 
 CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.
 
@@ -45,13 +45,15 @@ For larger quotas, please get in touch with Jens [directly](mailto:jens@censusma
 
 ### Local Cache
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+
+Starting with version 0.5.2 **cancensus** will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in [CensusMapper](https://censusmapper.ca). Statistics Canada occasionally detects and corrects errors in their census data releases, and **cancensus** will download a list of recalled data at the first invocation of `get_census()` in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the `remove_recalled_chached_data()` function. If data was cached with **cancenus** versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.
 
 ### Currently available datasets
 
 **cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2021 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2021 Program which can be viewed on their [website](https://www12.statcan.gc.ca/census-recensement/2021/ref/prodserv/release-diffusion-eng.cfm).
 
-Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.
+Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.
 
 ### Picking regions and variables
 
@@ -101,6 +103,32 @@ We'd love to feature examples of work or projects that use cancensus.
 * [Additional datasets: Structural type of dwelling by document type](https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html)
 * [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
+
+### Related packages
+This package is designed to play well with other Canadian data packages, in particular
+
+* [**tongfen**](https://mountainmath.github.io/tongfen/index.html), which solves the problem of making data across several census years comparable,
+* [**cansim**](https://mountainmath.github.io/cansim/index.html), which accesses regular StatCan tables and can be linked to census geographies via the `GeoUID`,and
+* [**cmhc**](https://mountainmath.github.io/cmhc/index.html), which accesses CMHC data and can be linked to census geographies via the `GeoUID`.
+
+Taken together these packages offer a seamless view into important Canadian data.
+
+There are several other jurisdiction where census data is available via R packages, including
+
+* US: [tidycensus](https://walker-data.com/tidycensus/) and [tigris](https://github.com/walkerke/tigris)
+* Brasil: [geobr](https://github.com/ipeaGIT/geobr)
+* Africa: [afrimapr](https://afrimapr.github.io/afrimapr.website/)
+* Brazil: [geobr](https://ipeagit.github.io/geobr/)
+* Chile: [chilemapas](https://pacha.dev/chilemapas/)
+* Czech Republic: [RCzechia](https://github.com/jlacko/RCzechia)
+* Finland: [geofi](https://ropengov.github.io/geofi/)
+* Ghana: [rGhanaCensus](https://CRAN.R-project.org/package=rGhanaCensus)
+* Spain: [mapSpain](https://github.com/rOpenSpain/mapSpain/)
+* UK: [geographr](https://github.com/humaniverse/geographr)
+* Uruguay: [geouy](https://github.com/RichDeto/geouy)
+* Global (political administrative boundaries): [rgeoboundaries](https://github.com/wmgeolab/rgeoboundaries)
+
+
 ### Contributing
 
 * We encourage contributions to improve this project. The best way is through issues and pull requests.
@@ -111,16 +139,16 @@ We'd love to feature examples of work or projects that use cancensus.
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.0.
+  access, retrieve, and work with Canadian Census data and geography. v0.5.3.
 
 
 A BibTeX entry for LaTeX users is
 ```
   @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
+    title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.0},
+    note = {R package version 0.5.3},
     url = {https://mountainmath.github.io/cancensus/},
   }
 ```
@@ -132,11 +160,11 @@ The [cansim package](https://mountainmath.github.io/cansim/index.html) is design
 
 Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
 
-The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining cenusus variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
+The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
 ### Statistics Canada Attribution
 
-Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:
+Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:
 
 ```
 Acknowledgment of Source

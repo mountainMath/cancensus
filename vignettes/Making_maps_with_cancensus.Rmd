@@ -33,8 +33,8 @@ On the other hand, `sp` has been around for a long time with development startin
 library(cancensus)
 library(sf)
 # retrieve sf dataframe
-toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
-                         vectors=c("median_hh_income"="v_CA16_2397"), level='CSD', quiet = TRUE, 
+toronto <- get_census(dataset='CA21', regions=list(CMA="35535"),
+                         vectors=c("median_hh_income"="v_CA21_906"), level='CSD', quiet = TRUE, 
                          geo_format = 'sf', labels = 'short')
 ```
 
@@ -43,14 +43,14 @@ toronto <- get_census(dataset='CA16', regions=list(CMA="35535"),
 The `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular column. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
 ```{r}
-plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD")
+plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD in 2020")
 ```
 
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticules, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
 ```{r}
-plot(st_geometry(toronto), col = NA, main = "Toronto CSDs with Median HH Income > $100,000", lty = 3)
-plot(st_geometry(toronto[toronto$median_hh_income > 100000,]), col = "red", add = TRUE)
+plot(st_geometry(toronto), col = NA, main = "Toronto CSDs with Median HH Income > $125,000 in 2020", lty = 3)
+plot(st_geometry(toronto[toronto$median_hh_income > 125000,]), col = "red", add = TRUE)
 ```
 
 # Maps with ggplot2
@@ -75,7 +75,7 @@ ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
         axis.text = element_blank(),
         axis.ticks = element_blank()) + 
   coord_sf(datum=NA) +
-  labs(title = "Median Household Income", subtitle = "Toronto Census Subdivisions, 2016 Census")
+  labs(title = "Median Household Income in 2020", subtitle = "Toronto Census Subdivisions, 2021 Census")
 ```
 
 # Interactive maps with leaflet

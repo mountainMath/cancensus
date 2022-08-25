@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
       </span>
     </div>
 
@@ -71,7 +71,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -129,7 +129,7 @@
 <li>Provides Census geography in multiple R spatial formats</li>
 <li>Provides data and geography at multiple Census geographic levels including province, Census Metropolitan Area, Census Division, Census Subdivision, Census Tract, Dissemination Areas, Enumeration Areas (for 1996), and Dissemination Blocks (for 2001-2021)</li>
 <li>Provides data for the 2021, 2016, 2011, 2006, 2001, and 1996 Census releases</li>
-<li>Access to taxfiler data at the Census Tract level for tax years 2000 through 2017</li>
+<li>Access to taxfiler data at the Census Tract level for tax years 2000 through 2018</li>
 </ul>
 <div class="section level3">
 <h3 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
@@ -139,16 +139,16 @@
 <div class="section level3">
 <h3 id="installing-the-package">Installing the package<a class="anchor" aria-label="anchor" href="#installing-the-package"></a>
 </h3>
-<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cancensus"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></code></pre>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cancensus"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span></code></pre>
 <p>Alternatively, the latest development version can be installed from Github.</p>
-<pre><code><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mountainmath/cancensus"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></code></pre>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mountainmath/cancensus"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="api-key">API key<a class="anchor" aria-label="anchor" href="#api-key"></a>
 </h3>
-<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up" class="external-link">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_api_key(&lt;your_api_key&gt;', install = TRUE)</code>.</p>
+<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up" class="external-link">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_cancensus_api_key(&lt;your_api_key&gt;', install = TRUE)</code>.</p>
 <p>CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.</p>
 <p>The new <code>get_intersecting_geometries</code> function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This <em>should</em> suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.</p>
 <p>For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
@@ -156,39 +156,40 @@
 <div class="section level3">
 <h3 id="local-cache">Local Cache<a class="anchor" aria-label="anchor" href="#local-cache"></a>
 </h3>
-<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cache_path(&lt;local cache path&gt;, install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cancensus_cache_path(&lt;local cache path&gt;, install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="reference/get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancenus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
 </div>
 <div class="section level3">
 <h3 id="currently-available-datasets">Currently available datasets<a class="anchor" aria-label="anchor" href="#currently-available-datasets"></a>
 </h3>
 <p><strong>cancensus</strong> can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2021 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2021 Program which can be viewed on their <a href="https://www12.statcan.gc.ca/census-recensement/2021/ref/prodserv/release-diffusion-eng.cfm" class="external-link">website</a>.</p>
-<p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.</p>
+<p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.</p>
 </div>
 <div class="section level3">
 <h3 id="picking-regions-and-variables">Picking regions and variables<a class="anchor" aria-label="anchor" href="#picking-regions-and-variables"></a>
 </h3>
 <p>Census data contains thousands of different geographic regions as well as thousands of unique variables. There are several useful functions within <strong>cancensus</strong> to simplify accessing Census metadata, locating regions, and identifying variables.</p>
-<pre><code><span class="co"># To view available Census datasets</span>
-<span class="fu"><a href="reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># To view available named regions at different levels of Census hierarchy for the 2016 Census (for example)</span>
-<span class="fu"><a href="reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span>
-
-<span class="co"># To view available Census variables for the 2016 Census</span>
-<span class="fu"><a href="reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="co"># To view available Census datasets</span></span>
+<span><span class="fu"><a href="reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To view available named regions at different levels of Census hierarchy for the 2016 Census (for example)</span></span>
+<span><span class="fu"><a href="reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To view available Census variables for the 2016 Census</span></span>
+<span><span class="fu"><a href="reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span></code></pre>
 <p>There is also an interactive tool that is available at the <a href="https://censusmapper.ca/api" class="external-link">CensusMapper API</a> to visually select regions and variables and generate code for the API call. Calling <code>explore_census_vectors(dataset = "CA16")</code> or <code>explore_census_regions(dataset = "CA16")</code> will open a new browser window to this interactive tool, preconfigured for whichever Census dataset is set as an argument.</p>
 </div>
 <div class="section level3">
 <h3 id="getting-the-data">Getting the data<a class="anchor" aria-label="anchor" href="#getting-the-data"></a>
 </h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf" class="external-link"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp" class="external-link"><strong>sp</strong></a> formats.</p>
-<pre><code><span class="co"># Return data only</span>
-<span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, 
-                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span>
-
-<span class="co"># Return an sf-class data frame</span>
-<span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, 
-                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="co"># Return data only</span></span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Return an sf-class data frame</span></span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
 <div class="section level3">
@@ -214,6 +215,47 @@
 </ul>
 </div>
 <div class="section level3">
+<h3 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
+</h3>
+<p>This package is designed to play well with other Canadian data packages, in particular</p>
+<ul>
+<li>
+<a href="https://mountainmath.github.io/tongfen/index.html" class="external-link"><strong>tongfen</strong></a>, which solves the problem of making data across several census years comparable,</li>
+<li>
+<a href="https://mountainmath.github.io/cansim/index.html" class="external-link"><strong>cansim</strong></a>, which accesses regular StatCan tables and can be linked to census geographies via the <code>GeoUID</code>,and</li>
+<li>
+<a href="https://mountainmath.github.io/cmhc/index.html" class="external-link"><strong>cmhc</strong></a>, which accesses CMHC data and can be linked to census geographies via the <code>GeoUID</code>.</li>
+</ul>
+<p>Taken together these packages offer a seamless view into important Canadian data.</p>
+<p>There are several other jurisdiction where census data is available via R packages, including</p>
+<ul>
+<li>US: <a href="https://walker-data.com/tidycensus/" class="external-link">tidycensus</a> and <a href="https://github.com/walkerke/tigris" class="external-link">tigris</a>
+</li>
+<li>Brasil: <a href="https://github.com/ipeaGIT/geobr" class="external-link">geobr</a>
+</li>
+<li>Africa: <a href="https://afrimapr.github.io/afrimapr.website/" class="external-link">afrimapr</a>
+</li>
+<li>Brazil: <a href="https://ipeagit.github.io/geobr/" class="external-link">geobr</a>
+</li>
+<li>Chile: <a href="https://pacha.dev/chilemapas/" class="external-link">chilemapas</a>
+</li>
+<li>Czech Republic: <a href="https://github.com/jlacko/RCzechia" class="external-link">RCzechia</a>
+</li>
+<li>Finland: <a href="https://ropengov.github.io/geofi/" class="external-link">geofi</a>
+</li>
+<li>Ghana: <a href="https://CRAN.R-project.org/package=rGhanaCensus" class="external-link">rGhanaCensus</a>
+</li>
+<li>Spain: <a href="https://github.com/rOpenSpain/mapSpain/" class="external-link">mapSpain</a>
+</li>
+<li>UK: <a href="https://github.com/humaniverse/geographr" class="external-link">geographr</a>
+</li>
+<li>Uruguay: <a href="https://github.com/RichDeto/geouy" class="external-link">geouy</a>
+</li>
+<li>Global (political administrative boundaries): <a href="https://github.com/wmgeolab/rgeoboundaries" class="external-link">rgeoboundaries</a>
+</li>
+</ul>
+</div>
+<div class="section level3">
 <h3 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h3>
 <ul>
@@ -226,28 +268,28 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.0.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.3.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
-    title = {cancensus: R package to access, retrieve, and work With Canadian Census data and geography},
+    title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.0},
+    note = {R package version 0.5.3},
     url = {https://mountainmath.github.io/cancensus/},
   }</code></pre>
 </div>
 <div class="section level3">
-<h3 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
+<h3 id="related-packages-1">Related packages<a class="anchor" aria-label="anchor" href="#related-packages-1"></a>
 </h3>
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data" class="external-link">socio-economic data repository</a> with thousands of data tables available for public access.</p>
 <p>The <a href="https://mountainmath.github.io/cansim/index.html" class="external-link">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus" class="external-link">Github</a>.</p>
 <p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
-<p>The <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> automates the task of obtaining cenusus variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen" class="external-link">Github</a>.</p>
+<p>The <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> automates the task of obtaining census variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen" class="external-link">Github</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="statistics-canada-attribution">Statistics Canada Attribution<a class="anchor" aria-label="anchor" href="#statistics-canada-attribution"></a>
 </h3>
-<p>Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:</p>
+<p>Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:</p>
 <pre><code>Acknowledgment of Source
 
 (a) You shall include and maintain the following notice on all licensed rights of the Information:
@@ -320,7 +362,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

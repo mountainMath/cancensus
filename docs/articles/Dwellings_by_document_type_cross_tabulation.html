@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -111,8 +111,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Additional datasets: Structural type of dwelling by document type</h1>
-            <h3 data-toc-skip class="subtitle">Dataset background and example usage</h3>
+      <h1 data-toc-skip>Additional datasets: Structural type of dwelling
+by document type</h1>
+            <h3 data-toc-skip class="subtitle">Dataset background and
+example usage</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mountainMath/cancensus/blob/HEAD/vignettes/Dwellings_by_document_type_cross_tabulation.Rmd" class="external-link"><code>vignettes/Dwellings_by_document_type_cross_tabulation.Rmd</code></a></small>
@@ -125,90 +127,122 @@
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/" class="external-link">Canadian Mortgage and Housing Corporation</a> (CMHC), CensusMapper has added and open-sourced a special cross-tabulation with <em>Structural Type of Dwelling</em> by <em>Document Type</em> down to the Census Tract level for the census years 2001, 2006, 2011 and 2016. <em>Structural Type of Dwelling</em> is a common census variable that describes the type of structure a dwelling unit is in. <em>Document Type</em> is a less frequently used variable that classifies whether the census determined the dwelling is either:</p>
+<p>Through collaboration with the <a href="https://www.cmhc-schl.gc.ca/" class="external-link">Canadian Mortgage and Housing
+Corporation</a> (CMHC), CensusMapper has added and open-sourced a
+special cross-tabulation with <em>Structural Type of Dwelling</em> by
+<em>Document Type</em> down to the Census Tract level for the census
+years 2001, 2006, 2011 and 2016. <em>Structural Type of Dwelling</em> is
+a common census variable that describes the type of structure a dwelling
+unit is in. <em>Document Type</em> is a less frequently used variable
+that classifies whether the census determined the dwelling is
+either:</p>
 <ul>
 <li>occupied by usual residents (also known as a household);</li>
 <li>occupied by temporarily present persons; or,</li>
 <li>unoccupied.</li>
 </ul>
-<p>This cross-tabulation has information on the structural type of the entire building stock, not just the occupied dwelling units. This is useful when trying to understand the built-up fabric of urban environments.</p>
-<p>As an example, we look at the structure of the dwelling stock in the City of Toronto in 2016.</p>
+<p>This cross-tabulation has information on the structural type of the
+entire building stock, not just the occupied dwelling units. This is
+useful when trying to understand the built-up fabric of urban
+environments.</p>
+<p>As an example, we look at the structure of the dwelling stock in the
+City of Toronto in 2016.</p>
 </div>
 <div class="section level2">
-<h2 id="example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents">Example usage: buildings unoccupied vs not occupied by usual residents<a class="anchor" aria-label="anchor" href="#example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents"></a>
+<h2 id="example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents">Example usage: buildings unoccupied vs not occupied by usual
+residents<a class="anchor" aria-label="anchor" href="#example-usage-buildings-unoccupied-vs-not-occupied-by-usual-residents"></a>
 </h2>
-<p>Dwellings registered as <em>unoccupied</em> on Census day capture the imagination of many, although people often mistakenly pull data on dwellings <em>not occupied by usual residents</em> as it is easily available in the standard Census profile data. The advantage of this custom cross-tabulation is that it allows researchers to zoom in on dwellings that were classified as <em>unoccupied</em> by the enumerator on Census day for additional detail.</p>
+<p>Dwellings registered as <em>unoccupied</em> on Census day capture the
+imagination of many, although people often mistakenly pull data on
+dwellings <em>not occupied by usual residents</em> as it is easily
+available in the standard Census profile data. The advantage of this
+custom cross-tabulation is that it allows researchers to zoom in on
+dwellings that were classified as <em>unoccupied</em> by the enumerator
+on Census day for additional detail.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Packages used in this example</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
-<p>In this example, we want to retrieve the custom structural dwelling cross-tab for the 2016 Census year with the code <code>CA16xSD</code> for the Toronto Census subdivision with the standard Statistics Canada region code <code>3520005</code>. For more background on searching for Census geographical regions, see <code>?list_census_regions()</code> or the <a href="https://mountainmath.github.io/cancensus/articles/cancensus.html" class="external-link">Get started with cancensus vignette</a>.</p>
+<code class="sourceCode R"><span><span class="co"># Packages used in this example</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p>In this example, we want to retrieve the custom structural dwelling
+cross-tab for the 2016 Census year with the code <code>CA16xSD</code>
+for the Toronto Census subdivision with the standard Statistics Canada
+region code <code>3520005</code>. For more background on searching for
+Census geographical regions, see <code>?list_census_regions()</code> or
+the <a href="https://mountainmath.github.io/cancensus/articles/cancensus.html" class="external-link">Get
+started with cancensus vignette</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Attribution for the dataset to be used in graphs</span>
-<span class="va">attribution</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="st">"CA16xSD"</span><span class="op">)</span>
-
-<span class="co"># Select all variables base variables, this gives us total counts by structural type of dwelling</span>
-<span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16xSD"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">parent_vector</span><span class="op">)</span><span class="op">)</span>
-<span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">vars</span><span class="op">$</span><span class="va">vector</span>,<span class="va">vars</span><span class="op">$</span><span class="va">label</span><span class="op">)</span>
-
-<span class="va">variables</span>
-<span class="co">#&gt;                                          Total dwellings </span>
-<span class="co">#&gt;                                            "v_CA16xSD_1" </span>
-<span class="co">#&gt;                                    Single-detached house </span>
-<span class="co">#&gt;                                            "v_CA16xSD_2" </span>
-<span class="co">#&gt;                                      Semi-detached house </span>
-<span class="co">#&gt;                                            "v_CA16xSD_3" </span>
-<span class="co">#&gt;                                                Row house </span>
-<span class="co">#&gt;                                            "v_CA16xSD_4" </span>
-<span class="co">#&gt;                            Apartment or flat in a duplex </span>
-<span class="co">#&gt;                                            "v_CA16xSD_5" </span>
-<span class="co">#&gt; Apartment in a building that has fewer than five storeys </span>
-<span class="co">#&gt;                                            "v_CA16xSD_6" </span>
-<span class="co">#&gt;    Apartment in a building that has five or more storeys </span>
-<span class="co">#&gt;                                            "v_CA16xSD_7" </span>
-<span class="co">#&gt;                              Other single-attached house </span>
-<span class="co">#&gt;                                            "v_CA16xSD_8" </span>
-<span class="co">#&gt;                                         Movable dwelling </span>
-<span class="co">#&gt;                                            "v_CA16xSD_9"</span></code></pre></div>
-<p>The named vector labels the census variables we are about to query.</p>
+<code class="sourceCode R"><span><span class="co"># Attribution for the dataset to be used in graphs</span></span>
+<span><span class="va">attribution</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset_attribution.html">dataset_attribution</a></span><span class="op">(</span><span class="st">"CA16xSD"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Select all variables base variables, this gives us total counts by structural type of dwelling</span></span>
+<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16xSD"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">parent_vector</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">vars</span><span class="op">$</span><span class="va">vector</span>,<span class="va">vars</span><span class="op">$</span><span class="va">label</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">variables</span></span>
+<span><span class="co">#&gt;                                          Total dwellings </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_1" </span></span>
+<span><span class="co">#&gt;                                    Single-detached house </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_2" </span></span>
+<span><span class="co">#&gt;                                      Semi-detached house </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_3" </span></span>
+<span><span class="co">#&gt;                                                Row house </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_4" </span></span>
+<span><span class="co">#&gt;                            Apartment or flat in a duplex </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_5" </span></span>
+<span><span class="co">#&gt; Apartment in a building that has fewer than five storeys </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_6" </span></span>
+<span><span class="co">#&gt;    Apartment in a building that has five or more storeys </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_7" </span></span>
+<span><span class="co">#&gt;                              Other single-attached house </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_8" </span></span>
+<span><span class="co">#&gt;                                         Movable dwelling </span></span>
+<span><span class="co">#&gt;                                            "v_CA16xSD_9"</span></span></code></pre></div>
+<p>The named vector labels the census variables we are about to
+query.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Separate out the individual dwelling types</span>
-<span class="va">dwelling_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">variables</span><span class="op">)</span>,<span class="st">"Total dwellings"</span><span class="op">)</span>
-
-<span class="co"># Grab the census data and compute shares for each dwelling type</span>
-<span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16xSD"</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CSD<span class="op">=</span><span class="st">"3520005"</span><span class="op">)</span>, vectors <span class="op">=</span> <span class="va">variables</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">dwelling_types</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">value</span><span class="op">/</span><span class="va">`Total dwellings`</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Separate out the individual dwelling types</span></span>
+<span><span class="va">dwelling_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">variables</span><span class="op">)</span>,<span class="st">"Total dwellings"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Grab the census data and compute shares for each dwelling type</span></span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16xSD"</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CSD<span class="op">=</span><span class="st">"3520005"</span><span class="op">)</span>, vectors <span class="op">=</span> <span class="va">variables</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">dwelling_types</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">value</span><span class="op">/</span><span class="va">`Total dwellings`</span><span class="op">)</span></span></code></pre></div>
 <p>To visualize what this looks like on a bar chart:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">name</span>,<span class="va">share</span><span class="op">)</span>,y<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>,fill<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"City of Toronto dwelling units by structural type"</span>,
-       x<span class="op">=</span><span class="cn">NULL</span>,y<span class="op">=</span><span class="cn">NULL</span>,caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">name</span>,<span class="va">share</span><span class="op">)</span>,y<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>,fill<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"City of Toronto dwelling units by structural type"</span>,</span>
+<span>       x<span class="op">=</span><span class="cn">NULL</span>,y<span class="op">=</span><span class="cn">NULL</span>,caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>As with regular Census data, all data can be retrieved as spatial data. Sometimes it’s easier to use the CensusMapper API interface to search for and select the variables we are interested in. The <code><a href="../reference/explore_census_vectors.html">explore_census_vectors()</a></code> function opens a browser with the variable selection tool, we determine that “v_CA16xSD_1” and “v_CA16xSD_28” are the variables enumerating all dwellings and all unoccupied dwellings, respectively.</p>
+<p>As with regular Census data, all data can be retrieved as spatial
+data. Sometimes it’s easier to use the CensusMapper API interface to
+search for and select the variables we are interested in. The
+<code><a href="../reference/explore_census_vectors.html">explore_census_vectors()</a></code> function opens a browser with the
+variable selection tool, we determine that “v_CA16xSD_1” and
+“v_CA16xSD_28” are the variables enumerating all dwellings and all
+unoccupied dwellings, respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Use explore_census_vectors() to browse and select variables of interest</span>
-<span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Total<span class="op">=</span><span class="st">"v_CA16xSD_1"</span>, Unoccupied<span class="op">=</span><span class="st">"v_CA16xSD_28"</span><span class="op">)</span>
-
-<span class="co"># Retrieve data with attached geography</span>
-<span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16xSD"</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CSD<span class="op">=</span><span class="st">"3520005"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">"CT"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span>,
-                          vectors <span class="op">=</span> <span class="va">vars</span>,use_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">Unoccupied</span><span class="op">/</span><span class="va">Total</span><span class="op">)</span>
-
-<span class="co"># Visualize</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"City of Toronto dwellings unoccupied on census day"</span>,
-       fill<span class="op">=</span><span class="st">"Share"</span>,
-       x<span class="op">=</span><span class="cn">NULL</span>,y<span class="op">=</span><span class="cn">NULL</span>,caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Use explore_census_vectors() to browse and select variables of interest</span></span>
+<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Total<span class="op">=</span><span class="st">"v_CA16xSD_1"</span>, Unoccupied<span class="op">=</span><span class="st">"v_CA16xSD_28"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Retrieve data with attached geography</span></span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16xSD"</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CSD<span class="op">=</span><span class="st">"3520005"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">"CT"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span>,</span>
+<span>                          vectors <span class="op">=</span> <span class="va">vars</span>,use_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>share<span class="op">=</span><span class="va">Unoccupied</span><span class="op">/</span><span class="va">Total</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Visualize</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">census_data</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"City of Toronto dwellings unoccupied on census day"</span>,</span>
+<span>       fill<span class="op">=</span><span class="st">"Share"</span>,</span>
+<span>       x<span class="op">=</span><span class="cn">NULL</span>,y<span class="op">=</span><span class="cn">NULL</span>,caption<span class="op">=</span><span class="va">attribution</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Dwellings_by_document_type_cross_tabulation_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 </div>
   </div>
@@ -230,7 +264,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

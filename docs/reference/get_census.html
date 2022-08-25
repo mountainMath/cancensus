@@ -24,7 +24,7 @@ files through the CensusMapper API. An API key is required to retrieve data."><m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
       </span>
     </div>
 
@@ -36,7 +36,7 @@ files through the CensusMapper API. An API key is required to retrieve data."><m
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -86,17 +86,18 @@ files through the CensusMapper API. An API key is required to retrieve data.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_census</span><span class="op">(</span>
-  <span class="va">dataset</span>,
-  <span class="va">regions</span>,
-  level <span class="op">=</span> <span class="cn">NA</span>,
-  vectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  geo_format <span class="op">=</span> <span class="cn">NA</span>,
-  labels <span class="op">=</span> <span class="st">"detailed"</span>,
-  use_cache <span class="op">=</span> <span class="cn">TRUE</span>,
-  quiet <span class="op">=</span> <span class="cn">FALSE</span>,
-  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CM_API_KEY"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_census</span><span class="op">(</span></span>
+<span>  <span class="va">dataset</span>,</span>
+<span>  <span class="va">regions</span>,</span>
+<span>  level <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  vectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  geo_format <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  resolution <span class="op">=</span> <span class="st">"simplified"</span>,</span>
+<span>  labels <span class="op">=</span> <span class="st">"detailed"</span>,</span>
+<span>  use_cache <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CM_API_KEY"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -108,22 +109,46 @@ an "as is" basis with the permission of Statistics Canada (Statistics Canada 199
     <h2>Arguments</h2>
     <dl><dt>dataset</dt>
 <dd><p>A CensusMapper dataset identifier.</p></dd>
+
+
 <dt>regions</dt>
 <dd><p>A named list of census regions to retrieve. Names must be valid census aggregation levels.</p></dd>
+
+
 <dt>level</dt>
 <dd><p>The census aggregation level to retrieve, defaults to <code>"Regions"</code>. One of <code>"Regions"</code>, <code>"PR"</code>, <code>"CMA"</code>, <code>"CD"</code>, <code>"CSD"</code>, <code>"CT"</code>, <code>"DA"</code>, <code>"EA"</code> (for 1996), or <code>"DB"</code> (for 2001-2016).</p></dd>
+
+
 <dt>vectors</dt>
 <dd><p>An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.</p></dd>
+
+
 <dt>geo_format</dt>
-<dd><p>By default is set to <code>NA</code> and appends no geographic information. To include geographic information with census data, specify one of either <code>"sf"</code> to return an <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf</a></code> object (requires the <code>sf</code> package) or <code>"sp"</code> to return a <code><a href="https://rdrr.io/pkg/sp/man/SpatialPolygonsDataFrame-class.html" class="external-link">SpatialPolygonsDataFrame-class</a></code> object (requires the <code>rgdal</code> package).</p></dd>
+<dd><p>By default is set to <code>NA</code> and appends no geographic information. To include geographic information with census data, specify one of either <code>"sf"</code> to return an <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf</a></code> object (requires the <code>sf</code> package) or <code>"sp"</code> to return a <code><a href="https://rdrr.io/pkg/sp/man/SpatialPolygonsDataFrame-class.html" class="external-link">SpatialPolygonsDataFrame-class</a></code> object (requires the <code>rgdal</code> package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the <code>sf</code> package.</p></dd>
+
+
+<dt>resolution</dt>
+<dd><p>Resolution of the geographic data. cancensus will download simplified geometries by default. For lower level geometries like DB or DA this will be very close to the high resolution data.
+Simplification generally increases as the geographic aggregation level increases.
+If high resolution geometries are required
+then this option can be set to 'high'. By default this setting is set to <code>'simplified'</code>.</p></dd>
+
+
 <dt>labels</dt>
 <dd><p>Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use <code>label_vectors(...)</code> to return variable label information in detail.</p></dd>
+
+
 <dt>use_cache</dt>
 <dd><p>If set to TRUE (the default) data will be read from the local cache if available.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>When TRUE, suppress messages and warnings.</p></dd>
+
+
 <dt>api_key</dt>
 <dd><p>An API key for the CensusMapper API. Defaults to <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> and then the <code>CM_API_KEY</code> environment variable.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -134,27 +159,27 @@ tool at <a href="https://censusmapper.ca/api" class="external-link">https://cens
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Query the API for data on dwellings in Vancouver, at the census subdivision</span></span>
-<span class="r-in"><span class="co"># level:</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
-<span class="r-in">                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span>
-<span class="r-in">                          level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Query the API for data on dwellings in Vancouver, at the census subdivision</span></span>
-<span class="r-in"><span class="co"># level, and return the associated geography files in \code{sf} format:</span></span>
-<span class="r-in"><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
-<span class="r-in">                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span>
-<span class="r-in">                          level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Make the same query, but this time drop descriptive vector names:</span></span>
-<span class="r-in"><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
-<span class="r-in">                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span>
-<span class="r-in">                          level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span>, labels<span class="op">=</span><span class="st">"short"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get details for truncated vectors:</span></span>
-<span class="r-in"><span class="fu"><a href="label_vectors.html">label_vectors</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Query the API for data on dwellings in Vancouver, at the census subdivision</span></span></span>
+<span class="r-in"><span><span class="co"># level:</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Query the API for data on dwellings in Vancouver, at the census subdivision</span></span></span>
+<span class="r-in"><span><span class="co"># level, and return the associated geography files in \code{sf} format:</span></span></span>
+<span class="r-in"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Make the same query, but this time drop descriptive vector names:</span></span></span>
+<span class="r-in"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu">get_census</span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span>, labels<span class="op">=</span><span class="st">"short"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get details for truncated vectors:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="label_vectors.html">label_vectors</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -169,7 +194,7 @@ tool at <a href="https://censusmapper.ca/api" class="external-link">https://cens
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -1,3 +1,17 @@
+# Update - 0.5.3
+- Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out. 
+- fixes a bug in the local data recall check
+
+# Update - v0.5.2
+- resolved broken and relocated links picked up in CRAN pretesting
+
+# Update - v0.5.1
+- Added functionality for users to detect and remove locally cached data that has been recalled by Statistics Canada
+- added a check on initial `get_census` call that produces a warning if locally cached data has been recalled by Statistics Canada
+- added option to retrieve higher-resolution geometries in `get_census`
+- resolved lingering CRAN NOTE
+- tested with RHUB default flavours
+
 # Update - v0.5.0
 
 - Added cache metadata

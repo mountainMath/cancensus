@@ -28,3 +28,4 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 census_vectors(census_data)
 }
 }
+\keyword{internal}

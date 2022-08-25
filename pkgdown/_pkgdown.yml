@@ -33,12 +33,21 @@ reference:
   - contents:
     - list_cancensus_cache
     - remove_from_cancensus_cache
+  - title: Recalled data
+  - contents:
+    - list_recalled_cached_data
+    - remove_recalled_cached_data
   - title: User settings
   - contents:
-    - set_api_key
-    - set_cache_path
-    - show_api_key
-    - show_cache_path
+    - set_cancensus_api_key
+    - set_cancensus_cache_path
+    - show_cancensus_api_key
+    - show_cancensus_cache_path
+  - title: Data
+  - contents:
+    - CODES_TABLE
+    - COV_SKYTRAIN_STATIONS
+
 articles:
     - title: Extending Cancensus
       navbar: ~

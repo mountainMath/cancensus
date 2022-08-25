@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
       </span>
     </div>
 
@@ -35,7 +35,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -84,7 +84,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">search_census_vectors</span><span class="op">(</span><span class="va">searchterm</span>, <span class="va">dataset</span>, type <span class="op">=</span> <span class="cn">NA</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">search_census_vectors</span><span class="op">(</span><span class="va">searchterm</span>, <span class="va">dataset</span>, type <span class="op">=</span> <span class="cn">NA</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -93,38 +93,47 @@
 <dd><p>The term or phrase to search for e.g. <code>"Ojibway"</code>.
 Search terms are case insensitive. If unable to find a given string,
 this function will suggest similarly named objects.</p></dd>
+
+
 <dt>dataset</dt>
 <dd><p>The dataset to query for available vectors, e.g.
 <code>"CA16"</code>.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>One of <code>NA</code>, <code>'Total'</code>, <code>'Male'</code> or <code>'Female'</code>.
 If specified, only return variables of specified `type`.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments passed on to <code><a href="list_census_vectors.html">list_census_vectors</a></code>.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibway'</span>, <span class="st">'CA16'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibway'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>search_census_vectors(). See ?find_census_vectors() for more robust search functions.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    vector      type   label     units parent_vector aggregation details         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> v_CA16_617  Total  Ojibway-… Numb… v_CA16_569    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> v_CA16_618  Male   Ojibway-… Numb… v_CA16_570    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> v_CA16_619  Female Ojibway-… Numb… v_CA16_571    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> v_CA16_623  Total  Ojibway   Numb… v_CA16_617    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> v_CA16_624  Male   Ojibway   Numb… v_CA16_618    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> v_CA16_625  Female Ojibway   Numb… v_CA16_619    Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> v_CA16_1424 Total  Ojibway-… Numb… v_CA16_1376   Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> v_CA16_1425 Male   Ojibway-… Numb… v_CA16_1377   Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> v_CA16_1426 Female Ojibway-… Numb… v_CA16_1378   Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> v_CA16_1430 Total  Ojibway   Numb… v_CA16_1424   Additive    CA 2016 Census;…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># This will return a warning that no match was found, but will suggest similar terms.</span></span>
-<span class="r-in"><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibwe'</span>, <span class="st">'CA16'</span>, <span class="st">'Total'</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    vector      type   label                        units paren…¹ aggre…² details</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> v_CA16_617  Total  Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> v_CA16_618  Male   Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> v_CA16_619  Female Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> v_CA16_623  Total  Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> v_CA16_624  Male   Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> v_CA16_625  Female Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> v_CA16_1424 Total  Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> v_CA16_1425 Male   Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> v_CA16_1426 Female Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> v_CA16_1430 Total  Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows, and abbreviated variable names ¹​parent_vector,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ²​aggregation</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># This will return a warning that no match was found, but will suggest similar terms.</span></span></span>
+<span class="r-in"><span><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibwe'</span>, <span class="st">'CA16'</span>, <span class="st">'Total'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -139,7 +148,7 @@ If specified, only return variables of specified `type`.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

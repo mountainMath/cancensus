@@ -39,8 +39,8 @@ cache_path <- function(...) {
 
 
 clean_vector_list <- function(vector_list,dataset=NULL){
-  if (!("data.frame") %in% class(vector_list)) {
-    if (class(vector_list)=="character") {
+  if (!inherits(vector_list,"data.frame")) {
+    if (inherits(vector_list,"character")) {
       if (is.null(dataset))  dataset <- dataset_from_vector_list(vector_list)
       vector_list = list_census_vectors(dataset) %>%
         dplyr::filter(vector %in% vector_list)
@@ -53,7 +53,7 @@ clean_vector_list <- function(vector_list,dataset=NULL){
 dataset_from_vector_list <- function(vector_list){
   dataset <- attr(vector_list,'dataset')
   if (is.null(dataset)) {
-    vectors = ifelse(class(vector_list)=="character",vector_list,vector_list$vector)
+    vectors = ifelse(inherits(vector_list,"character"),vector_list,vector_list$vector)
     dataset <- vectors %>%
       as.character() %>%
       lapply(function(d)unlist(strsplit(d,"_"))[2]) %>%
@@ -82,6 +82,34 @@ as.int = function(x, na.strings = cancensus_na_strings) {
   x = as.integer(x)
   x[na] = NA_integer_
   x
+}
+
+check_recalled_data_and_warn <- function(meta_file,params){
+  cached_data<-generate_metadata(meta_file,params)
+  recalled_data <- list_recalled_cached_data(cached_data,warn_only_once=TRUE)
+  if (!is.null(recalled_data) && nrow(recalled_data)>0) {
+    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data.")
+  }
+  d<-NULL
+}
+
+check_for_recalled_data_and_warn <- function(){
+  recalled_data <- list_recalled_cached_data(warn_only_once=TRUE)
+  if (!is.null(recalled_data) && nrow(recalled_data)>0) {
+    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data."))
+  }
+  d<-NULL
+}
+
+first_run_checks <- function(){
+  # Check caches for recalled data
+  path=file.path(tempdir(),"cancensus_first_run_checks.info")
+  if (!file.exists(path)) {
+    # first time cancensus is run!
+    check_for_recalled_data_and_warn()
+    readr::write_lines("recall_check\n",path)
+  }
+  d<-NULL
 }
 
 #' A dataset with code table summaries for census data

@@ -1,3 +1,18 @@
+# cancensus - 0.5.3
+- Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to stopping with an error. 
+- fixes a bug in the local data recall check
+
+# cancensus - 0.5.2
+- resolved broken and relocated links picked up in CRAN pretesting
+
+# cancensus - 0.5.1
+- Added functionality for users to detect and remove locally cached data that has been recalled by Statistics Canada
+- added a check on initial `get_census` call that produces a warning if locally cached data has been recalled by Statistics Canada
+- added option to retrieve higher-resolution geometries in `get_census`
+
+## Minor changes
+- renamed get/set cache/api_key functions to avoid name conflicts with related packages
+
 # cancensus - 0.5.0
 
 ## Minor changes
@@ -81,7 +96,7 @@
 
 ## Major changes
 - Added a `max_leaves_option` for the `search_census_vectors` function. Adds functionality to set maximum depth for child census vectors, i.e. `max_level=NA` as an additional parameter. Then e.g. `max_level=1` would only get direct children and no grandchildren.
-- Resolved issues with mislabelled CD UID for CSD level data
+- Resolved issues with mislabeled CD UID for CSD level data
 - Improve reliability of character/numeric alignments for geographic UIDS
 - `get_census_geography` is now soft deprecated and rolled into the standard `get_census` with parameters
 
