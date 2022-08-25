@@ -28,7 +28,7 @@ Query the available list of Census vectors based on their label and return
 details including vector code. Default search behaviour expects an exact match, but
 keyword or semantic searches can be used instead by setting \code{query_type='keyword'} or
 \code{query_type = 'semantic'} instead. Keyword search is useful when looking to explore
-Census vectors based on broad themes like "income" or "language". Keyword search seperates
+Census vectors based on broad themes like "income" or "language". Keyword search separates
 the query into unigrams and returns Census vectors with matching words, ranked by incidence
 of matches. Semantic search is designed for more precise searches while allowing room for error
 for spelling or phrasing, as well as for finding closely related vector matches. Semantic search

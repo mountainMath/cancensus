@@ -160,7 +160,7 @@ The [cansim package](https://mountainmath.github.io/cansim/index.html) is design
 
 Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
 
-The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining cenusus variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
+The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
 ### Statistics Canada Attribution
 
