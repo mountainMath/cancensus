@@ -269,8 +269,7 @@ available datasets alongside their metadata.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census xtab - Structural… CA11    StatCa… 98-301… https:…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census xtab - Structural… CA16    StatCa… 98-301… https:…</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 19 more rows, and abbreviated variable names ¹​geo_dataset,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span></span></code></pre></div>
 <p>As other Census datasets become available via the CensusMapper API,
 they will be listed as output when calling
 <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
@@ -302,8 +301,7 @@ regions and their corresponding id for a given census dataset.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 12     Nova Scotia               PR      <span style="text-decoration: underline;">969</span>383 N.S.    <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 13     New Brunswick             PR      <span style="text-decoration: underline;">775</span>610 N.B.    <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 10     Newfoundland and Labrador PR      <span style="text-decoration: underline;">510</span>550 N.L.    <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 5,508 more rows, and abbreviated variable name ¹​municipal_status</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 5,508 more rows, and abbreviated variable name ¹​municipal_status</span></span></span></code></pre></div>
 <p>The <code>regions</code> parameter in <code>get_census</code>
 requires as input a list of region id strings that correspond to that
 regions geoid. You can combine different regions together into region
@@ -420,7 +418,7 @@ data they are looking for.</p>
 Census variables for a given dataset.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4,158 × 7</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4,280 × 7</span></span></span>
 <span><span class="co">#&gt;    vector    type   label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA21_1  Total  Population, 2021               Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
@@ -433,9 +431,8 @@ Census variables for a given dataset.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA21_8  Total  Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA21_9  Male   Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA21_10 Female Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 4,148 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​aggregation</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 4,270 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ²​aggregation</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="variable-characteristics">Variable characteristics<a class="anchor" aria-label="anchor" href="#variable-characteristics"></a>

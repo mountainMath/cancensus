@@ -1,7 +1,7 @@
 pandoc: 2.3.1
 pkgdown_sha: ~
 
-url: https://mountainmath.github.io/cancensus/index.html
+url: https://mountainmath.github.io/cancensus/
 
 home:
   title: Access, retrieve, and work with Canadian Census data and geography.
