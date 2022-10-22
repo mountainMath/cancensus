@@ -27,7 +27,7 @@ the Censusmapper site in a new web page or tab."><meta property="og:image" conte
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
       </span>
     </div>
 
@@ -117,27 +117,16 @@ If specified, only return variables of specified `level`.</p></dd>
 <dd><p>Further arguments passed on to <code><a href="list_census_regions.html">list_census_regions</a></code>.</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    
+
+<p>A census region list of the same format as `list_census_regions()` contianing the matches.</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victoria'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading regions list from local cache.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 11 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    region  name              level    pop municipal_status CMA_UID CD_UID PR_UID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 59935   Victoria          CMA   <span style="text-decoration: underline;">367</span>770 B                <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     59    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1312    Victoria          CD     <span style="text-decoration: underline;">18</span>617 CT               <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     13    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1218    Victoria          CD      <span style="text-decoration: underline;">7</span>089 CTY              <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     12    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 5917034 Victoria          CSD    <span style="text-decoration: underline;">85</span>792 CY               59935   5917   59    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2439062 Victoriaville     CSD    <span style="text-decoration: underline;">46</span>130 V                24440   2439   24    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1218001 Victoria, Subd. B CSD     <span style="text-decoration: underline;">3</span>985 SC               <span style="color: #BB0000;">NA</span>      1218   12    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1218006 Victoria, Subd. A CSD     <span style="text-decoration: underline;">2</span>567 SC               <span style="color: #BB0000;">NA</span>      1218   12    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1001365 Victoria          CSD     <span style="text-decoration: underline;">1</span>800 T                <span style="color: #BB0000;">NA</span>      1001   10    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 4608042 Victoria          CSD     <span style="text-decoration: underline;">1</span>514 RM               <span style="color: #BB0000;">NA</span>      4608   46    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 4601078 Victoria Beach    CSD      398 RM               <span style="color: #BB0000;">NA</span>      4601   46    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> 1102032 Victoria          CSD       74 COM              <span style="color: #BB0000;">NA</span>      1102   11    </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># This will return a warning that no match was found, but will suggest similar named regions.</span></span></span>
 <span class="r-in"><span><span class="fu">search_census_regions</span><span class="op">(</span><span class="st">'Victorea'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

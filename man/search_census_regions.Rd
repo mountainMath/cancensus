@@ -19,6 +19,9 @@ If specified, only return variables of specified `level`.}
 
 \item{...}{Further arguments passed on to \code{\link{list_census_regions}}.}
 }
+\value{
+A census region list of the same format as `list_census_regions()` contianing the matches.
+}
 \description{
 Runs a query against the CensusMapper API to retrieve region data with
 names matching specific queries. Users can optionally specify the target geography level
@@ -27,8 +30,6 @@ names matching specific queries. Users can optionally specify the target geograp
 the Censusmapper site in a new web page or tab.
 }
 \examples{
-search_census_regions('Victoria', 'CA16')
-
 \dontrun{
 # This will return a warning that no match was found, but will suggest similar named regions.
 search_census_regions('Victorea', 'CA16')
