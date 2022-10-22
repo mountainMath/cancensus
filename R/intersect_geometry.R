@@ -47,6 +47,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
   result <- NULL
+  dataset <- translate_dataset(dataset)
 
     if ("sf" %in% class(geometry)) {
     geometry=sf::st_geometry(geometry)

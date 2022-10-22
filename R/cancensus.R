@@ -62,6 +62,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   data_version<-NULL
   geo_version<-NULL
 
+  dataset <- translate_dataset(dataset)
+
   # Check region selection validity
   if (is.na(level)) level="Regions"
 

@@ -282,6 +282,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
 #'
 #' }
 explore_census_vectors <- function(dataset = "CA16") {
+  dataset <- translate_dataset(dataset)
   message("Opening interactive census variable explorer at censusmapper.ca/api in the browser")
   utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_variable"))
 }
@@ -309,6 +310,7 @@ explore_census_vectors <- function(dataset = "CA16") {
 #'
 #' }
 explore_census_regions <- function(dataset = "CA16") {
+  dataset <- translate_dataset(dataset)
   message("Opening interactive census region explorer at censusmapper.ca/api in the browser")
   utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_region"))
 }
