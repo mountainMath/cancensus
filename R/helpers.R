@@ -39,6 +39,7 @@ cache_path <- function(...) {
 
 
 translate_dataset <- function(dataset) {
+  dataset <- as.character(dataset)
   translations <- c("1996"="CA1996",
                     "2001"="CA01",
                     "2006"="CA06",
