@@ -362,6 +362,7 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
 dataset_attribution <- function(datasets){
+  datasets <-   lapply(datasets,translate_dataset) %>% unlist()
   attribution <-list_census_datasets(quiet=TRUE) %>%
     dplyr::filter(.data$dataset %in% datasets) %>%
     dplyr::pull(.data$attribution)
