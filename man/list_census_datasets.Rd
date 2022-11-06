@@ -18,7 +18,7 @@ refresh the temporary cache with the result.}
 Returns a data frame with a column \code{dataset} containing the code for the
 dataset, a column \code{description} describing it, a \code{geo_dataset} column
 identifying the geography dataset the data is based on, a \code{attribution} column
-with an attribtuion string, a \code{reference} column with a reference identifier, and
+with an attribution string, a \code{reference} column with a reference identifier, and
 a \code{reference_url} column with a link to reference materials.
 }
 \description{
