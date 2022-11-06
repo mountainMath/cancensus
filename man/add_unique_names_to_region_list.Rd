@@ -13,10 +13,10 @@ add_unique_names_to_region_list(region_list)
 The same list of regions with an extra column `Name` with de-duplicated names.
 }
 \description{
-Especially at the CSD level names of municipalities aren't always unique. This function
-takes as input a subset of a regions list as gotten from `list_census_regions()` and de-duplicates names as
-needed by adding the municipal status in parenthesis If this does not de-duplicate the name then the
-geographic identifier will be added in parenthesis behind that.
+Names of municipalities are not always unique, especially at the CSD level. This function
+takes as input a subset of a regions list as generated from `list_census_regions()` and de-duplicates names as
+needed by adding the municipal status in parenthesis. If this does not de-duplicate the name then the
+geographic identifier will be further added in parenthesis behind that.
 }
 \examples{
 \dontrun{

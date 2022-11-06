@@ -82,7 +82,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 #' names matching specific queries. Users can optionally specify the target geography level
 #' (e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
 #' \code{explore_census_vectors()} will launch the interactive region selection tool on
-#' the Censusmapper site in a new web page or tab.
+#' the CensusMapper site in a new web page or tab.
 #'
 #' @param searchterm The term to search for e.g. \code{"Victoria"}.
 #' Search terms are case insensitive. If unable to find a given search term,
@@ -92,7 +92,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 #' @param level One of \code{NA}, \code{'C'}, \code{'PR'}, \code{'CMA'}, \code{'CD'}, or \code{'CSD'}.
 #' If specified, only return variables of specified `level`.
 #' @param ... Further arguments passed on to \code{\link{list_census_regions}}.
-#' @return A census region list of the same format as `list_census_regions()` contianing the matches.
+#' @return A census region list of the same format as `list_census_regions()` containing the matches.
 #'
 #' @export
 #'
@@ -177,10 +177,10 @@ as_census_region_list <- function(tbl) {
 
 #' Convenience function for creating unique names from region list
 #'
-#' @description Especially at the CSD level names of municipalities aren't always unique. This function
-#' takes as input a subset of a regions list as gotten from `list_census_regions()` and de-duplicates names as
-#' needed by adding the municipal status in parenthesis If this does not de-duplicate the name then the
-#' geographic identifier will be added in parenthesis behind that.
+#' @description Names of municipalities are not always unique, especially at the CSD level. This function
+#' takes as input a subset of a regions list as generated from `list_census_regions()` and de-duplicates names as
+#' needed by adding the municipal status in parenthesis. If this does not de-duplicate the name then the
+#' geographic identifier will be further added in parenthesis behind that.
 #'
 #' @param region_list a subset of a regions list as gotten from `list_census_regions()`
 #' @return The same list of regions with an extra column `Name` with de-duplicated names.
