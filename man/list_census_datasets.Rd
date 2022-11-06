@@ -7,7 +7,7 @@
 list_census_datasets(use_cache = TRUE, quiet = FALSE)
 }
 \arguments{
-\item{use_cache}{If set to TRUE (the dfault), data will be read from a temporary local cache for the
+\item{use_cache}{If set to TRUE (the default), data will be read from a temporary local cache for the
 duration of the R session, if
 available. If set to FALSE, query the API for the data, and
 refresh the temporary cache with the result.}
