@@ -1,18 +1,22 @@
-# cancensus - 0.5.4
+# cancensus 0.5.4
+
 - added ability to query census datasets by year
 - added a convenience function for creating unique names within given selection of regions from `list_census_regions()`
 - added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out.
 - improved checking that correct spatial formats are requested
 - preparing for 'sp' spatial format usage deprecation in future versions
 
-# cancensus - 0.5.3
+# cancensus 0.5.3
+
 - Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to stopping with an error. 
 - fixes a bug in the local data recall check
 
-# cancensus - 0.5.2
+# cancensus 0.5.2
+
 - resolved broken and relocated links picked up in CRAN pretesting
 
-# cancensus - 0.5.1
+# cancensus 0.5.1
+
 - Added functionality for users to detect and remove locally cached data that has been recalled by Statistics Canada
 - added a check on initial `get_census` call that produces a warning if locally cached data has been recalled by Statistics Canada
 - added option to retrieve higher-resolution geometries in `get_census`
@@ -20,7 +24,7 @@
 ## Minor changes
 - renamed get/set cache/api_key functions to avoid name conflicts with related packages
 
-# cancensus - 0.5.0
+# cancensus 0.5.0
 
 ## Minor changes
 - Added cache metadata

@@ -79,6 +79,44 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.4" id="cancensus-054">cancensus 0.5.4<small>2022-11-07</small><a class="anchor" aria-label="anchor" href="#cancensus-054"></a></h2>
+<ul><li>added ability to query census datasets by year</li>
+<li>added a convenience function for creating unique names within given selection of regions from <code><a href="../reference/list_census_regions.html">list_census_regions()</a></code>
+</li>
+<li>added a check and context menu to install <code>sf</code> package when user requests spatial data but does not have the required package installed as opposed to erroring out.</li>
+<li>improved checking that correct spatial formats are requested</li>
+<li>preparing for ‘sp’ spatial format usage deprecation in future versions</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.3" id="cancensus-053">cancensus 0.5.3<small>2022-08-25</small><a class="anchor" aria-label="anchor" href="#cancensus-053"></a></h2>
+<ul><li>Added a check and context menu to install <code>sf</code> package when user requests spatial data but does not have the required package installed as opposed to stopping with an error.</li>
+<li>fixes a bug in the local data recall check</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.2" id="cancensus-052">cancensus 0.5.2<small>2022-08-19</small><a class="anchor" aria-label="anchor" href="#cancensus-052"></a></h2>
+<ul><li>resolved broken and relocated links picked up in CRAN pretesting</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.1" id="cancensus-051">cancensus 0.5.1<a class="anchor" aria-label="anchor" href="#cancensus-051"></a></h2>
+<ul><li>Added functionality for users to detect and remove locally cached data that has been recalled by Statistics Canada</li>
+<li>added a check on initial <code>get_census</code> call that produces a warning if locally cached data has been recalled by Statistics Canada</li>
+<li>added option to retrieve higher-resolution geometries in <code>get_census</code>
+</li>
+</ul><div class="section level3">
+<h3 id="minor-changes-0-5-1">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-5-1"></a></h3>
+<ul><li>renamed get/set cache/api_key functions to avoid name conflicts with related packages</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.0" id="cancensus-050">cancensus 0.5.0<small>2022-02-08</small><a class="anchor" aria-label="anchor" href="#cancensus-050"></a></h2>
+<div class="section level3">
+<h3 id="minor-changes-0-5-0">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-5-0"></a></h3>
+<ul><li>Added cache metadata</li>
+<li>overview information on cached data</li>
+<li>allow selective removing of cached data</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.3" id="cancensus-043">cancensus 0.4.3<small>2021-06-08</small><a class="anchor" aria-label="anchor" href="#cancensus-043"></a></h2>
 <div class="section level3">
 <h3 id="minor-changes-0-4-3">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-3"></a></h3>
