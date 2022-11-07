@@ -26,6 +26,7 @@ reference:
   - title: Working with Census data
   - contents:
     - label_vectors
+    - add_unique_names_to_region_list
     - child_census_vectors
     - parent_census_vectors
     - dataset_attribution

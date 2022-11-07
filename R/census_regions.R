@@ -36,6 +36,7 @@
 #' @examples
 #' list_census_regions('CA16')
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
+  dataset <- translate_dataset(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
 
   if (!use_cache || !file.exists(cache_file)) {
@@ -81,7 +82,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 #' names matching specific queries. Users can optionally specify the target geography level
 #' (e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
 #' \code{explore_census_vectors()} will launch the interactive region selection tool on
-#' the Censusmapper site in a new web page or tab.
+#' the CensusMapper site in a new web page or tab.
 #'
 #' @param searchterm The term to search for e.g. \code{"Victoria"}.
 #' Search terms are case insensitive. If unable to find a given search term,
@@ -91,12 +92,11 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 #' @param level One of \code{NA}, \code{'C'}, \code{'PR'}, \code{'CMA'}, \code{'CD'}, or \code{'CSD'}.
 #' If specified, only return variables of specified `level`.
 #' @param ... Further arguments passed on to \code{\link{list_census_regions}}.
+#' @return A census region list of the same format as `list_census_regions()` containing the matches.
 #'
 #' @export
 #'
 #' @examples
-#' search_census_regions('Victoria', 'CA16')
-#'
 #' \dontrun{
 #' # This will return a warning that no match was found, but will suggest similar named regions.
 #' search_census_regions('Victorea', 'CA16')
@@ -173,6 +173,46 @@ as_census_region_list <- function(tbl) {
   regions <- nested$regions
   names(regions) <- nested$level
   regions
+}
+
+#' Convenience function for creating unique names from region list
+#'
+#' @description Names of municipalities are not always unique, especially at the CSD level. This function
+#' takes as input a subset of a regions list as generated from `list_census_regions()` and de-duplicates names as
+#' needed by adding the municipal status in parenthesis. If this does not de-duplicate the name then the
+#' geographic identifier will be further added in parenthesis behind that.
+#'
+#' @param region_list a subset of a regions list as gotten from `list_census_regions()`
+#' @return The same list of regions with an extra column `Name` with de-duplicated names.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # This will return a warning that no match was found, but will suggest similar named regions.
+#' library(dplyr)
+#' list_census_regions("CA21") %>%
+#'   filter(level=="CSD", CMA_UID=="59933") %>%
+#'   add_unique_names_to_region_list()
+#' }
+add_unique_names_to_region_list <- function(region_list) {
+  gs <- dplyr::groups(region_list)
+  r<-region_list %>%
+    dplyr::group_by(.data$name) %>%
+    dplyr::mutate(count=dplyr::n()) %>%
+    dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ name,
+                                        TRUE ~ paste0(.data$name," (",.data$municipal_status,")"))) |>
+    dplyr::group_by(.data$Name) %>%
+    dplyr::mutate(count=dplyr::n()) %>%
+    dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
+                                        TRUE ~ paste0(.data$Name," (",.data$region,")"))) |>
+    dplyr::select(-.data$count) |>
+    dplyr::ungroup()
+
+  if (length(gs)>1) {
+    r <- r |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(gs)))
+  }
+  r
 }
 
 

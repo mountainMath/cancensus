@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
       </span>
     </div>
 
@@ -157,7 +157,7 @@
 <h3 id="local-cache">Local Cache<a class="anchor" aria-label="anchor" href="#local-cache"></a>
 </h3>
 <p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cancensus_cache_path(&lt;local cache path&gt;, install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
-<p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="reference/get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancenus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
+<p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="reference/get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancensus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
 </div>
 <div class="section level3">
 <h3 id="currently-available-datasets">Currently available datasets<a class="anchor" aria-label="anchor" href="#currently-available-datasets"></a>
@@ -289,7 +289,7 @@
 <div class="section level3">
 <h3 id="statistics-canada-attribution">Statistics Canada Attribution<a class="anchor" aria-label="anchor" href="#statistics-canada-attribution"></a>
 </h3>
-<p>Subject to the Statistics Canada Open Licence Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:</p>
+<p>Subject to the Statistics Canada Open License Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:</p>
 <pre><code>Acknowledgment of Source
 
 (a) You shall include and maintain the following notice on all licensed rights of the Information:

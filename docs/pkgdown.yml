@@ -1,4 +1,4 @@
-pandoc: '2.18'
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
@@ -8,7 +8,7 @@ articles:
   cancensus: cancensus.html
   data_discovery: data_discovery.html
   intersecting_geometries: intersecting_geometries.html
-last_built: 2022-10-14T00:32Z
+last_built: 2022-11-06T20:54Z
 urls:
   reference: https://mountainmath.github.io/cancensus/reference
   article: https://mountainmath.github.io/cancensus/articles

@@ -27,6 +27,7 @@
 #' list_census_vectors('CA16')
 #' }
 list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
+  dataset <- translate_dataset(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")

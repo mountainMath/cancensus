@@ -62,6 +62,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   data_version<-NULL
   geo_version<-NULL
 
+  dataset <- translate_dataset(dataset)
+
   # Check region selection validity
   if (is.na(level)) level="Regions"
 
@@ -92,14 +94,31 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     stop("The `sf` package is required to return geographies.")
   }
 
-  # Check if SF is installed when asking for spatial data
-  if(geo_format == "sf" && !("sf" %in% utils::installed.packages())) {
-    if (utils::menu(c("Yes", "No"),
-             title= paste("The `sf` package is required to return geographies. Would you like to install?")) == "1") {
-      utils::install.packages('sf')
-    } else {
-      print("Cancelling installation and retrieving tabular data only.")
-      geo_format <- NA
+  # --------- Spatial format checks --------------------------------------------------------------------#
+  # This section checks that proper spatial formats are requested. If users select spatial data and
+  # don't have the 'sf' package installed, will prompt them with a menu to install it, otherwise we will
+  # return spatial data only. If users select 'sp' format, will advise them that usage is deprecated and nudge
+  # to install 'sf' package.
+  if (!is.na(geo_format)) {
+    if(!geo_format %in% c("sf","sp")) {
+      stop("the `geo_format` parameter should be 'sf', 'sp', or NA")
+    } else if(geo_format == "sf" && !("sf" %in% utils::installed.packages())) {
+      if (utils::menu(c("Install package", "Return tabular data without geo"),
+                      title= paste("The `sf` package is required to return geographies. Would you like to install?")) == "1") {
+        utils::install.packages('sf')
+      } else  {
+        message("Retrieving tabular data only. Please install 'sf' package if you wish to use Census data as spatial data.")
+        geo_format <- NA
+      }
+    } else if(geo_format == "sp" && !("sf" %in% utils::installed.packages())) {
+      message("The use of 'sp' format in cancensus package is now deprecated.\nPlease install 'sf' package to return spatial format data.")
+      if (utils::menu(c("Install package", "Return tabular data without geo"),
+                      title= paste("Would you like to install 'sf' to continue?")) == "1") {
+        utils::install.packages('sf')
+      } else  {
+        message("Retrieving tabular data only. Please install 'sf' package if you wish to use Census data as spatial data.")
+        geo_format <- NA
+      }
     }
   }
 
@@ -360,6 +379,7 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
 dataset_attribution <- function(datasets){
+  datasets <-   lapply(datasets,translate_dataset) %>% unlist()
   attribution <-list_census_datasets(quiet=TRUE) %>%
     dplyr::filter(.data$dataset %in% datasets) %>%
     dplyr::pull(.data$attribution)

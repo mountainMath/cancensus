@@ -1,5 +1,10 @@
+# Update - 0.5.4
+- added ability to query census datasets by year
+- add a convenience function for creating unique names within given selection of regions from `list_census_regions()`
+- added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out.
+- improved checking that correct spatial formats are requested
+
 # Update - 0.5.3
-- Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out. 
 - fixes a bug in the local data recall check
 
 # Update - v0.5.2

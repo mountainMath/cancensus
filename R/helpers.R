@@ -38,6 +38,19 @@ cache_path <- function(...) {
 }
 
 
+translate_dataset <- function(dataset) {
+  dataset <- as.character(dataset)
+  translations <- c("1996"="CA1996",
+                    "2001"="CA01",
+                    "2006"="CA06",
+                    "2011"="CA11",
+                    "2016"="CA16",
+                    "2021"="CA21")
+  #dataset <- toupper(dataset)
+  if (dataset %in% names(translations)) dataset=as.character(translations[dataset])
+  dataset
+}
+
 clean_vector_list <- function(vector_list,dataset=NULL){
   if (!inherits(vector_list,"data.frame")) {
     if (inherits(vector_list,"character")) {

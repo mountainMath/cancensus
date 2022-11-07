@@ -1,3 +1,10 @@
+# cancensus - 0.5.4
+- added ability to query census datasets by year
+- added a convenience function for creating unique names within given selection of regions from `list_census_regions()`
+- added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to erroring out.
+- improved checking that correct spatial formats are requested
+- preparing for 'sp' spatial format usage deprecation in future versions
+
 # cancensus - 0.5.3
 - Added a check and context menu to install `sf` package when user requests spatial data but does not have the required package installed as opposed to stopping with an error. 
 - fixes a bug in the local data recall check

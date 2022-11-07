@@ -19,16 +19,17 @@ If specified, only return variables of specified `level`.}
 
 \item{...}{Further arguments passed on to \code{\link{list_census_regions}}.}
 }
+\value{
+A census region list of the same format as `list_census_regions()` containing the matches.
+}
 \description{
 Runs a query against the CensusMapper API to retrieve region data with
 names matching specific queries. Users can optionally specify the target geography level
 (e.g. \code{level = 'CMA'}, \code{level = 'CSD'}, etc.). Alternatively, calling
 \code{explore_census_vectors()} will launch the interactive region selection tool on
-the Censusmapper site in a new web page or tab.
+the CensusMapper site in a new web page or tab.
 }
 \examples{
-search_census_regions('Victoria', 'CA16')
-
 \dontrun{
 # This will return a warning that no match was found, but will suggest similar named regions.
 search_census_regions('Victorea', 'CA16')
