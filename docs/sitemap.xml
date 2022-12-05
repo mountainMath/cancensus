@@ -79,6 +79,15 @@
     <loc>https://mountainmath.github.io/cancensus/reference/get_recalled_database.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_wds_data.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_wds_metadata.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/reference/index.html</loc>
   </url>
   <url>

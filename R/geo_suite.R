@@ -1,6 +1,3 @@
-
-
-
 #' Read the geosuite data
 #'
 #' @description
@@ -174,4 +171,8 @@ get_geographic_attributes <- function(census_year="2016",refresh=FALSE){
   result %>%
     dplyr::mutate(dplyr::across(dplyr::matches("DBpop\\d{4}|DBtdwell\\d{4}|DBurdwell\\d{4}|DBarea"),as.numeric))
 }
+
+
+
+
 

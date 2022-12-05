@@ -44,6 +44,11 @@ reference:
     - set_cancensus_cache_path
     - show_cancensus_api_key
     - show_cancensus_cache_path
+  - title: Getting data directly from StatCan
+  - contents:
+    - get_statcan_geographies
+    - get_statcan_wds_data
+    - get_statcan_wds_metadata
   - title: Data
   - contents:
     - CODES_TABLE
