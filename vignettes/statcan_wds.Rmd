@@ -74,7 +74,7 @@ plot_data <- data |>
 
 Now we can visualize the data, here are the top 20 Federal Electoral Districts by share of the population with Ukranian heritage. 
 
-```{r}
+```{r fig.height=4.5, fig.width=6}
 plot_data |> slice_max(Share,n=20) |>
   ggplot(aes(y=reorder(Name,Share),x=Share)) +
   geom_bar(stat="identity",fill="steelblue") +
@@ -93,7 +93,7 @@ fed_geos <- get_statcan_geographies("2021","FED")
 
 With these we can join on our census data and map it.
 
-```{r}
+```{r fig.height=4.5, fig.width=6}
 fed_geos |>
   left_join(plot_data,by="DGUID") |>
   ggplot(aes(fill=Share)) +
