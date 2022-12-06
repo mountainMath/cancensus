@@ -67,6 +67,10 @@ articles:
       navbar: ~
       contents:
       - intersecting_geometries
+    - title: StatCan WDS
+      navbar: ~
+      contents:
+      - statcan_wds
     - title: Additional datasets
       navbar: ~
       contents:

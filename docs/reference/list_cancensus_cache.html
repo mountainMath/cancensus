@@ -50,6 +50,9 @@
       <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
     </li>
     <li>
+      <a href="../articles/statcan_wds.html">StatCan WDS</a>
+    </li>
+    <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
     </li>
     <li>
@@ -98,7 +101,7 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># list add the cached census data</span></span></span>
 <span class="r-in"><span><span class="fu">list_cancensus_cache</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,380 × 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,388 × 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    path         dataset regions level vectors created_at          version   size</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> CM_data_009… CA06    <span style="color: #949494;">"</span>[\"{\… DA    <span style="color: #949494;">"</span>[]<span style="color: #949494;">"</span>    2022-05-21 <span style="color: #949494;">15:28:16</span> d.1       <span style="text-decoration: underline;">1</span>663</span>
@@ -111,7 +114,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CM_data_02b… CA16    <span style="color: #949494;">"</span>{\"C\… CT    <span style="color: #949494;">"</span>[\"v_… 2022-10-06 <span style="color: #949494;">10:39:55</span> d.2     <span style="text-decoration: underline;">143</span>505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> CM_data_02b… CA11    <span style="color: #949494;">"</span>[\"{\… Regi… <span style="color: #949494;">"</span>[\"v_… 2022-04-29 <span style="color: #949494;">11:48:58</span> d.1        656</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> CM_data_02b… CA16    <span style="color: #949494;">"</span>[\"{\… CT    <span style="color: #949494;">"</span>[\"v_… 2022-05-02 <span style="color: #949494;">16:44:21</span> d.1       <span style="text-decoration: underline;">2</span>764</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,370 more rows, and 3 more variables: last_accessed &lt;dttm&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,378 more rows, and 3 more variables: last_accessed &lt;dttm&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   access_count &lt;dbl&gt;, resolution &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -4,19 +4,22 @@
 \alias{get_statcan_wds_metadata}
 \title{Query the StatCan WDS for metadata}
 \usage{
-get_statcan_wds_metadata(census_year, level)
+get_statcan_wds_metadata(census_year, level, refresh = FALSE)
 }
 \arguments{
 \item{census_year}{census year to get the data for, right now only 2021 is supported}
 
 \item{level}{geographic level to return the data for, valid choices are
 "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR"}
+
+\item{refresh}{default is `FALSE` will refresh the temporary cache if `TRUE`}
 }
 \value{
 tibble with the metadata
 }
 \description{
 Get official metadata information from Statistics Canada for a given geographic level. Only available for the 2021 census.
+Data is cached for the duration of the R session.
 }
 \examples{
 # get metadata for federal electoral districts

@@ -4,7 +4,13 @@
 \alias{get_statcan_wds_data}
 \title{Query the StatCan WDS for data}
 \usage{
-get_statcan_wds_data(DGUIDs, members = NULL, gender = "All", language = "en")
+get_statcan_wds_data(
+  DGUIDs,
+  members = NULL,
+  gender = "All",
+  language = "en",
+  refresh = FALSE
+)
 }
 \arguments{
 \item{DGUIDs}{census year to get the data for, right now only 2021 is supported. Valid DGUIDs for a given geographic
@@ -17,6 +23,8 @@ Member IDs and their descriptions can be queried via the `get_statcan_wds_metada
 values are "Total", "Male", "Female" to only query total data, or for males only or for females only.}
 
 \item{language}{specify language for geography and characteristic names that get added, valid choices are "en" and "fr"}
+
+\item{refresh}{default is `FALSE` will refresh the temporary cache if `TRUE`}
 }
 \value{
 tibble with the enriched census data
@@ -24,6 +32,7 @@ tibble with the enriched census data
 \description{
 Get official census data from Statistics Canada for a given set of DGUIDs. Only available for the 2021 census. The
 downloaded data gets enriched by geographic and characteristic names based on metadata obtained via `get_statcan_wds_metadata()`.
+Data is cached for the duration of the R session.
 }
 \examples{
 # get data for federal electoral district 2013A000459021

@@ -1,0 +1,107 @@
+---
+title: "StatCan WDS"
+output: rmarkdown::html_vignette
+mainfont: Roboto
+vignette: >
+  %\VignetteIndexEntry{StatCan WDS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  comment = "#>",
+  eval = nzchar(Sys.getenv("COMPILE_VIG"))
+)
+```
+
+```{r setup}
+library(cancensus)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+
+Some census datasets have not been imported into CensusMapper, and thus aren't available via the `get_census()` function. But the data can be queried directly from the [Statistics Canada Web Data Service for the 2021 census](https://www12.statcan.gc.ca/wds-sdw/2021profile-profil2021-eng.cfm), as well as geographic boundary files.
+
+## Word of caution
+The StatCan census WDS is not a stable API, the meaning of the internal identifiers used to query have changed in the past, and may change again in the future. **Use with extreme caution.** The same call may give different results at different points in time. Moreover, the API server is sometimes unavailable.
+
+## Ukranians by Federal Electoral Districts
+As an example we access the share of people with Ukranian ethnic origin at the Federal Electoral District level. First we need to find the StatCan Characteristic IDs for our characteristic of interest. For this we download the metadata, extract the characteristics, locate the base characteristic for ethnic origin and the entry referencing "Ukrainian" that's a descendant of the base characteristic.
+
+```{r}
+metadata <- get_statcan_wds_metadata("2021","FED")
+
+characteristics <- metadata |> 
+  filter(`Codelist en`=="Characteristic") |>
+  mutate(across(matches("ID"),as.integer))
+
+ethnic_base <- characteristics |> 
+  filter(grepl("Total - Ethnic",en))
+ukranian <- characteristics |> 
+  filter(grepl("Ukrainian",en), `Parent ID`==ethnic_base$ID) 
+
+selected_characteristics <- bind_rows(ethnic_base,ukranian)
+
+selected_characteristics |> select(ID,en)
+```
+
+We can also get the geographic identifiers for the federal electoral districts from the metadata.
+
+```{r}
+dguids <- metadata |>
+  filter(`Codelist ID`=="CL_GEO_FED") |>
+  pull(ID)
+```
+
+```{r}
+data <- get_statcan_wds_data(dguids,members=selected_characteristics$ID,gender="Total")
+```
+
+The data comes enriched with metadata to make working with it easier, in particular the `CHARACTERISTIC_NAME` column contains plain language names. Now we can transform the data to compute percentages.
+
+```{r}
+plot_data <- data |> 
+  select(DGUID=GEO_DESC,Name=GEO_NAME,name=CHARACTERISTIC_NAME,value=OBS_VALUE) |>
+  pivot_wider() |>
+  mutate(Share=Ukrainian/`Total - Ethnic or cultural origin for the population in private households - 25% sample data`)
+```
+
+Now we can visualize the data, here are the top 20 Federal Electoral Districts by share of the population with Ukranian heritage. 
+
+```{r}
+plot_data |> slice_max(Share,n=20) |>
+  ggplot(aes(y=reorder(Name,Share),x=Share)) +
+  geom_bar(stat="identity",fill="steelblue") +
+  scale_x_continuous(labels=scales::percent) +
+  labs(title="Ukranian ethnic origin",
+       y="Federal electoral district",
+       x="Share of population in private households",
+       caption="StatCan Census 2021")
+```
+
+To map the data we have to get the geographies.
+
+```{r}
+fed_geos <- get_statcan_geographies("2021","FED")
+```
+
+With these we can join on our census data and map it.
+
+```{r}
+fed_geos |>
+  left_join(plot_data,by="DGUID") |>
+  ggplot(aes(fill=Share)) +
+  geom_sf() +
+  scale_fill_viridis_c(labels=scales::percent) +
+  coord_sf(datum=NA) +
+  labs(title="Ukranian ethnic origin by Federal Electoral District",
+       fill="Share of\npopulation",
+       caption="StatCan Census 2021")
+```
+
