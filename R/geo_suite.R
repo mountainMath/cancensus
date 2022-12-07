@@ -1,25 +1,26 @@
 #' Read the geosuite data
 #'
 #' @description
-#' Reads the geosuite data for the given level and census year. Data gets cached after first download.
+#' Reads the geosuite data for the given level and census year. Data gets cached after first download if the
+#' cancensus cache path has been set. For older
+#' years `get_statcan_geographic_attributes()` can fill in most of the information
 #'
 #' @param level geographic level to return the data for, valid choices are
-#' "DB", "DA", "ADA", "CT", "CSD", "CMA", "CD", "PR"
+#' "DB", "DA", "ADA", "CT", "CSD", "CMA", "CD", "PR", "FED", "DPL", "ER", "PN", "POPCTR"
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the geosuite data
 #'
-#' @keywords internal
 #'
 #' @examples
 #' # list add the cached census data
 #' \dontrun{
-#' get_geo_suite("DA","2021")
+#' get_statcan_geo_suite("DA","2021")
 #' }
 #' @export
-get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
+get_statcan_geo_suite <- function(level,census_year="2021",refresh=FALSE){
   valid_years <- c("2021") #seq(2001,2021,5) %>% as.character()
-  valid_levels <- c("DB", "DA", "CT", "ADA", "CSD", "CMA", "CD", "PR")
+  valid_levels <- c("DB", "DA", "CT", "ADA", "CSD", "CMA", "CD", "PR","FED","DPL","ER","PN","POPCTR")
   if (!(as.character(census_year) %in% valid_years)) {
     stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
                 " are supported for GeoSuite"))
@@ -74,10 +75,12 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
 #'
 #' @description
 #' Reads the Dissemination Geographies Relationship File for the given census year. The table contains
-#' the information on how all the geographic levels are related for each area. A reference guide is available
+#' the information on how all the geographic levels are related for each area. Data gets cached after first download if the
+#' cancensus cache path has been set. A reference guide is available
 #' at https://www150.statcan.gc.ca/n1/en/catalogue/982600032021001
 #'
-#' @param census_year census year to get the data for, right now only 2021 is supported
+#' @param census_year census year to get the data for, right now only 2021 is supported, for older
+#' years `get_statcan_geographic_attributes()` can fill in most of the information
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the relationship data
 #'
@@ -86,10 +89,10 @@ get_geo_suite <- function(level,census_year="2021",refresh=FALSE){
 #' @examples
 #' # list add the cached census data
 #' \dontrun{
-#' get_geography_relationship("2021")
+#' get_statcan_geography_relationships("2021")
 #' }
 #' @export
-get_geography_relationship <- function(census_year="2021", refresh=FALSE){
+get_statcan_geography_relationships <- function(census_year="2021", refresh=FALSE){
   valid_years <- c("2021")
   if (!(as.character(census_year) %in% valid_years)) {
     stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
@@ -110,28 +113,29 @@ get_geography_relationship <- function(census_year="2021", refresh=FALSE){
 #' @description
 #' Reads the Geographies Attributes File for the given census year. The table contains
 #' the information on how all the geographic levels are related for each area, and population, dwelling and household counts.
-#' A reference guide is available
+#' Data gets cached after first download if the
+#' cancensus cache path has been set. A reference guide is available
 #' at https://www150.statcan.gc.ca/n1/en/catalogue/92-151-G2021001
 #'
-#' @param census_year census year to get the data for, right now only 2006, 2011 and 2016 are supported
+#' @param census_year census year to get the data for, right now only 2006, 2011, 2016, 2021 are supported
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the relationship data
 #'
 #' @examples
 #' # list add the cached census data
-#' get_geographic_attributes("2016")
+#' get_statcan_geographic_attributes("2021")
 #'
 #' @export
-get_geographic_attributes <- function(census_year="2016",refresh=FALSE){
+get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE){
   census_year <- as.character(census_year)[1]
-  valid_years <- seq(2006,2016,5) %>% as.character
+  valid_years <- seq(2006,2021,5) %>% as.character
   if (!(as.character(census_year) %in% valid_years)) {
     stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
                 " are supported for the geographic relationship file."))
   }
-  urls <- c("2016"="https://www12.statcan.gc.ca/census-recensement/2016/geo/ref/gaf/files-fichiers/2016_92-151_XBB_txt.zip",
+  urls <- c("2021"="https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/attribute-attribs/files-fichiers/2021_92-151_X.zip",
+            "2016"="https://www12.statcan.gc.ca/census-recensement/2016/geo/ref/gaf/files-fichiers/2016_92-151_XBB_txt.zip",
             "2011"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2011_92-151_XBB_txt.zip",
-            #"2011"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2011_92-151_XBB_xlsx.zip",
             "2006"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2006_92-151_XBB_txt.zip")
 
   base_path <- cache_path("attribute_files")
@@ -144,8 +148,9 @@ get_geographic_attributes <- function(census_year="2016",refresh=FALSE){
     utils::download.file(urls[[census_year]],tmp)
     utils::unzip(tmp,exdir = base_path_year)
   }
-  file <- dir(base_path_year,pattern="\\.txt",full.names = TRUE)
-  if (census_year=="2016") {
+  if (census_year=="2021") file <- dir(base_path_year,pattern="\\.csv",full.names = TRUE)
+  else file <- dir(base_path_year,pattern="\\.txt",full.names = TRUE)
+  if (census_year %in% c("2016","2021")) {
     result <- readr::read_csv(file,col_types = readr::cols(.default="c"),
                               locale = readr::locale(encoding ="Windows-1252"))
   } else {

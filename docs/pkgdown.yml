@@ -8,8 +8,9 @@ articles:
   cancensus: cancensus.html
   data_discovery: data_discovery.html
   intersecting_geometries: intersecting_geometries.html
+  statcan_attribute_files: statcan_attribute_files.html
   statcan_wds: statcan_wds.html
-last_built: 2022-12-06T17:13Z
+last_built: 2022-12-07T00:47Z
 urls:
   reference: https://mountainmath.github.io/cancensus/reference
   article: https://mountainmath.github.io/cancensus/articles

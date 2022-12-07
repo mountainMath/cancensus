@@ -46,9 +46,12 @@ reference:
     - show_cancensus_cache_path
   - title: Getting data directly from StatCan
   - contents:
-    - get_statcan_geographies
     - get_statcan_wds_data
     - get_statcan_wds_metadata
+    - get_statcan_geographies
+    - get_statcan_geographic_attributes
+    - get_statcan_geography_relationships
+    - get_statcan_geo_suite
   - title: Data
   - contents:
     - CODES_TABLE
@@ -67,6 +70,10 @@ articles:
       navbar: ~
       contents:
       - intersecting_geometries
+    - title: StatCan attribute files
+      navbar: ~
+      contents:
+      - statcan_attribute_files
     - title: StatCan WDS
       navbar: ~
       contents:

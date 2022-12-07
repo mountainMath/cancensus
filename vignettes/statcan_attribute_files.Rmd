@@ -1,0 +1,46 @@
+---
+title: "StatCan attribute files"
+output: rmarkdown::html_vignette
+mainfont: Roboto
+vignette: >
+  %\VignetteIndexEntry{StatCan attribute files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cancensus)
+library(dplyr)
+```
+
+## Background
+Attribute files describe the detailed relationship of various Statistics Canada geographic levels and provide population, household and dewlling counts. This information can be useful for understanding the hierarchical relationships of different geographic levels. The [CensusMapper API](https::/censusmapper.ca/api) that **cancensus** uses for most of the data queries is ill-suited to get comprehensive data on the hierarichal relationships Canada wide, so it can be helpful to have direct access to this data in comprehensive tabular form.
+
+## Match between Census Tracts and Census Subdivisions
+If we are interested in understanding which Census Tracts respect municipal boundaries and which ones don't in 2021 we can consult the geographic attributes file. It contains a row for each Census Block, the basic building block of census geographies, and tags other levels of geography the Census Block lies in.
+
+```{r}
+attributes <- get_statcan_geographic_attributes("2021")
+
+attributes %>% colnames()
+```
+
+To answer our question, we filter Census Block by the ones that lie within a Census Tract, and check for the collection of Census Blocks within each Census Tract how many municipalities they lie in.
+
+```{r}
+attributes %>%
+  filter(CMATYPE_RMRGENRE %in% c("B","K")) |> # filter areas not in CTs
+  group_by(CTCODE_SRCODE,CMATYPE_RMRGENRE) |>
+  summarise(`Number of municipalities`=length(unique(CSDUID_SDRIDU)),.groups="drop") |>
+  count(`Number of municipalities`,CMATYPE_RMRGENRE) |>
+  arrange(CMATYPE_RMRGENRE,`Number of municipalities`)
+```
+
+This shows that most census tracts for both Census Metropolitan Areas (CMATYPE_RMRGENRE="B") and tracted Census Agglomerations (CMATYPE_RMRGENRE="K"), with some census tracts spanning several municipalities.
