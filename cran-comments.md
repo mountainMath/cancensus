@@ -1,6 +1,7 @@
 # Update 0.5.5
 - add functionality for direct access to StatCan census WDS for 2021
 - add functionality to download original StatCan geographies for 2021
+- update CODES_TABLE for 2021 census
 
 # Update - 0.5.4
 - added ability to query census datasets by year
