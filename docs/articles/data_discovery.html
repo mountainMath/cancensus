@@ -152,7 +152,7 @@ which details occupancy status for residences. These crosstabs are
 available for the 2001, 2006, 2011, and 2016 Census years at all levels
 starting with census tract.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
 <span><span class="co">##    dataset description                           geo_d…¹ attri…² refer…³ refer…⁴</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -168,7 +168,7 @@ starting with census tract.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census xtab - Structural… CA16    StatCa… 98-301… https:…</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 19 more rows, and abbreviated variable names ¹​geo_dataset,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span></span></code></pre>
-<p>The <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> function also provides
+<p>The <code><a href="list_census_datasets.html">list_census_datasets()</a></code> function also provides
 additional background like series reference code, catalogue reference,
 and attribution details.</p>
 </div>
@@ -187,8 +187,8 @@ dataset to 6,623 in the <code>CA16</code> one.</p>
 <h3 id="view-available-census-variable-vectors">View available Census variable vectors<a class="anchor" aria-label="anchor" href="#view-available-census-variable-vectors"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7,694 × 7</span></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7,709 × 7</span></span></span>
 <span><span class="co">##    vector    type   label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> v_CA21_1  Total  Population, 2021               Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
@@ -201,7 +201,7 @@ dataset to 6,623 in the <code>CA16</code> one.</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> v_CA21_8  Total  Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> v_CA21_9  Male   Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> v_CA21_10 Female Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 7,684 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 7,699 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ²​aggregation</span></span></span></code></pre>
 <p><code>list_census_vectors(dataset)</code> retrieves an index of all
 available vectors for a given dataset from the CensusMapper API or local
@@ -227,7 +227,7 @@ then tries to find the vectors with the greatest number of unique
 matches; and, semantic search which works better with search phrases and
 has tolerance for inexact searches. Switching between search modes is
 done using the <code>query_type</code> argument when calling
-<code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> function.</p>
+<code><a href="find_census_vectors.html">find_census_vectors()</a></code> function.</p>
 <p>Note that variable search is optimized for the Census variables in
 the main Census datasets. While searches generally work for variables in
 additional datasets such as cross-tabs and taxfiler data, they have not
@@ -239,7 +239,7 @@ been extensively tested against these datasets.</p>
 know exactly the term you are looking for, and is not robust to spelling
 errors.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Oji-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Oji-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
 <span><span class="co">##   vector      type  label    details                                            </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              </span></span>
@@ -249,12 +249,12 @@ errors.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> v_CA16_5930 Total Oji-Cree 25% Data; Work; Total - Language used most often a…</span></span></code></pre>
 <p>This, on the other hand, will return a warning.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Ojib-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Ojib-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span></span>
 <span><span class="co">## See ?find_census_vectors() for more details.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></span></code></pre>
-<p>Unless otherwise specified, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> will
+<p>Unless otherwise specified, <code><a href="find_census_vectors.html">find_census_vectors()</a></code> will
 use exact search as the default option.</p>
 </div>
 <div class="section level4">
@@ -266,7 +266,7 @@ are looking for. Under the hood, keyword search splits the query and
 vector details into unique unigram tokens and then looks for the vectors
 with the greatest number of matches.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'commute mode'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'commute mode'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
 <span><span class="co">##   vector      type   label                                               details</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -282,7 +282,7 @@ unique keyword matches. What happens if there are other keyword matches
 that have fewer total matches? By default, the function argument is set
 as <code>interactive = TRUE</code>, which will prompt the user with a
 console menu option to see the rest of the matches or not. If using
-<code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> in a script or reproducible
+<code><a href="find_census_vectors.html">find_census_vectors()</a></code> in a script or reproducible
 documentation, we recommend setting this argument to
 <code>interactive = FALSE</code>.</p>
 </div>
@@ -295,7 +295,7 @@ queries and vector details into n-grams and finds matches using
 approximate string distances based on the generalized Levenshtein
 distance.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 56 × 4</span></span></span>
 <span><span class="co">##    vector      type  label                                               details</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -314,14 +314,14 @@ distance.</p>
 that may come up with exact search. For example, while this throws a
 warning:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"ojib cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"ojib cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span></span>
 <span><span class="co">## See ?find_census_vectors() for more details.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></span></code></pre>
 <p>This will find the correct Census vector.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Multiple possible matches. Results ordered by closeness.</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
 <span><span class="co">##   vector      type  label    details                                            </span></span>
@@ -450,7 +450,7 @@ geographic ids for lower levels. All CMAs are included with their own
 defined geography, as well as those CAs which have their own Census
 tracts.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5,518 × 8</span></span></span>
 <span><span class="co">##    region name                      level      pop munic…¹ CMA_UID CD_UID PR_UID</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
@@ -483,7 +483,7 @@ geography have the code K, while those without have type code D.
 any geographies that have a name that matches or partially matches the
 search query.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"CA21"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="search_census_regions.html">search_census_regions</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"CA21"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 8</span></span></span>
 <span><span class="co">##   region  name              level     pop municipal_status CMA_UID CD_UID PR_UID</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>

@@ -87,12 +87,12 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.5" id="cancensus-055">cancensus 0.5.5<a class="anchor" aria-label="anchor" href="#cancensus-055"></a></h2>
 <ul><li>add functionality for direct access to StatCan census WDS for 2021</li>
-<li>add functionality to download originial StatCan geographies for 2021</li>
+<li>add functionality to download original StatCan geographies for 2021</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.4" id="cancensus-054">cancensus 0.5.4<small>2022-11-07</small><a class="anchor" aria-label="anchor" href="#cancensus-054"></a></h2>
 <ul><li>added ability to query census datasets by year</li>
-<li>added a convenience function for creating unique names within given selection of regions from <code><a href="../reference/list_census_regions.html">list_census_regions()</a></code>
+<li>added a convenience function for creating unique names within given selection of regions from <code><a href="list_census_regions.html">list_census_regions()</a></code>
 </li>
 <li>added a check and context menu to install <code>sf</code> package when user requests spatial data but does not have the required package installed as opposed to erroring out.</li>
 <li>improved checking that correct spatial formats are requested</li>
@@ -140,7 +140,7 @@
 <div class="section level3">
 <h3 id="minor-changes-0-4-2">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-2"></a></h3>
 <ul><li>Fixed a minor problem where cache path wasn’t always picked up</li>
-<li>Added optional argument <code>keep_parent</code> when calling <code><a href="../reference/child_census_vectors.html">child_census_vectors()</a></code> that retains the input parent variable in the list of result. We found that in many cases user would follow up a call to <code><a href="../reference/child_census_vectors.html">child_census_vectors()</a></code> with a <code>bind_rows(...)</code> to do this, so this should save a step.</li>
+<li>Added optional argument <code>keep_parent</code> when calling <code><a href="child_census_vectors.html">child_census_vectors()</a></code> that retains the input parent variable in the list of result. We found that in many cases user would follow up a call to <code><a href="child_census_vectors.html">child_census_vectors()</a></code> with a <code>bind_rows(...)</code> to do this, so this should save a step.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -172,7 +172,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="minor-changes-0-3-2">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-2"></a></h3>
-<ul><li>Fixes <a href="https://github.com/mountainMath/cancensus/issues/150" class="external-link">bug</a> in <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code>
+<ul><li>Fixes <a href="https://github.com/mountainMath/cancensus/issues/150" class="external-link">bug</a> in <code><a href="find_census_vectors.html">find_census_vectors()</a></code>
 </li>
 </ul></div>
 </div>
@@ -187,17 +187,17 @@
 <h2 class="page-header" data-toc-text="0.3.0" id="cancensus-030">cancensus 0.3.0<a class="anchor" aria-label="anchor" href="#cancensus-030"></a></h2>
 <div class="section level3">
 <h3 id="major-changes-0-3-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-0-3-0"></a></h3>
-<ul><li>Fully redesigned variable search using <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> and deprecation of `search_census_vectors(). See the <a href="https://mountainmath.github.io/cancensus/articles/data_discovery.html">Data discovery: resources for finding available and relevant data vignette</a> for additional information.</li>
-<li>Census Agglomerations with defined geographies and Census tracts are separated from CMAs when calling <code><a href="../reference/list_census_regions.html">list_census_regions()</a></code>
+<ul><li>Fully redesigned variable search using <code><a href="find_census_vectors.html">find_census_vectors()</a></code> and deprecation of `search_census_vectors(). See the <a href="https://mountainmath.github.io/cancensus/articles/data_discovery.html">Data discovery: resources for finding available and relevant data vignette</a> for additional information.</li>
+<li>Census Agglomerations with defined geographies and Census tracts are separated from CMAs when calling <code><a href="list_census_regions.html">list_census_regions()</a></code>
 </li>
-<li>Additional metadata for catalogue information and attribution is returned when calling <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>
+<li>Additional metadata for catalogue information and attribution is returned when calling <code><a href="list_census_datasets.html">list_census_datasets()</a></code>
 </li>
 <li>New functions <code>explore_census_regions</code> and <code>explore_census_vectors</code> which open a browser page towards the interactive discovery and selection tools on the <a href="https://censusmapper.ca/api" class="external-link">Censusmapper website</a>
 </li>
 <li>New function <code>attribution_for_dataset</code> which provides accurate attribution information for citation and visualizations for a given dataset.</li>
 <li>Additional datasets: T1FF taxfiler data and dwelling type crosstabs, made available by CMHC. For more info, see the new vignettes for these datasets: <a href="https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>, <a href="https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>.</li>
 <li>
-<code><a href="../reference/get_census_geometry.html">get_census_geometry()</a></code> is now hard-deprecated and will stop the program flow. Use <code><a href="../reference/get_census.html">get_census()</a></code> instead.</li>
+<code><a href="get_census_geometry.html">get_census_geometry()</a></code> is now hard-deprecated and will stop the program flow. Use <code><a href="get_census.html">get_census()</a></code> instead.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-changes-0-3-0">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-0"></a></h3>
@@ -300,7 +300,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="minor-changes-0-1-5">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-1-5"></a></h3>
-<ul><li>Default behaviour for <code><a href="../reference/list_census_vectors.html">list_census_vectors()</a></code> changed to have <code>quiet = TRUE</code>
+<ul><li>Default behaviour for <code><a href="list_census_vectors.html">list_census_vectors()</a></code> changed to have <code>quiet = TRUE</code>
 </li>
 </ul></div>
 </div>

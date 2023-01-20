@@ -1,7 +1,7 @@
 # cancensus 0.5.5
 
 - add functionality for direct access to StatCan census WDS for 2021
-- add functionality to download originial StatCan geographies for 2021
+- add functionality to download original StatCan geographies for 2021
 
 # cancensus 0.5.4
 

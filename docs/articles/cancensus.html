@@ -215,17 +215,17 @@ an sf-class data frame, or <code>sp</code> to return a
 SpatialPolygonsDataFrame object.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Returns a data frame with data only</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
 <span>                          level<span class="op">=</span><span class="st">'CSD'</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span>, geo_format <span class="op">=</span> <span class="cn">NA</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Returns data and geography as an sf-class data frame</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
 <span>                          level<span class="op">=</span><span class="st">'CSD'</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span>, geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Returns a SpatialPolygonsDataFrame object with data and geography</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
 <span>                          level<span class="op">=</span><span class="st">'CSD'</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span>, geo_format <span class="op">=</span> <span class="st">'sp'</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><strong>cancensus</strong> utilizes caching to increase speed,
@@ -236,7 +236,7 @@ instead. To force <strong>cancensus</strong> to refresh the data,
 specify <code>use_cache = FALSE</code> as a parameter for
 <code>get_census</code>.</p>
 <p>Additional parameters for advanced options can be viewed by running
-<code><a href="../reference/get_census.html">?get_census</a></code>.</p>
+<code><a href="get_census.html">?get_census</a></code>.</p>
 <div class="section level3">
 <h3 id="census-datasets">Census Datasets<a class="anchor" aria-label="anchor" href="#census-datasets"></a>
 </h3>
@@ -257,10 +257,10 @@ crosstabs for Structural type of dwelling by Document type, which
 details occupancy status for residences. These crosstabs are available
 for the 2001, 2006, 2011, and 2016 Census years at all levels starting
 with census tract.</p>
-<p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all
+<p>The function <code><a href="list_census_datasets.html">list_census_datasets()</a></code> will show all
 available datasets alongside their metadata.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
 <span><span class="co">#&gt;    dataset description                           geo_d…¹ attri…² refer…³ refer…⁴</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -278,7 +278,7 @@ available datasets alongside their metadata.</p>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span></span></code></pre></div>
 <p>As other Census datasets become available via the CensusMapper API,
 they will be listed as output when calling
-<code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
+<code><a href="list_census_datasets.html">list_census_datasets()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="census-regions">Census Regions<a class="anchor" aria-label="anchor" href="#census-regions"></a>
@@ -293,7 +293,7 @@ regions.</p>
 <code>list_census_regions(dataset)</code>, to display all named census
 regions and their corresponding id for a given census dataset.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,518 × 8</span></span></span>
 <span><span class="co">#&gt;    region name                      level      pop munic…¹ CMA_UID CD_UID PR_UID</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
@@ -314,7 +314,7 @@ regions geoid. You can combine different regions together into region
 lists.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieves Vancouver and Toronto</span></span>
-<span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="st">"CMA"</span>, <span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"Toronto"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 8</span></span></span>
 <span><span class="co">#&gt;   region name      level     pop municipal_status CMA_UID CD_UID PR_UID</span></span>
@@ -322,7 +322,7 @@ lists.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 35535  Toronto   CMA   6<span style="text-decoration: underline;">202</span>225 B                <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     35    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 59933  Vancouver CMA   2<span style="text-decoration: underline;">642</span>825 B                <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     59</span></span>
 <span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"59933"</span>,<span class="st">"35535"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"59933"</span>,<span class="st">"35535"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
 <span>                          level<span class="op">=</span><span class="st">'CSD'</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -423,8 +423,8 @@ data they are looking for.</p>
 <p>Run <code>list_census_vectors(dataset)</code> to view all available
 Census variables for a given dataset.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7,694 × 7</span></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7,709 × 7</span></span></span>
 <span><span class="co">#&gt;    vector    type   label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA21_1  Total  Population, 2021               Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
@@ -437,7 +437,7 @@ Census variables for a given dataset.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA21_8  Total  Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA21_9  Male   Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA21_10 Female Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 7,684 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 7,699 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ²​aggregation</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -468,7 +468,7 @@ variables using key terms.</li>
 </h3>
 <p>Each Census dataset features numerous variables making it a bit of a
 challenge to find the exact variable you are looking for. There is a
-function, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code>, for searching through
+function, <code><a href="find_census_vectors.html">find_census_vectors()</a></code>, for searching through
 Census variable metadata in a few different ways. There are three types
 of searches possible using this function: exact search, which simply
 looks for exact string matches for a given query against the vector
@@ -480,20 +480,20 @@ modes is done using the <code>query_type</code> argument when calling
 <code>find_census_variables()</code> function.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span></span>
-<span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
 <span><span class="co">#&gt;   vector      type  label      details                                          </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                            </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> v_CA16_3813 Total Australia  25% Data; Citizenship and Immigration; Total - S…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> v_CA16_4809 Total Australian 25% Data; Minority / Origin; Total - Ethnic orig…</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia origin"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia origin"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   vector      type  label      details                                          </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                            </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> v_CA16_4809 Total Australian 25% Data; Minority / Origin; Total - Ethnic orig…</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australian ethnic"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"keyword"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australian ethnic"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"keyword"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   vector      type  label      details                                          </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                            </span></span>
@@ -507,9 +507,9 @@ the variable for the number of people of Austrian ethnic background. We
 can select that vector and quickly look up its entire hierarchy using
 <code>parent_census_vectors</code> on a vector list.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4092"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="parent_census_vectors.html">parent_census_vectors</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 7</span></span></span>
 <span><span class="co">#&gt;   vector      type  label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -525,7 +525,7 @@ respondents disaggregated by individual countries, it is pretty easy to
 do so.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the Northern European aggregate</span></span>
-<span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Northern European"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"Total"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Northern European"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"Total"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
 <span><span class="co">#&gt;   vector      type  label                                                details</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -542,8 +542,8 @@ represents the aggregate for all Northern European origins. The
 constituent underlying variables.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show all child variable leaves</span></span>
-<span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4122"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span><span class="op">(</span>leaves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4122"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="child_census_vectors.html">child_census_vectors</a></span><span class="op">(</span>leaves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
 <span><span class="co">#&gt;   vector      type  label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
