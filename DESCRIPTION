@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
 Title: Access, Retrieve, and Work with Canadian Census Data and Geography
-Version: 0.5.4
+Version: 0.5.5
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
@@ -38,7 +38,8 @@ Suggests: knitr,
     sf,
     geojsonsf,
     tidyr,
-    lwgeom
+    lwgeom,
+    xml2
 VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/cancensus/, https://censusmapper.ca/api
 BugReports: https://github.com/mountainMath/cancensus/issues

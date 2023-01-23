@@ -28,6 +28,12 @@
     <loc>https://mountainmath.github.io/cancensus/articles/intersecting_geometries.html</loc>
   </url>
   <url>
+    <loc>https://mountainmath.github.io/cancensus/articles/statcan_attribute_files.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/articles/statcan_wds.html</loc>
+  </url>
+  <url>
     <loc>https://mountainmath.github.io/cancensus/authors.html</loc>
   </url>
   <url>
@@ -77,6 +83,24 @@
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/reference/get_recalled_database.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_wds_data.html</loc>
+  </url>
+  <url>
+    <loc>https://mountainmath.github.io/cancensus/reference/get_statcan_wds_metadata.html</loc>
   </url>
   <url>
     <loc>https://mountainmath.github.io/cancensus/reference/index.html</loc>

@@ -8,7 +8,7 @@
 A dataset with code table summaries for census data
 }
 \references{
-\url{https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo012-eng.cfm}
+\url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CSDtype}, \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CDtype}
 }
 \author{
 derived from StatCan definitions

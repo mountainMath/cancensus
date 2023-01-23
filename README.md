@@ -139,17 +139,17 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.3.
+  access, retrieve, and work with Canadian Census data and geography. v0.5.5.
 
 
 A BibTeX entry for LaTeX users is
 ```
-  @Manual{,
+  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.3},
-    url = {https://mountainmath.github.io/cancensus/},
+    note = {R package version 0.5.5},
+    url = {https://mountainmath.github.io/cancensus/}
   }
 ```
 ### Related packages
@@ -164,7 +164,7 @@ The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automat
 
 ### Statistics Canada Attribution
 
-Subject to the Statistics Canada Open License Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:
+Subject to the Statistics Canada Open Data License Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:
 
 ```
 Acknowledgment of Source

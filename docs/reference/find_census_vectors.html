@@ -36,7 +36,7 @@ type = 'female' or type = 'male' as a parameter."><meta property="og:image" cont
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -61,6 +61,12 @@ type = 'female' or type = 'male' as a parameter."><meta property="og:image" cont
     </li>
     <li>
       <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_attribute_files.html">StatCan attribute files</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_wds.html">StatCan WDS</a>
     </li>
     <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -145,8 +151,6 @@ options in some cases. See description section for more details on query types.<
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">find_census_vectors</span><span class="op">(</span><span class="st">'Oji-cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'exact'</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug at /Users/jens/Documents/R/cancensus/R/helpers.R#51: dataset</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vector      type  label    details                                            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              </span>
@@ -156,8 +160,6 @@ options in some cases. See description section for more details on query types.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> v_CA16_5930 Total Oji-Cree 25% Data; Work; Total - Language used most often a…</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">find_census_vectors</span><span class="op">(</span><span class="st">'commuting duration'</span>, dataset <span class="op">=</span> <span class="st">'CA11'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug at /Users/jens/Documents/R/cancensus/R/helpers.R#51: dataset</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vector       type   label                                              details</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
@@ -165,8 +167,6 @@ options in some cases. See description section for more details on query types.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> v_CA11N_2217 Female Median commuting duration                          CA 201…</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">find_census_vectors</span><span class="op">(</span><span class="st">'after tax income'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug at /Users/jens/Documents/R/cancensus/R/helpers.R#51: dataset</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple possible matches. Results ordered by closeness.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 56 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    vector      type  label                                               details</span>

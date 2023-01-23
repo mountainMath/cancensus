@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -85,6 +85,12 @@
     </li>
     <li>
       <a href="articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
+    </li>
+    <li>
+      <a href="articles/statcan_attribute_files.html">StatCan attribute files</a>
+    </li>
+    <li>
+      <a href="articles/statcan_wds.html">StatCan WDS</a>
     </li>
     <li>
       <a href="articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -157,7 +163,7 @@
 <h3 id="local-cache">Local Cache<a class="anchor" aria-label="anchor" href="#local-cache"></a>
 </h3>
 <p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cancensus_cache_path(&lt;local cache path&gt;, install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
-<p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="reference/get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancensus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
+<p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancensus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
 </div>
 <div class="section level3">
 <h3 id="currently-available-datasets">Currently available datasets<a class="anchor" aria-label="anchor" href="#currently-available-datasets"></a>
@@ -170,13 +176,13 @@
 </h3>
 <p>Census data contains thousands of different geographic regions as well as thousands of unique variables. There are several useful functions within <strong>cancensus</strong> to simplify accessing Census metadata, locating regions, and identifying variables.</p>
 <pre><code><span><span class="co"># To view available Census datasets</span></span>
-<span><span class="fu"><a href="reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># To view available named regions at different levels of Census hierarchy for the 2016 Census (for example)</span></span>
-<span><span class="fu"><a href="reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># To view available Census variables for the 2016 Census</span></span>
-<span><span class="fu"><a href="reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span></code></pre>
+<span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span></span></code></pre>
 <p>There is also an interactive tool that is available at the <a href="https://censusmapper.ca/api" class="external-link">CensusMapper API</a> to visually select regions and variables and generate code for the API call. Calling <code>explore_census_vectors(dataset = "CA16")</code> or <code>explore_census_regions(dataset = "CA16")</code> will open a new browser window to this interactive tool, preconfigured for whichever Census dataset is set as an argument.</p>
 </div>
 <div class="section level3">
@@ -184,11 +190,11 @@
 </h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf" class="external-link"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp" class="external-link"><strong>sp</strong></a> formats.</p>
 <pre><code><span><span class="co"># Return data only</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Return an sf-class data frame</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
@@ -268,14 +274,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.3.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.5.</p>
 <p>A BibTeX entry for LaTeX users is</p>
-<pre><code>  @Manual{,
+<pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.3},
-    url = {https://mountainmath.github.io/cancensus/},
+    note = {R package version 0.5.5},
+    url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>
 <div class="section level3">
@@ -289,7 +295,7 @@
 <div class="section level3">
 <h3 id="statistics-canada-attribution">Statistics Canada Attribution<a class="anchor" aria-label="anchor" href="#statistics-canada-attribution"></a>
 </h3>
-<p>Subject to the Statistics Canada Open License Agreement, licensed products using Statistics Canada data should employ the following aknowledgement of source:</p>
+<p>Subject to the Statistics Canada Open Data License Agreement, licensed products using Statistics Canada data should employ the following acknowledgement of source:</p>
 <pre><code>Acknowledgment of Source
 
 (a) You shall include and maintain the following notice on all licensed rights of the Information:

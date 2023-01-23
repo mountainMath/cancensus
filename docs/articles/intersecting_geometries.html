@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -78,6 +78,12 @@
     </li>
     <li>
       <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_attribute_files.html">StatCan attribute files</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_wds.html">StatCan WDS</a>
     </li>
     <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -130,7 +136,7 @@ or administrative units. Census users may have their own defined
 geographies or other geospatial data of interest and want to be able to
 quickly and easily identify the collection of census features that
 correspond to that region.</p>
-<p>The <code><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries()</a></code> function is projection
+<p>The <code><a href="get_intersecting_geometries.html">get_intersecting_geometries()</a></code> function is projection
 agnostic and accepts any valid <code>sf</code> or <code>sfc</code> class
 object as input. These objects are then reprojected into lat/lon
 coordinates on the backend to facilitate the intersecting join on the
@@ -159,9 +165,9 @@ package.</p>
 obtain the list of municipalities (CSDs) and census tracts (CTs) that
 intersect the 800m station buffer objects.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">station_city_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CSD"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<code class="sourceCode R"><span><span class="va">station_city_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CSD"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
 <span>                                                quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">station_ct_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CT"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<span><span class="va">station_ct_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"CT"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
 <span>                                              quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>These return a list of census geographic identifiers suitable for use
 in the ‘region’ argument in <code>get_census</code>. We may be
@@ -169,10 +175,10 @@ interested in the transit to work mode share in each of these
 buffers.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mode_base<span class="op">=</span><span class="st">"v_CA16_5792"</span>,transit<span class="op">=</span><span class="st">"v_CA16_5801"</span>,walk<span class="op">=</span><span class="st">"v_CA16_5804"</span><span class="op">)</span></span>
-<span><span class="va">station_city</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_city_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
+<span><span class="va">station_city</span> <span class="op">&lt;-</span>  <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_city_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
 <span>                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"Vancouver (CY)"</span><span class="op">)</span></span>
-<span><span class="va">station_cts</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
+<span><span class="va">station_cts</span> <span class="op">&lt;-</span>   <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors <span class="op">=</span> <span class="va">variables</span>, </span>
 <span>                            geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>To understand how these relate we plot the data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -189,9 +195,9 @@ buffers.</p>
 <p>To get a closer match we can cut out the dissemination areas
 intersecting the station catchment areas.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">station_das</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"DA"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
+<code class="sourceCode R"><span><span class="va">station_das</span> <span class="op">&lt;-</span>   <span class="fu"><a href="get_intersecting_geometries.html">get_intersecting_geometries</a></span><span class="op">(</span><span class="st">"CA16"</span>, level <span class="op">=</span> <span class="st">"DA"</span>, geometry <span class="op">=</span> <span class="va">cov_station_buffers</span>,</span>
 <span>                                             quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">.</span>, vectors<span class="op">=</span><span class="va">variables</span>, geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">.</span>, vectors<span class="op">=</span><span class="va">variables</span>, geo_format <span class="op">=</span> <span class="st">'sf'</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">station_city</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
@@ -209,7 +215,7 @@ is to first query all DAs withing the CTs identified by the previous
 <code>get_intersecting_geometries</code> call and then filter down to
 those intersecting the station buffers.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">station_das2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors<span class="op">=</span><span class="va">variables</span>, </span>
+<code class="sourceCode R"><span><span class="va">station_das2</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_census.html">get_census</a></span><span class="op">(</span><span class="st">"CA16"</span>, regions <span class="op">=</span> <span class="va">station_ct_ids</span>, vectors<span class="op">=</span><span class="va">variables</span>, </span>
 <span>                           geo_format <span class="op">=</span> <span class="st">'sf'</span>, level<span class="op">=</span><span class="st">"DA"</span>, quiet<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html" class="external-link">st_filter</a></span><span class="op">(</span><span class="va">cov_station_buffers</span><span class="op">)</span></span>
 <span></span>

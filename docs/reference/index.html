@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -48,6 +48,12 @@
     </li>
     <li>
       <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_attribute_files.html">StatCan attribute files</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_wds.html">StatCan WDS</a>
     </li>
     <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -101,8 +107,8 @@
           <p><code><a href="as_census_region_list.html">as_census_region_list()</a></code> </p>
         </td>
         <td><p>Convert a (suitably filtered) data frame from
-<code>list_census_regions</code> to a list suitable for passing to
-<code>get_census</code>.</p></td>
+<code><a href="list_census_regions.html">list_census_regions</a></code> to a list suitable for passing to
+<code><a href="get_census.html">get_census</a></code>.</p></td>
       </tr><tr><td>
           <p><code><a href="list_census_vectors.html">list_census_vectors()</a></code> </p>
         </td>
@@ -203,6 +209,34 @@ variables returned by
           <p><code><a href="show_cancensus_cache_path.html">show_cancensus_cache_path()</a></code> </p>
         </td>
         <td><p>View saved cache directory path</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="getting-data-directly-from-statcan">Getting data directly from StatCan <a href="#getting-data-directly-from-statcan" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="get_statcan_wds_data.html">get_statcan_wds_data()</a></code> </p>
+        </td>
+        <td><p>Query the StatCan WDS for data</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_statcan_wds_metadata.html">get_statcan_wds_metadata()</a></code> </p>
+        </td>
+        <td><p>Query the StatCan WDS for metadata</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_statcan_geographies.html">get_statcan_geographies()</a></code> </p>
+        </td>
+        <td><p>Read the geosuite data</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_statcan_geographic_attributes.html">get_statcan_geographic_attributes()</a></code> </p>
+        </td>
+        <td><p>Read the Geographic Attributes File</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_statcan_geography_relationships.html">get_statcan_geography_relationships()</a></code> </p>
+        </td>
+        <td><p>Read the Dissemination Geographies Relationship File</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_statcan_geo_suite.html">get_statcan_geo_suite()</a></code> </p>
+        </td>
+        <td><p>Read the geosuite data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>

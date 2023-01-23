@@ -101,7 +101,7 @@ check_recalled_data_and_warn <- function(meta_file,params){
   cached_data<-generate_metadata(meta_file,params)
   recalled_data <- list_recalled_cached_data(cached_data,warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data.")
+    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data.")
   }
   d<-NULL
 }
@@ -109,7 +109,7 @@ check_recalled_data_and_warn <- function(meta_file,params){
 check_for_recalled_data_and_warn <- function(){
   recalled_data <- list_recalled_cached_data(warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nnremove_recalled_cached_data()\nto remove recalled data."))
+    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data."))
   }
   d<-NULL
 }
@@ -129,7 +129,7 @@ first_run_checks <- function(){
 #' @name CODES_TABLE
 #' @docType data
 #' @author derived from StatCan definitions
-#' @references \url{https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo012-eng.cfm}
+#' @references \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CSDtype}, \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CDtype}
 #' @keywords data
 NULL
 

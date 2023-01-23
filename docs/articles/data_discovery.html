@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -78,6 +78,12 @@
     </li>
     <li>
       <a href="../articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_attribute_files.html">StatCan attribute files</a>
+    </li>
+    <li>
+      <a href="../articles/statcan_wds.html">StatCan WDS</a>
     </li>
     <li>
       <a href="../articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
@@ -129,13 +135,9 @@ available and relevant data</h3>
 </h2>
 <p><code>cancensus</code> can access Statistics Canada Census data for
 the 1996, 2001, 2006 Censuses, the 2011 Census and National Household
-Survey, as well as the 2016 Census. You can run
+Survey, the 2016 Census, as well as the 2021 Census. You can run
 <code>list_census_datasets</code> to check what datasets are currently
-available for access through the CensusMapper API. Additional data for
-the 2016 Census will be included in CensusMapper within a day or two
-after public release by Statistics Canada. Statistics Canada maintains a
-release schedule for the Census 2016 Program which can be viewed on
-their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm" class="external-link">website</a>.</p>
+available for access through the CensusMapper API.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing
 Corporation (CMHC), <code>cancensus</code> now includes additional
 Census-linked datasets as open-data releases. These include annual
@@ -146,7 +148,7 @@ which details occupancy status for residences. These crosstabs are
 available for the 2001, 2006, 2011, and 2016 Census years at all levels
 starting with census tract.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
 <span><span class="co">##    dataset description                           geo_d…¹ attri…² refer…³ refer…⁴</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -162,7 +164,7 @@ starting with census tract.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census xtab - Structural… CA16    StatCa… 98-301… https:…</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 19 more rows, and abbreviated variable names ¹​geo_dataset,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span></span></code></pre>
-<p>The <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> function also provides
+<p>The <code><a href="list_census_datasets.html">list_census_datasets()</a></code> function also provides
 additional background like series reference code, catalogue reference,
 and attribution details.</p>
 </div>
@@ -181,8 +183,8 @@ dataset to 6,623 in the <code>CA16</code> one.</p>
 <h3 id="view-available-census-variable-vectors">View available Census variable vectors<a class="anchor" aria-label="anchor" href="#view-available-census-variable-vectors"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5,756 × 7</span></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7,709 × 7</span></span></span>
 <span><span class="co">##    vector    type   label                          units paren…¹ aggre…² details</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> v_CA21_1  Total  Population, 2021               Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
@@ -195,7 +197,7 @@ dataset to 6,623 in the <code>CA16</code> one.</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> v_CA21_8  Total  Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> v_CA21_9  Male   Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> v_CA21_10 Female Total - Age                    Numb… <span style="color: #BB0000;">NA</span>      Additi… CA 202…</span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 5,746 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 7,699 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ²​aggregation</span></span></span></code></pre>
 <p><code>list_census_vectors(dataset)</code> retrieves an index of all
 available vectors for a given dataset from the CensusMapper API or local
@@ -221,7 +223,7 @@ then tries to find the vectors with the greatest number of unique
 matches; and, semantic search which works better with search phrases and
 has tolerance for inexact searches. Switching between search modes is
 done using the <code>query_type</code> argument when calling
-<code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> function.</p>
+<code><a href="find_census_vectors.html">find_census_vectors()</a></code> function.</p>
 <p>Note that variable search is optimized for the Census variables in
 the main Census datasets. While searches generally work for variables in
 additional datasets such as cross-tabs and taxfiler data, they have not
@@ -233,7 +235,7 @@ been extensively tested against these datasets.</p>
 know exactly the term you are looking for, and is not robust to spelling
 errors.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Oji-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Oji-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
 <span><span class="co">##   vector      type  label    details                                            </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              </span></span>
@@ -243,12 +245,12 @@ errors.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> v_CA16_5930 Total Oji-Cree 25% Data; Work; Total - Language used most often a…</span></span></code></pre>
 <p>This, on the other hand, will return a warning.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Ojib-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Ojib-cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span></span>
 <span><span class="co">## See ?find_census_vectors() for more details.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></span></code></pre>
-<p>Unless otherwise specified, <code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> will
+<p>Unless otherwise specified, <code><a href="find_census_vectors.html">find_census_vectors()</a></code> will
 use exact search as the default option.</p>
 </div>
 <div class="section level4">
@@ -260,7 +262,7 @@ are looking for. Under the hood, keyword search splits the query and
 vector details into unique unigram tokens and then looks for the vectors
 with the greatest number of matches.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'commute mode'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'commute mode'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'female'</span>, query_type <span class="op">=</span> <span class="st">'keyword'</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
 <span><span class="co">##   vector      type   label                                               details</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -276,7 +278,7 @@ unique keyword matches. What happens if there are other keyword matches
 that have fewer total matches? By default, the function argument is set
 as <code>interactive = TRUE</code>, which will prompt the user with a
 console menu option to see the rest of the matches or not. If using
-<code><a href="../reference/find_census_vectors.html">find_census_vectors()</a></code> in a script or reproducible
+<code><a href="find_census_vectors.html">find_census_vectors()</a></code> in a script or reproducible
 documentation, we recommend setting this argument to
 <code>interactive = FALSE</code>.</p>
 </div>
@@ -289,7 +291,7 @@ queries and vector details into n-grams and finds matches using
 approximate string distances based on the generalized Levenshtein
 distance.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 56 × 4</span></span></span>
 <span><span class="co">##    vector      type  label                                               details</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -308,14 +310,14 @@ distance.</p>
 that may come up with exact search. For example, while this throws a
 warning:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"ojib cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"ojib cree"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: No exact matches found. Please check spelling and try again or consider using semantic or keyword search.</span></span>
 <span><span class="co">## See ?find_census_vectors() for more details.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)</span></span></code></pre>
 <p>This will find the correct Census vector.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Multiple possible matches. Results ordered by closeness.</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
 <span><span class="co">##   vector      type  label    details                                            </span></span>
@@ -336,9 +338,9 @@ possible matches.</p>
 <h3 id="standard-geographical-classification">Standard Geographical Classification<a class="anchor" aria-label="anchor" href="#standard-geographical-classification"></a>
 </h3>
 <p>Statistics Canada uses an official classification of geographic areas
-known as the <a href="https://www.statcan.gc.ca/eng/subjects/standard/sgc/2016/introduction" class="external-link">Standard
+known as the <a href="https://www.statcan.gc.ca/en/subjects/standard/sgc/2021/introduction" class="external-link">Standard
 Geographical Classification (SGC)</a>, which is updated periodically.
-The latest version is based on the 2016 Census. Geographic
+The latest version is based on the 2021 Census. Geographic
 classification codes are standardized across Statistics Canada products,
 including the Census as well as any other Statistics Canada dataset. In
 practice, this means that the region ID for the Vancouver Census
@@ -368,10 +370,10 @@ subdivision.</p>
 <span><span class="co">##   level     n</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> C         1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> CA       14</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> CA        9</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> CD      293</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> CMA      35</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> CSD    <span style="text-decoration: underline;">5</span>162</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> CMA      41</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> CSD    <span style="text-decoration: underline;">5</span>161</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> PR       13</span></span></code></pre>
 <p>There is also an additional region, with the id <code>01</code> and
 the level code <code>C</code> which represents all of Canada as a
@@ -392,17 +394,17 @@ in Census data. Census Agglomeration areas have to have a core
 population above 10,000.</p>
 <p>All CMAs and CAs consist of Census subdivisions but not all Census
 subdivisions are a subset of a CMA or a CA. For more details on CMAs and
-CAs, consult Statistics Canada’s Census Dictionary article for <a href="https://www12.statcan.gc.ca/census-recensement/2016/ref/dict/geo009-eng.cfm" class="external-link">Census
+CAs, consult Statistics Canada’s Census Dictionary article for <a href="https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/az/Definition-eng.cfm?ID=geo009" class="external-link">Census
 metropolitan areas (CMA) and census agglomerations (CA)</a>. All CMAs
 and some CAs have data at the Census tract level, but most CAs do not.
-The 2016 Census has 35 CMAs and 14 CAs with Census tracts that have
-their own defined geography. There are a further 106 CAs without Census
-tracts that do not have their own distinctly defined geographies.</p>
+The 2021 Census has 41 CMAs and 9 CAs with Census tracts that have their
+own defined geography. There are a further 102 CAs without Census tracts
+that do not have their own distinctly defined geographies.</p>
 </div>
 <div class="section level4">
 <h4 id="aside-dissemination-areas-blocks-and-enumeration-areas">Aside: dissemination areas, blocks, and enumeration areas<a class="anchor" aria-label="anchor" href="#aside-dissemination-areas-blocks-and-enumeration-areas"></a>
 </h4>
-<p><a href="https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/da-ad/def-eng.htm" class="external-link">Dissemination
+<p><a href="https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/az/Definition-eng.cfm?ID=geo021" class="external-link">Dissemination
 areas</a> (DA) are the smallest atomic geographic unit at which all
 census data is captured. DAs cover the entirety of Canada and follow the
 boundaries of census subdivisions and census tracts. While inter-census
@@ -411,15 +413,15 @@ stable as the census tracts and census subdivisions that they make up.
 In addition to census boundaries, DAs will generally follow natural
 boundaries created by other spatial features like roads, railways, water
 features, and designed to be spatially compact and with a target
-population around 400-700 persons. The 2016 census data has 56,589
+population around 400-700 persons. The 2021 census data has 57,936
 distinct DAs.</p>
 <p><a href="https://www12.statcan.gc.ca/English/census01/products/reference/dict/geo024.htm" class="external-link">Enumeration
 areas</a> (EA) were the DA equivalent for censuses prior to 2001.
 Similar to DAs, EAs were used to as the basic level at which census data
 was collected. They do not necessarily correspond accurately to DAs in
 data from 2001 onwards.</p>
-<p><a href="https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/db-id/def-eng.htm" class="external-link">Dissemination
-block</a> (DB) level data is available for the 2001-2016 datasets. DBs
+<p><a href="https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/az/Definition-eng.cfm?ID=geo014" class="external-link">Dissemination
+block</a> (DB) level data is available for the 2001-2021 datasets. DBs
 are essentially city blocks, bounded by intersecting streets and
 therefore are largely the product of road networks at the time of the
 census. The geographies and identification codes of DBs are not
@@ -428,7 +430,7 @@ boundaries of higher geographic levels in such a way as to ensure that
 they can be aggregated upwards precisely. DBs only provide data for
 population, dwelling counts, and number of households (from 2006
 onwards) without any additional characteristic data. DBs with population
-under 15 have their population counts adjusted for privacy. For the 2016
+under 15 have their population counts adjusted for privacy. For the 2021
 census, there are close to half a million DB distinct regions.</p>
 </div>
 </div>
@@ -444,7 +446,7 @@ geographic ids for lower levels. All CMAs are included with their own
 defined geography, as well as those CAs which have their own Census
 tracts.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5,518 × 8</span></span></span>
 <span><span class="co">##    region name                      level      pop munic…¹ CMA_UID CD_UID PR_UID</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
@@ -477,7 +479,7 @@ geography have the code K, while those without have type code D.
 any geographies that have a name that matches or partially matches the
 search query.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/search_census_regions.html">search_census_regions</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"CA21"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="search_census_regions.html">search_census_regions</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"CA21"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 8</span></span></span>
 <span><span class="co">##   region  name              level     pop municipal_status CMA_UID CD_UID PR_UID</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
