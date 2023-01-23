@@ -121,28 +121,9 @@ at https://www150.statcan.gc.ca/n1/en/catalogue/92-151-G2021001</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># list add the cached census data</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu">get_statcan_geographic_attributes</span><span class="op">(</span><span class="st">"2021"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 498,786 × 63</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    PRUID_PRIDU PRDGUID…¹ PRNAM…² PRENA…³ PRFNA…⁴ PREAB…⁵ PRFAB…⁶ CDUID…⁷ CDDGU…⁸</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 10          2021A000… Newfou… Newfou… Terre-… N.L.    T.-N.-… 1001    2021A0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 498,776 more rows, 54 more variables: CDNAME_DRNOM &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   CDTYPE_DRGENRE &lt;chr&gt;, FEDUID_CEFIDU &lt;chr&gt;, FEDDGUID_CEFIDUGD &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   FEDNAME_CEFNOM &lt;chr&gt;, CSDUID_SDRIDU &lt;chr&gt;, CSDDGUID_SDRIDUGD &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   CSDNAME_SDRNOM &lt;chr&gt;, CSDTYPE_SDRGENRE &lt;chr&gt;, DPLUID_LDIDU &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   DPLDGUID_LDIDUGD &lt;chr&gt;, DPLNAME_LDNOM &lt;chr&gt;, DPLTYPE_LDGENRE &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ERUID_REIDU &lt;chr&gt;, ERDGUID_REIDUGD &lt;chr&gt;, ERNAME_RENOM &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   CCSUID_SRUIDU &lt;chr&gt;, CCSDGUID_SRUIDUGD &lt;chr&gt;, CCSNAME_SRUNOM &lt;chr&gt;, …</span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>

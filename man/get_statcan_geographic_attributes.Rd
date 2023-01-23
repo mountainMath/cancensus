@@ -23,6 +23,7 @@ at https://www150.statcan.gc.ca/n1/en/catalogue/92-151-G2021001
 }
 \examples{
 # list add the cached census data
+\dontrun{
 get_statcan_geographic_attributes("2021")
-
+}
 }

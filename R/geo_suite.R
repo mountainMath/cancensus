@@ -123,8 +123,9 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 #'
 #' @examples
 #' # list add the cached census data
+#' \dontrun{
 #' get_statcan_geographic_attributes("2021")
-#'
+#' }
 #' @export
 get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE){
   census_year <- as.character(census_year)[1]

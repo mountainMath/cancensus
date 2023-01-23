@@ -144,12 +144,12 @@ If you wish to cite cancensus:
 
 A BibTeX entry for LaTeX users is
 ```
-  @Manual{,
+  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
     note = {R package version 0.5.5},
-    url = {https://mountainmath.github.io/cancensus/},
+    url = {https://mountainmath.github.io/cancensus/}
   }
 ```
 ### Related packages
