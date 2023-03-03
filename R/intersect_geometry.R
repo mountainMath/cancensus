@@ -76,7 +76,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
 
   if (!use_cache || !file.exists(data_file)) {
     if (!have_api_key) {
-      stop(paste("No API key set. Use set_api_key('<your API ket>`) to set one, or set_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+      stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
     }
     url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
