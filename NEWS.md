@@ -1,3 +1,7 @@
+# cancensus 0.5.6
+
+- fix issue when using named vectors to query data for non-existent geographies, return NULL in this case instead of throwing error
+
 # cancensus 0.5.5
 
 - add functionality for direct access to StatCan census WDS for 2021
