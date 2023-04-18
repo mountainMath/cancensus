@@ -10,7 +10,7 @@ get_statcan_wds_metadata(census_year, level, refresh = FALSE)
 \item{census_year}{census year to get the data for, right now only 2021 is supported}
 
 \item{level}{geographic level to return the data for, valid choices are
-"PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR"}
+"PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"}
 
 \item{refresh}{default is `FALSE` will refresh the temporary cache if `TRUE`}
 }

@@ -1,6 +1,8 @@
 # cancensus 0.5.6
 
 - fix issue when using named vectors to query data for non-existent geographies, return NULL in this case instead of throwing error
+- fix problem with population centre geographic data download
+- support newly released Forward Sortation Area geography for statcan geography and WDS functionality
 
 # cancensus 0.5.5
 

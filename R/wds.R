@@ -6,7 +6,7 @@
 #'
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param level geographic level to return the data for, valid choices are
-#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR"
+#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"
 #' @param refresh default is `FALSE` will refresh the temporary cache if `TRUE`
 #' @return tibble with the metadata
 #'
@@ -18,7 +18,7 @@
 #' @export
 get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
   valid_census_years <- c("2021")
-  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR")
+  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA")
   if (!(census_year %in% valid_census_years)) {
     stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
   }
