@@ -34,24 +34,24 @@ get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
   code_lists <- xml2::xml_find_all(d,"//structure:Codelist")
 
   meta_data <- lapply(code_lists, \(cl){
-    codelist_id <- cl |> xml2::xml_attr("id")
-    agencyID <- cl |> xml2::xml_attr("agencyID")
-    codelist_en <- cl |> xml2::xml_find_all("common:Name[@xml:lang='en']") |> xml2::xml_text()
-    codelist_fr <- cl |> xml2::xml_find_all("common:Name[@xml:lang='fr']") |> xml2::xml_text()
-    description_en <- cl |> xml2::xml_find_all("common:Name[@xml:lang='en']") |> xml2::xml_text()
-    description_fr <- cl |> xml2::xml_find_all("common:Name[@xml:lang='fr']") |> xml2::xml_text()
-    codes <- cl |> xml2::xml_find_all("structure:Code")
+    codelist_id <- cl %>% xml2::xml_attr("id")
+    agencyID <- cl %>% xml2::xml_attr("agencyID")
+    codelist_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
+    codelist_fr <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text()
+    description_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
+    description_fr <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text()
+    codes <- cl %>% xml2::xml_find_all("structure:Code")
     dplyr::tibble(`Agency ID`=agencyID,
            `Codelist ID`=codelist_id,
            `Codelist en`=codelist_en,
            `Codelist fr`=codelist_fr,
-           ID=codes |> xml2::xml_attr("id"),
-           en=codes |> xml2::xml_find_all("common:Name[@xml:lang='en']") |> xml2::xml_text(),
-           fr=codes |> xml2::xml_find_all("common:Name[@xml:lang='fr']") |> xml2::xml_text(),
-           `Parent ID`=codes |> xml2::xml_find_all("structure:Parent/Ref",flatten=FALSE) |>
-             lapply(\(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  |> unlist()
+           ID=codes %>% xml2::xml_attr("id"),
+           en=codes %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text(),
+           fr=codes %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text(),
+           `Parent ID`=codes %>% xml2::xml_find_all("structure:Parent/Ref",flatten=FALSE) %>%
+             lapply(\(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
              )
-  }) |>
+  }) %>%
     dplyr::bind_rows()
  meta_data
 }
@@ -116,22 +116,22 @@ get_statcan_wds_data <- function(DGUIDs,
   census_year <- "2021"
   meta_data <- get_statcan_wds_metadata(census_year,level,refresh = refresh)
 
-  levels <- meta_data |>
+  levels <- meta_data %>%
     dplyr::filter(.data$`Codelist ID`=="CL_GEO_LEVEL")
 
-  meta_geos <- meta_data |>
+  meta_geos <- meta_data %>%
     dplyr::filter(.data$`Codelist ID`==paste0("CL_GEO_",level))
-  meta_characteristics <- meta_data |>
+  meta_characteristics <- meta_data %>%
     dplyr::filter(.data$`Codelist ID`=="CL_CHARACTERISTIC")
 
   name_field <- language #paste0(language,"_description")
 
-  data <- readr::read_csv(wds_data_tempfile,col_types = readr::cols(.default="c")) |>
-    dplyr::mutate(dplyr::across(dplyr::matches("OBS_VALUE|TNR_CI_"),as.numeric)) |>
-    dplyr::left_join(meta_geos |>
+  data <- readr::read_csv(wds_data_tempfile,col_types = readr::cols(.default="c")) %>%
+    dplyr::mutate(dplyr::across(dplyr::matches("OBS_VALUE|TNR_CI_"),as.numeric)) %>%
+    dplyr::left_join(meta_geos %>%
                        dplyr::select(GEO_DESC=.data$ID,GEO_NAME=!!as.name(name_field)),
-                     by="GEO_DESC") |>
-    dplyr::left_join(meta_characteristics |>
+                     by="GEO_DESC") %>%
+    dplyr::left_join(meta_characteristics %>%
                        dplyr::select(CHARACTERISTIC=.data$ID,CHARACTERISTIC_NAME=!!as.name(name_field)),
               by="CHARACTERISTIC")
 

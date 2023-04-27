@@ -37,7 +37,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   }
   level_map <-  c("CMACA"="CMA","CA"="CMA","POPCNTR"="PC","POPCTR"="PC")
   if (level %in% names(level_map)) level <-level_map[[level]]
-  geo_base_path <- cancensus:::cache_path("geographies")
+  geo_base_path <- cache_path("geographies")
   if (!dir.exists(geo_base_path)) dir.create(geo_base_path)
   geo_base_path <- file.path(geo_base_path,type)
   if (!dir.exists(geo_base_path)) dir.create(geo_base_path)
