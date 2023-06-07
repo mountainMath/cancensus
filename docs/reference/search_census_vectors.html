@@ -121,20 +121,19 @@ If specified, only return variables of specified `type`.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibway'</span>, <span class="st">'CA16'</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>search_census_vectors(). See ?find_census_vectors() for more robust search functions.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    vector      type   label                        units paren…¹ aggre…² details</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> v_CA16_617  Total  Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> v_CA16_618  Male   Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> v_CA16_619  Female Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> v_CA16_623  Total  Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> v_CA16_624  Male   Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> v_CA16_625  Female Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> v_CA16_1424 Total  Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> v_CA16_1425 Male   Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> v_CA16_1426 Female Ojibway-Potawatomi languages Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> v_CA16_1430 Total  Ojibway                      Numb… v_CA16… Additi… CA 201…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows, and abbreviated variable names ¹​parent_vector,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ²​aggregation</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    vector      type   label              units parent_vector aggregation details</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> v_CA16_617  Total  Ojibway-Potawatom… Numb… v_CA16_569    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> v_CA16_618  Male   Ojibway-Potawatom… Numb… v_CA16_570    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> v_CA16_619  Female Ojibway-Potawatom… Numb… v_CA16_571    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> v_CA16_623  Total  Ojibway            Numb… v_CA16_617    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> v_CA16_624  Male   Ojibway            Numb… v_CA16_618    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> v_CA16_625  Female Ojibway            Numb… v_CA16_619    Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> v_CA16_1424 Total  Ojibway-Potawatom… Numb… v_CA16_1376   Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> v_CA16_1425 Male   Ojibway-Potawatom… Numb… v_CA16_1377   Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> v_CA16_1426 Female Ojibway-Potawatom… Numb… v_CA16_1378   Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> v_CA16_1430 Total  Ojibway            Numb… v_CA16_1424   Additive    CA 201…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># This will return a warning that no match was found, but will suggest similar terms.</span></span></span>
 <span class="r-in"><span><span class="fu">search_census_vectors</span><span class="op">(</span><span class="st">'Ojibwe'</span>, <span class="st">'CA16'</span>, <span class="st">'Total'</span><span class="op">)</span></span></span>

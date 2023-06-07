@@ -179,47 +179,45 @@ use <code><a href="../reference/list_census_datasets.html">list_census_datasets(
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"taxfiler"</span>,<span class="va">description</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 6</span></span></span>
-<span><span class="co">#&gt;    dataset description             geo_dataset attribution       refer…¹ refer…²</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF taxfiler data CA1996      StatCan 2000 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF taxfiler data CA01        StatCan 2001 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF taxfiler data CA01        StatCan 2002 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF taxfiler data CA01        StatCan 2003 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF taxfiler data CA01        StatCan 2004 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF taxfiler data CA01        StatCan 2005 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF taxfiler data CA06        StatCan 2006 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF taxfiler data CA06        StatCan 2007 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF taxfiler data CA06        StatCan 2008 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF taxfiler data CA06        StatCan 2009 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF taxfiler data CA06        StatCan 2010 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF taxfiler data CA06        StatCan 2011 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF taxfiler data CA11        StatCan 2012 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF taxfiler data CA11        StatCan 2013 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF taxfiler data CA11        StatCan 2014 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF taxfiler data CA11        StatCan 2015 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF taxfiler data CA16        StatCan 2016 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF taxfiler data CA16        StatCan 2017 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF taxfiler data CA16        StatCan 2018 T1F… 72-212… https:…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​reference, ²​reference_url</span></span></span></code></pre></div>
+<span><span class="co">#&gt;    dataset description           geo_dataset attribution reference reference_url</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF taxfiler d… CA1996      StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span></code></pre></div>
 <p>And, as an example, available data vectors for one such T1FF
 dataset.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">'TX2017'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 818 × 7</span></span></span>
-<span><span class="co">#&gt;    vector      type  label           units              parent…¹ aggre…² details</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_TX2017_1  Total Taxfilers - #   Number             <span style="color: #BB0000;">NA</span>       Additi… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_TX2017_3  Total % 0-24          Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_TX2017_4  Total % 25-44         Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_TX2017_5  Total % 45-64         Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_TX2017_6  Total % 65+           Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_TX2017_7  Total Average - Age   Ratio              v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_TX2017_8  Total % female        Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_TX2017_9  Total % married       Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_TX2017_10 Total % in appt       Percentage (0-100) v_TX201… Averag… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_TX2017_11 Total All persons - # Number             <span style="color: #BB0000;">NA</span>       Additi… Tax da…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 808 more rows, and abbreviated variable names ¹​parent_vector,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​aggregation</span></span></span></code></pre></div>
+<span><span class="co">#&gt;    vector      type  label           units     parent_vector aggregation details</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_TX2017_1  Total Taxfilers - #   Number    <span style="color: #BB0000;">NA</span>            Additive    Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_TX2017_3  Total % 0-24          Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_TX2017_4  Total % 25-44         Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_TX2017_5  Total % 45-64         Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_TX2017_6  Total % 65+           Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_TX2017_7  Total Average - Age   Ratio     v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_TX2017_8  Total % female        Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_TX2017_9  Total % married       Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_TX2017_10 Total % in appt       Percenta… v_TX2017_1    Average of… Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_TX2017_11 Total All persons - # Number    <span style="color: #BB0000;">NA</span>            Additive    Tax da…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 808 more rows</span></span></span></code></pre></div>
 <p>This particular dataset has over 800 individual vectors. The vector
 codes follow a regular pattern across different years, and we can use
 this to quickly identify all the relevant variables of interest across

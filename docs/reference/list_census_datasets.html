@@ -124,20 +124,19 @@ a <code>reference_url</code> column with a link to reference materials.</p>
 <span class="r-in"><span><span class="fu">list_census_datasets</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Reading dataset list from temporary cache.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 29 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    dataset description                           geo_d…¹ attri…² refer…³ refer…⁴</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census                    CA1996  StatCa… 92-351… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census                    CA01    StatCa… 92-378… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census                    CA06    StatCa… 92-566… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Census and NHS            CA11    StatCa… 98-301… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census                    CA16    StatCa… 98-301… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census                    CA21    StatCa… 98-301… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Census xtab - Structural… CA01    StatCa… 92-378… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Census xtab - Structural… CA06    StatCa… 92-566… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census xtab - Structural… CA11    StatCa… 98-301… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census xtab - Structural… CA16    StatCa… 98-301… https:…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 19 more rows, and abbreviated variable names ¹​geo_dataset,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ²​attribution, ³​reference, ⁴​reference_url</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dataset description           geo_dataset attribution reference reference_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census    CA1996      StatCan 19… 92-351-U  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census    CA01        StatCan 20… 92-378-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census    CA06        StatCan 20… 92-566-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Census a… CA11        StatCan 20… 98-301-X… https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census    CA16        StatCan 20… 98-301-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census    CA21        StatCan 20… 98-301-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Census x… CA01        StatCan 20… 92-378-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Census x… CA06        StatCan 20… 92-566-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census x… CA11        StatCan 20… 98-301-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census x… CA16        StatCan 20… 98-301-X  https://www1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 19 more rows</span></span>
 </code></pre></div>
     </div>
   </div>
