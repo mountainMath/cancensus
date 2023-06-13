@@ -144,7 +144,7 @@ CensusMapper is a project by <a href="https://github.com/mountainMath" class="ex
 authors of <strong>cancensus</strong>, to provide interactive geographic
 visualizations of Canadian Census data. CensusMapper databases store all
 publicly available data from Statistics Canada for the 2006, 2011, and
-2016 Censuses. Censusmapper data can be accessed via an API and
+2016 Censuses. CensusMapper data can be accessed via an API and
 <strong>cancensus</strong> is built to interface directly with it.</p>
 <div class="section level3">
 <h3 id="api-key">API Key<a class="anchor" aria-label="anchor" href="#api-key"></a>
@@ -161,7 +161,7 @@ limits. For larger quotas, please get in touch with Jens <a href="mailto:jens@ce
 the CensusMapper menu bar). Once you have your key, you can store it in
 your system environment so it is automatically used in API calls. To do
 so just enter
-<code>set_api_key(&lt;your_api_key&gt;, install = TRUE)</code></p>
+<code>set_cancensus_api_key(&lt;your_api_key&gt;', install = TRUE)</code></p>
 </div>
 <div class="section level3">
 <h3 id="installing-cancensus">Installing cancensus<a class="anchor" aria-label="anchor" href="#installing-cancensus"></a>
@@ -192,7 +192,7 @@ directory, but this cache is not persistent across sessions. In order to
 speed up performance, reduce quota usage, and reduce the need for
 unnecessary network calls, we recommend assigning a persistent local
 cache using
-<code>set_cache_path(&lt;local cache path&gt;, install = TRUE)</code>,
+<code>set_cancensus_cache_path(&lt;local cache path&gt;, install = TRUE)</code>,
 this enables more efficient loading and reuse of downloaded data.. Users
 will be prompted with a suggestion to change their default cache
 location when making API calls if one has not been set yet.</p>

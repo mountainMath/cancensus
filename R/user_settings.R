@@ -138,9 +138,10 @@ show_cancensus_cache_path <- function() {
 cm_no_cache_path_message <- paste(
   "Census data is currently stored temporarily.\n\n",
   "In order to speed up performance, reduce API quota usage, and reduce",
-  "unnecessary network calls, please set up a persistent cache directory by",
-  "setting the environment variable CM_CACHE_PATH= '<path to cancensus cache directory>' or ",
+  "unnecessary network calls, please set up a persistent cache directory via",
+  "`set_cancensus_cache_path(<local cache path>, install = TRUE)`.\n\n",
+  "to set the environment variable CM_CACHE_PATH= '<path to cancensus cache directory>' or ",
   "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
-  "You may add this environment varianble to your .Renviron",
-  "or add this option, together with your API key, to your .Rprofile.\n\n"
+  "This will add your cache directory as environment varianble to your .Renviron to be",
+  "used across sessions and projects.\n\n"
 )

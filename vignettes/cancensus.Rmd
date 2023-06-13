@@ -19,19 +19,20 @@ knitr::opts_chunk$set(
 )
 library(cancensus)
 library(dplyr)
-# set_api_key(<your_api_key>, install = TRUE)
+# set_cancensus_api_key(<your_api_key>', install = TRUE)
+# set_cancensus_cache_path(<local cache path>, install = TRUE)
 ```
 # Cancensus and CensusMapper
 
 The **cancensus** package was developed to provide users with a way to access Canadian Census in a programmatic way following good [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf) practices. While the structure and data in **cancensus** is unique to Canadian Census data, this package is inspired in part by [tidycensus](https://github.com/walkerke/tidycensus), a package to interface with the US Census Bureau data APIs. 
 
-As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://github.com/mountainMath), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publicly available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. Censusmapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
+As Statistics Canada does not provide direct API access to Census data, **cancensus** retrieves Census data indirectly through the [CensusMapper](https://censusmapper.ca) API. CensusMapper is a project by [Jens von Bergmann](https://github.com/mountainMath), one of the authors of **cancensus**, to provide interactive geographic visualizations of Canadian Census data. CensusMapper databases store all publicly available data from Statistics Canada for the 2006, 2011, and 2016 Censuses. CensusMapper data can be accessed via an API and **cancensus** is built to interface directly with it. 
 
 ## API Key
 
 **cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of fine grained geographies may run into API quota limits. For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).  
 
-To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_api_key(<your_api_key>, install = TRUE)`
+To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key(<your_api_key>', install = TRUE)`
 
 ## Installing cancensus
 
@@ -56,7 +57,7 @@ options(cancensus.api_key = "your_api_key")
 options(cancensus.cache_path = "custom cache path")
 ```
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data.. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data.. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 # Accessing Census Data
 
