@@ -43,7 +43,8 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
     keyconcat <- paste0("CM_API_KEY='", key, "'")
     # Append API key to .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
-    message('Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CM_API_KEY"). \nTo use now, restart R or run `readRenviron("~/.Renviron")`')
+    Sys.setenv(CM_API_KEY = key)
+    message('Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CM_API_KEY").')
   } else {
     message("API key set for duration of session. To install your API key for use across sessions, run this function with `install = TRUE`.")
     Sys.setenv(CM_API_KEY = key)
@@ -65,7 +66,7 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
 #'\dontrun{
 #' set_cancensus_cache_path("~/cancensus_cache")
 #'
-#' # This will set the cache path permanently until ovewritten again
+#' # This will set the cache path permanently until overwritten again
 #' set_cancensus_cache_path("~/cancensus_cache", install = TRUE)
 #' }
 set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
@@ -93,7 +94,8 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
     keyconcat <- paste0("CM_CACHE_PATH='", cache_path, "'")
     # Append cache path .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
-    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH"). \nTo use now, restart R or run readRenviron("~/.Renviron").')
+    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH").')
+    Sys.setenv('CM_CACHE_PATH' = cache_path)
   } else {
     message("Cache set for duration of session. To permanently add your cache path for use across sessions, run this function with install = TRUE.")
     Sys.setenv('CM_CACHE_PATH' = cache_path)
@@ -139,9 +141,7 @@ cm_no_cache_path_message <- paste(
   "Census data is currently stored temporarily.\n\n",
   "In order to speed up performance, reduce API quota usage, and reduce",
   "unnecessary network calls, please set up a persistent cache directory via",
-  "`set_cancensus_cache_path(<local cache path>, install = TRUE)`.\n\n",
-  "to set the environment variable CM_CACHE_PATH= '<path to cancensus cache directory>' or ",
-  "setting options(cancensus.cache_path = '<path to cancensus cache directory>')\n\n",
+  "`set_cancensus_cache_path('<local cache path>', install = TRUE)`.\n",
   "This will add your cache directory as environment varianble to your .Renviron to be",
   "used across sessions and projects.\n\n"
 )

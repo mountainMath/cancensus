@@ -41,15 +41,12 @@ The stable version of **cancensus** can be easily installed from CRAN.
 install.packages("cancensus")
 
 library(cancensus)
-
-options(cancensus.api_key = "your_api_key")
-options(cancensus.cache_path = "custom cache path")
 ```
 
-Alternatively, the latest development version can be installed from Github using `devtools`. 
+Alternatively, the latest development version can be installed from Github using `remotes``. 
 ```{r load_package_git, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("mountainmath/cancensus")
+remotes::install_github("mountainmath/cancensus")
 
 library(cancensus)
 
@@ -57,7 +54,15 @@ options(cancensus.api_key = "your_api_key")
 options(cancensus.cache_path = "custom cache path")
 ```
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data.. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+If you have not already done so, you can install the API keys and the data cache path. You can get your free API key when you sign up for a [CensusMapper account](https://censusmapper.ca/) and check your profile. Additionally we recommend you set a permanent data cache path so that census data you query is stored persistently across sessions. 
+
+```{r install_api_key_and_cache_path, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
+# Only need to install api key can cache path once
+set_cancensus_api_key('<your_api_key>', install = TRUE)
+set_cancensus_cache_path('<local cache path>', install = TRUE)
+```
+
+Data in the persistent cache can be managed via the functions `list_cancensus_cache` and `remove_from_cancensus_cache` if needed.
 
 # Accessing Census Data
 
@@ -91,7 +96,7 @@ Additional parameters for advanced options can be viewed by running `?get_census
 
 ## Census Datasets
 
-**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, and 2016 . You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
+**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, and 2016 . You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2016 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2016 Program which can be viewed on their [website](http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm).
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2017, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, and 2016 Census years at all levels starting with census tract.
 

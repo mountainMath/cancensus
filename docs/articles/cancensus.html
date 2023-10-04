@@ -171,31 +171,29 @@ installed from CRAN.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cancensus"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.api_key <span class="op">=</span> <span class="st">"your_api_key"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.cache_path <span class="op">=</span> <span class="st">"custom cache path"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, the latest development version can be installed from
-Github using <code>devtools</code>.</p>
+Github using `remotes``.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mountainmath/cancensus"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mountainmath/cancensus"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.api_key <span class="op">=</span> <span class="st">"your_api_key"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.cache_path <span class="op">=</span> <span class="st">"custom cache path"</span><span class="op">)</span></span></code></pre></div>
-<p>For performance reasons, and to avoid unnecessarily drawing down API
-quotas, <strong>cancensus</strong> caches data queries under the hood.
-By default, <strong>cancensus</strong> caches in R’s temporary
-directory, but this cache is not persistent across sessions. In order to
-speed up performance, reduce quota usage, and reduce the need for
-unnecessary network calls, we recommend assigning a persistent local
-cache using
-<code>set_cancensus_cache_path(&lt;local cache path&gt;, install = TRUE)</code>,
-this enables more efficient loading and reuse of downloaded data.. Users
-will be prompted with a suggestion to change their default cache
-location when making API calls if one has not been set yet.</p>
+<p>If you have not already done so, you can install the API keys and the
+data cache path. You can get your free API key when you sign up for a <a href="https://censusmapper.ca/" class="external-link">CensusMapper account</a> and check your
+profile. Additionally we recommend you set a permanent data cache path
+so that census data you query is stored persistently across
+sessions.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Only need to install api key can cache path once</span></span>
+<span><span class="fu"><a href="../reference/set_cancensus_api_key.html">set_cancensus_api_key</a></span><span class="op">(</span><span class="st">'&lt;your_api_key&gt;'</span>, install <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/set_cancensus_cache_path.html">set_cancensus_cache_path</a></span><span class="op">(</span><span class="st">'&lt;local cache path&gt;'</span>, install <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Data in the persistent cache can be managed via the functions
+<code>list_cancensus_cache</code> and
+<code>remove_from_cancensus_cache</code> if needed.</p>
 </div>
 </div>
 <div class="section level2">
@@ -213,7 +211,7 @@ geography level. You can specify one of three options for spatial
 formats: <code>NA</code> to return data only, <code>sf</code> to return
 an sf-class data frame, or <code>sp</code> to return a
 SpatialPolygonsDataFrame object.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Returns a data frame with data only</span></span>
 <span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
@@ -244,7 +242,7 @@ specify <code>use_cache = FALSE</code> as a parameter for
 for Census years 1996, 2001, 2006, 2011, and 2016 . You can run
 <code>list_census_datasets</code> to check what datasets are currently
 available for access through the CensusMapper API. Additional data for
-the 2016 Census will be included in Censusmapper within a day or two
+the 2016 Census will be included in CensusMapper within a day or two
 after public release by Statistics Canada. Statistics Canada maintains a
 release schedule for the Census 2016 Program which can be viewed on
 their <a href="http://www12.statcan.gc.ca/census-recensement/2016/ref/release-dates-diffusion-eng.cfm" class="external-link">website</a>.</p>
@@ -259,7 +257,7 @@ for the 2001, 2006, 2011, and 2016 Census years at all levels starting
 with census tract.</p>
 <p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all
 available datasets alongside their metadata.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
 <span><span class="co">#&gt;    dataset description           geo_dataset attribution reference reference_url</span></span>
@@ -291,7 +289,7 @@ regions.</p>
 <strong>cancensus</strong> provides a function,
 <code>list_census_regions(dataset)</code>, to display all named census
 regions and their corresponding id for a given census dataset.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,518 × 8</span></span></span>
 <span><span class="co">#&gt;    region name               level    pop municipal_status CMA_UID CD_UID PR_UID</span></span>
@@ -311,7 +309,7 @@ regions and their corresponding id for a given census dataset.</p>
 requires as input a list of region id strings that correspond to that
 regions geoid. You can combine different regions together into region
 lists.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieves Vancouver and Toronto</span></span>
 <span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="st">"CMA"</span>, <span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"Toronto"</span><span class="op">)</span><span class="op">)</span></span>
@@ -421,7 +419,7 @@ data they are looking for.</p>
 </h3>
 <p>Run <code>list_census_vectors(dataset)</code> to view all available
 Census variables for a given dataset.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7,709 × 7</span></span></span>
 <span><span class="co">#&gt;    vector    type   label                units parent_vector aggregation details</span></span>
@@ -476,7 +474,7 @@ unique matches; and, semantic search which works better with search
 phrases and has tolerance for inexact searches. Switching between search
 modes is done using the <code>query_type</code> argument when calling
 <code>find_census_variables()</code> function.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span></span>
 <span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
@@ -504,7 +502,7 @@ modes is done using the <code>query_type</code> argument when calling
 the variable for the number of people of Austrian ethnic background. We
 can select that vector and quickly look up its entire hierarchy using
 <code>parent_census_vectors</code> on a vector list.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4092"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -520,7 +518,7 @@ variable stems that share the same aggregate variable. As an example, if
 we want to look the total count of Northern European ethnic origin
 respondents disaggregated by individual countries, it is pretty easy to
 do so.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the Northern European aggregate</span></span>
 <span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Northern European"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"Total"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
@@ -537,7 +535,7 @@ do so.</p>
 represents the aggregate for all Northern European origins. The
 <code>child_census_vectors</code> function can return a list of its
 constituent underlying variables.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show all child variable leaves</span></span>
 <span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4122"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span><span class="op">(</span>leaves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
