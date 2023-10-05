@@ -268,7 +268,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       to_rename <- setNames(names(result),gsub(":.*","",names(result)))
       to_rename <- to_rename[names(to_rename)!=as.character(to_rename)]
       if (length(to_rename)>0) result <- result %>% dplyr::rename(!!!to_rename)
-      if (!is.null(names(vectors))) result <- result %>% dplyr::rename(!!! vectors)
+      if (!is.null(names(vectors))) {
+        to_rename <- vectors[as.character(vectors) %in% names(result)]
+        if (length(to_rename)>0) result <- result %>% dplyr::rename(!!! to_rename)
+      }
     }
   }
 

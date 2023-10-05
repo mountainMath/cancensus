@@ -22,7 +22,10 @@ cache_path <- function(...) {
   if (nchar(cache_dir)==0) {
     if (!is.null(getOption("cancensus.cache_path"))) {
       cache_dir <- getOption("cancensus.cache_path")
-    } else cache_dir <- tempdir()
+    } else {
+      cache_dir <- tempdir()
+      message(cm_no_cache_path_message)
+    }
   }
   if (!is.character(cache_dir)) {
     stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",

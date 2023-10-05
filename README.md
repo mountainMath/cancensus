@@ -29,13 +29,13 @@ library(cancensus)
 
 Alternatively, the latest development version can be installed from Github.
 ```
-devtools::install_github("mountainmath/cancensus")
+remotes::install_github("mountainmath/cancensus")
 library(cancensus)
 ```
 
 ### API key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key(<your_api_key>', install = TRUE)`.
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key('<your_api_key>', install = TRUE)`.
 
 CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.
 
@@ -45,13 +45,13 @@ For larger quotas, please get in touch with Jens [directly](mailto:jens@censusma
 
 ### Local Cache
 
-For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path(<local cache path>, install = TRUE)`, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
+For performance reasons, and to avoid unnecessarily drawing down API quotas, **cancensus** caches data queries under the hood. By default, **cancensus** caches in R's temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using `set_cancensus_cache_path('<local cache path>', install = TRUE)`, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet. 
 
 Starting with version 0.5.2 **cancensus** will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in [CensusMapper](https://censusmapper.ca). Statistics Canada occasionally detects and corrects errors in their census data releases, and **cancensus** will download a list of recalled data at the first invocation of `get_census()` in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the `remove_recalled_chached_data()` function. If data was cached with **cancensus** versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.
 
 ### Currently available datasets
 
-**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2021 Census will be included in Censusmapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2021 Program which can be viewed on their [website](https://www12.statcan.gc.ca/census-recensement/2021/ref/prodserv/release-diffusion-eng.cfm).
+**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2021 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2021 Program which can be viewed on their [website](https://www12.statcan.gc.ca/census-recensement/2021/ref/prodserv/release-diffusion-eng.cfm).
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.
 
@@ -139,7 +139,7 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.5.
+  access, retrieve, and work with Canadian Census data and geography. v0.5.6.
 
 
 A BibTeX entry for LaTeX users is
@@ -148,7 +148,7 @@ A BibTeX entry for LaTeX users is
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.5},
+    note = {R package version 0.5.6},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```

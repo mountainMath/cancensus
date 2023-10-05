@@ -43,5 +43,7 @@ Returns a data frame with the following columns:
 Query the CensusMapper API for available regions in a given dataset.
 }
 \examples{
+\dontrun{
 list_census_regions('CA16')
+}
 }

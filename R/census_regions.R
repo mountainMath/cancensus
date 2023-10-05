@@ -34,7 +34,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' list_census_regions('CA16')
+#' }
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   dataset <- translate_dataset(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
@@ -200,16 +202,16 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::group_by(.data$name) %>%
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ name,
-                                        TRUE ~ paste0(.data$name," (",.data$municipal_status,")"))) |>
+                                        TRUE ~ paste0(.data$name," (",.data$municipal_status,")"))) %>%
     dplyr::group_by(.data$Name) %>%
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
-                                        TRUE ~ paste0(.data$Name," (",.data$region,")"))) |>
-    dplyr::select(-.data$count) |>
+                                        TRUE ~ paste0(.data$Name," (",.data$region,")"))) %>%
+    dplyr::select(-.data$count) %>%
     dplyr::ungroup()
 
   if (length(gs)>1) {
-    r <- r |>
+    r <- r %>%
       dplyr::group_by(dplyr::across(dplyr::all_of(gs)))
   }
   r

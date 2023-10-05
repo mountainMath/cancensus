@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.6</span>
       </span>
     </div>
 
@@ -133,7 +133,7 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <p>Some census datasets have not been imported into CensusMapper, and
-thus aren’t available via the <code><a href="get_census.html">get_census()</a></code> function. But
+thus aren’t available via the <code><a href="../reference/get_census.html">get_census()</a></code> function. But
 the data can be queried directly from the <a href="https://www12.statcan.gc.ca/wds-sdw/2021profile-profil2021-eng.cfm" class="external-link">Statistics
 Canada Web Data Service for the 2021 census</a>, as well as geographic
 boundary files.</p>
@@ -156,7 +156,7 @@ this we download the metadata, extract the characteristics, locate the
 base characteristic for ethnic origin and the entry referencing
 “Ukrainian” that’s a descendant of the base characteristic.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_statcan_wds_metadata.html">get_statcan_wds_metadata</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_metadata.html">get_statcan_wds_metadata</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">characteristics</span> <span class="op">&lt;-</span> <span class="va">metadata</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`Codelist en`</span><span class="op">==</span><span class="st">"Characteristic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -167,7 +167,7 @@ base characteristic for ethnic origin and the entry referencing
 <span><span class="va">ukranian</span> <span class="op">&lt;-</span> <span class="va">characteristics</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Ukrainian"</span>,<span class="va">en</span><span class="op">)</span>, <span class="va">`Parent ID`</span><span class="op">==</span><span class="va">ethnic_base</span><span class="op">$</span><span class="va">ID</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="va">selected_characteristics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">ethnic_base</span>,<span class="va">ukranian</span><span class="op">)</span></span>
+<span><span class="va">selected_characteristics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">ethnic_base</span>,<span class="va">ukranian</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">selected_characteristics</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">ID</span>,<span class="va">en</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
@@ -182,7 +182,7 @@ districts from the metadata.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`Codelist ID`</span><span class="op">==</span><span class="st">"CL_GEO_FED"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_statcan_wds_data.html">get_statcan_wds_data</a></span><span class="op">(</span><span class="va">dguids</span>,members<span class="op">=</span><span class="va">selected_characteristics</span><span class="op">$</span><span class="va">ID</span>,gender<span class="op">=</span><span class="st">"Total"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_data.html">get_statcan_wds_data</a></span><span class="op">(</span><span class="va">dguids</span>,members<span class="op">=</span><span class="va">selected_characteristics</span><span class="op">$</span><span class="va">ID</span>,gender<span class="op">=</span><span class="st">"Total"</span><span class="op">)</span></span></code></pre></div>
 <p>The data comes enriched with metadata to make working with it easier,
 in particular the <code>CHARACTERISTIC_NAME</code> column contains plain
 language names. Now we can transform the data to compute
@@ -206,7 +206,7 @@ Districts by share of the population with Ukrainian heritage.</p>
 <p><img src="statcan_wds_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 <p>To map the data we have to get the geographies.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fed_geos</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_statcan_geographies.html">get_statcan_geographies</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fed_geos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_geographies.html">get_statcan_geographies</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span></code></pre></div>
 <p>With these we can join on our census data and map it.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fed_geos</span> <span class="op">|&gt;</span></span>
@@ -239,7 +239,7 @@ Districts by share of the population with Ukrainian heritage.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
