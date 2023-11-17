@@ -20,7 +20,7 @@ Cancensus provides session caching for retrieved data to increase speeds and red
 \dontrun{
 set_cancensus_cache_path("~/cancensus_cache")
 
-# This will set the cache path permanently until ovewritten again
+# This will set the cache path permanently until overwritten again
 set_cancensus_cache_path("~/cancensus_cache", install = TRUE)
 }
 }
