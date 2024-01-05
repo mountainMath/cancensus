@@ -45,7 +45,7 @@ get_statcan_geo_suite <- function(level,census_year="2021",refresh=FALSE){
     options(timeout=old_timeout)
     if (!dir.exists(path)) dir.create(path)
     if (Sys.info()[['sysname']]=="Darwin") {
-      system(paste0("ditto -V -x -k --sequesterRsrc --rsrc ",tmp," ",path))
+      system(paste0("ditto -V -x -k --sequesterRsrc --rsrc '",tmp,"' '",path,"'"))
     } else {
       utils::unzip(tmp,exdir = path)
     }
