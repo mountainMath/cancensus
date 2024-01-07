@@ -1,5 +1,6 @@
 # cancensus 0.5.7
 - fix issue with path names not quoted properly when downoading and unpacking geosuite data
+- support versions in WDS data, in paricular for federal electoral districts
 
 # cancensus 0.5.6
 - fix issue when using named vectors to query data for non-existent geographies, return NULL in this case instead of throwing error
