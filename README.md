@@ -105,14 +105,17 @@ We'd love to feature examples of work or projects that use cancensus.
 
 
 ### Related packages
-This package is designed to play well with other Canadian data packages, in particular
+The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-* [**tongfen**](https://mountainmath.github.io/tongfen/index.html), which solves the problem of making data across several census years comparable,
-* [**cansim**](https://mountainmath.github.io/cansim/index.html), which accesses regular StatCan tables and can be linked to census geographies via the `GeoUID`,and
-* [**cmhc**](https://mountainmath.github.io/cmhc/index.html), which accesses CMHC data and can be linked to census geographies via the `GeoUID`.
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). Data retrieved via the cansim package can be linked to census data via the `GeoUID` field.
+
+The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
+
+The [**cmhc**](https://mountainmath.github.io/cmhc/index.html) package, which accesses CMHC data on the housing in Canada and can be linked to census geographies via the `GeoUID`.
 
 Taken together these packages offer a seamless view into important Canadian data.
 
+### International census data
 There are several other jurisdiction where census data is available via R packages, including
 
 * US: [tidycensus](https://walker-data.com/tidycensus/) and [tigris](https://github.com/walkerke/tigris)
@@ -152,15 +155,7 @@ A BibTeX entry for LaTeX users is
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```
-### Related packages
 
-The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
-
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus).
-
-Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.
-
-The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
 ### Statistics Canada Attribution
 
