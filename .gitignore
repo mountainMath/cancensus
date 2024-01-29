@@ -8,7 +8,6 @@ data_cache
 R/local_server_setup.R
 inst/doc
 inst/cache
-cancensus.Rproj
 doc
 Meta
 CRAN-RELEASE
