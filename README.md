@@ -51,7 +51,7 @@ Starting with version 0.5.2 **cancensus** will automatically check if for data t
 
 ### Currently available datasets
 
-**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API. Additional data for the 2021 Census will be included in CensusMapper within a day or two after public release by Statistics Canada. Statistics Canada maintains a release schedule for the Census 2021 Program which can be viewed on their [website](https://www12.statcan.gc.ca/census-recensement/2021/ref/prodserv/release-diffusion-eng.cfm).
+**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API.
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.
 

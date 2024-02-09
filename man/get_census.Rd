@@ -32,7 +32,7 @@ get_census(
 
 \item{geo_format}{By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.}
 
-\item{resolution}{Resolution of the geographic data. {cancensus} will download simplified geometries by default. For lower level geometries like DB or DA this will be very close to the high resolution data.
+\item{resolution}{Resolution of the geographic data. By default simplified geometries will be download. For lower level geometries like DB or DA this will be very close to the high resolution data.
 Simplification generally increases as the geographic aggregation level increases.
 If high resolution geometries are required
 then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.}
