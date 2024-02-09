@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
       </span>
     </div>
 
@@ -126,7 +126,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="cancensus">cancensus<a class="anchor" aria-label="anchor" href="#cancensus"></a>
 </h1></div>
-<p><a href="https://github.com/mountainMath/cancensus/actions" class="external-link"><img src="https://github.com/mountainMath/cancensus/workflows/R-CMD-check/badge.svg" alt="R build status"></a> <a href="https://cran.r-project.org/package=cancensus" class="external-link"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a> <a href="https://cranlogs.r-pkg.org/badges/cancensus" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a></p>
+<p><a href="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://cran.r-project.org/package=cancensus" class="external-link"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a> <a href="https://cranlogs.r-pkg.org/badges/cancensus" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a></p>
 <p><a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width="25%" height="25%"></a></p>
 <p>Access, retrieve, and work with Canadian Census data and geography.</p>
 <ul>
@@ -223,16 +223,15 @@
 <div class="section level3">
 <h3 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
 </h3>
-<p>This package is designed to play well with other Canadian data packages, in particular</p>
-<ul>
-<li>
-<a href="https://mountainmath.github.io/tongfen/index.html" class="external-link"><strong>tongfen</strong></a>, which solves the problem of making data across several census years comparable,</li>
-<li>
-<a href="https://mountainmath.github.io/cansim/index.html" class="external-link"><strong>cansim</strong></a>, which accesses regular StatCan tables and can be linked to census geographies via the <code>GeoUID</code>,and</li>
-<li>
-<a href="https://mountainmath.github.io/cmhc/index.html" class="external-link"><strong>cmhc</strong></a>, which accesses CMHC data and can be linked to census geographies via the <code>GeoUID</code>.</li>
-</ul>
+<p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data" class="external-link">socio-economic data repository</a> with thousands of data tables available for public access.</p>
+<p>The <a href="https://mountainmath.github.io/cansim/index.html" class="external-link">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus" class="external-link">Github</a>. Data retrieved via the cansim package can be linked to census data via the <code>GeoUID</code> field.</p>
+<p>The <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> automates the task of obtaining census variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen" class="external-link">Github</a>.</p>
+<p>The <a href="https://mountainmath.github.io/cmhc/index.html" class="external-link"><strong>cmhc</strong></a> package, which accesses CMHC data on the housing in Canada and can be linked to census geographies via the <code>GeoUID</code>.</p>
 <p>Taken together these packages offer a seamless view into important Canadian data.</p>
+</div>
+<div class="section level3">
+<h3 id="international-census-data">International census data<a class="anchor" aria-label="anchor" href="#international-census-data"></a>
+</h3>
 <p>There are several other jurisdiction where census data is available via R packages, including</p>
 <ul>
 <li>US: <a href="https://walker-data.com/tidycensus/" class="external-link">tidycensus</a> and <a href="https://github.com/walkerke/tigris" class="external-link">tigris</a>
@@ -274,23 +273,15 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.6.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.7.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2022},
-    note = {R package version 0.5.6},
+    note = {R package version 0.5.7},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
-</div>
-<div class="section level3">
-<h3 id="related-packages-1">Related packages<a class="anchor" aria-label="anchor" href="#related-packages-1"></a>
-</h3>
-<p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data" class="external-link">socio-economic data repository</a> with thousands of data tables available for public access.</p>
-<p>The <a href="https://mountainmath.github.io/cansim/index.html" class="external-link">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus" class="external-link">Github</a>.</p>
-<p>Data downloaded through the cansim package that comes with standard geographic attributes will typically share a common geographic ID that can be matched to Census data.</p>
-<p>The <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> automates the task of obtaining census variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen" class="external-link">Github</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="statistics-canada-attribution">Statistics Canada Attribution<a class="anchor" aria-label="anchor" href="#statistics-canada-attribution"></a>

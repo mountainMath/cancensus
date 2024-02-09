@@ -25,7 +25,7 @@ Data is cached for the duration of the R session."><meta property="og:image" con
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
       </span>
     </div>
 
@@ -97,6 +97,7 @@ Data is cached for the duration of the R session.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_statcan_wds_data</span><span class="op">(</span></span>
 <span>  <span class="va">DGUIDs</span>,</span>
 <span>  members <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gender <span class="op">=</span> <span class="st">"All"</span>,</span>
 <span>  language <span class="op">=</span> <span class="st">"en"</span>,</span>
 <span>  refresh <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -113,6 +114,12 @@ level can be queried via `get_statcan_wds_metadata()`.</p></dd>
 <dt>members</dt>
 <dd><p>list of Member IOs to download data for. By default all characteristics are downloaded. Valid
 Member IDs and their descriptions can be queried via the `get_statcan_wds_metadata()` call.</p></dd>
+
+
+<dt>version</dt>
+<dd><p>optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
+access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
+available version is accessed.</p></dd>
 
 
 <dt>gender</dt>
