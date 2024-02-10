@@ -7,6 +7,7 @@
 get_statcan_wds_data(
   DGUIDs,
   members = NULL,
+  version = NULL,
   gender = "All",
   language = "en",
   refresh = FALSE
@@ -18,6 +19,10 @@ level can be queried via `get_statcan_wds_metadata()`.}
 
 \item{members}{list of Member IOs to download data for. By default all characteristics are downloaded. Valid
 Member IDs and their descriptions can be queried via the `get_statcan_wds_metadata()` call.}
+
+\item{version}{optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
+access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
+available version is accessed.}
 
 \item{gender}{optionally query data for only one gender. By default this queries data for all genders, possible
 values are "Total", "Male", "Female" to only query total data, or for males only or for females only.}

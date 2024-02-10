@@ -7,6 +7,9 @@
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param level geographic level to return the data for, valid choices are
 #' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"
+#' @param version optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
+#' access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
+#' available version is accessed.
 #' @param refresh default is `FALSE` will refresh the temporary cache if `TRUE`
 #' @return tibble with the metadata
 #'
@@ -16,7 +19,7 @@
 #' get_statcan_wds_metadata(census_year="2021",level="FED")
 #' }
 #' @export
-get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
+get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALSE){
   valid_census_years <- c("2021")
   valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA")
   if (!(census_year %in% valid_census_years)) {
@@ -25,7 +28,9 @@ get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
   if (!(level %in% valid_levels)) {
     stop(paste0("Level must be one of ",paste0(valid_levels,collapse = ", "),"."))
   }
-  meta_url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/dataflow/STC_CP/DF_",level,"?references=all")
+  meta_url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/dataflow/STC_CP/DF_",level,
+                     ifelse(is.null(version),"",paste0("/",version)),
+                     "?references=all")
   metadata_tempfile <- file.path(tempdir(),paste0("census_wds_metadata_",digest::digest(meta_url),".sdmx"))
   if (refresh || !file.exists(metadata_tempfile)) {
     utils::download.file(meta_url,metadata_tempfile)
@@ -67,6 +72,9 @@ get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
 #' level can be queried via `get_statcan_wds_metadata()`.
 #' @param members list of Member IOs to download data for. By default all characteristics are downloaded. Valid
 #' Member IDs and their descriptions can be queried via the `get_statcan_wds_metadata()` call.
+#' @param version optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
+#' access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
+#' available version is accessed.
 #' @param gender optionally query data for only one gender. By default this queries data for all genders, possible
 #' values are "Total", "Male", "Female" to only query total data, or for males only or for females only.
 #' @param language specify language for geography and characteristic names that get added, valid choices are "en" and "fr"
@@ -81,6 +89,7 @@ get_statcan_wds_metadata <- function(census_year,level,refresh=FALSE){
 #' @export
 get_statcan_wds_data <- function(DGUIDs,
                            members = NULL,
+                           version= NULL,
                            gender="All",
                            language="en",
                            refresh=FALSE) {
@@ -102,7 +111,7 @@ get_statcan_wds_data <- function(DGUIDs,
   gender <- c("All"="","Total"="1","Male"="2","Female"="3")[[gender]]
   dguid_string <- paste0(DGUIDs,collapse="+")
   member_string <- paste0(members,collapse = "+")
-  add=paste0("DF_",level,"/A5.",dguid_string,".",gender,".",member_string,".1")
+  add=paste0("DF_",level,ifelse(is.null(version),"",paste0(",",version)),"/A5.",dguid_string,".",gender,".",member_string,".1")
   wds_data_tempfile <- file.path(tempdir(),paste0("wds_data_",digest::digest(add),".csv"))
   if (!file.exists(wds_data_tempfile)) {
     response <- httr::GET(paste0(url,",",add),
@@ -114,7 +123,7 @@ get_statcan_wds_data <- function(DGUIDs,
     stop(paste0("Invalid request.\n",httr::content(response)))
   }
   census_year <- "2021"
-  meta_data <- get_statcan_wds_metadata(census_year,level,refresh = refresh)
+  meta_data <- get_statcan_wds_metadata(census_year,level=level,version = version,refresh = refresh)
 
   levels <- meta_data %>%
     dplyr::filter(.data$`Codelist ID`=="CL_GEO_LEVEL")

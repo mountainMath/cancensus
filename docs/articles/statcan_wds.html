@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
       </span>
     </div>
 
@@ -150,13 +150,21 @@ Moreover, the API server is sometimes unavailable.</p>
 <h2 id="ukrainians-by-federal-electoral-districts">Ukrainians by Federal Electoral Districts<a class="anchor" aria-label="anchor" href="#ukrainians-by-federal-electoral-districts"></a>
 </h2>
 <p>As an example we access the share of people with Ukrainian ethnic
-origin at the Federal Electoral District level. First we need to find
-the StatCan Characteristic IDs for our characteristic of interest. For
-this we download the metadata, extract the characteristics, locate the
-base characteristic for ethnic origin and the entry referencing
-“Ukrainian” that’s a descendant of the base characteristic.</p>
+origin at the Federal Electoral District level. Only the 2013 Federal
+Electoral District boundaries are currently available from Statistics
+Canada, since we want to map the data we will work with those in favour
+of the updated 2023 boundaries. For this we need to specify the version
+of the data we want to access, “1.3” for the 2013 boundaries vs the
+latest “2.0” for the 2023 boundaries.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_metadata.html">get_statcan_wds_metadata</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fed_version</span> <span class="op">=</span> <span class="st">"1.3"</span></span></code></pre></div>
+<p>Next we need to find the StatCan Characteristic IDs for our
+characteristic of interest. For this we download the metadata, extract
+the characteristics, locate the base characteristic for ethnic origin
+and the entry referencing “Ukrainian” that’s a descendant of the base
+characteristic.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_metadata.html">get_statcan_wds_metadata</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span>,version<span class="op">=</span><span class="va">fed_version</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">characteristics</span> <span class="op">&lt;-</span> <span class="va">metadata</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`Codelist en`</span><span class="op">==</span><span class="st">"Characteristic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -177,48 +185,49 @@ base characteristic for ethnic origin and the entry referencing
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">1</span>694 Ukrainian</span></span></code></pre></div>
 <p>We can also get the geographic identifiers for the federal electoral
 districts from the metadata.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dguids</span> <span class="op">&lt;-</span> <span class="va">metadata</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">`Codelist ID`</span><span class="op">==</span><span class="st">"CL_GEO_FED"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_data.html">get_statcan_wds_data</a></span><span class="op">(</span><span class="va">dguids</span>,members<span class="op">=</span><span class="va">selected_characteristics</span><span class="op">$</span><span class="va">ID</span>,gender<span class="op">=</span><span class="st">"Total"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_wds_data.html">get_statcan_wds_data</a></span><span class="op">(</span><span class="va">dguids</span>,members<span class="op">=</span><span class="va">selected_characteristics</span><span class="op">$</span><span class="va">ID</span>,</span>
+<span>                             gender<span class="op">=</span><span class="st">"Total"</span>,version<span class="op">=</span><span class="va">fed_version</span><span class="op">)</span></span></code></pre></div>
 <p>The data comes enriched with metadata to make working with it easier,
 in particular the <code>CHARACTERISTIC_NAME</code> column contains plain
 language names. Now we can transform the data to compute
 percentages.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>DGUID<span class="op">=</span><span class="va">GEO_DESC</span>,Name<span class="op">=</span><span class="va">GEO_NAME</span>,name<span class="op">=</span><span class="va">CHARACTERISTIC_NAME</span>,value<span class="op">=</span><span class="va">OBS_VALUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Share<span class="op">=</span><span class="va">Ukrainian</span><span class="op">/</span><span class="va">`Total - Ethnic or cultural origin for the population in private households - 25% sample data`</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can visualize the data, here are the top 20 Federal Electoral
 Districts by share of the population with Ukrainian heritage.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">Share</span>,n<span class="op">=</span><span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">Name</span>,<span class="va">Share</span><span class="op">)</span>,x<span class="op">=</span><span class="va">Share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>,fill<span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Ukrainian ethnic origin"</span>,</span>
-<span>       y<span class="op">=</span><span class="st">"Federal electoral district"</span>,</span>
+<span>       y<span class="op">=</span><span class="st">"Federal electoral district (2013 Represenation Order)"</span>,</span>
 <span>       x<span class="op">=</span><span class="st">"Share of population in private households"</span>,</span>
 <span>       caption<span class="op">=</span><span class="st">"StatCan Census 2021"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="statcan_wds_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
+<p><img src="statcan_wds_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
 <p>To map the data we have to get the geographies.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fed_geos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_geographies.html">get_statcan_geographies</a></span><span class="op">(</span><span class="st">"2021"</span>,<span class="st">"FED"</span><span class="op">)</span></span></code></pre></div>
 <p>With these we can join on our census data and map it.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fed_geos</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">plot_data</span>,by<span class="op">=</span><span class="st">"DGUID"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">Share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>labels<span class="op">=</span><span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>datum<span class="op">=</span><span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Ukrainian ethnic origin by Federal Electoral District"</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Ukrainian ethnic origin by (2013) Federal Electoral District"</span>,</span>
 <span>       fill<span class="op">=</span><span class="st">"Share of\npopulation"</span>,</span>
 <span>       caption<span class="op">=</span><span class="st">"StatCan Census 2021"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="statcan_wds_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
+<p><img src="statcan_wds_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
   </div>
 
