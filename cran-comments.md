@@ -1,3 +1,7 @@
+# cancensus 0.5.8
+
+- clarify installing API key and cache path in "getting started" vignette
+
 # cancensus 0.5.7
 - fix issue with path names not quoted properly when downoading and unpacking geosuite data
 - support versions in WDS data, in paricular for federal electoral districts

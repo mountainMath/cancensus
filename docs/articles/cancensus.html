@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.8</span>
       </span>
     </div>
 
@@ -178,15 +178,15 @@ Github using `remotes``.</p>
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mountainmath/cancensus"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.api_key <span class="op">=</span> <span class="st">"your_api_key"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.cache_path <span class="op">=</span> <span class="st">"custom cache path"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mountainMath/cancensus" class="external-link">cancensus</a></span><span class="op">)</span></span></code></pre></div>
 <p>If you have not already done so, you can install the API keys and the
 data cache path. You can get your free API key when you sign up for a <a href="https://censusmapper.ca/" class="external-link">CensusMapper account</a> and check your
 profile. Additionally we recommend you set a permanent data cache path
-so that census data you query is stored persistently across
-sessions.</p>
+so that census data you query is stored persistently across sessions.
+<strong>Make sure to replace the filler text
+<code>&lt;your_api_key&gt;</code> and
+<code>&lt;local cache path&gt;</code> with your actual API key and local
+cache path.</strong></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only need to install api key can cache path once</span></span>
 <span><span class="fu"><a href="../reference/set_cancensus_api_key.html">set_cancensus_api_key</a></span><span class="op">(</span><span class="st">'&lt;your_api_key&gt;'</span>, install <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
