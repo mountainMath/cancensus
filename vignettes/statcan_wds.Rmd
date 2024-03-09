@@ -45,7 +45,7 @@ metadata <- get_statcan_wds_metadata("2021","FED",version=fed_version)
 
 characteristics <- metadata |> 
   filter(`Codelist en`=="Characteristic") |>
-  mutate(across(matches("ID"),as.integer))
+  mutate(across(c(ID,`Parent ID`),as.integer))
 
 ethnic_base <- characteristics |> 
   filter(grepl("Total - Ethnic",en))

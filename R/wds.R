@@ -118,9 +118,9 @@ get_statcan_wds_data <- function(DGUIDs,
                           httr::accept("text/csv"),
                           httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
                           httr::write_disk(wds_data_tempfile,overwrite = TRUE))
-  }
-  if (!response$status_code=="200") {
-    stop(paste0("Invalid request.\n",httr::content(response)))
+    if (!response$status_code=="200") {
+      stop(paste0("Invalid request.\n",httr::content(response)))
+    }
   }
   census_year <- "2021"
   meta_data <- get_statcan_wds_metadata(census_year,level=level,version = version,refresh = refresh)
