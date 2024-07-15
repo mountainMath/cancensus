@@ -5,7 +5,7 @@
 #'
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param level geographic level to return the data for, valid choices are
-#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"
+#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA", "HR"
 #' @param type type of geographic data, valid choices area "cartographic" or "digital"
 #' @param cache_path optional path to cache the data. If the cancensus cache path is set the geographic data gets
 #' cached in the "geographies" subdirectory of the cancensus cache path.

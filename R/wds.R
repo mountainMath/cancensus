@@ -6,7 +6,7 @@
 #'
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param level geographic level to return the data for, valid choices are
-#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"
+#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA", "HR"
 #' @param version optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
 #' access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
 #' available version is accessed.

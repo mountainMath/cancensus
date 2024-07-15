@@ -10,7 +10,7 @@ get_statcan_wds_metadata(census_year, level, version = NULL, refresh = FALSE)
 \item{census_year}{census year to get the data for, right now only 2021 is supported}
 
 \item{level}{geographic level to return the data for, valid choices are
-"PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"}
+"PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA", "HR"}
 
 \item{version}{optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
 access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
