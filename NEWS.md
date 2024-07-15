@@ -2,6 +2,7 @@
 
 - clarify installing API key and cache path in "getting started" vignette
 - fix caching problem with get_statcan_wds_data
+- support health region level census data for 2021 via WDS
 
 # cancensus 0.5.7
 

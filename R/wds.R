@@ -21,7 +21,7 @@
 #' @export
 get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALSE){
   valid_census_years <- c("2021")
-  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA")
+  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA","HR")
   if (!(census_year %in% valid_census_years)) {
     stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
   }
