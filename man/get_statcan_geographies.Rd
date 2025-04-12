@@ -18,7 +18,7 @@ get_statcan_geographies(
 \item{census_year}{census year to get the data for, right now only 2021 is supported}
 
 \item{level}{geographic level to return the data for, valid choices are
-"PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA", "HR"}
+"PR","CD","CMACA","CSD","CT","ADA","DA","DB,"ER","FED","DPL","POPCNTR", "FSA", "HR"}
 
 \item{type}{type of geographic data, valid choices area "cartographic" or "digital"}
 
