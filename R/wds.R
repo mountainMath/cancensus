@@ -119,6 +119,14 @@ get_statcan_wds_data <- function(DGUIDs,
                           httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
                           httr::write_disk(wds_data_tempfile,overwrite = TRUE))
     if (!response$status_code=="200") {
+      if (!is.null(response$error) && ("curl_error_peer_failed_verification" %in% class(response$error))) {
+        stop(paste0(strwrap(gsub(".+\\): ","",as.character(response$error),80)),collapse = "\n"),"\n",
+             "This means that the authenticity of the StatCan API server can't be verified.\n",
+             "Statistics Canada has a history of failty SSL certificats on their API,\n",
+             "if you are reasonably sure that your connection is not getting hijacked you\n",
+             "can disable peer checking for the duration of the R session by typing\n\n",
+             "httr::set_config(httr::config(ssl_verifypeer=0,ssl_verifystatus=0))","\n\n","into the console.")
+      }
       stop(paste0("Invalid request.\n",httr::content(response)))
     }
   }

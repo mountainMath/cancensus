@@ -101,7 +101,7 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
   file_path <- cache_path(paste0("geography_relationship_",census_year,".zip"))
   if (refresh || !file.exists(file_path)) {
     url <- paste0("https://www12.statcan.gc.ca/census-recensement/",census_year,"/geo/sip-pis/dguid-idugd/files-fichiers/",census_year,"_98260004.zip")
-    utils::download.file(url,  file_path)
+    utils::download.file(url,  file_path,method="wb")
   }
   readr::read_csv(file_path,
                   locale = readr::locale(encoding ="Windows-1252"),
@@ -146,7 +146,7 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE){
     if (dir.exists(base_path_year)) unlink(base_path_year,recursive = TRUE)
     dir.create(base_path_year)
     tmp<-tempfile(fileext = ".zip")
-    utils::download.file(urls[[census_year]],tmp)
+    status <- utils::download.file(urls[[census_year]],tmp,method="wb")
     utils::unzip(tmp,exdir = base_path_year)
   }
   if (census_year=="2021") file <- dir(base_path_year,pattern="\\.csv",full.names = TRUE)
