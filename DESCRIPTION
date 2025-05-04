@@ -42,4 +42,4 @@ VignetteBuilder: knitr
 URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/cancensus/, https://censusmapper.ca/api
 BugReports: https://github.com/mountainMath/cancensus/issues
 Depends: 
-    R (>= 4.10)
+    R (>= 4.1)
