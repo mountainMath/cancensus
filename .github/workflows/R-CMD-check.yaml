@@ -4,11 +4,13 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
-  schedule:
+     branches: [main, master]
+ schedule:
     - cron: "15 15 * * *"
 
 name: R-CMD-check
+
+permissions: read-all
 
 jobs:
   R-CMD-check:
@@ -20,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,   r: 'release'}
+          - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
@@ -32,7 +34,7 @@ jobs:
       COMPILE_VIG: ${{ secrets.COMPILE_VIG }}
       R_KEEP_PKG_SOURCE: yes
 
-     steps:
+    steps:
       - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
