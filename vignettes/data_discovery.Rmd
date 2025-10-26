@@ -10,7 +10,13 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE, 
+  message = FALSE,
+  comment = "#>",
+  eval = nzchar(Sys.getenv("COMPILE_VIG"))
+)
 library(cancensus)
 ```
 
