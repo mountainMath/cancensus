@@ -1,17 +1,16 @@
-pandoc: 3.1.1
-pkgdown: 2.0.7
+pandoc: 3.6.3
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  Dwellings_by_document_type_cross_tabulation: Dwellings_by_document_type_cross_tabulation.html
-  Making_maps_with_cancensus: Making_maps_with_cancensus.html
-  Taxfiler_Data: Taxfiler_Data.html
   cancensus: cancensus.html
   data_discovery: data_discovery.html
+  Dwellings_by_document_type_cross_tabulation: Dwellings_by_document_type_cross_tabulation.html
   intersecting_geometries: intersecting_geometries.html
+  Making_maps_with_cancensus: Making_maps_with_cancensus.html
   statcan_attribute_files: statcan_attribute_files.html
   statcan_wds: statcan_wds.html
-last_built: 2024-02-22T18:45Z
+  Taxfiler_Data: Taxfiler_Data.html
+last_built: 2025-10-26T17:02Z
 urls:
   reference: https://mountainmath.github.io/cancensus/reference
   article: https://mountainmath.github.io/cancensus/articles
-
