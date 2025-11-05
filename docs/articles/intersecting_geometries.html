@@ -184,7 +184,7 @@ buffers.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"CTs within City of Vancouver skytrain station catchments"</span>,</span>
 <span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
 <span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-5-1.png" alt="CTs within City of Vancouver skytrain station catchments" width="700"></p>
 <p>To get a closer match we can cut out the dissemination areas
 intersecting the station catchment areas.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -201,7 +201,7 @@ intersecting the station catchment areas.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,</span>
 <span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
 <span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-6-1.png" alt="DAs within City of Vancouver skytrain station catchments" width="700"></p>
 <p>However, API points for <code>get_intersecting_geometries</code> are
 quite limited at this point, an alternative way to obtain the same data
 is to first query all DAs withing the CTs identified by the previous
@@ -221,7 +221,7 @@ those intersecting the station buffers.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"DAs within City of Vancouver skytrain station catchments"</span>,</span>
 <span>       fill<span class="op">=</span><span class="st">"Walk or\ntransit\nto work"</span>,</span>
 <span>       caption<span class="op">=</span><span class="st">"StatCan Census 2016"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p><img src="intersecting_geometries_files/figure-html/unnamed-chunk-7-1.png" alt="DAs within City of Vancouver skytrain station catchments (alternative method)" width="700"></p>
 <p>We may increase the default quotas for the
 <code>get_intersecting_geometries</code> call at some point, but while
 we throttling API usage and monitor server impacts of the new
