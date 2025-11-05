@@ -1,4 +1,4 @@
-# cancensus 0.5.9
+# cancensus 0.5.10
 - ensure that cancensus won't trigger CRAN check errors if StatCan servers are down
 - replace shorthand function with regular function definition to address CRAN note
 
