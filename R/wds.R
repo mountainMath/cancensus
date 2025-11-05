@@ -38,7 +38,7 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
   d <- xml2::read_xml(metadata_tempfile)
   code_lists <- xml2::xml_find_all(d,"//structure:Codelist")
 
-  meta_data <- lapply(code_lists, \(cl){
+  meta_data <- lapply(code_lists, function(cl){
     codelist_id <- cl %>% xml2::xml_attr("id")
     agencyID <- cl %>% xml2::xml_attr("agencyID")
     codelist_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
@@ -54,7 +54,7 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
            en=codes %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text(),
            fr=codes %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text(),
            `Parent ID`=codes %>% xml2::xml_find_all("structure:Parent/Ref",flatten=FALSE) %>%
-             lapply(\(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
+             lapply(function(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
              )
   }) %>%
     dplyr::bind_rows()

@@ -12,7 +12,7 @@ Description: Integrated, convenient, and uniform access to Canadian
     for working with Census variables, variable hierarchies, and region selection. API
     keys are freely available with free registration at <https://censusmapper.ca/api>.
     Census data and boundary geometries are reproduced and distributed on an "as
-    is" basis with the permission of Statistics Canada (Statistics Canada 2001; 2006;
+    is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006;
     2011; 2016; 2021).
 License: MIT + file LICENSE
 Encoding: UTF-8

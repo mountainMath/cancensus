@@ -104,6 +104,9 @@ We'd love to feature examples of work or projects that use cancensus.
 * [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
 
+### Python port
+A Python port of **cancensus** is available via the [pycancensus package](https://github.com/dshkol/pycancensus/).
+
 ### Related packages
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
