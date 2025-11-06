@@ -42,13 +42,13 @@ toronto <- get_census(dataset='CA21', regions=list(CMA="35535"),
 
 The `sf` package provides a wrapper around the base R `plot()` function and largely works the same way with most of the same custom graphical parameters. One key thing about `sf.plot()` is that it will plot every column of a sf data frame separately unless you specify a particular column. In this case, the household income variable we selected is stored in the `v_CA16_2397` column. Plotting it is easy. 
 
-```{r}
+```{r fig.alt="Toronto Household Income by CSD in 2020"}
 plot(toronto["median_hh_income"], main = "Toronto Household Income by CSD in 2020")
 ```
 
 You can specify titles, colour palettes, breaks, background colour, lines, borders, transparency, graticules, and much more by taking advantage of the available parameters. You can also combine layers of graphics objects made with `plot()` by running different plots and adding the `add = TRUE` parameter. 
 
-```{r}
+```{r fig.alt="Toronto CSDs with Median HH Income > $125,000 in 2020"}
 plot(st_geometry(toronto), col = NA, main = "Toronto CSDs with Median HH Income > $125,000 in 2020", lty = 3)
 plot(st_geometry(toronto[toronto$median_hh_income > 125000,]), col = "red", add = TRUE)
 ```
@@ -61,14 +61,14 @@ Plotting `sf` objects with `ggplot2` is very straightforward with the built-in `
 
 An example of a basic map.
 
-```{r}
+```{r fig.alt="Toronto CSDs with Median HH Income > $125,000 in 2020"}
 library(ggplot2)
 ggplot(toronto) + geom_sf(aes(fill = median_hh_income))
 ```
 
 Or a similar map with all of the trimmings: 
 
-```{r}
+```{r fig.alt="Toronto Median Household Income in 2020"}
 ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
   scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
   theme(panel.grid = element_blank(),

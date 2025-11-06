@@ -84,7 +84,7 @@ plot_data <- years %>%
 
 Here we also re-organized the data by year. All that's left is to plot the data, one year at a time.
 
-```{r}
+```{r fig.alt="Share of census families in low income"}
 ggplot(plot_data,aes(fill=share)) +
   geom_sf(size=0.1,color="white") +
   facet_wrap("Year") +
@@ -97,7 +97,7 @@ ggplot(plot_data,aes(fill=share)) +
 
 We may be tempted to re-arrange the data to create timelines, but we have to be careful as census geographies change over time. Inspecting the dataset tables at the top informs us that the 2006 through 2011 data all come on the common 2006 census geography, so the 2006 and 2011 tax data are directly comparable.
 
-```{r}
+```{r fig.alt="Change in share of census families in low income 2006-2011"}
 change_data <- plot_data %>% 
   filter(Year==2006) %>% 
   select(GeoUID,`2006`=share) %>%

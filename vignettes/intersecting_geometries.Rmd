@@ -63,7 +63,7 @@ station_cts <-   get_census("CA16", regions = station_ct_ids, vectors = variable
 
 To understand how these relate we plot the data.
 
-```{r}
+```{r fig.alt="CTs within City of Vancouver skytrain station catchments"}
 ggplot(station_city) +
   geom_sf(fill=NA) +
   geom_sf(data=station_cts,aes(fill=((walk+transit)/mode_base))) +
@@ -77,7 +77,7 @@ ggplot(station_city) +
 
 To get a closer match we can cut out the dissemination areas intersecting the station catchment areas. 
 
-```{r}
+```{r fig.alt="DAs within City of Vancouver skytrain station catchments"}
 station_das <-   get_intersecting_geometries("CA16", level = "DA", geometry = cov_station_buffers,
                                              quiet=TRUE) %>% 
   get_census("CA16", regions = ., vectors=variables, geo_format = 'sf', quiet=TRUE)
@@ -96,7 +96,7 @@ ggplot(station_city) +
 
 However, API points for `get_intersecting_geometries` are quite limited at this point, an alternative way to obtain the same data is to first query all DAs withing the CTs identified by the previous `get_intersecting_geometries` call and then filter down to those intersecting the station buffers.
 
-```{r}
+```{r fig.alt="DAs within City of Vancouver skytrain station catchments (alternative method)"}
 station_das2 <- get_census("CA16", regions = station_ct_ids, vectors=variables, 
                            geo_format = 'sf', level="DA", quiet=TRUE) %>%
   sf::st_filter(cov_station_buffers)

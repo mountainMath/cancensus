@@ -104,6 +104,9 @@ We'd love to feature examples of work or projects that use cancensus.
 * [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
 
+### Python port
+A Python port of **cancensus** is available via the [pycancensus package](https://github.com/dshkol/pycancensus/).
+
 ### Related packages
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
@@ -142,7 +145,7 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.9.
+  access, retrieve, and work with Canadian Census data and geography. v0.5.10.
 
 
 A BibTeX entry for LaTeX users is
@@ -151,7 +154,8 @@ A BibTeX entry for LaTeX users is
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2025},
-    note = {R package version 0.5.9},
+    doi = {10.32614/CRAN.package.cancensus},
+    note = {R package version 0.5.10},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```
