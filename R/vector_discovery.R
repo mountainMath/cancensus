@@ -162,10 +162,22 @@ semantic_search <- function(query_terms, census_vector_list) {
   word_count <- length(query_words)
   sentence_word_split <- strsplit(tolower(clean_vector_list), "\\s+")
 
-  n_grams <- lapply(sentence_word_split, function(x){
-    sapply(seq_along(x), function(i){
-      paste(x[i:min(length(x), ((i+word_count)-1))], sep = " ", collapse = " ")
-    })})
+  # Optimized n-gram generation: use vectorized operations where possible
+  n_grams <- lapply(sentence_word_split, function(words) {
+    n <- length(words)
+    if (n == 0) return(character(0))
+    if (word_count == 1) return(words)
+    if (n < word_count) {
+      return(paste(words, collapse = " "))
+    }
+    # Pre-allocate result vector for efficiency
+    result <- character(n)
+    for (i in seq_len(n)) {
+      end_idx <- min(n, i + word_count - 1)
+      result[i] <- paste(words[i:end_idx], collapse = " ")
+    }
+    return(result)
+  })
 
   ordered_ngram_count <- trimws(names(sort(table(unlist(n_grams)), decreasing = TRUE)), "both")
   revised_query <- c(query_terms, unlist(strsplit(query_terms, "\\s+")))
