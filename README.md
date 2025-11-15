@@ -3,6 +3,7 @@
 [![R-CMD-check](https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
+[![DOI](https://img.shields.io/badge/DOI-10.32614/CRAN.package.cancensus-d2b24a.svg)](https://doi.org/10.32614/CRAN.package.cancensus)
 
 <a href="https://mountainmath.github.io/cancensus/index.html"><img id="readme-logo" src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 
