@@ -42,7 +42,7 @@ CensusMapper API keys are free and public API quotas are generous; however, due 
 
 The new `get_intersecting_geometries` function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This _should_ suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.
 
-For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).
+For larger quotas, please get in touch with Jens [directly](mailto:jens@mountainmath.ca).
 
 ### Local Cache
 
