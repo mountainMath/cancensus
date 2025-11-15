@@ -27,5 +27,7 @@ Query the CensusMapper API for available datasets.
 \examples{
 
 # List available datasets in CensusMapper
+\dontrun{
 list_census_datasets()
+}
 }

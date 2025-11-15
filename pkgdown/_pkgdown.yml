@@ -90,6 +90,7 @@ authors:
   Dmitry Shkolnik:
     href: https://dshkol.com
 template:
+  bootstrap: 5
   params:
     ganalytics: UA-107390160-3
     bootswatch: simplex

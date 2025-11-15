@@ -6,7 +6,7 @@
 #'
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param level geographic level to return the data for, valid choices are
-#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA"
+#' "PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR", "FSA", "HR"
 #' @param version optionally specify a version of the data to download. For example, for FED level data, version 1.3 will
 #' access the 2013 represenation order, whereas version 2.0 will access the 2023 representation order. By default the latest
 #' available version is accessed.
@@ -21,7 +21,7 @@
 #' @export
 get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALSE){
   valid_census_years <- c("2021")
-  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA")
+  valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA","HR")
   if (!(census_year %in% valid_census_years)) {
     stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
   }
@@ -38,7 +38,7 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
   d <- xml2::read_xml(metadata_tempfile)
   code_lists <- xml2::xml_find_all(d,"//structure:Codelist")
 
-  meta_data <- lapply(code_lists, \(cl){
+  meta_data <- lapply(code_lists, function(cl){
     codelist_id <- cl %>% xml2::xml_attr("id")
     agencyID <- cl %>% xml2::xml_attr("agencyID")
     codelist_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
@@ -54,7 +54,7 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
            en=codes %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text(),
            fr=codes %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text(),
            `Parent ID`=codes %>% xml2::xml_find_all("structure:Parent/Ref",flatten=FALSE) %>%
-             lapply(\(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
+             lapply(function(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
              )
   }) %>%
     dplyr::bind_rows()
@@ -118,9 +118,17 @@ get_statcan_wds_data <- function(DGUIDs,
                           httr::accept("text/csv"),
                           httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
                           httr::write_disk(wds_data_tempfile,overwrite = TRUE))
-  }
-  if (!response$status_code=="200") {
-    stop(paste0("Invalid request.\n",httr::content(response)))
+    if (!response$status_code=="200") {
+      if (!is.null(response$error) && ("curl_error_peer_failed_verification" %in% class(response$error))) {
+        stop(paste0(strwrap(gsub(".+\\): ","",as.character(response$error),80)),collapse = "\n"),"\n",
+             "This means that the authenticity of the StatCan API server can't be verified.\n",
+             "Statistics Canada has a history of failty SSL certificats on their API,\n",
+             "if you are reasonably sure that your connection is not getting hijacked you\n",
+             "can disable peer checking for the duration of the R session by typing\n\n",
+             "httr::set_config(httr::config(ssl_verifypeer=0,ssl_verifystatus=0))","\n\n","into the console.")
+      }
+      stop(paste0("Invalid request.\n",httr::content(response)))
+    }
   }
   census_year <- "2021"
   meta_data <- get_statcan_wds_metadata(census_year,level=level,version = version,refresh = refresh)
