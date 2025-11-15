@@ -145,7 +145,11 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to
+<<<<<<< HEAD
   access, retrieve, and work with Canadian Census data and geography. v0.5.11.
+=======
+  access, retrieve, and work with Canadian Census data and geography. v0.5.10.
+>>>>>>> main
 
 
 A BibTeX entry for LaTeX users is
