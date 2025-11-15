@@ -10,7 +10,7 @@ articles:
   statcan_attribute_files: statcan_attribute_files.html
   statcan_wds: statcan_wds.html
   Taxfiler_Data: Taxfiler_Data.html
-last_built: 2025-11-15T03:48Z
+last_built: 2025-11-15T03:56Z
 urls:
   reference: https://mountainmath.github.io/cancensus/reference
   article: https://mountainmath.github.io/cancensus/articles
