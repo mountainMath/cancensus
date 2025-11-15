@@ -24,5 +24,7 @@ lastMiKTeXException
 ^\.rprofile
 .DS_Store
 ^doc$
-
 ^CRAN-SUBMISSION$
+^benchmarks/*
+^AI_agent_comments/*
+
