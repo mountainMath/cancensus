@@ -4,11 +4,6 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
 
-<style>
-main#main img#readme-logo {
-  display:none;
-}
-</style>
 <a href="https://mountainmath.github.io/cancensus/index.html"><img id="readme-logo" src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 
 
