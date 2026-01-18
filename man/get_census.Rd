@@ -18,7 +18,9 @@ get_census(
   labels = "detailed",
   use_cache = TRUE,
   quiet = FALSE,
-  api_key = Sys.getenv("CM_API_KEY")
+  api_key = Sys.getenv("CM_API_KEY"),
+  retry = FALSE,
+  max_retries = 3
 )
 }
 \arguments{
@@ -44,6 +46,10 @@ then this option can be set to 'high'. By default this setting is set to \code{'
 \item{quiet}{When TRUE, suppress messages and warnings.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
+
+\item{retry}{Logical. If TRUE, automatically retry failed API requests with exponential backoff. Defaults to FALSE.}
+
+\item{max_retries}{Maximum number of retry attempts when \code{retry = TRUE}. Defaults to 3.}
 }
 \description{
 This function allows convenient access to Canadian census data and boundary
