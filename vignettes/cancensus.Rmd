@@ -49,12 +49,9 @@ Alternatively, the latest development version can be installed from Github using
 remotes::install_github("mountainmath/cancensus")
 
 library(cancensus)
-
-options(cancensus.api_key = "your_api_key")
-options(cancensus.cache_path = "custom cache path")
 ```
 
-If you have not already done so, you can install the API keys and the data cache path. You can get your free API key when you sign up for a [CensusMapper account](https://censusmapper.ca/) and check your profile. Additionally we recommend you set a permanent data cache path so that census data you query is stored persistently across sessions. 
+If you have not already done so, you can install the API keys and the data cache path. You can get your free API key when you sign up for a [CensusMapper account](https://censusmapper.ca/) and check your profile. Additionally we recommend you set a permanent data cache path so that census data you query is stored persistently across sessions. **Make sure to replace the filler text `<your_api_key>` and `<local cache path>` with your actual API key and local cache path.**
 
 ```{r install_api_key_and_cache_path, echo=TRUE, message=FALSE, warning=FALSE, eval = FALSE}
 # Only need to install api key can cache path once

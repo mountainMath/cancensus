@@ -146,7 +146,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(data_file, ".meta")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "data.csv")
       response <- if (!quiet) {
@@ -218,7 +218,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(geo_file, ".meta")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "geo.geojson")
       response <- if (!quiet) {
@@ -352,7 +352,9 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' @examples
 #'
 #' # List available datasets in CensusMapper
+#' \dontrun{
 #' list_census_datasets()
+#' }
 list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -391,8 +393,10 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
+#' }
 dataset_attribution <- function(datasets){
   datasets <-   lapply(datasets,translate_dataset) %>% unlist()
   attribution <-list_census_datasets(quiet=TRUE) %>%

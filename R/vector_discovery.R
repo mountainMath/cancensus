@@ -12,8 +12,9 @@
 #' @export
 #'
 #' @examples
-#' search_census_vectors('Ojibway', 'CA16')
 #'\dontrun{
+#' search_census_vectors('Ojibway', 'CA16')
+#'
 #' # This will return a warning that no match was found, but will suggest similar terms.
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
 #' }
@@ -82,13 +83,13 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' find_census_vectors('Oji-cree', dataset = 'CA16', type = 'total', query_type = 'exact')
 #'
 #' find_census_vectors('commuting duration', dataset = 'CA11', type = 'female', query_type = 'keyword')
 #'
 #' find_census_vectors('after tax income', dataset = 'CA16', type = 'total', query_type = 'semantic')
 #'
-#'\dontrun{
 #' # This incorrect spelling will return a warning that no match was found,
 #' # but will suggest trying semantic or keyword search.
 #' find_census_vectors('Ojibwey', dataset = 'CA16', type = 'total')
@@ -162,10 +163,22 @@ semantic_search <- function(query_terms, census_vector_list) {
   word_count <- length(query_words)
   sentence_word_split <- strsplit(tolower(clean_vector_list), "\\s+")
 
-  n_grams <- lapply(sentence_word_split, function(x){
-    sapply(seq_along(x), function(i){
-      paste(x[i:min(length(x), ((i+word_count)-1))], sep = " ", collapse = " ")
-    })})
+  # Optimized n-gram generation: use vectorized operations where possible
+  n_grams <- lapply(sentence_word_split, function(words) {
+    n <- length(words)
+    if (n == 0) return(character(0))
+    if (word_count == 1) return(words)
+    if (n < word_count) {
+      return(paste(words, collapse = " "))
+    }
+    # Pre-allocate result vector for efficiency
+    result <- character(n)
+    for (i in seq_len(n)) {
+      end_idx <- min(n, i + word_count - 1)
+      result[i] <- paste(words[i:end_idx], collapse = " ")
+    }
+    return(result)
+  })
 
   ordered_ngram_count <- trimws(names(sort(table(unlist(n_grams)), decreasing = TRUE)), "both")
   revised_query <- c(query_terms, unlist(strsplit(query_terms, "\\s+")))

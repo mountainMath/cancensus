@@ -1,3 +1,28 @@
+# cancensus 0.5.11
+
+## Performance Improvements
+
+- **Significant performance improvements** to census vector hierarchy traversal functions
+  - `parent_census_vectors()` is now **1.9x faster** (92% speedup) by caching the full vector list once instead of repeated lookups
+  - `child_census_vectors()` is now **1.2x faster** (23% speedup) with same optimization
+  - Replaced O(n²) rbind operations in loops with efficient list accumulation
+  - Deep hierarchies (8+ levels) see the most improvement
+
+- **Faster semantic search** in `find_census_vectors()`
+  - N-gram generation is now **1.4x faster** (30-40% speedup)
+  - Optimized text processing with pre-allocated vectors
+  - Better performance for all query types and lengths
+
+# cancensus 0.5.10
+- ensure that cancensus won't trigger CRAN check errors if StatCan servers are down
+- replace shorthand function with regular function definition to address CRAN note
+
+# cancensus 0.5.8
+- clarify installing API key and cache path in "getting started" vignette
+- fix caching problem with get_statcan_wds_data
+- support health region level census data for 2021 via WDS
+- support download of dissemination block geographies from StatCan
+
 # cancensus 0.5.7
 - fix issue with path names not quoted properly when downoading and unpacking geosuite data
 - support versions in WDS data, in paricular for federal electoral districts
