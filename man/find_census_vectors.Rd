@@ -41,13 +41,13 @@ aggregation, but can optionally return only the \code{Female} or \code{Male} agg
 \code{type = 'female'} or \code{type = 'male'} as a parameter.
 }
 \examples{
+\dontrun{
 find_census_vectors('Oji-cree', dataset = 'CA16', type = 'total', query_type = 'exact')
 
 find_census_vectors('commuting duration', dataset = 'CA11', type = 'female', query_type = 'keyword')
 
 find_census_vectors('after tax income', dataset = 'CA16', type = 'total', query_type = 'semantic')
 
-\dontrun{
 # This incorrect spelling will return a warning that no match was found,
 # but will suggest trying semantic or keyword search.
 find_census_vectors('Ojibwey', dataset = 'CA16', type = 'total')
