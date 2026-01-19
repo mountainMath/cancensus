@@ -1,3 +1,13 @@
+# cancensus 0.5.10
+- ensure that cancensus won't trigger CRAN check errors if StatCan servers are down
+- replace shorthand function with regular function definition to address CRAN note
+
+# cancensus 0.5.8
+- clarify installing API key and cache path in "getting started" vignette
+- fix caching problem with get_statcan_wds_data
+- support health region level census data for 2021 via WDS
+- support download of dissemination block geographies from StatCan
+
 # cancensus 0.5.7
 - fix issue with path names not quoted properly when downoading and unpacking geosuite data
 - support versions in WDS data, in paricular for federal electoral districts

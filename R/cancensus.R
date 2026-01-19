@@ -340,7 +340,9 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' @examples
 #'
 #' # List available datasets in CensusMapper
+#' \dontrun{
 #' list_census_datasets()
+#' }
 list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -379,8 +381,10 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
+#' }
 dataset_attribution <- function(datasets){
   datasets <-   lapply(datasets,translate_dataset) %>% unlist()
   attribution <-list_census_datasets(quiet=TRUE) %>%

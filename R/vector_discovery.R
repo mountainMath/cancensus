@@ -12,8 +12,9 @@
 #' @export
 #'
 #' @examples
-#' search_census_vectors('Ojibway', 'CA16')
 #'\dontrun{
+#' search_census_vectors('Ojibway', 'CA16')
+#'
 #' # This will return a warning that no match was found, but will suggest similar terms.
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
 #' }
@@ -82,13 +83,13 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' find_census_vectors('Oji-cree', dataset = 'CA16', type = 'total', query_type = 'exact')
 #'
 #' find_census_vectors('commuting duration', dataset = 'CA11', type = 'female', query_type = 'keyword')
 #'
 #' find_census_vectors('after tax income', dataset = 'CA16', type = 'total', query_type = 'semantic')
 #'
-#'\dontrun{
 #' # This incorrect spelling will return a warning that no match was found,
 #' # but will suggest trying semantic or keyword search.
 #' find_census_vectors('Ojibwey', dataset = 'CA16', type = 'total')

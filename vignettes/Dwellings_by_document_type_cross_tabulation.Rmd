@@ -68,7 +68,7 @@ census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), vectors = varia
 ```
 
 To visualize what this looks like on a bar chart:
-```{r}
+```{r fig.alt="Toronto dwelling units by structural type"}
 ggplot(census_data,aes(x=reorder(name,share),y=share)) +
   geom_bar(stat="identity",fill="steelblue") +
   coord_flip() +
@@ -79,7 +79,7 @@ ggplot(census_data,aes(x=reorder(name,share),y=share)) +
 
 As with regular Census data, all data can be retrieved as spatial data. Sometimes it's easier to use the CensusMapper API interface to search for and select the variables we are interested in. The `explore_census_vectors()` function opens a browser with the variable selection tool, we determine that "v_CA16xSD_1" and "v_CA16xSD_28" are the variables enumerating all dwellings and all unoccupied dwellings, respectively.
 
-```{r}
+```{r fig.alt="Toronto dwellings unoccupied on census day"}
 # Use explore_census_vectors() to browse and select variables of interest
 vars <- c(Total="v_CA16xSD_1", Unoccupied="v_CA16xSD_28")
 

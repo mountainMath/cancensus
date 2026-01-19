@@ -22,7 +22,7 @@ lastMiKTeXException
 ^data-raw/*
 ^\.renviron
 ^\.rprofile
-
+.DS_Store
 ^doc$
 
 ^CRAN-SUBMISSION$
