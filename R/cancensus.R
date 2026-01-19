@@ -20,6 +20,10 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
+#' @param preserve_suppression_flags Logical. If TRUE, creates additional columns with suffix \code{_flag}
+#'   for each census vector variable, containing the original suppression codes (e.g., 'x', 'F', '...')
+#'   before they are converted to NA. Useful for understanding data quality and suppression patterns.
+#'   Default is FALSE. Use \code{\link{census_data_quality}} to analyze suppression patterns.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
@@ -51,7 +55,8 @@
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
                         resolution = 'simplified',
                         labels = "detailed",
-                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"))
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"),
+                        preserve_suppression_flags=FALSE)
   {
 
   # API and data recall checks
@@ -141,7 +146,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(data_file, ".meta")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "data.csv")
       response <- if (!quiet) {
@@ -157,8 +162,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
+        # When preserving suppression flags, don't convert na_strings to NA yet
         httr::content(response, type = "text", encoding = "UTF-8") %>%
-          readr::read_csv(na = cancensus_na_strings,
+          readr::read_csv(na = if (preserve_suppression_flags) character() else cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
         check_recalled_data_and_warn(meta_file,params)
@@ -167,9 +173,15 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble(.name_repair = "minimal")
       }
+
+      # Create suppression flag columns before converting to numeric
+      if (preserve_suppression_flags) {
+        result <- create_suppression_flags(result, cancensus_na_strings)
+      }
+
       result <- result %>%
         dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                           names(.)[grepl("v_",names(.))]), as.num) %>%
+                           names(.)[grepl("^v_",names(.)) & !grepl("_flag$",names(.))]), as.num) %>%
         dplyr::mutate(Type = as.factor(.data$Type),
                       `Region Name` = as.factor(.data$`Region Name`))
 
@@ -206,7 +218,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(geo_file, ".meta")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "geo.geojson")
       response <- if (!quiet) {
@@ -340,7 +352,9 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' @examples
 #'
 #' # List available datasets in CensusMapper
+#' \dontrun{
 #' list_census_datasets()
+#' }
 list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
@@ -379,8 +393,10 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
+#' }
 dataset_attribution <- function(datasets){
   datasets <-   lapply(datasets,translate_dataset) %>% unlist()
   attribution <-list_census_datasets(quiet=TRUE) %>%

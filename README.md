@@ -3,8 +3,9 @@
 [![R-CMD-check](https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cancensus)](https://cran.r-project.org/package=cancensus)
 [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/cancensus)](https://cranlogs.r-pkg.org/badges/cancensus)
+[![DOI](https://img.shields.io/badge/DOI-10.32614/CRAN.package.cancensus-d2b24a.svg)](https://doi.org/10.32614/CRAN.package.cancensus)
 
-<a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
+<a href="https://mountainmath.github.io/cancensus/index.html"><img id="readme-logo" src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a>
 
 
 Access, retrieve, and work with Canadian Census data and geography. 
@@ -41,7 +42,7 @@ CensusMapper API keys are free and public API quotas are generous; however, due 
 
 The new `get_intersecting_geometries` function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This _should_ suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.
 
-For larger quotas, please get in touch with Jens [directly](mailto:jens@censusmapper.ca).
+For larger quotas, please get in touch with Jens [directly](mailto:jens@mountainmath.ca).
 
 ### Local Cache
 
@@ -104,6 +105,9 @@ We'd love to feature examples of work or projects that use cancensus.
 * [Additional datasets: Annual T1FF taxfiler data](https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html)
 
 
+### Python port
+A Python port of **cancensus** is available via the [pycancensus package](https://github.com/dshkol/pycancensus/).
+
 ### Related packages
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
@@ -135,14 +139,14 @@ There are several other jurisdiction where census data is available via R packag
 ### Contributing
 
 * We encourage contributions to improve this project. The best way is through issues and pull requests.
-* If you want to get in touch, we are pretty good at responding via email or via twitter at [@dshkol](https://twitter.com/dshkol) or [@vb_jens](https://twitter.com/vb_jens). 
+* If you want to get in touch, we are pretty good at responding via email or via x/bluesky at [@dshkol](https://x.com/dshkol)/[@dshkol.bsky.social](https://bsky.app/profile/dshkol.bsky.social) or [@vb_jens](https://x.com/vb_jens)/[@jensvb.bsky.social](https://bsky.app/profile/jensvb.bsky.social).
 
 ### Cite **cancensus**
 
 If you wish to cite cancensus:
 
-  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.5.7.
+  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to
+  access, retrieve, and work with Canadian Census data and geography. v0.5.11.
 
 
 A BibTeX entry for LaTeX users is
@@ -150,8 +154,9 @@ A BibTeX entry for LaTeX users is
   @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-    year = {2022},
-    note = {R package version 0.5.7},
+    year = {2025},
+    doi = {10.32614/CRAN.package.cancensus},
+    note = {R package version 0.5.11},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```

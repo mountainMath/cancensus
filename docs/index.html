@@ -4,38 +4,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Access, retrieve, and work with Canadian Census data and geography. • cancensus</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Access, retrieve, and work with Canadian Census data and geography.">
-<meta property="og:description" content='Integrated, convenient, and uniform access to Canadian
-    Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready 
-    tidy data frames and spatial data in multiple formats, as well as convenience functions
-    for working with Census variables, variable hierarchies, and region selection. API
-    keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;.
-    Census data and boundary geometries are reproduced and distributed on an "as
-    is" basis with the permission of Statistics Canada (Statistics Canada 2001; 2006;
-    2011; 2016; 2021).'>
+<meta name="description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021).'>
+<meta property="og:description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021).'>
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png">
 <meta property="og:image:alt" content="cancensus">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@vb_jens">
 <meta name="twitter:site" content="https://mountainmath.github.io/cancensus/">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script><script>
+<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -43,91 +32,58 @@
   gtag('config', 'UA-107390160-3');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">cancensus</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="articles/cancensus.html">Get started</a>
-</li>
-<li>
-  <a href="reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/Making_maps_with_cancensus.html">Making maps with cancensus</a>
-    </li>
-    <li>
-      <a href="articles/data_discovery.html">Data discovery</a>
-    </li>
-    <li>
-      <a href="articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a>
-    </li>
-    <li>
-      <a href="articles/statcan_attribute_files.html">StatCan attribute files</a>
-    </li>
-    <li>
-      <a href="articles/statcan_wds.html">StatCan WDS</a>
-    </li>
-    <li>
-      <a href="articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a>
-    </li>
-    <li>
-      <a href="articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="index.html">cancensus</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.11</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/cancensus.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/Making_maps_with_cancensus.html">Making maps with cancensus</a></li>
+    <li><a class="dropdown-item" href="articles/data_discovery.html">Data discovery</a></li>
+    <li><a class="dropdown-item" href="articles/intersecting_geometries.html">Finding intersecting geometries from custom data</a></li>
+    <li><a class="dropdown-item" href="articles/statcan_attribute_files.html">StatCan attribute files</a></li>
+    <li><a class="dropdown-item" href="articles/statcan_wds.html">StatCan WDS</a></li>
+    <li><a class="dropdown-item" href="articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a></li>
+    <li><a class="dropdown-item" href="articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a></li>
   </ul>
 </li>
-<li>
-  <a href="news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/mountainMath/cancensus/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mountainMath/cancensus/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="cancensus">cancensus<a class="anchor" aria-label="anchor" href="#cancensus"></a>
+</h1>
 </div>
-<!--/.navbar -->
-
-      
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div class="section level1">
-<div class="page-header"><h1 id="cancensus">cancensus<a class="anchor" aria-label="anchor" href="#cancensus"></a>
-</h1></div>
 <p><a href="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://cran.r-project.org/package=cancensus" class="external-link"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a> <a href="https://cranlogs.r-pkg.org/badges/cancensus" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a></p>
-<p><a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width="25%" height="25%"></a></p>
+<!--a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a-->
 <p>Access, retrieve, and work with Canadian Census data and geography.</p>
 <ul>
 <li>Download data and Census geography in tidy and analysis-ready format</li>
@@ -190,11 +146,11 @@
 </h3>
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf" class="external-link"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp" class="external-link"><strong>sp</strong></a> formats.</p>
 <pre><code><span><span class="co"># Return data only</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Return an sf-class data frame</span></span>
-<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>, </span>
+<span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
@@ -219,6 +175,11 @@
 <li><a href="https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html">Additional datasets: Structural type of dwelling by document type</a></li>
 <li><a href="https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html">Additional datasets: Annual T1FF taxfiler data</a></li>
 </ul>
+</div>
+<div class="section level3">
+<h3 id="python-port">Python port<a class="anchor" aria-label="anchor" href="#python-port"></a>
+</h3>
+<p>A Python port of <strong>cancensus</strong> is available via the <a href="https://github.com/dshkol/pycancensus/" class="external-link">pycancensus package</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
@@ -265,7 +226,7 @@
 </h3>
 <ul>
 <li>We encourage contributions to improve this project. The best way is through issues and pull requests.</li>
-<li>If you want to get in touch, we are pretty good at responding via email or via twitter at <a href="https://twitter.com/dshkol" class="external-link">@dshkol</a> or <a href="https://twitter.com/vb_jens" class="external-link">@vb_jens</a>.</li>
+<li>If you want to get in touch, we are pretty good at responding via email or via x/bluesky at <a href="https://x.com/dshkol" class="external-link">@dshkol</a>/<a href="https://bsky.app/profile/dshkol.bsky.social" class="external-link">@dshkol.bsky.social</a> or <a href="https://x.com/vb_jens" class="external-link">@vb_jens</a>/<a href="https://bsky.app/profile/jensvb.bsky.social" class="external-link">@jensvb.bsky.social</a>.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -273,13 +234,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2022). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.7.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.11.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-    year = {2022},
-    note = {R package version 0.5.7},
+    year = {2025},
+    doi = {10.32614/CRAN.package.cancensus},
+    note = {R package version 0.5.11},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>
@@ -292,16 +254,13 @@
 (a) You shall include and maintain the following notice on all licensed rights of the Information:
 
   - Source: Statistics Canada, name of product, reference date. Reproduced and distributed on an "as is" basis with the permission of Statistics Canada.
- 
+
 (b) Where any Information is contained within a Value-added Product, you shall include on such Value-added Product the following notice:
 
   - Adapted from Statistics Canada, name of product, reference date. This does not constitute an endorsement by Statistics Canada of this product.</code></pre>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+  </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=cancensus" class="external-link">View on CRAN</a></li>
@@ -331,37 +290,34 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://mountainmath.ca" class="external-link">Jens von Bergmann</a> <br><small class="roles"> Author </small>  </li>
+<a href="https://mountainmath.ca" class="external-link">Jens von Bergmann</a> <br><small class="roles"> Author </small>   </li>
 <li>
-<a href="https://dshkol.com" class="external-link">Dmitry Shkolnik</a> <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Aaron Jacobs <br><small class="roles"> Author </small>  </li>
+<a href="https://dshkol.com" class="external-link">Dmitry Shkolnik</a> <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Aaron Jacobs <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
 
 
-  </div>
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by <a href="https://mountainmath.ca" class="external-link">Jens von Bergmann</a>, <a href="https://dshkol.com" class="external-link">Dmitry Shkolnik</a>, Aaron Jacobs.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by <a href="https://mountainmath.ca" class="external-link">Jens von Bergmann</a>, <a href="https://dshkol.com" class="external-link">Dmitry Shkolnik</a>, Aaron Jacobs.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
 
 
-  
+
 
   </body>
 </html>
