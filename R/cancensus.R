@@ -163,7 +163,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Execute with or without retry
       response <- if (retry>0) {
-        retry_api_call(make_data_call, max_retries = retry, quiet = quiet)
+        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet)
       } else {
         make_data_call()
       }
@@ -253,8 +253,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       }
 
       # Execute with or without retry
-      response <- if (retry) {
-        retry_api_call(make_geo_call, max_retries = max_retries, quiet = quiet)
+      response <- if (retry>0) {
+        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet)
       } else {
         make_geo_call()
       }

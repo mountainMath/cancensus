@@ -21,6 +21,17 @@
 - No breaking changes to any function signatures or behavior
 - Added `microbenchmark` and `testthat` to Suggests
 
+## New features
+
+- Conveninece function to visualize vector hierarchy (visualize_vector_hierarchy)
+
+## Various small improvements
+
+- Improvements in warnings and messages
+- Removal of stale code
+- Optionally retain original NA data types and emit warning when data quality is poor
+- Download progress reporting and retry logic for robustness against network issues
+
 # cancensus 0.5.10
 
 - ensure that cancensus won't trigger CRAN check errors if StatCan servers are down
