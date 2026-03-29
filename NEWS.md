@@ -23,7 +23,7 @@
 
 ## New features
 
-- Conveninece function to visualize vector hierarchy (visualize_vector_hierarchy)
+- Convenience function to visualize vector hierarchy (`visualize_vector_hierarchy()`)
 
 ## Various small improvements
 
