@@ -40,7 +40,7 @@
 
     <a class="navbar-brand me-2" href="index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,8 +82,8 @@
 <img src="logo.png" class="logo" alt=""><h1 id="cancensus">cancensus<a class="anchor" aria-label="anchor" href="#cancensus"></a>
 </h1>
 </div>
-<p><a href="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://cran.r-project.org/package=cancensus" class="external-link"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a> <a href="https://cranlogs.r-pkg.org/badges/cancensus" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a></p>
-<!--a href="https://mountainmath.github.io/cancensus/index.html"><img src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width = "25%" height = "25%"/></a-->
+<p><a href="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mountainMath/cancensus/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://cran.r-project.org/package=cancensus" class="external-link"><img src="http://www.r-pkg.org/badges/version/cancensus" alt="CRAN_Status_Badge"></a> <a href="https://cranlogs.r-pkg.org/badges/cancensus" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/cancensus" alt="CRAN_Downloads_Badge"></a> <a href="https://doi.org/10.32614/CRAN.package.cancensus" class="external-link"><img src="https://img.shields.io/badge/DOI-10.32614/CRAN.package.cancensus-d2b24a.svg" alt="DOI"></a></p>
+<p><a href="https://mountainmath.github.io/cancensus/index.html"><img id="readme-logo" src="https://raw.githubusercontent.com/mountainMath/cancensus/master/images/cancensus-sticker.png" alt="cancensus logo" align="right" width="25%" height="25%"></a></p>
 <p>Access, retrieve, and work with Canadian Census data and geography.</p>
 <ul>
 <li>Download data and Census geography in tidy and analysis-ready format</li>
@@ -113,7 +113,7 @@
 <p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up" class="external-link">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_cancensus_api_key('&lt;your_api_key&gt;', install = TRUE)</code>.</p>
 <p>CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.</p>
 <p>The new <code>get_intersecting_geometries</code> function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This <em>should</em> suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.</p>
-<p>For larger quotas, please get in touch with Jens <a href="mailto:jens@censusmapper.ca">directly</a>.</p>
+<p>For larger quotas, please get in touch with Jens <a href="mailto:jens@mountainmath.ca">directly</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="local-cache">Local Cache<a class="anchor" aria-label="anchor" href="#local-cache"></a>
@@ -234,14 +234,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.5.11.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.0.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2025},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.5.11},
+    note = {R package version 0.6.0},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>

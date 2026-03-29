@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,9 +49,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.11" id="cancensus-0511">cancensus 0.5.11<a class="anchor" aria-label="anchor" href="#cancensus-0511"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.6.0" id="cancensus-060">cancensus 0.6.0<a class="anchor" aria-label="anchor" href="#cancensus-060"></a></h2>
 <div class="section level3">
-<h3 id="performance-improvements-0-5-11">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-0-5-11"></a></h3>
+<h3 id="performance-improvements-0-6-0">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-0-6-0"></a></h3>
 <ul><li>
 <strong>Significant performance improvements</strong> to census vector hierarchy traversal functions
 <ul><li>
@@ -69,13 +69,24 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="testing--quality-0-5-11">Testing &amp; Quality<a class="anchor" aria-label="anchor" href="#testing--quality-0-5-11"></a></h3>
+<h3 id="testing--quality-0-6-0">Testing &amp; Quality<a class="anchor" aria-label="anchor" href="#testing--quality-0-6-0"></a></h3>
 <ul><li>Added comprehensive test suite with <strong>43 unit tests</strong>
 </li>
 <li>New <code>tests/testthat/</code> directory structure</li>
 <li>All optimizations maintain 100% backward compatibility</li>
 <li>No breaking changes to any function signatures or behavior</li>
 <li>Added <code>microbenchmark</code> and <code>testthat</code> to Suggests</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-0-6-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-6-0"></a></h3>
+<ul><li>Conveninece function to visualize vector hierarchy (visualize_vector_hierarchy)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="various-small-improvements-0-6-0">Various small improvements<a class="anchor" aria-label="anchor" href="#various-small-improvements-0-6-0"></a></h3>
+<ul><li>Improvements in warnings and messages</li>
+<li>Removal of stale code</li>
+<li>Optionally retain original NA data types and emit warning when data quality is poor</li>
+<li>Download progress reporting and retry logic for robustness against network issues</li>
 </ul></div>
 </div>
     <div class="section level2">

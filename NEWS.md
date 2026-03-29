@@ -1,4 +1,4 @@
-# cancensus 0.5.11
+# cancensus 0.6.0
 
 ## Performance Improvements
 

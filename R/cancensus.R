@@ -172,7 +172,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Report download size
       content_length <- as.numeric(response$headers$`content-length`)
-      if (!quiet && !is.na(content_length) && content_length > 0) {
+      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
         message(sprintf("Downloaded %s of data.", format_bytes(content_length)))
       }
 
@@ -263,7 +263,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Report download size
       content_length <- as.numeric(response$headers$`content-length`)
-      if (!quiet && !is.na(content_length) && content_length > 0) {
+      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
         message(sprintf("Downloaded %s of geometry.", format_bytes(content_length)))
       }
 

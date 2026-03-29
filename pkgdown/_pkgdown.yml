@@ -30,6 +30,7 @@ reference:
     - child_census_vectors
     - parent_census_vectors
     - visualize_vector_hierarchy
+    - census_data_quality
     - dataset_attribution
   - title: Managing cached data
   - contents:
