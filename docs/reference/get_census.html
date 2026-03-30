@@ -69,7 +69,6 @@ files through the CensusMapper API. An API key is required to retrieve data.</p>
 <span>  use_cache <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CM_API_KEY"</span><span class="op">)</span>,</span>
-<span>  preserve_suppression_flags <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  retry <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -126,13 +125,6 @@ then this option can be set to 'high'. By default this setting is set to <code>'
 <dd><p>An API key for the CensusMapper API. Defaults to <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> and then the <code>CM_API_KEY</code> environment variable.</p></dd>
 
 
-<dt id="arg-preserve-suppression-flags">preserve_suppression_flags<a class="anchor" aria-label="anchor" href="#arg-preserve-suppression-flags"></a></dt>
-<dd><p>Logical. If TRUE, creates additional columns with suffix <code>_flag</code>
-for each census vector variable, containing the original suppression codes (e.g., 'x', 'F', '...')
-before they are converted to NA. Useful for understanding data quality and suppression patterns.
-Default is FALSE. Use <code><a href="census_data_quality.html">census_data_quality</a></code> to analyze suppression patterns.</p></dd>
-
-
 <dt id="arg-retry">retry<a class="anchor" aria-label="anchor" href="#arg-retry"></a></dt>
 <dd><p>Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.</p></dd>
 
@@ -178,7 +170,7 @@ tool at <a href="https://censusmapper.ca/api" class="external-link">https://cens
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

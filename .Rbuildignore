@@ -27,4 +27,7 @@ lastMiKTeXException
 ^CRAN-SUBMISSION$
 ^benchmarks/*
 ^AI_agent_comments/*
-
+R/data_quality.R
+EXECUTIVE_SUMMARY.md
+PERFORMANCE_SUMMARY.md
+PR_DETAILS.md
