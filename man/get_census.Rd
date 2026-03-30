@@ -19,7 +19,6 @@ get_census(
   use_cache = TRUE,
   quiet = FALSE,
   api_key = Sys.getenv("CM_API_KEY"),
-  preserve_suppression_flags = FALSE,
   retry = 0
 )
 }
@@ -46,11 +45,6 @@ then this option can be set to 'high'. By default this setting is set to \code{'
 \item{quiet}{When TRUE, suppress messages and warnings.}
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
-
-\item{preserve_suppression_flags}{Logical. If TRUE, creates additional columns with suffix \code{_flag}
-for each census vector variable, containing the original suppression codes (e.g., 'x', 'F', '...')
-before they are converted to NA. Useful for understanding data quality and suppression patterns.
-Default is FALSE. Use \code{\link{census_data_quality}} to analyze suppression patterns.}
 
 \item{retry}{Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.}
 }

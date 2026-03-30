@@ -20,10 +20,6 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
-#' @param preserve_suppression_flags Logical. If TRUE, creates additional columns with suffix \code{_flag}
-#'   for each census vector variable, containing the original suppression codes (e.g., 'x', 'F', '...')
-#'   before they are converted to NA. Useful for understanding data quality and suppression patterns.
-#'   Default is FALSE. Use \code{\link{census_data_quality}} to analyze suppression patterns.
 #' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
@@ -57,7 +53,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                         resolution = 'simplified',
                         labels = "detailed",
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"),
-                        preserve_suppression_flags=FALSE,
                         retry=0) {
 
   # API and data recall checks
@@ -184,7 +179,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
         # Use readr::read_csv if it's available.
         # When preserving suppression flags, don't convert na_strings to NA yet
         httr::content(response, type = "text", encoding = "UTF-8") %>%
-          readr::read_csv(na = if (preserve_suppression_flags) character() else cancensus_na_strings,
+          readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
         check_recalled_data_and_warn(meta_file,params)
@@ -192,11 +187,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble(.name_repair = "minimal")
-      }
-
-      # Create suppression flag columns before converting to numeric
-      if (preserve_suppression_flags) {
-        result <- create_suppression_flags(result, cancensus_na_strings)
       }
 
       result <- result %>%

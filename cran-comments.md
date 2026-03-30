@@ -29,7 +29,6 @@
 
 - Improvements in warnings and messages
 - Removal of stale code
-- Optionally retain original NA data types and emit warning when data quality is poor
 - Download progress reporting and retry logic for robustness against network issues
 
 # cancensus 0.5.10
