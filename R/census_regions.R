@@ -7,6 +7,7 @@
 #'   available. If set to FALSE, query the API for the data, and
 #'   refresh the local cache with the result.
 #' @param quiet When TRUE, suppress messages and warnings.
+#' @param retry Number of times to retry failed API requests with exponential backoff. Defaults to 0.
 #'
 #' @return
 #'
@@ -37,14 +38,16 @@
 #' \dontrun{
 #' list_census_regions('CA16')
 #' }
-list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
+list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE, retry = 0) {
   dataset <- translate_dataset(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
 
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for regions data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
-                                 "/place_names.csv"))
+    make_regions_call <- function() {
+      httr::GET(cm_url("data_sets", dataset, "place_names.csv"))
+    }
+    response <- perform_api_call(make_regions_call, retry = retry, quiet = quiet)
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
@@ -55,10 +58,10 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     } else {
       readr::read_csv(content,col_types = readr::cols(.default='c'))
     }
-    result <- dplyr::select(result, region = .data$geo_uid, .data$name,
-                            level = .data$type, pop = .data$population,
-                            municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)  %>%
+    result <- dplyr::select(result, region = "geo_uid", "name",
+                            level = "type", pop = "population",
+                            municipal_status = "flag",
+                            dplyr::all_of(c("CMA_UID", "CD_UID", "PR_UID")))  %>%
       dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
@@ -68,8 +71,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     if (!quiet) message("Reading regions list from local cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (!quiet && is.null(last_updated) ||
-        difftime(Sys.time(), last_updated, units = "days") > 1) {
+    if (!quiet && cache_is_stale(last_updated)) {
       warning(paste("Cached regions list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
@@ -207,7 +209,7 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
                                         TRUE ~ paste0(.data$Name," (",.data$region,")"))) %>%
-    dplyr::select(-.data$count) %>%
+    dplyr::select(-dplyr::all_of("count")) %>%
     dplyr::ungroup()
 
   if (length(gs)>1) {

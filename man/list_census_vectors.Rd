@@ -4,7 +4,7 @@
 \alias{list_census_vectors}
 \title{Query the CensusMapper API for available vectors for a given dataset.}
 \usage{
-list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
+list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE, retry = 0)
 }
 \arguments{
 \item{dataset}{The dataset to query for available vectors, e.g.
@@ -16,6 +16,8 @@ available. If set to FALSE, query the API for the data, and
 refresh the local cache with the result.}
 
 \item{quiet}{When FALSE, shows messages and warnings. Set to TRUE by default.}
+
+\item{retry}{Number of times to retry failed API requests with exponential backoff. Defaults to 0.}
 }
 \value{
 Returns a data frame detailing the available Census vectors (i.e. variables) for a given Census

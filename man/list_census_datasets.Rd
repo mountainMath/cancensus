@@ -4,7 +4,7 @@
 \alias{list_census_datasets}
 \title{Query the CensusMapper API for available datasets.}
 \usage{
-list_census_datasets(use_cache = TRUE, quiet = FALSE)
+list_census_datasets(use_cache = TRUE, quiet = FALSE, retry = 0)
 }
 \arguments{
 \item{use_cache}{If set to TRUE (the default), data will be read from a temporary local cache for the
@@ -13,6 +13,8 @@ available. If set to FALSE, query the API for the data, and
 refresh the temporary cache with the result.}
 
 \item{quiet}{When TRUE, suppress messages and warnings.}
+
+\item{retry}{Number of times to retry failed API requests with exponential backoff. Defaults to 0.}
 }
 \value{
 Returns a data frame with a column \code{dataset} containing the code for the

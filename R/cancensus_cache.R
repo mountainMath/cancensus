@@ -99,7 +99,7 @@ list_cancensus_cache <- function(){
     all <- all %>%
       dplyr::left_join(manual_sizes,by="path") %>%
       dplyr::mutate(size=dplyr::coalesce(.data$size,.data$manual_size)) %>%
-      dplyr::select(-.data$manual_size)
+      dplyr::select(-dplyr::all_of("manual_size"))
   }
 
   for (n in setdiff(metadata_columns_c,names(all))) {

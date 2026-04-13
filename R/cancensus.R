@@ -20,7 +20,7 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
-#' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
+#' @param retry Number of times to retry failed API requests with exponential backoff. Defaults to 0.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
@@ -64,12 +64,13 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   geo_version<-NULL
 
   dataset <- translate_dataset(dataset)
+  retry <- normalise_whole_number(retry, "retry")
 
   # Check region selection validity
   if (is.na(level)) level="Regions"
 
   # Check spatial resolution
-  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
+  if (!(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -157,11 +158,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       }
 
       # Execute with or without retry
-      response <- if (retry>0) {
-        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet)
-      } else {
-        make_data_call()
-      }
+      response <- perform_api_call(make_data_call, retry = retry, quiet = quiet)
 
       handle_cm_status_code(response, NULL)
 
@@ -242,11 +239,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       }
 
       # Execute with or without retry
-      response <- if (retry>0) {
-        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet)
-      } else {
-        make_geo_call()
-      }
+      response <- perform_api_call(make_geo_call, retry = retry, quiet = quiet)
 
       handle_cm_status_code(response, NULL)
 
@@ -386,12 +379,14 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA'
 #' \dontrun{
 #' list_census_datasets()
 #' }
-list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
+list_census_datasets <- function(use_cache = TRUE, quiet = FALSE, retry = 0) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for available datasets...")
-    response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
-                          httr::accept_json())
+    make_dataset_call <- function() {
+      httr::GET(cm_api_url("list_datasets"), httr::accept_json())
+    }
+    response <- perform_api_call(make_dataset_call, retry = retry, quiet = quiet)
     handle_cm_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
@@ -403,8 +398,7 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     if (!quiet) message("Reading dataset list from temporary cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (!quiet && is.null(last_updated) ||
-          difftime(Sys.time(), last_updated, units = "days") > 1) {
+    if (!quiet && cache_is_stale(last_updated)) {
       warning(paste("Cached dataset list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }

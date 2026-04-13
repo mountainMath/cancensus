@@ -7,6 +7,7 @@
 #'   available. If set to FALSE, query the API for the data, and
 #'   refresh the local cache with the result.
 #' @param quiet When FALSE, shows messages and warnings. Set to TRUE by default.
+#' @param retry Number of times to retry failed API requests with exponential backoff. Defaults to 0.
 #'
 #' @return
 #' Returns a data frame detailing the available Census vectors (i.e. variables) for a given Census
@@ -26,17 +27,20 @@
 #' # List all vectors for a given Census dataset in CensusMapper
 #' list_census_vectors('CA16')
 #' }
-list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
+list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE, retry = 0) {
   dataset <- translate_dataset(dataset)
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
-    url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
-    response <- if (!quiet) {
-      message("Querying CensusMapper API for vectors data...")
-      httr::GET(url, httr::progress())
-    } else {
-      httr::GET(url)
+    url <- cm_api_url("vector_info", paste0(dataset, ".csv"))
+    if (!quiet) message("Querying CensusMapper API for vectors data...")
+    make_vector_call <- function() {
+      if (!quiet) {
+        httr::GET(url, httr::progress())
+      } else {
+        httr::GET(url)
+      }
     }
+    response <- perform_api_call(make_vector_call, retry = retry, quiet = quiet)
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
@@ -62,9 +66,9 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
         grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
                                  fixed = TRUE)
       )) %>%
-      dplyr::select(.data$vector, .data$type, .data$label, .data$units,
-                    parent_vector = .data$parent, .data$aggregation,
-                    .data$details)
+      dplyr::select(dplyr::all_of(c("vector", "type", "label", "units")),
+                    parent_vector = "parent",
+                    dplyr::all_of(c("aggregation", "details")))
     attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
     save(result, file = cache_file)

@@ -4,7 +4,7 @@
 \alias{list_census_regions}
 \title{Query the CensusMapper API for available regions in a given dataset.}
 \usage{
-list_census_regions(dataset, use_cache = TRUE, quiet = FALSE)
+list_census_regions(dataset, use_cache = TRUE, quiet = FALSE, retry = 0)
 }
 \arguments{
 \item{dataset}{The dataset to query for available regions, e.g.
@@ -16,6 +16,8 @@ available. If set to FALSE, query the API for the data, and
 refresh the local cache with the result.}
 
 \item{quiet}{When TRUE, suppress messages and warnings.}
+
+\item{retry}{Number of times to retry failed API requests with exponential backoff. Defaults to 0.}
 }
 \value{
 Returns a data frame with the following columns:

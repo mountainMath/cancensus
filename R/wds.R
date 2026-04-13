@@ -146,10 +146,10 @@ get_statcan_wds_data <- function(DGUIDs,
   data <- readr::read_csv(wds_data_tempfile,col_types = readr::cols(.default="c")) %>%
     dplyr::mutate(dplyr::across(dplyr::matches("OBS_VALUE|TNR_CI_"),as.numeric)) %>%
     dplyr::left_join(meta_geos %>%
-                       dplyr::select(GEO_DESC=.data$ID,GEO_NAME=!!as.name(name_field)),
+                       dplyr::select(GEO_DESC = "ID", GEO_NAME = dplyr::all_of(name_field)),
                      by="GEO_DESC") %>%
     dplyr::left_join(meta_characteristics %>%
-                       dplyr::select(CHARACTERISTIC=.data$ID,CHARACTERISTIC_NAME=!!as.name(name_field)),
+                       dplyr::select(CHARACTERISTIC = "ID", CHARACTERISTIC_NAME = dplyr::all_of(name_field)),
               by="CHARACTERISTIC")
 
   data
@@ -187,5 +187,4 @@ geo_level_from_DGUID <- function(DGUID,simple=TRUE){
   }
   level
 }
-
 

@@ -3,7 +3,21 @@
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"
-  url
+  if (!is.character(url) || length(url) != 1 || is.na(url) || !nzchar(url)) {
+    stop("`cancensus.base_url` must be a non-empty string.", call. = FALSE)
+  }
+  sub("/+$", "", url)
+}
+
+cm_url <- function(...) {
+  parts <- unlist(list(...), use.names = FALSE)
+  parts <- parts[!is.na(parts) & nzchar(parts)]
+  parts <- gsub("^/+|/+$", "", parts)
+  paste(c(cancensus_base_url(), parts), collapse = "/")
+}
+
+cm_api_url <- function(...) {
+  cm_url("api/v1", ...)
 }
 
 valid_api_key <- function(api_key){
@@ -85,28 +99,30 @@ cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 #' Retry an API call with exponential backoff
 #'
 #' @param call_fn A function that performs the API call and returns an httr response
-#' @param max_retries Maximum number of retry attempts (default: 3)
+#' @param max_attempts Maximum number of total attempts (default: 3)
 #' @param quiet If TRUE, suppress retry messages
+#' @param sleep_fn Function used to wait between attempts
 #' @return The httr response object
-#' @keywords internal
-retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
+#' @noRd
+retry_api_call <- function(call_fn, max_attempts = 3, quiet = FALSE, sleep_fn = Sys.sleep) {
+ max_attempts <- normalise_whole_number(max_attempts, "max_attempts", minimum = 1)
  attempt <- 1
  last_error <- NULL
 
- while (attempt <= max_retries) {
+ while (attempt <= max_attempts) {
    tryCatch({
      response <- call_fn()
 
      # Check for transient HTTP errors (5xx, timeout, connection errors)
      status <- httr::status_code(response)
-     if (status >= 500 && status < 600 && attempt < max_retries) {
+     if (status >= 500 && status < 600 && attempt < max_attempts) {
        # Server error - retry
        wait_time <- 2 ^ (attempt - 1)  # Exponential backoff: 1, 2, 4 seconds
        if (!quiet) {
          message(sprintf("Server error (HTTP %d), retrying in %ds (attempt %d/%d)...",
-                         status, wait_time, attempt + 1, max_retries))
+                         status, wait_time, attempt + 1, max_attempts))
        }
-       Sys.sleep(wait_time)
+       sleep_fn(wait_time)
        attempt <- attempt + 1
        next
      }
@@ -117,13 +133,13 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
    }, error = function(e) {
      last_error <<- e
      # Network errors - retry
-     if (attempt < max_retries) {
+     if (attempt < max_attempts) {
        wait_time <- 2 ^ (attempt - 1)
        if (!quiet) {
          message(sprintf("Network error: %s. Retrying in %ds (attempt %d/%d)...",
-                         conditionMessage(e), wait_time, attempt + 1, max_retries))
+                         conditionMessage(e), wait_time, attempt + 1, max_attempts))
        }
-       Sys.sleep(wait_time)
+       sleep_fn(wait_time)
        attempt <<- attempt + 1
      } else {
        stop(e)
@@ -137,8 +153,33 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
  }
 }
 
+normalise_whole_number <- function(x, name, minimum = 0) {
+  if (!is.numeric(x) || length(x) != 1 || is.na(x) || !is.finite(x) ||
+      x < minimum || x != floor(x)) {
+    stop(sprintf("`%s` must be a whole number greater than or equal to %s.", name, minimum),
+         call. = FALSE)
+  }
+  as.integer(x)
+}
+
+perform_api_call <- function(call_fn, retry = 0, quiet = FALSE) {
+  retry <- normalise_whole_number(retry, "retry")
+  if (retry > 0) {
+    retry_api_call(call_fn, max_attempts = retry + 1, quiet = quiet)
+  } else {
+    call_fn()
+  }
+}
+
+cache_is_stale <- function(last_updated, max_age_days = 1) {
+  if (is.null(last_updated) || length(last_updated) != 1 || is.na(last_updated)) {
+    return(TRUE)
+  }
+  difftime(Sys.time(), last_updated, units = "days") > max_age_days
+}
+
 #' Format bytes to human-readable size
-#' @keywords internal
+#' @noRd
 format_bytes <- function(bytes) {
  if (bytes < 1024) return(paste0(bytes, " B"))
  if (bytes < 1024^2) return(sprintf("%.1f KB", bytes / 1024))
@@ -207,5 +248,3 @@ NULL
 #' @references \url{https://opendata.vancouver.ca/explore/dataset/rapid-transit-stations/information/}
 #' @keywords data
 NULL
-
-
