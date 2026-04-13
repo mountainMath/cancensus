@@ -177,7 +177,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # Read the data file and transform to proper data types
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
-        # When preserving suppression flags, don't convert na_strings to NA yet
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
@@ -191,7 +190,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       result <- result %>%
         dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                           names(.)[grepl("^v_",names(.)) & !grepl("_flag$",names(.))]), as.num) %>%
+                           names(.)[grepl("^v_",names(.))]), as.num) %>%
         dplyr::mutate(Type = as.factor(.data$Type),
                       `Region Name` = as.factor(.data$`Region Name`))
 
