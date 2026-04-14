@@ -3,3 +3,7 @@ pre, code {
   size: 70%;
   color: #333;
 }
+
+main#main img#readme-logo {
+  display:none;
+}

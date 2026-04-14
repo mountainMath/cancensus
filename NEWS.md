@@ -1,4 +1,4 @@
-# cancensus 0.5.11
+# cancensus 0.6.0
 
 ## Performance Improvements
 
@@ -20,6 +20,16 @@
 - All optimizations maintain 100% backward compatibility
 - No breaking changes to any function signatures or behavior
 - Added `microbenchmark` and `testthat` to Suggests
+
+## New features
+
+- Convenience function to visualize vector hierarchy (`visualize_vector_hierarchy()`)
+
+## Various small improvements
+
+- Improvements in warnings and messages
+- Removal of stale code
+- Download progress reporting and retry logic for robustness against network issues
 
 # cancensus 0.5.10
 

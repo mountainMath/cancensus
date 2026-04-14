@@ -20,6 +20,7 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
+#' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
@@ -51,8 +52,8 @@
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
                         resolution = 'simplified',
                         labels = "detailed",
-                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"))
-  {
+                        use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"),
+                        retry=0) {
 
   # API and data recall checks
   first_run_checks()
@@ -141,16 +142,35 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(data_file, ".meta")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "data.csv")
-      response <- if (!quiet) {
-        message("Querying CensusMapper API...")
-        httr::POST(url, httr::progress(), body=params)
-      } else {
-        httr::POST(url, body=params)
+      if (!quiet) message("Querying CensusMapper API for data...")
+
+      # Define the API call
+      make_data_call <- function() {
+        if (!quiet) {
+          httr::POST(url, httr::progress(), body=params)
+        } else {
+          httr::POST(url, body=params)
+        }
       }
+
+      # Execute with or without retry
+      response <- if (retry>0) {
+        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet)
+      } else {
+        make_data_call()
+      }
+
       handle_cm_status_code(response, NULL)
+
+      # Report download size
+      content_length <- as.numeric(response$headers$`content-length`)
+      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
+        message(sprintf("Downloaded %s of data.", format_bytes(content_length)))
+      }
+
       data_version <- response$headers$`data-version`
 
 
@@ -167,9 +187,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
           dplyr::as_tibble(.name_repair = "minimal")
       }
+
       result <- result %>%
         dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
-                           names(.)[grepl("v_",names(.))]), as.num) %>%
+                           names(.)[grepl("^v_",names(.))]), as.num) %>%
         dplyr::mutate(Type = as.factor(.data$Type),
                       `Region Name` = as.factor(.data$`Region Name`))
 
@@ -206,16 +227,35 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(geo_file, ".meta")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API ket>`) to set one, or set_cancensus_api_key('<your API ket>`, install = TRUE) to save is permanently in our .Renviron."))
+        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
       }
       url <- paste0(base_url, "geo.geojson")
-      response <- if (!quiet) {
-        message("Querying CensusMapper API...")
-        httr::POST(url, httr::progress(),body=params)
-      } else {
-        httr::POST(url,body=params)
+      if (!quiet) message("Querying CensusMapper API for geometry...")
+
+      # Define the API call
+      make_geo_call <- function() {
+        if (!quiet) {
+          httr::POST(url, httr::progress(), body=params)
+        } else {
+          httr::POST(url, body=params)
+        }
       }
+
+      # Execute with or without retry
+      response <- if (retry>0) {
+        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet)
+      } else {
+        make_geo_call()
+      }
+
       handle_cm_status_code(response, NULL)
+
+      # Report download size
+      content_length <- as.numeric(response$headers$`content-length`)
+      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
+        message(sprintf("Downloaded %s of geometry.", format_bytes(content_length)))
+      }
+
       geo_version <- response$headers$`data-version`
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
       file_info <- file.info(geo_file)
@@ -233,6 +273,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
        transform_geo(level) #%>%
       # sf::st_sf(agr="constant") # just in case
 
+    if (!quiet) {
+      message(sprintf("Processing %s geographic features.", format(nrow(geos), big.mark = ",")))
+    }
 
     result <- if (is.null(result)) {
       geos

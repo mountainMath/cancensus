@@ -29,6 +29,7 @@ reference:
     - add_unique_names_to_region_list
     - child_census_vectors
     - parent_census_vectors
+    - visualize_vector_hierarchy
     - dataset_attribution
   - title: Managing cached data
   - contents:
@@ -90,6 +91,7 @@ authors:
   Dmitry Shkolnik:
     href: https://dshkol.com
 template:
+  bootstrap: 5
   params:
     ganalytics: UA-107390160-3
     bootswatch: simplex

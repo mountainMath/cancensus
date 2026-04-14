@@ -82,6 +82,70 @@ dataset_from_vector_list <- function(vector_list){
 
 cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 
+#' Retry an API call with exponential backoff
+#'
+#' @param call_fn A function that performs the API call and returns an httr response
+#' @param max_retries Maximum number of retry attempts (default: 3)
+#' @param quiet If TRUE, suppress retry messages
+#' @return The httr response object
+#' @keywords internal
+retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
+ attempt <- 1
+ last_error <- NULL
+
+ while (attempt <= max_retries) {
+   tryCatch({
+     response <- call_fn()
+
+     # Check for transient HTTP errors (5xx, timeout, connection errors)
+     status <- httr::status_code(response)
+     if (status >= 500 && status < 600 && attempt < max_retries) {
+       # Server error - retry
+       wait_time <- 2 ^ (attempt - 1)  # Exponential backoff: 1, 2, 4 seconds
+       if (!quiet) {
+         message(sprintf("Server error (HTTP %d), retrying in %ds (attempt %d/%d)...",
+                         status, wait_time, attempt + 1, max_retries))
+       }
+       Sys.sleep(wait_time)
+       attempt <- attempt + 1
+       next
+     }
+
+     # Success or non-retryable error
+     return(response)
+
+   }, error = function(e) {
+     last_error <<- e
+     # Network errors - retry
+     if (attempt < max_retries) {
+       wait_time <- 2 ^ (attempt - 1)
+       if (!quiet) {
+         message(sprintf("Network error: %s. Retrying in %ds (attempt %d/%d)...",
+                         conditionMessage(e), wait_time, attempt + 1, max_retries))
+       }
+       Sys.sleep(wait_time)
+       attempt <<- attempt + 1
+     } else {
+       stop(e)
+     }
+   })
+ }
+
+ # If we've exhausted retries, throw the last error
+ if (!is.null(last_error)) {
+   stop(last_error)
+ }
+}
+
+#' Format bytes to human-readable size
+#' @keywords internal
+format_bytes <- function(bytes) {
+ if (bytes < 1024) return(paste0(bytes, " B"))
+ if (bytes < 1024^2) return(sprintf("%.1f KB", bytes / 1024))
+ if (bytes < 1024^3) return(sprintf("%.1f MB", bytes / 1024^2))
+ return(sprintf("%.1f GB", bytes / 1024^3))
+}
+
 as.num = function(x, na.strings = cancensus_na_strings) {
   stopifnot(is.character(x))
   na = x %in% na.strings

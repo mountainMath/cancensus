@@ -65,7 +65,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
     utils::unzip(tmp,exdir = exdir)
     fs <- dir(exdir,full.names = TRUE)
     if (length(fs)==1 && dir.exists(fs)) {
-      tmp_dir <- file.path(geo_base_path,"XXXX")
+      tmp_dir <- tempfile(pattern = "cancensus_geo_", tmpdir = geo_base_path)
       file.rename(exdir,tmp_dir)
       fs <- dir(tmp_dir,full.names = TRUE)
       file.rename(fs,exdir)

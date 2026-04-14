@@ -7,6 +7,8 @@ CRAN-SUBMISSION
 ^docs$
 docs/
 docs/*
+^docs_old$
+^docs_old/
 ^pkgdown$
 .*data_cache/
 R/hex_sticker.R
@@ -24,5 +26,11 @@ lastMiKTeXException
 ^\.rprofile
 .DS_Store
 ^doc$
-
 ^CRAN-SUBMISSION$
+^benchmarks/*
+^AI_agent_comments/*
+^\.claude$
+^\.claude/
+EXECUTIVE_SUMMARY.md
+PERFORMANCE_SUMMARY.md
+PR_DETAILS.md

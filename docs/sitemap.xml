@@ -1,6 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://mountainmath.github.io/cancensus/404.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/EXECUTIVE_SUMMARY.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/LICENSE-text.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/PERFORMANCE_SUMMARY.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/PR_DETAILS.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/articles/Dwellings_by_document_type_cross_tabulation.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/articles/Taxfiler_Data.html</loc></url>
@@ -23,6 +26,7 @@
 <url><loc>https://mountainmath.github.io/cancensus/reference/explore_census_regions.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/explore_census_vectors.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/find_census_vectors.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/reference/format_bytes.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/get_census.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/get_census_geometry.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/get_intersecting_geometries.html</loc></url>
@@ -43,11 +47,13 @@
 <url><loc>https://mountainmath.github.io/cancensus/reference/parent_census_vectors.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/remove_from_cancensus_cache.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/remove_recalled_cached_data.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/reference/retry_api_call.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/search_census_regions.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/search_census_vectors.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/set_cancensus_api_key.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/show_cancensus_api_key.html</loc></url>
 <url><loc>https://mountainmath.github.io/cancensus/reference/show_cancensus_cache_path.html</loc></url>
+<url><loc>https://mountainmath.github.io/cancensus/reference/visualize_vector_hierarchy.html</loc></url>
 </urlset>
 

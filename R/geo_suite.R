@@ -56,7 +56,8 @@ get_statcan_geo_suite <- function(level,census_year="2021",refresh=FALSE){
                           locale = readr::locale(encoding ="Windows-1252"),
                           col_types = readr::cols(.default="c")) %>%
       dplyr::mutate(dplyr::across(dplyr::matches("pop_|tdwell_|urdwell_|area"),as.numeric))
-  } else if (census_year=="2021") {
+  } else { #if (census_year=="2021") {
+    stop("GeoSuite data is only available for the 2021 census year at this time.")
     # if (level=="DB") level="CB"
     # gd<-Hmisc::mdb.get(file.path(path,"data/geosuite2001.mdb"),
     #                   tables=level) %>%
