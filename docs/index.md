@@ -164,9 +164,9 @@ equivalent.
 - [Income: A first
   look](https://doodles.mountainmath.ca/blog/2017/09/14/income-a-first-look/)
 - [Language Diversity in
-  Canada](https://www.dshkol.com/2017/language-diversity-in-canada/)
+  Canada](https://dshkol.com/posts/language-diversity-in-canada/)
 - [Diversity and Segregation in Canadian
-  cities](https://www.dshkol.com/2018/diversity-and-segregation-canadian-cities/)
+  cities](https://dshkol.com/posts/diversity-and-segregation-canadian-cities/)
 - [Census tract level T1FF
   data](https://doodles.mountainmath.ca/blog/2020/04/23/census-tract-level-t1ff-tax-data/)
 

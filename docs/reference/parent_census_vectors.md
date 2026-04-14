@@ -23,7 +23,10 @@ parent_census_vectors(vector_list)
 ``` r
 # Query parent vectors directly using vector identifier
 parent_census_vectors("v_CA16_2519")
-#> Error in handle_cm_status_code(response, NULL): Download of Census Data failed. Invalid Dataset Parameter
+#> # A tibble: 1 × 7
+#>   vector      type  label                units parent_vector aggregation details
+#>   <chr>       <fct> <chr>                <fct> <chr>         <chr>       <chr>  
+#> 1 v_CA16_2510 Total Total - Low-income … Numb… NA            Additive    CA 201…
 if (FALSE) { # \dontrun{
 # Example using multiple vectors coerced into a list
 parent_census_vectors(c("v_CA16_2519","v_CA16_2520","v_CA16_2521"))

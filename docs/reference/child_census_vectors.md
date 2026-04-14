@@ -43,7 +43,13 @@ child_census_vectors(
 ``` r
 # Query parent vectors directly using vector identifier
 child_census_vectors("v_CA16_2510")
-#> Error in handle_cm_status_code(response, NULL): Download of Census Data failed. Invalid Dataset Parameter
+#> # A tibble: 4 × 7
+#>   vector      type  label             units  parent_vector aggregation details  
+#>   <chr>       <fct> <chr>             <fct>  <chr>         <chr>       <chr>    
+#> 1 v_CA16_2513 Total 0 to 17 years     Number v_CA16_2510   Additive    CA 2016 …
+#> 2 v_CA16_2519 Total 18 to 64 years    Number v_CA16_2510   Additive    CA 2016 …
+#> 3 v_CA16_2522 Total 65 years and over Number v_CA16_2510   Additive    CA 2016 …
+#> 4 v_CA16_2516 Total 0 to 5 years      Number v_CA16_2513   Additive    CA 2016 …
 
 if (FALSE) { # \dontrun{
 
