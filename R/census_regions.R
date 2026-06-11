@@ -39,6 +39,11 @@
 #' }
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   dataset <- translate_dataset(dataset)
+  cache_key <- paste0(dataset, "_regions")
+  if (use_cache) {
+    cached <- session_cache_get(cache_key)
+    if (!is.null(cached)) return(cached)
+  }
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
 
   if (!use_cache || !file.exists(cache_file)) {
@@ -63,7 +68,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    result
+    session_cache_set(cache_key, result)
   } else {
     if (!quiet) message("Reading regions list from local cache.")
     load(file = cache_file)
@@ -74,7 +79,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
                     "FALSE` to update it."))
     }
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    result
+    session_cache_set(cache_key, result)
   }
 }
 

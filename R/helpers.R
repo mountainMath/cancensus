@@ -1,5 +1,23 @@
 # Internal functions that do useful things frequently required in other functions
 
+# In-memory session cache for metadata (vector and region lists). Sits in
+# front of the tempdir() file cache so repeated calls within a session don't
+# pay the disk read + deserialization cost on every access.
+.cancensus_session_cache <- new.env(parent = emptyenv())
+
+session_cache_get <- function(key){
+  if (exists(key, envir = .cancensus_session_cache, inherits = FALSE)) {
+    get(key, envir = .cancensus_session_cache, inherits = FALSE)
+  } else {
+    NULL
+  }
+}
+
+session_cache_set <- function(key, value){
+  assign(key, value, envir = .cancensus_session_cache)
+  value
+}
+
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"

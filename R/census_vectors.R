@@ -28,6 +28,11 @@
 #' }
 list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   dataset <- translate_dataset(dataset)
+  cache_key <- paste0(dataset, "_vectors")
+  if (use_cache) {
+    cached <- session_cache_get(cache_key)
+    if (!is.null(cached)) return(cached)
+  }
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
@@ -68,11 +73,11 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
     attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
     save(result, file = cache_file)
-    result
+    session_cache_set(cache_key, result)
   } else {
     if (!quiet) message("Reading vector information from local cache.")
     load(file = cache_file)
-    result
+    session_cache_set(cache_key, result)
   }
 }
 
