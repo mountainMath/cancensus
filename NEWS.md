@@ -1,3 +1,29 @@
+# cancensus 0.6.1
+
+## Bug fixes
+
+- `set_cancensus_api_key()` and `set_cancensus_cache_path()` with `overwrite = TRUE, install = TRUE` no longer truncate the user's `.Renviron` when it does not already contain the corresponding key
+- `get_statcan_wds_data()` no longer caches error response bodies as data, and `refresh = TRUE` now bypasses the data cache as documented
+- `remove_recalled_cached_data()` no longer over-matches recalled vector IDs (e.g. a recall of `v_CA21_1` no longer also flags cached data for `v_CA21_10`)
+- `get_census()` now warns about recalled data when reading tabular data from the local cache, matching the geometry path
+- `parent_census_vectors()` and `child_census_vectors()` now stop with "Unable to determine dataset" for mixed-dataset input instead of silently dropping vectors
+- `find_census_vectors()` exact search now matches queries containing regex metacharacters (e.g. `"income ($)"`) literally instead of erroring or silently failing
+- `find_census_vectors()` semantic search now considers the best match for every query word (previously only the full phrase), and restores suffix n-grams dropped in 0.6.0
+- `find_census_vectors()` keyword search no longer matches every vector when the query starts with a digit or punctuation
+- `visualize_vector_hierarchy()` accepts multi-vector character input as documented, and no longer labels nodes truncated by `max_depth` as leaves (now marked with `...`)
+- `add_unique_names_to_region_list()` now correctly preserves grouping of grouped input
+- `list_census_datasets()` and `list_census_regions()` staleness warnings now respect `quiet = TRUE`
+- API retry logic now retries HTTP 429 (rate limit) and 408 (timeout) responses, honoring `Retry-After` headers
+- The cache directory is now created recursively with a clear error on failure
+
+## Performance improvements
+
+- New in-memory session cache for `list_census_vectors()` and `list_census_regions()`: repeated calls within a session no longer re-read and deserialize the cached file on every access (cache hits are ~1000x faster)
+- `parent_census_vectors()` and `child_census_vectors()` use a hash-based BFS traversal, 4-8x faster on deep hierarchies on top of the 0.6.0 improvements, with identical output
+- `find_census_vectors()` semantic search prunes fuzzy-match candidates by length bound before computing Levenshtein distances
+- `get_census()` no longer scans the package library (`installed.packages()`) on spatial calls
+- `get_statcan_wds_metadata()` parent ID extraction is vectorized (~5-10x faster metadata parsing for large levels such as DA)
+
 # cancensus 0.6.0
 
 ## Performance Improvements
