@@ -95,33 +95,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     stop("The `sf` package is required to return geographies.")
   }
 
-  # --------- Spatial format checks --------------------------------------------------------------------#
-  # This section checks that proper spatial formats are requested. If users select spatial data and
-  # don't have the 'sf' package installed, will prompt them with a menu to install it, otherwise we will
-  # return spatial data only. If users select 'sp' format, will advise them that usage is deprecated and nudge
-  # to install 'sf' package.
-  if (!is.na(geo_format)) {
-    if(!geo_format %in% c("sf","sp")) {
-      stop("the `geo_format` parameter should be 'sf', 'sp', or NA")
-    } else if(geo_format == "sf" && !("sf" %in% utils::installed.packages())) {
-      if (utils::menu(c("Install package", "Return tabular data without geo"),
-                      title= paste("The `sf` package is required to return geographies. Would you like to install?")) == "1") {
-        utils::install.packages('sf')
-      } else  {
-        message("Retrieving tabular data only. Please install 'sf' package if you wish to use Census data as spatial data.")
-        geo_format <- NA
-      }
-    } else if(geo_format == "sp" && !("sf" %in% utils::installed.packages())) {
-      message("The use of 'sp' format in cancensus package is now deprecated.\nPlease install 'sf' package to return spatial format data.")
-      if (utils::menu(c("Install package", "Return tabular data without geo"),
-                      title= paste("Would you like to install 'sf' to continue?")) == "1") {
-        utils::install.packages('sf')
-      } else  {
-        message("Retrieving tabular data only. Please install 'sf' package if you wish to use Census data as spatial data.")
-        geo_format <- NA
-      }
-    }
-  }
+  # sf availability is already guaranteed by the check above; the previous
+  # installed.packages()-based install prompts were unreachable and scanned
+  # the entire package library on every spatial call
 
   base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
@@ -288,15 +264,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     touch_metadata(meta_file,params)
   }
 
-  # ensure sf format even if library not loaded and set agr columns
+  # ensure sf format even if library not loaded
   if (!is.na(geo_format) & geo_format=='sf') {
-    numerics <- result %>% dplyr::select_if(function(d)is.numeric(d)|is.integer(d)) %>%
-      names()
-    non_numerics <- setdiff(names(result),c(numerics,"geometry"))
-    agr_cols <- c(setNames(rep_len("aggregate",length(numerics)),numerics),
-                  setNames(rep_len("identity",length(non_numerics)),non_numerics))
     result <- result %>%
-      #sf::st_sf(agr=agr_cols) # something wrong here, does not work for `Region Name` column. maybe bug in sf?
       sf::st_sf(agr="constant")
   }
 

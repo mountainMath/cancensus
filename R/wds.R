@@ -43,8 +43,6 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
     agencyID <- cl %>% xml2::xml_attr("agencyID")
     codelist_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
     codelist_fr <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text()
-    description_en <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text()
-    description_fr <- cl %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text()
     codes <- cl %>% xml2::xml_find_all("structure:Code")
     dplyr::tibble(`Agency ID`=agencyID,
            `Codelist ID`=codelist_id,
@@ -53,8 +51,10 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
            ID=codes %>% xml2::xml_attr("id"),
            en=codes %>% xml2::xml_find_all("common:Name[@xml:lang='en']") %>% xml2::xml_text(),
            fr=codes %>% xml2::xml_find_all("common:Name[@xml:lang='fr']") %>% xml2::xml_text(),
-           `Parent ID`=codes %>% xml2::xml_find_all("structure:Parent/Ref",flatten=FALSE) %>%
-             lapply(function(d)ifelse(is.null(d),NA,xml2::xml_attr(d,"id")))  %>% unlist()
+           # xml_find_first is vectorized over the nodeset in C and returns
+           # NA for codes without a parent node
+           `Parent ID`=codes %>% xml2::xml_find_first("structure:Parent/Ref") %>%
+             xml2::xml_attr("id")
              )
   }) %>%
     dplyr::bind_rows()

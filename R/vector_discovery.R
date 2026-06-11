@@ -181,10 +181,24 @@ semantic_search <- function(query_terms, census_vector_list) {
   })
 
   ordered_ngram_count <- trimws(names(sort(table(unlist(n_grams)), decreasing = TRUE)), "both")
+  if (length(ordered_ngram_count) == 0) {
+    stop("No census vector details available to search against.", call. = FALSE)
+  }
   revised_query <- c(query_terms, unlist(strsplit(query_terms, "\\s+")))
+  # Levenshtein distance is bounded below by the length difference, so
+  # n-grams whose length differs from the query term by more than the match
+  # threshold (2) can never match; prune them before the expensive adist()
+  # computation and treat them as infinitely distant
+  ngram_nchar <- nchar(ordered_ngram_count)
   lev_dist_df <- setNames(data.frame(sapply(seq_along(revised_query),
                                             function(i){
-                                              utils::adist(revised_query[i], ordered_ngram_count, ignore.case = TRUE)
+                                              q <- revised_query[i]
+                                              out <- rep(Inf, length(ordered_ngram_count))
+                                              cand <- which(abs(ngram_nchar - nchar(q)) <= 2)
+                                              if (length(cand) > 0) {
+                                                out[cand] <- utils::adist(q, ordered_ngram_count[cand], ignore.case = TRUE)
+                                              }
+                                              out
                                             }
   )), gsub("\\s+", "_", revised_query))
 
@@ -193,8 +207,10 @@ semantic_search <- function(query_terms, census_vector_list) {
       "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
       call. = FALSE
     )} else {
-      # best-matching n-gram for the full query and for each query word
-      best_ngrams <- unique(ordered_ngram_count[sapply(seq_len(ncol(lev_dist_df)),
+      # best-matching n-gram for each query component that has a close match
+      # (within the distance-2 threshold)
+      matching_cols <- which(vapply(lev_dist_df, min, numeric(1)) <= 2)
+      best_ngrams <- unique(ordered_ngram_count[sapply(matching_cols,
                                                        function(i) {
                                                          which.min(lev_dist_df[, i])
                                                        })])
@@ -233,7 +249,8 @@ semantic_search <- function(query_terms, census_vector_list) {
 keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) {
   sample_vector_list <- census_vector_list$details
   vector_words <- strsplit(gsub("\\s+"," ",gsub("[[:punct:]]"," ",tolower(sample_vector_list))), split = " ")
-  clean_vector_list <- lapply(vector_words, function(x) paste(unique(x), collapse = " "))
+  clean_vector_list <- vapply(vector_words, function(x) paste(unique(x), collapse = " "),
+                              character(1), USE.NAMES = FALSE)
 
   query_tokens <- unlist(strsplit(tolower(query_terms), "[^a-z]+"))
   # drop empty tokens (e.g. from queries starting with a digit), an empty

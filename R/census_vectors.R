@@ -116,27 +116,21 @@ parent_census_vectors <- function(vector_list){
   # Cache the full vector list once instead of repeated API/cache lookups
   all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
 
-  n=0
-  vector_list <-
-    all_vectors %>%
-    dplyr::filter(vector %in% base_list$parent_vector) %>%
-    dplyr::distinct(vector, .keep_all = TRUE)
-
-  # Accumulate results in a list to avoid repeated rbind operations
-  results_list <- list(vector_list)
-
-  while (n!=nrow(vector_list)) {
-    n=nrow(vector_list)
-    new_list <- all_vectors %>%
-      dplyr::filter(vector %in% vector_list$parent_vector)
-
-    if (nrow(new_list) > 0) {
-      results_list <- c(results_list, list(new_list))
-      # Bind all results at once and get distinct vectors
-      vector_list <- dplyr::bind_rows(results_list) %>%
-        dplyr::distinct(vector, .keep_all = TRUE)
-    }
+  # BFS on plain character vectors; hash-based %in%/match avoids re-binding
+  # and re-filtering the full accumulated tibble at every hierarchy level.
+  # `seen` accumulates vector codes in discovery order, which matches the
+  # previous bind_rows() + distinct() keep-first ordering.
+  seen <- unique(all_vectors$vector[all_vectors$vector %in% base_list$parent_vector])
+  frontier <- seen
+  while (length(frontier) > 0) {
+    parents <- unique(all_vectors$parent_vector[match(frontier, all_vectors$vector)])
+    new_vecs <- setdiff(all_vectors$vector[all_vectors$vector %in% parents], seen)
+    if (length(new_vecs) == 0) break
+    seen <- c(seen, new_vecs)
+    frontier <- new_vecs
   }
+  vector_list <- all_vectors[match(seen, all_vectors$vector), ]
+
   attr(vector_list, "dataset") <- dataset
   return(vector_list)
 }
@@ -185,33 +179,25 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,kee
   vector_list <- clean_vector_list(vector_list)
   base_list <- vector_list
   dataset <- dataset_from_vector_list(vector_list)
-  n <- 0
   child_level <- 1
   if (!is.null(dataset)) {
     # Cache the full vector list once instead of repeated API/cache lookups
     all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
 
-    vector_list <-
-      all_vectors %>%
-      dplyr::filter(.data$parent_vector %in% base_list$vector) %>%
-      dplyr::distinct(vector, .keep_all = TRUE)
-
-    # Accumulate results in a list to avoid repeated rbind operations
-    results_list <- list(vector_list)
-
-    while (n!=nrow(vector_list) && (is.na(max_level) || child_level<max_level)) {
-      child_level <- child_level+1
-      n=nrow(vector_list)
-      new_list <- all_vectors %>%
-        dplyr::filter(.data$parent_vector %in% vector_list$vector)
-
-      if (nrow(new_list) > 0) {
-        results_list <- c(results_list, list(new_list))
-        # Bind all results at once and get distinct vectors
-        vector_list <- dplyr::bind_rows(results_list) %>%
-          dplyr::distinct(vector, .keep_all = TRUE)
-      }
+    # BFS on plain character vectors; hash-based %in% avoids re-binding and
+    # re-filtering the full accumulated tibble at every hierarchy level.
+    # `seen` accumulates vector codes in discovery order, which matches the
+    # previous bind_rows() + distinct() keep-first ordering.
+    seen <- unique(all_vectors$vector[all_vectors$parent_vector %in% base_list$vector])
+    frontier <- seen
+    while (length(frontier) > 0 && (is.na(max_level) || child_level < max_level)) {
+      child_level <- child_level + 1
+      new_vecs <- setdiff(all_vectors$vector[all_vectors$parent_vector %in% frontier], seen)
+      if (length(new_vecs) == 0) break
+      seen <- c(seen, new_vecs)
+      frontier <- new_vecs
     }
+    vector_list <- all_vectors[match(seen, all_vectors$vector), ]
     # only keep leaves if leaves_only==TRUE
     if (leaves_only) {
       vector_list <- vector_list %>%
