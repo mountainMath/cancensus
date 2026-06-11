@@ -193,10 +193,13 @@ semantic_search <- function(query_terms, census_vector_list) {
       "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
       call. = FALSE
     )} else {
-      res <- sample_vector_list[grep(ordered_ngram_count[sapply(seq_len(ncol(lev_dist_df)),
-                                                                function(i) {
-                                                                  which.min(lev_dist_df[, i])
-                                                                })], clean_vector_list, value = FALSE, ignore.case = TRUE)]
+      # best-matching n-gram for the full query and for each query word
+      best_ngrams <- unique(ordered_ngram_count[sapply(seq_len(ncol(lev_dist_df)),
+                                                       function(i) {
+                                                         which.min(lev_dist_df[, i])
+                                                       })])
+      res <- sample_vector_list[grep(paste0(regex_escape(best_ngrams), collapse = "|"),
+                                     clean_vector_list, value = FALSE, ignore.case = TRUE)]
 
       if(length(res) == 1) {census_vector_list[which(census_vector_list$details %in% res),]} else if(length(res) >1) {
         message("Multiple possible matches. Results ordered by closeness.")
