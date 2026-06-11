@@ -29,7 +29,8 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
       if(isTRUE(overwrite)){
         message("Adding key to your .Renviron file. Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
         oldenv=readLines(renv)
-        newenv <- oldenv[-grep("CM_API_KEY", oldenv)]
+        key_lines <- grep("CM_API_KEY", oldenv)
+        newenv <- if (length(key_lines) > 0) oldenv[-key_lines] else oldenv
         writeLines(newenv, renv, sep = "\n")
       }
       else{
@@ -81,7 +82,8 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
       if(isTRUE(overwrite)){
         message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
         oldenv=readLines(renv)
-        newenv <- oldenv[-grep("CM_CACHE_PATH", oldenv)]
+        path_lines <- grep("CM_CACHE_PATH", oldenv)
+        newenv <- if (length(path_lines) > 0) oldenv[-path_lines] else oldenv
         writeLines(newenv, renv, sep = "\n")
       } else{
         tv <- readLines(renv)

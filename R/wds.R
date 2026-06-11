@@ -113,12 +113,17 @@ get_statcan_wds_data <- function(DGUIDs,
   member_string <- paste0(members,collapse = "+")
   add=paste0("DF_",level,ifelse(is.null(version),"",paste0(",",version)),"/A5.",dguid_string,".",gender,".",member_string,".1")
   wds_data_tempfile <- file.path(tempdir(),paste0("wds_data_",digest::digest(add),".csv"))
-  if (!file.exists(wds_data_tempfile)) {
+  if (refresh || !file.exists(wds_data_tempfile)) {
     response <- httr::GET(paste0(url,",",add),
                           httr::accept("text/csv"),
                           httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
                           httr::write_disk(wds_data_tempfile,overwrite = TRUE))
     if (!response$status_code=="200") {
+      # write_disk persists the body even on failure; capture it for the error
+      # message, then remove the file so the error response does not get read
+      # back as cached data on the next call
+      error_content <- tryCatch(httr::content(response), error = function(e) "")
+      unlink(wds_data_tempfile)
       if (!is.null(response$error) && ("curl_error_peer_failed_verification" %in% class(response$error))) {
         stop(paste0(strwrap(gsub(".+\\): ","",as.character(response$error),80)),collapse = "\n"),"\n",
              "This means that the authenticity of the StatCan API server can't be verified.\n",
@@ -127,7 +132,7 @@ get_statcan_wds_data <- function(DGUIDs,
              "can disable peer checking for the duration of the R session by typing\n\n",
              "httr::set_config(httr::config(ssl_verifypeer=0,ssl_verifystatus=0))","\n\n","into the console.")
       }
-      stop(paste0("Invalid request.\n",httr::content(response)))
+      stop(paste0("Invalid request.\n",error_content))
     }
   }
   census_year <- "2021"

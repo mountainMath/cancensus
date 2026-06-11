@@ -4,6 +4,14 @@ recall_data_path <- function(){
   file.path(tempdir(),"recall.csv")
 }
 
+# Match recalled vector IDs against the JSON-encoded `vectors` metadata field.
+# IDs are anchored on the surrounding JSON quotes so that e.g. a recall of
+# "v_CA21_1" does not also match cached data for "v_CA21_10".
+recalled_vector_pattern <- function(vectors){
+  escaped <- gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", vectors)
+  paste0('"(',paste0(escaped,collapse="|"),')"')
+}
+
 
 #' Get metadata for recalled data
 #'
@@ -29,7 +37,7 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
       utils::download.file(url,path,mode="wb",quiet=TRUE),
       error = function(e) {
         warning("Unable to download recall database at this point.")
-        problem <- TRUE
+        problem <<- TRUE
       },
       warning = function(e) {
         warning("Unable to download recall database at this point.")
@@ -79,7 +87,7 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
                                       is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
                                       .data$version<=.y$api_version,
                                       .data$dataset==.y$dataset,
-                                      grepl(paste0(.x$vector,collapse = "|"),.data$vectors))) %>%
+                                      grepl(recalled_vector_pattern(.x$vector),.data$vectors))) %>%
       dplyr::bind_rows() %>%
       dplyr::ungroup()
 
