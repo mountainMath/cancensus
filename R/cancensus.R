@@ -181,7 +181,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
           readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
-        check_recalled_data_and_warn(meta_file,params)
         httr::content(response, type = "text", encoding = "UTF-8") %>%
           textConnection %>%
           utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
@@ -206,6 +205,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       saveRDS(metadata, file = meta_file)
     } else {
       if (!quiet) message("Reading vectors data from local cache.")
+      check_recalled_data_and_warn(meta_file,params)
       # Load `result` object from cache.
       load(file = data_file)
     }

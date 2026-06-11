@@ -69,7 +69,7 @@ clean_vector_list <- function(vector_list,dataset=NULL){
 dataset_from_vector_list <- function(vector_list){
   dataset <- attr(vector_list,'dataset')
   if (is.null(dataset)) {
-    vectors = ifelse(inherits(vector_list,"character"),vector_list,vector_list$vector)
+    vectors = if (inherits(vector_list,"character")) vector_list else vector_list$vector
     dataset <- vectors %>%
       as.character() %>%
       lapply(function(d)unlist(strsplit(d,"_"))[2]) %>%
