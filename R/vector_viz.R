@@ -53,10 +53,11 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
 
     # Get the root vector info
     all_vectors <- list_census_vectors(dataset, quiet = TRUE)
-    root_info <- all_vectors %>% dplyr::filter(.data$vector == !!vector)
+    root_info <- all_vectors %>% dplyr::filter(.data$vector %in% !!vector)
 
     if (nrow(root_info) == 0) {
-      stop(paste0("Vector '", vector, "' not found in dataset '", dataset, "'."),
+      stop(paste0("Vector '", paste0(vector, collapse = "', '"),
+                  "' not found in dataset '", dataset, "'."),
            call. = FALSE)
     }
   } else if (inherits(vector, "data.frame")) {
@@ -142,9 +143,17 @@ if (!is.na(max_depth) && current_depth > max_depth) {
       label <- paste0(label, " [", child$type, "]")
     }
 
-    # Check if this is a leaf (no children in tree)
+    # Check if this is a leaf; consult the full vector list so that nodes
+    # truncated by max_depth are not falsely labeled as leaves
     has_children_in_tree <- any(tree_vectors$parent_vector == child$vector, na.rm = TRUE)
-    leaf_indicator <- if (!has_children_in_tree) " (leaf)" else ""
+    has_children_in_dataset <- any(all_vectors$parent_vector == child$vector, na.rm = TRUE)
+    leaf_indicator <- if (!has_children_in_dataset) {
+      " (leaf)"
+    } else if (!has_children_in_tree) {
+      " ..."
+    } else {
+      ""
+    }
 
     # Print this child
     cat(paste0(prefix, connector, child$vector, ": ", label, leaf_indicator, "\n"))

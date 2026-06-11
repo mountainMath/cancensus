@@ -32,7 +32,12 @@ cache_path <- function(...) {
          .call = FALSE)
   }
   if (!file.exists(cache_dir)) {
-    dir.create(cache_dir, showWarnings = FALSE)
+    dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+    if (!dir.exists(cache_dir)) {
+      stop(paste0("Could not create cache directory '",cache_dir,
+                  "'. Check the 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option."),
+           call. = FALSE)
+    }
   }
   cache_key <- paste0(...)
   if (!identical(cache_key, character(0)))
@@ -102,13 +107,17 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
    tryCatch({
      response <- call_fn()
 
-     # Check for transient HTTP errors (5xx, timeout, connection errors)
+     # Check for transient HTTP errors (5xx, rate limiting, request timeout)
      status <- httr::status_code(response)
-     if (status >= 500 && status < 600 && attempt < max_retries) {
-       # Server error - retry
+     if (((status >= 500 && status < 600) || status %in% c(408, 429)) && attempt < max_retries) {
+       # Transient error - retry, honoring a Retry-After header if present
        wait_time <- 2 ^ (attempt - 1)  # Exponential backoff: 1, 2, 4 seconds
+       retry_after <- suppressWarnings(as.numeric(httr::headers(response)$`retry-after`))
+       if (length(retry_after) == 1 && !is.na(retry_after) && retry_after > 0) {
+         wait_time <- max(wait_time, min(ceiling(retry_after), 60))
+       }
        if (!quiet) {
-         message(sprintf("Server error (HTTP %d), retrying in %ds (attempt %d/%d)...",
+         message(sprintf("Transient error (HTTP %d), retrying in %ds (attempt %d/%d)...",
                          status, wait_time, attempt + 1, max_retries))
        }
        Sys.sleep(wait_time)

@@ -403,8 +403,8 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     if (!quiet) message("Reading dataset list from temporary cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (!quiet && is.null(last_updated) ||
-          difftime(Sys.time(), last_updated, units = "days") > 1) {
+    if (!quiet && (is.null(last_updated) ||
+          difftime(Sys.time(), last_updated, units = "days") > 1)) {
       warning(paste("Cached dataset list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
