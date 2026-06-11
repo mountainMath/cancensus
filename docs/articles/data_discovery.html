@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Data discovery">
@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,18 +106,18 @@ starting with census tract.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
-<span><span class="co">#&gt;    dataset description           geo_dataset attribution reference reference_url</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census    CA1996      StatCan 19… 92-351-U  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census    CA01        StatCan 20… 92-378-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census    CA06        StatCan 20… 92-566-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Census a… CA11        StatCan 20… 98-301-X… https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census    CA16        StatCan 20… 98-301-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census    CA21        StatCan 20… 98-301-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Census x… CA01        StatCan 20… 92-378-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Census x… CA06        StatCan 20… 92-566-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census x… CA11        StatCan 20… 98-301-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census x… CA16        StatCan 20… 98-301-X  https://www1…</span></span>
+<span><span class="co">#&gt;    dataset description           attribution reference reference_url geo_dataset</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census    StatCan 19… 92-351-U  https://www1… CA1996     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census    StatCan 20… 92-378-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census    StatCan 20… 92-566-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Census a… StatCan 20… 98-301-X… https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census    StatCan 20… 98-301-X  https://www1… CA16       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census    StatCan 20… 98-301-X  https://www1… CA21       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Census x… StatCan 20… 92-378-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Census x… StatCan 20… 92-566-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census x… StatCan 20… 98-301-X  https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census x… StatCan 20… 98-301-X  https://www1… CA16       </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 19 more rows</span></span></span></code></pre></div>
 <p>The <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> function also provides
 additional background like series reference code, catalogue reference,
@@ -246,20 +246,20 @@ approximate string distances based on the generalized Levenshtein
 distance.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"after tax incomes"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"semantic"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 56 × 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 243 × 4</span></span></span>
 <span><span class="co">#&gt;    vector      type  label                                               details</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA16_2210 Total Number of after-tax income recipients aged 15 year… Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_CA16_2213 Total Median after-tax income in 2015 among recipients (… Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_CA16_2306 Total Percentage with after-tax income                    Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_CA16_2297 Total Total - After-tax income groups in 2015 for the po… Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_CA16_2300 Total Without after-tax income                            Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_CA16_2303 Total With after-tax income                               Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_CA16_2309 Total Under $10,000 (including loss)                      Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA16_2312 Total $10,000 to $19,999                                  Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA16_2315 Total $20,000 to $29,999                                  Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA16_2318 Total $30,000 to $39,999                                  Income…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 46 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA16_454  Total Married or living common law                        Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_CA16_457  Total Married                                             Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_CA16_460  Total Living common law                                   Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_CA16_463  Total Not married and not living common law               Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_CA16_466  Total Never married                                       Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_CA16_469  Total Separated                                           Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_CA16_472  Total Divorced                                            Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA16_475  Total Widowed                                             Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA16_487  Total Common-law couples                                  Census…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA16_2201 Total Total - Income statistics in 2015 for the populati… Income…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 233 more rows</span></span></span></code></pre></div>
 <p>Semantic search is more robust to spelling and punctuation issues
 that may come up with exact search. For example, while this throws a
 warning:</p>
@@ -273,13 +273,20 @@ warning:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">'ojib cree'</span>, dataset <span class="op">=</span> <span class="st">'CA16'</span>, type <span class="op">=</span> <span class="st">'total'</span>, query_type <span class="op">=</span> <span class="st">'semantic'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Multiple possible matches. Results ordered by closeness.</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
-<span><span class="co">#&gt;   vector      type  label    details                                            </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> v_CA16_626  Total Oji-Cree Language; Total - Mother tongue for the total popu…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> v_CA16_1433 Total Oji-Cree Language; Total - Language spoken most often at ho…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> v_CA16_2676 Total Oji-Cree 25% Data; Total - Knowledge of languages for the p…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> v_CA16_5930 Total Oji-Cree 25% Data; Work; Total - Language used most often a…</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 57 × 4</span></span></span>
+<span><span class="co">#&gt;    vector     type  label                     details                           </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA16_575 Total Cree-Montagnais languages Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> v_CA16_578 Total Atikamekw                 Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> v_CA16_581 Total Montagnais (Innu)         Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> v_CA16_584 Total Moose Cree                Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> v_CA16_587 Total Naskapi                   Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> v_CA16_590 Total Northern East Cree        Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> v_CA16_593 Total Plains Cree               Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA16_596 Total Southern East Cree        Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA16_599 Total Swampy Cree               Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA16_602 Total Woods Cree                Language; Total - Mother tongue f…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 47 more rows</span></span></span></code></pre></div>
 <p>Results are ordered by string proximity if there are multiple
 possible matches.</p>
 </div>

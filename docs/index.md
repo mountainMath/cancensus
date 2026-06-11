@@ -253,18 +253,18 @@ R packages, including
 
 If you wish to cite cancensus:
 
-von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R
+von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R
 package to access, retrieve, and work with Canadian Census data and
-geography. v0.6.0.
+geography. v0.6.1.
 
 A BibTeX entry for LaTeX users is
 
       @Manual{cancensus,
         author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
         title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-        year = {2025},
+        year = {2026},
         doi = {10.32614/CRAN.package.cancensus},
-        note = {R package version 0.6.0},
+        note = {R package version 0.6.1},
         url = {https://mountainmath.github.io/cancensus/}
       }
 

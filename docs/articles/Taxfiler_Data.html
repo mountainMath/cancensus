@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Additional datasets: Annual T1FF taxfiler data">
@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,27 +135,27 @@ use <code><a href="../reference/list_census_datasets.html">list_census_datasets(
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"taxfiler"</span>,<span class="va">description</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 6</span></span></span>
-<span><span class="co">#&gt;    dataset description           geo_dataset attribution reference reference_url</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF taxfiler d… CA1996      StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF taxfiler d… CA01        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF taxfiler d… CA06        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF taxfiler d… CA11        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF taxfiler d… CA16        StatCan 20… 72-212-X  https://www1…</span></span></code></pre></div>
+<span><span class="co">#&gt;    dataset description           attribution reference reference_url geo_dataset</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TX2000  2000 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA1996     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TX2001  2001 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TX2002  2002 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TX2003  2003 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TX2004  2004 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TX2005  2005 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA01       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TX2006  2006 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TX2007  2007 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TX2008  2008 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TX2009  2009 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> TX2010  2010 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> TX2011  2011 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA06       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> TX2012  2012 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> TX2013  2013 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> TX2014  2014 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> TX2015  2015 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA11       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TX2016  2016 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA16       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> TX2017  2017 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA16       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> TX2018  2018 T1FF taxfiler d… StatCan 20… 72-212-X  https://www1… CA16</span></span></code></pre></div>
 <p>And, as an example, available data vectors for one such T1FF
 dataset.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
