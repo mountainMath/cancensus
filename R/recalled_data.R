@@ -8,8 +8,7 @@ recall_data_path <- function(){
 # IDs are anchored on the surrounding JSON quotes so that e.g. a recall of
 # "v_CA21_1" does not also match cached data for "v_CA21_10".
 recalled_vector_pattern <- function(vectors){
-  escaped <- gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", vectors)
-  paste0('"(',paste0(escaped,collapse="|"),')"')
+  paste0('"(',paste0(regex_escape(vectors),collapse="|"),')"')
 }
 
 

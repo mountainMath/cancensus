@@ -41,6 +41,11 @@ cache_path <- function(...) {
 }
 
 
+# Escape regex metacharacters so user input can be matched literally
+regex_escape <- function(x) {
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", x)
+}
+
 translate_dataset <- function(dataset) {
   dataset <- as.character(dataset)
   translations <- c("1996"="CA1996",

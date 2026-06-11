@@ -129,7 +129,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
                                  .name_repair = "minimal")
     names(hintlist) <- "Similar named regions"
     #
-    if (length(hintlist) > 0) {
+    if (nrow(hintlist) > 0) {
       warning("No results found. Please use accurate spelling. See above for list of similarly named regions.")
       print(hintlist)
     } else {

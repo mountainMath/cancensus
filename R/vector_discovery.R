@@ -41,7 +41,7 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
     hintlist <- dplyr::as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
     names(hintlist) <- "Similarly named objects"
     #
-    if (length(hintlist) > 0) {
+    if (nrow(hintlist) > 0) {
       warning("No results found. Please use accurate spelling. See above for list of variables with similar named terms.")
       print(hintlist)
     } else {
@@ -126,7 +126,8 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
     census_vector_list <- census_vector_list[census_vector_list$type %in% type, ]
   }
   if (query_type == "exact") {
-    result <- census_vector_list[grep(query, census_vector_list$details, ignore.case = TRUE), ]
+    # escape the query so regex metacharacters in census labels like "($)" match literally
+    result <- census_vector_list[grep(regex_escape(query), census_vector_list$details, ignore.case = TRUE), ]
     if(length(result$vector)>=1) result else {
       warning("No exact matches found. Please check spelling and try again or consider using semantic or keyword search.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
               call. = FALSE)
@@ -168,10 +169,9 @@ semantic_search <- function(query_terms, census_vector_list) {
     n <- length(words)
     if (n == 0) return(character(0))
     if (word_count == 1) return(words)
-    if (n < word_count) {
-      return(paste(words, collapse = " "))
-    }
-    # Pre-allocate result vector for efficiency
+    # Pre-allocate result vector for efficiency; when n < word_count this
+    # yields all suffix n-grams, matching pre-0.6.0 behavior
+
     result <- character(n)
     for (i in seq_len(n)) {
       end_idx <- min(n, i + word_count - 1)
@@ -193,7 +193,7 @@ semantic_search <- function(query_terms, census_vector_list) {
       "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
       call. = FALSE
     )} else {
-      res <- sample_vector_list[grep(ordered_ngram_count[sapply(seq_along(ncol(lev_dist_df)),
+      res <- sample_vector_list[grep(ordered_ngram_count[sapply(seq_len(ncol(lev_dist_df)),
                                                                 function(i) {
                                                                   which.min(lev_dist_df[, i])
                                                                 })], clean_vector_list, value = FALSE, ignore.case = TRUE)]
@@ -232,7 +232,11 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
   vector_words <- strsplit(gsub("\\s+"," ",gsub("[[:punct:]]"," ",tolower(sample_vector_list))), split = " ")
   clean_vector_list <- lapply(vector_words, function(x) paste(unique(x), collapse = " "))
 
-  query_words <- paste(unlist(strsplit(tolower(query_terms), "[^a-z]+")), collapse = "|")
+  query_tokens <- unlist(strsplit(tolower(query_terms), "[^a-z]+"))
+  # drop empty tokens (e.g. from queries starting with a digit), an empty
+  # regex alternative would match every vector
+  query_tokens <- query_tokens[nzchar(query_tokens)]
+  query_words <- paste(query_tokens, collapse = "|")
   index_matches <- grep(query_words, clean_vector_list, ignore.case = TRUE)
 
   ret_matches <- clean_vector_list[index_matches]
