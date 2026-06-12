@@ -27,7 +27,6 @@ Imports: digest (>= 0.1),
     geojsonsf,
     rlang,
     readr
-RoxygenNote: 7.3.3
 Suggests: knitr,
     ggplot2,
     leaflet,
@@ -45,3 +44,4 @@ URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/c
 BugReports: https://github.com/mountainMath/cancensus/issues
 Depends: 
     R (>= 4.1)
+Config/roxygen2/version: 8.0.0
