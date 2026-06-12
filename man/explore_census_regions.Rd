@@ -23,7 +23,7 @@ tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographi
 
 explore_census_vectors(dataset = "CA16")
 
-explore_census_regions(dataset = "CA11")
+explore_census_regions(dataset = "CA21")
 
 }
 }

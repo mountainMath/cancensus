@@ -101,8 +101,8 @@ This particular dataset has over 800 individual vectors. The vector
 codes follow a regular pattern across different years, and we can use
 this to quickly identify all the relevant variables of interest across
 multiple datasets. We can utilized the [CensusMapper graphical variable
-selection interface](https://censusmapper.ca/api/CA16#api_variable),
-which can also be reached by calling
+selection interface](https://censusmapper.ca/api), which can also be
+reached by calling
 [`explore_census_vectors()`](https://mountainmath.github.io/cancensus/reference/explore_census_vectors.md)
 from the R console. For this example we are interested in low income
 families and note that the internal CensusMapper vector for all families

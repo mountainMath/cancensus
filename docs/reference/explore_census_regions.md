@@ -28,7 +28,7 @@ if (FALSE) { # \dontrun{
 
 explore_census_vectors(dataset = "CA16")
 
-explore_census_regions(dataset = "CA11")
+explore_census_regions(dataset = "CA21")
 
 } # }
 ```

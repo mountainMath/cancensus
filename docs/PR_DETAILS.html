@@ -59,7 +59,7 @@
 <div class="section level3">
 <h3 id="id_1-census-vector-hierarchy-traversal-12-19x-faster">1. Census Vector Hierarchy Traversal (1.2-1.9x faster)<a class="anchor" aria-label="anchor" href="#id_1-census-vector-hierarchy-traversal-12-19x-faster"></a></h3>
 <p><strong>Functions affected:</strong> - <code><a href="reference/parent_census_vectors.html">parent_census_vectors()</a></code> - <strong>1.92x faster</strong> (92% speedup) - <code><a href="reference/child_census_vectors.html">child_census_vectors()</a></code> - <strong>1.23x faster</strong> (23% speedup)</p>
-<p><strong>Optimizations:</strong> 1. <strong>Cache optimization</strong> - Load full vector list once instead of repeated <code><a href="reference/list_census_vectors.html">list_census_vectors()</a></code> calls 2. <strong>List accumulation</strong> - Replace O(n²) <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> in loops with efficient list + <code>bind_rows()</code></p>
+<p><strong>Optimizations:</strong> 1. <strong>Cache optimization</strong> - Load full vector list once instead of repeated <code><a href="reference/list_census_vectors.html">list_census_vectors()</a></code> calls 2. <strong>List accumulation</strong> - Replace O(n²) <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> in loops with efficient list + <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code></p>
 <p><strong>Impact:</strong> - Eliminates 8+ cache lookups per function call → 1 lookup - Prevents memory thrashing from repeated data frame copying - Scales much better with deep hierarchies (8+ levels)</p>
 </div>
 <div class="section level3">
@@ -113,7 +113,7 @@
 <div class="section level3">
 <h3 id="id_2-code-complexity">2. Code Complexity<a class="anchor" aria-label="anchor" href="#id_2-code-complexity"></a></h3>
 <p><strong>Optimization:</strong> List accumulation instead of direct rbind</p>
-<p><strong>Trade-off:</strong> - <strong>Before:</strong> Simple <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> in loop (but O(n²)) - <strong>After:</strong> List accumulation + <code>bind_rows()</code> (O(n) but more lines)</p>
+<p><strong>Trade-off:</strong> - <strong>Before:</strong> Simple <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> in loop (but O(n²)) - <strong>After:</strong> List accumulation + <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code> (O(n) but more lines)</p>
 <p><strong>Impact:</strong> - Added ~10 lines of code per function - Inline comments explain optimization - Still using familiar dplyr patterns</p>
 <p><strong>Recommendation:</strong> ✅ Accept - complexity increase is minimal and well-documented</p>
 </div>

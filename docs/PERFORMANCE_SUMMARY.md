@@ -25,8 +25,9 @@ lookups**: Calling
 inside while loops (8+ times per call)
 
 **Solution:** - **List accumulation**: Collect results in a list, then
-`bind_rows()` once at the end - **Cache optimization**: Load full vector
-list once at function start, reuse throughout
+[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind_rows.html)
+once at the end - **Cache optimization**: Load full vector list once at
+function start, reuse throughout
 
 **Performance Gains:** -
 [`parent_census_vectors()`](https://mountainmath.github.io/cancensus/reference/parent_census_vectors.md):

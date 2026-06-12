@@ -43,7 +43,7 @@ Github.
 
 **cancensus** requires a valid CensusMapper API key to use. You can
 obtain a free API key by [signing
-up](https://censusmapper.ca/users/sign_up) for a CensusMapper account.
+up](https://censusmapper.ca/auth/register) for a CensusMapper account.
 To check your API key, just go to “Edit Profile” (in the top-right of
 the CensusMapper menu bar). Once you have your key, you can store it in
 your system environment so it is automatically used in API calls. To do
@@ -302,8 +302,10 @@ acknowledgement of source:
 - [`as_census_region_list()`](https://mountainmath.github.io/cancensus/reference/as_census_region_list.md)
   :
 
-  Convert a (suitably filtered) data frame from `list_census_regions` to
-  a list suitable for passing to `get_census`.
+  Convert a (suitably filtered) data frame from
+  [`list_census_regions`](https://mountainmath.github.io/cancensus/reference/list_census_regions.html)
+  to a list suitable for passing to
+  [`get_census`](https://mountainmath.github.io/cancensus/reference/get_census.html).
 
 - [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
   : Query the CensusMapper API for available vectors for a given
