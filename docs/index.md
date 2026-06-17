@@ -203,7 +203,7 @@ is designed to retrieve and work with public Statistics Canada data
 tables. The cansim prepares retrieved data tables as analysis-ready tidy
 dataframes and provides a number of convenience tools and functions to
 make it easier to work with Statistics Canada data. It is available on
-CRAN and on [Github](https://github.com/mountainMath/cancensus). Data
+CRAN and on [Github](https://github.com/mountainMath/cansim). Data
 retrieved via the cansim package can be linked to census data via the
 `GeoUID` field.
 

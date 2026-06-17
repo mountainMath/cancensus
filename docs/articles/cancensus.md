@@ -24,7 +24,7 @@ publicly available data from Statistics Canada for the 2006, 2011, and
 
 **cancensus** requires a valid CensusMapper API key to use. You can
 obtain a free API key by [signing
-up](https://censusmapper.ca/users/sign_up) for a CensusMapper account.
+up](https://censusmapper.ca/auth/register) for a CensusMapper account.
 CensusMapper API keys are free and public API quotas are generous;
 however, due to incremental costs of serving large quantities of data,
 there limits to API usage in place. For most use cases, these API limits

@@ -73,6 +73,10 @@
   parent ID extraction is vectorized (~5-10x faster metadata parsing for
   large levels such as DA)
 
+### Minor changes
+
+- update links to refreshed CensusMapper
+
 ## cancensus 0.6.0
 
 CRAN release: 2026-04-14
