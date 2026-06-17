@@ -24,6 +24,9 @@
 - `get_census()` no longer scans the package library (`installed.packages()`) on spatial calls
 - `get_statcan_wds_metadata()` parent ID extraction is vectorized (~5-10x faster metadata parsing for large levels such as DA)
 
+## Minor changes
+- update links to refreshed CensusMapper
+
 # cancensus 0.6.0
 
 ## Performance Improvements

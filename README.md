@@ -111,7 +111,7 @@ A Python port of **cancensus** is available via the [pycancensus package](https:
 ### Related packages
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). Data retrieved via the cansim package can be linked to census data via the `GeoUID` field.
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cansim). Data retrieved via the cansim package can be linked to census data via the `GeoUID` field.
 
 The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
