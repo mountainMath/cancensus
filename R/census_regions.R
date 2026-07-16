@@ -39,6 +39,11 @@
 #' }
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   dataset <- translate_dataset(dataset)
+  cache_key <- paste0(dataset, "_regions")
+  if (use_cache) {
+    cached <- session_cache_get(cache_key)
+    if (!is.null(cached)) return(cached)
+  }
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
 
   if (!use_cache || !file.exists(cache_file)) {
@@ -63,18 +68,18 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    result
+    session_cache_set(cache_key, result)
   } else {
     if (!quiet) message("Reading regions list from local cache.")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
-    if (!quiet && is.null(last_updated) ||
-        difftime(Sys.time(), last_updated, units = "days") > 1) {
+    if (!quiet && (is.null(last_updated) ||
+        difftime(Sys.time(), last_updated, units = "days") > 1)) {
       warning(paste("Cached regions list may be out of date. Set `use_cache =",
                     "FALSE` to update it."))
     }
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    result
+    session_cache_set(cache_key, result)
   }
 }
 
@@ -129,7 +134,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
                                  .name_repair = "minimal")
     names(hintlist) <- "Similar named regions"
     #
-    if (length(hintlist) > 0) {
+    if (nrow(hintlist) > 0) {
       warning("No results found. Please use accurate spelling. See above for list of similarly named regions.")
       print(hintlist)
     } else {
@@ -197,7 +202,7 @@ as_census_region_list <- function(tbl) {
 #'   add_unique_names_to_region_list()
 #' }
 add_unique_names_to_region_list <- function(region_list) {
-  gs <- dplyr::groups(region_list)
+  gs <- dplyr::group_vars(region_list)
   r<-region_list %>%
     dplyr::group_by(.data$name) %>%
     dplyr::mutate(count=dplyr::n()) %>%
@@ -210,7 +215,7 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::select(-.data$count) %>%
     dplyr::ungroup()
 
-  if (length(gs)>1) {
+  if (length(gs)>0) {
     r <- r %>%
       dplyr::group_by(dplyr::across(dplyr::all_of(gs)))
   }

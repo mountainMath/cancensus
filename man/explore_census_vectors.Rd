@@ -4,7 +4,7 @@
 \alias{explore_census_vectors}
 \title{Interactively browse Census variables and regions on Censusmapper.ca in a new browser window}
 \usage{
-explore_census_vectors(dataset = "CA16")
+explore_census_vectors(dataset = "CA21")
 }
 \arguments{
 \item{dataset}{The dataset to query for available vectors, e.g. \code{'CA16'}.
@@ -23,7 +23,7 @@ tools available for the CA16, CA11, CA06, and CA01 Census datasets and geographi
 
 explore_census_vectors(dataset = "CA16")
 
-explore_census_regions(dataset = "CA11")
+explore_census_regions(dataset = "CA21")
 
 }
 }

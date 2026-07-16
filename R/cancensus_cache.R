@@ -92,9 +92,9 @@ list_cancensus_cache <- function(){
     dplyr::pull(.data$path)
 
   if (length(missing_sizes)>0) {
-    manual_sizes <- missing_sizes %>%
-      lapply(function(p) dplyr::tibble(path=p,manual_size=file.info(file.path(cp,p))$size)) %>%
-      dplyr::bind_rows()
+    # file.info is vectorized, stat all files in one batch
+    manual_sizes <- dplyr::tibble(path=missing_sizes,
+                                  manual_size=file.info(file.path(cp,missing_sizes))$size)
 
     all <- all %>%
       dplyr::left_join(manual_sizes,by="path") %>%

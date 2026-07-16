@@ -1,5 +1,23 @@
 # Internal functions that do useful things frequently required in other functions
 
+# In-memory session cache for metadata (vector and region lists). Sits in
+# front of the tempdir() file cache so repeated calls within a session don't
+# pay the disk read + deserialization cost on every access.
+.cancensus_session_cache <- new.env(parent = emptyenv())
+
+session_cache_get <- function(key){
+  if (exists(key, envir = .cancensus_session_cache, inherits = FALSE)) {
+    get(key, envir = .cancensus_session_cache, inherits = FALSE)
+  } else {
+    NULL
+  }
+}
+
+session_cache_set <- function(key, value){
+  assign(key, value, envir = .cancensus_session_cache)
+  value
+}
+
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"
@@ -32,7 +50,12 @@ cache_path <- function(...) {
          .call = FALSE)
   }
   if (!file.exists(cache_dir)) {
-    dir.create(cache_dir, showWarnings = FALSE)
+    dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+    if (!dir.exists(cache_dir)) {
+      stop(paste0("Could not create cache directory '",cache_dir,
+                  "'. Check the 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option."),
+           call. = FALSE)
+    }
   }
   cache_key <- paste0(...)
   if (!identical(cache_key, character(0)))
@@ -40,6 +63,11 @@ cache_path <- function(...) {
   cache_dir
 }
 
+
+# Escape regex metacharacters so user input can be matched literally
+regex_escape <- function(x) {
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", x)
+}
 
 translate_dataset <- function(dataset) {
   dataset <- as.character(dataset)
@@ -69,12 +97,8 @@ clean_vector_list <- function(vector_list,dataset=NULL){
 dataset_from_vector_list <- function(vector_list){
   dataset <- attr(vector_list,'dataset')
   if (is.null(dataset)) {
-    vectors = ifelse(inherits(vector_list,"character"),vector_list,vector_list$vector)
-    dataset <- vectors %>%
-      as.character() %>%
-      lapply(function(d)unlist(strsplit(d,"_"))[2]) %>%
-      unlist() %>%
-      unique()
+    vectors = if (inherits(vector_list,"character")) vector_list else vector_list$vector
+    dataset <- unique(sub("^[^_]+_([^_]+).*$", "\\1", as.character(vectors)))
     if (length(dataset)!=1) stop("Unable to determine dataset")
   }
   dataset
@@ -97,13 +121,17 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
    tryCatch({
      response <- call_fn()
 
-     # Check for transient HTTP errors (5xx, timeout, connection errors)
+     # Check for transient HTTP errors (5xx, rate limiting, request timeout)
      status <- httr::status_code(response)
-     if (status >= 500 && status < 600 && attempt < max_retries) {
-       # Server error - retry
+     if (((status >= 500 && status < 600) || status %in% c(408, 429)) && attempt < max_retries) {
+       # Transient error - retry, honoring a Retry-After header if present
        wait_time <- 2 ^ (attempt - 1)  # Exponential backoff: 1, 2, 4 seconds
+       retry_after <- suppressWarnings(as.numeric(httr::headers(response)$`retry-after`))
+       if (length(retry_after) == 1 && !is.na(retry_after) && retry_after > 0) {
+         wait_time <- max(wait_time, min(ceiling(retry_after), 60))
+       }
        if (!quiet) {
-         message(sprintf("Server error (HTTP %d), retrying in %ds (attempt %d/%d)...",
+         message(sprintf("Transient error (HTTP %d), retrying in %ds (attempt %d/%d)...",
                          status, wait_time, attempt + 1, max_retries))
        }
        Sys.sleep(wait_time)

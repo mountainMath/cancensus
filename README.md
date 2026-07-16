@@ -36,7 +36,7 @@ library(cancensus)
 
 ### API key
 
-**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/users/sign_up) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key('<your_api_key>', install = TRUE)`.
+**cancensus** requires a valid CensusMapper API key to use. You can obtain a free API key by [signing up](https://censusmapper.ca/auth/register) for a CensusMapper account. To check your API key, just go to "Edit Profile" (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter `set_cancensus_api_key('<your_api_key>', install = TRUE)`.
 
 CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.
 
@@ -111,7 +111,7 @@ A Python port of **cancensus** is available via the [pycancensus package](https:
 ### Related packages
 The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast [socio-economic data repository](https://www150.statcan.gc.ca/n1/en/type/data) with thousands of data tables available for public access. 
 
-The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cancensus). Data retrieved via the cansim package can be linked to census data via the `GeoUID` field.
+The [cansim package](https://mountainmath.github.io/cansim/index.html) is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on [Github](https://github.com/mountainMath/cansim). Data retrieved via the cansim package can be linked to census data via the `GeoUID` field.
 
 The [tongfen package](https://mountainmath.github.io/tongfen/index.html) automates the task of obtaining census variables from different census years on a common geography. It is available on [Github](https://github.com/mountainMath/tongfen).
 
@@ -145,8 +145,8 @@ There are several other jurisdiction where census data is available via R packag
 
 If you wish to cite cancensus:
 
-  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.6.0.
+  von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to
+  access, retrieve, and work with Canadian Census data and geography. v0.6.1.
 
 
 A BibTeX entry for LaTeX users is
@@ -154,9 +154,9 @@ A BibTeX entry for LaTeX users is
   @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-    year = {2025},
+    year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.0},
+    note = {R package version 0.6.1},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```

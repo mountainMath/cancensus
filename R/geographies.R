@@ -37,8 +37,13 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   }
   level_map <-  c("CMACA"="CMA","CA"="CMA","POPCNTR"="PC","POPCTR"="PC")
   if (level %in% names(level_map)) level <-level_map[[level]]
-  geo_base_path <- cache_path("geographies")
-  if (!dir.exists(geo_base_path)) dir.create(geo_base_path)
+  geo_base_path <- if (is.null(cache_path)) {
+    # local argument shadows the cache_path() helper, R resolves the call to the function
+    cache_path("geographies")
+  } else {
+    file.path(cache_path,"geographies")
+  }
+  if (!dir.exists(geo_base_path)) dir.create(geo_base_path,recursive = TRUE)
   geo_base_path <- file.path(geo_base_path,type)
   if (!dir.exists(geo_base_path)) dir.create(geo_base_path)
   exdir <- file.path(geo_base_path,level)

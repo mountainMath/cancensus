@@ -10,7 +10,7 @@ the CA16, CA11, CA06, and CA01 Census datasets and geographies.
 ## Usage
 
 ``` r
-explore_census_vectors(dataset = "CA16")
+explore_census_vectors(dataset = "CA21")
 ```
 
 ## Arguments
@@ -28,7 +28,7 @@ if (FALSE) { # \dontrun{
 
 explore_census_vectors(dataset = "CA16")
 
-explore_census_regions(dataset = "CA11")
+explore_census_regions(dataset = "CA21")
 
 } # }
 ```

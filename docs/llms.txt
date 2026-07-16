@@ -43,7 +43,7 @@ Github.
 
 **cancensus** requires a valid CensusMapper API key to use. You can
 obtain a free API key by [signing
-up](https://censusmapper.ca/users/sign_up) for a CensusMapper account.
+up](https://censusmapper.ca/auth/register) for a CensusMapper account.
 To check your API key, just go to “Edit Profile” (in the top-right of
 the CensusMapper menu bar). Once you have your key, you can store it in
 your system environment so it is automatically used in API calls. To do
@@ -203,7 +203,7 @@ is designed to retrieve and work with public Statistics Canada data
 tables. The cansim prepares retrieved data tables as analysis-ready tidy
 dataframes and provides a number of convenience tools and functions to
 make it easier to work with Statistics Canada data. It is available on
-CRAN and on [Github](https://github.com/mountainMath/cancensus). Data
+CRAN and on [Github](https://github.com/mountainMath/cansim). Data
 retrieved via the cansim package can be linked to census data via the
 `GeoUID` field.
 
@@ -253,18 +253,18 @@ R packages, including
 
 If you wish to cite cancensus:
 
-von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R
+von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R
 package to access, retrieve, and work with Canadian Census data and
-geography. v0.6.0.
+geography. v0.6.1.
 
 A BibTeX entry for LaTeX users is
 
       @Manual{cancensus,
         author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
         title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-        year = {2025},
+        year = {2026},
         doi = {10.32614/CRAN.package.cancensus},
-        note = {R package version 0.6.0},
+        note = {R package version 0.6.1},
         url = {https://mountainmath.github.io/cancensus/}
       }
 
@@ -302,8 +302,10 @@ acknowledgement of source:
 - [`as_census_region_list()`](https://mountainmath.github.io/cancensus/reference/as_census_region_list.md)
   :
 
-  Convert a (suitably filtered) data frame from `list_census_regions` to
-  a list suitable for passing to `get_census`.
+  Convert a (suitably filtered) data frame from
+  [`list_census_regions`](https://mountainmath.github.io/cancensus/reference/list_census_regions.html)
+  to a list suitable for passing to
+  [`get_census`](https://mountainmath.github.io/cancensus/reference/get_census.html).
 
 - [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
   : Query the CensusMapper API for available vectors for a given

@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Access, retrieve, and work with Canadian Census data and geography.">
@@ -40,7 +40,7 @@
 
     <a class="navbar-brand me-2" href="index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,7 +110,7 @@
 <div class="section level3">
 <h3 id="api-key">API key<a class="anchor" aria-label="anchor" href="#api-key"></a>
 </h3>
-<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/users/sign_up" class="external-link">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_cancensus_api_key('&lt;your_api_key&gt;', install = TRUE)</code>.</p>
+<p><strong>cancensus</strong> requires a valid CensusMapper API key to use. You can obtain a free API key by <a href="https://censusmapper.ca/auth/register" class="external-link">signing up</a> for a CensusMapper account. To check your API key, just go to “Edit Profile” (in the top-right of the CensusMapper menu bar). Once you have your key, you can store it in your system environment so it is automatically used in API calls. To do so just enter <code>set_cancensus_api_key('&lt;your_api_key&gt;', install = TRUE)</code>.</p>
 <p>CensusMapper API keys are free and public API quotas are generous; however, due to incremental costs of serving large quantities of data, there are some limits to API usage in place. For most use cases, these API limits should not be an issue. Production uses with large extracts of detailed geographies may run into API quota limits.</p>
 <p>The new <code>get_intersecting_geometries</code> function has a separate API quota. This functionality puts higher demands on server resources than other API calls and therefore comes from a different bucket. By default user keys are capped to 500 region identifiers a day or 5000 per month. This <em>should</em> suffice for most casual use cases, but we will continue to monitor the impact on server load and may increase the default limits in the future.</p>
 <p>For larger quotas, please get in touch with Jens <a href="mailto:jens@mountainmath.ca">directly</a>.</p>
@@ -185,7 +185,7 @@
 <h3 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
 </h3>
 <p>The cancensus package is designed for working with Canadian Census data. In addition to Census data, Statistics Canada provides access to a vast <a href="https://www150.statcan.gc.ca/n1/en/type/data" class="external-link">socio-economic data repository</a> with thousands of data tables available for public access.</p>
-<p>The <a href="https://mountainmath.github.io/cansim/index.html" class="external-link">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cancensus" class="external-link">Github</a>. Data retrieved via the cansim package can be linked to census data via the <code>GeoUID</code> field.</p>
+<p>The <a href="https://mountainmath.github.io/cansim/index.html" class="external-link">cansim package</a> is designed to retrieve and work with public Statistics Canada data tables. The cansim prepares retrieved data tables as analysis-ready tidy dataframes and provides a number of convenience tools and functions to make it easier to work with Statistics Canada data. It is available on CRAN and on <a href="https://github.com/mountainMath/cansim" class="external-link">Github</a>. Data retrieved via the cansim package can be linked to census data via the <code>GeoUID</code> field.</p>
 <p>The <a href="https://mountainmath.github.io/tongfen/index.html" class="external-link">tongfen package</a> automates the task of obtaining census variables from different census years on a common geography. It is available on <a href="https://github.com/mountainMath/tongfen" class="external-link">Github</a>.</p>
 <p>The <a href="https://mountainmath.github.io/cmhc/index.html" class="external-link"><strong>cmhc</strong></a> package, which accesses CMHC data on the housing in Canada and can be linked to census geographies via the <code>GeoUID</code>.</p>
 <p>Taken together these packages offer a seamless view into important Canadian data.</p>
@@ -234,14 +234,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2025). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.0.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.1.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
-    year = {2025},
+    year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.0},
+    note = {R package version 0.6.1},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>
