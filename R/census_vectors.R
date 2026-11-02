@@ -48,7 +48,7 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
       dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
                        .name_repair = "minimal")
     } else {
-      readr::read_csv(content,col_types=readr::cols(.default="c"))
+      readr::read_csv(I(content),col_types=readr::cols(.default="c"))
     }
     result <- dplyr::mutate(
       result, type = factor(.data$type),
@@ -67,9 +67,9 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
         grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
                                  fixed = TRUE)
       )) %>%
-      dplyr::select(.data$vector, .data$type, .data$label, .data$units,
-                    parent_vector = .data$parent, .data$aggregation,
-                    .data$details)
+      dplyr::select("vector", "type", "label", "units",
+                    parent_vector = "parent", "aggregation",
+                    "details")
     attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
     save(result, file = cache_file)
