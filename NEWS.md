@@ -9,6 +9,8 @@
 ## Bug fixes
 
 - Checking the local cache for recalled data no longer errors when the recall database lists only data recalls or only geometry recalls. Previously this would have made `get_census()` fail for users with a non-empty cache
+- `get_statcan_geographies()`, `get_statcan_geo_suite()`, `get_statcan_geographic_attributes()` and `get_statcan_geography_relationships()` now fail gracefully when Statistics Canada blocks the download with a Cloudflare browser verification (#228). They return `NULL` with a warning that gives the link for downloading the file in a browser and the location in the cache directory to move it to, and pick up the file from there on the next run. If the download was blocked while refreshing existing cached data with `refresh = TRUE`, they return the cached data with the same warning instead of `NULL`. The file has to stay zipped, so on macOS the warning points out that Safari unzips downloads automatically, and it flags folders that look like an unzipped copy of the file
+- A failed or blocked download with `refresh = TRUE` no longer deletes the cached data in `get_statcan_geographic_attributes()`, and a failed download no longer leaves behind an empty cache directory that caused subsequent calls to fail
 
 # cancensus 0.6.1
 

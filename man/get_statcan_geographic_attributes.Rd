@@ -12,7 +12,9 @@ get_statcan_geographic_attributes(census_year = "2021", refresh = FALSE)
 \item{refresh}{(logical) refresh the cache if true}
 }
 \value{
-tibble with the relationship data
+tibble with the relationship data. If Statistics Canada blocks the download this gives a
+warning explaining how to download the file manually, and returns the cached data when
+refreshing existing cached data and `NULL` otherwise
 }
 \description{
 Reads the Geographies Attributes File for the given census year. The table contains

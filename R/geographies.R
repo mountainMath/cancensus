@@ -12,7 +12,9 @@
 #' @param timeout optional timeout parameter, adjust as needed if the data download times out when using slow connections
 #' @param refresh (logical) refresh the cache if true
 #' @param quiet (logical) suppress messages if `TRUE`
-#' @return a spatial dataframe with the geographic data
+#' @return a spatial dataframe with the geographic data. If Statistics Canada blocks the download
+#' this gives a warning explaining how to download the file manually, and returns the cached data
+#' when refreshing existing cached data and `NULL` otherwise
 #'
 #' @examples
 #' # get the digital geographic boundaries for provinces and territories
@@ -47,8 +49,8 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   geo_base_path <- file.path(geo_base_path,type)
   if (!dir.exists(geo_base_path)) dir.create(geo_base_path)
   exdir <- file.path(geo_base_path,level)
-  if (refresh || !dir.exists(exdir) || length(dir(exdir,"\\.shp$"))==0) {
-    old_timeout <- getOption("timeout")
+  has_cache <- length(dir(exdir,"\\.shp$"))>0
+  if (refresh || !has_cache) {
     if (type=="cartographic") typeID <- "b" else typeID <- "a"
     if (nchar(level)==2) filler="_000"
     else if (nchar(level)==3) filler="000"
@@ -63,18 +65,19 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
         url <- "https://www150.statcan.gc.ca/n1/en/pub/82-402-x/2024001/hrbf-flrs/digi/ArcGIS/HR_000a23a_e.zip"
       }
     }
-    tmp <- tempfile()
-    options(timeout = timeout)
-    utils::download.file(url,tmp,mode="wb",quiet=quiet)
-    options(timeout = old_timeout)
-    utils::unzip(tmp,exdir = exdir)
-    fs <- dir(exdir,full.names = TRUE)
-    if (length(fs)==1 && dir.exists(fs)) {
-      tmp_dir <- tempfile(pattern = "cancensus_geo_", tmpdir = geo_base_path)
-      file.rename(exdir,tmp_dir)
-      fs <- dir(tmp_dir,full.names = TRUE)
-      file.rename(fs,exdir)
-      unlink(tmp_dir)
+    tmp <- statcan_download_zip(url,base_path = cache_path,timeout = timeout,quiet = quiet,has_cache = has_cache)
+    if (is.null(tmp) && !has_cache) return(NULL)
+    if (!is.null(tmp)) {
+      utils::unzip(tmp,exdir = exdir)
+      unlink(tmp)
+      fs <- dir(exdir,full.names = TRUE)
+      if (length(fs)==1 && dir.exists(fs)) {
+        tmp_dir <- tempfile(pattern = "cancensus_geo_", tmpdir = geo_base_path)
+        file.rename(exdir,tmp_dir)
+        fs <- dir(tmp_dir,full.names = TRUE)
+        file.rename(fs,exdir)
+        unlink(tmp_dir)
+      }
     }
   } else {
     if (!quiet) message("Reading geographic data from local cache.")
