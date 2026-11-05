@@ -1,7 +1,6 @@
-pre, code {
-  background-color: #f8f8f8;
-  size: 70%;
-  color: #333;
+img.logo, .template-home img.logo {
+  width: 25%;
+  min-width: 100px;
 }
 
 main#main img#readme-logo {
