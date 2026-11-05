@@ -87,6 +87,21 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 ```
 With `labels = "labelled"` columns get short names and the full description of each column is stored in its `"label"` attribute. This will become the default in a future version; set `labels` explicitly, or set `options(cancensus.labels = "labelled")`, to keep your code stable when that happens.
 
+### French labels
+
+Census variable labels are available in French for all census datasets by setting `language = "fr"`, or for a whole session with `options(cancensus.language = "fr")`. Tax and cross-tabulation datasets don't have French labels and fall back to English with a warning.
+```
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"), 
+                          vectors=c(median_hh_income="v_CA21_906"), level='CSD', 
+                          labels = "labelled", language = "fr")
+attr(census_data$median_hh_income, "label")
+#> [1] "Revenu total médian des ménages en 2020 ($)"
+
+# Find variables using French labels
+find_census_vectors("revenu total médian des ménages", dataset = "CA21", type = "total", language = "fr")
+```
+Column names stay the same in both languages, and only the labels change, so the same code runs in either language. With `ggplot2` version 4.0.0 or later the labels become the default axis and legend titles, so graphs and maps get French titles automatically. See the [mapping vignette](https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html) for an example. Region names are not translated.
+
 **cancensus** attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded,  **cancensus** will instead access the locally cached equivalent. 
 
 ### Examples of work using cancensus

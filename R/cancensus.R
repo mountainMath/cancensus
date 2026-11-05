@@ -292,7 +292,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     vector_columns <- names(result)[grep("^v_", names(result))]
     census_vectors <- parse_vector_columns(vector_columns) %>%
       translate_census_vectors(dataset, language, quiet = quiet)
-    attr(result, "census_vectors") <- census_vectors
     if (labels != "detailed" | !is.null(names(vectors))) {
       to_rename <- setNames(names(result),gsub(":.*","",names(result)))
       to_rename <- to_rename[names(to_rename)!=as.character(to_rename)]
@@ -318,6 +317,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if (!is.na(geo_format) & geo_format=='sp') { # ensure sf format even if library not loaded
     result <- sf::as_Spatial(result)
   }
+
+  # set this last since renaming sf objects and converting to sp drop the attribute
+  if (length(vectors)>0) attr(result, "census_vectors") <- census_vectors
 
   return(result)
 }

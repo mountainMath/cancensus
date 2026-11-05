@@ -14,6 +14,8 @@
 
 ## Bug fixes
 
+- `label_vectors()` now works for `sf` and `sp` results of `get_census()`. Renaming columns dropped the labels for most requests with geographic data
+- `find_census_vectors(query_type = "keyword")` no longer errors in non-interactive sessions when there are additional matches with less precision. It returns the top matches with a message about the number of additional matches, since the prompt to show them can't be answered
 - `label_vectors()` now returns the full label for vectors with colons in their label, e.g. `Size of census family: 2 persons` in CA06 and CA11. Previously the `Detail` column was cut off at the second colon, and the result had a third unnamed column
 - `find_census_vectors()` keyword and semantic search no longer drop non-ASCII letters from the query
 - `get_census()` no longer errors when only some of the `vectors` are named, the unnamed ones keep their vector code as column name

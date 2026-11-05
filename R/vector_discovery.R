@@ -234,6 +234,9 @@ semantic_search <- function(query_terms, census_vector_list) {
     }
 }
 
+# The interactive parameter of keyword_search masks the base function, this is also easier to mock
+session_is_interactive <- function() base::interactive()
+
 #' Internal function for powering keyword searches in find_census_vectors
 #'
 #' @description Default search behaviour in \code{find_census_vectors()} expects an exact match, but
@@ -251,7 +254,8 @@ semantic_search <- function(query_terms, census_vector_list) {
 #' matching keywords it will prompt the user with an option to show the additional results.
 #' This can be manually overridden by setting \code{interactive=FALSE}, which will result in
 #' only the top matched results showing up, which might be useful if this function is used in
-#' automated scripts.
+#' automated scripts. In non-interactive sessions, where a prompt can't be answered, it returns
+#' the top matched results with a message about the number of additional matches.
 #'
 #' @keywords Internal
 #' @noRd
@@ -288,6 +292,11 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
     if (length(res_df$results) == length(top_res$vector))
       return(top_res)
     else if (!interactive) {return(top_res)}
+    else if (!session_is_interactive()) {
+      message(length(other_res$vector), " additional keyword matches with less precision are not shown ",
+              "since the session is not interactive.")
+      return(top_res)
+    }
     else if (length(other_res$vector) > 0 & interactive){
       print(top_res)
       show_more <-

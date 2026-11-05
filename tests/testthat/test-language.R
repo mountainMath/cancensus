@@ -557,3 +557,62 @@ test_that("dataset_attribution uses the requested language", {
   expect_equal(dataset_attribution(c("CA16", "CA21"), language = "fr"), "StatCan, Recensement de 2016, 2021")
   expect_equal(dataset_attribution("TX1", language = "fr"), "Tax 2017")
 })
+
+# Run get_census against mocked endpoints that also serve geometry
+local_census_geo_api <- function(env = parent.frame()) {
+  geo_json <- paste0('{"type":"FeatureCollection","features":[{"type":"Feature",',
+                     '"properties":{"id":"5915022","t":"CSD","a":1.5},',
+                     '"geometry":{"type":"Polygon","coordinates":[[[0,0],[1,0],[1,1],[0,0]]]}}]}')
+  local_census_api(env = env)
+  local_mocked_bindings(
+    cm_POST = function(url, ...) mock_response(if (grepl("geo.geojson", url, fixed = TRUE)) geo_json else data_csv),
+    .env = env
+  )
+}
+
+test_that("label_vectors works for geographic data in all label modes", {
+  local_census_geo_api()
+  expected <- c("Population", "Size of census family: 2 persons", "Age")
+  for (labels in c("detailed", "short", "labelled")) {
+    result <- census("GEOLV", geo_format = "sf", labels = labels)
+    expect_s3_class(result, "sf")
+    expect_equal(label_vectors(result)$Detail, expected)
+
+    named <- get_census("GEOLV", regions = list(CSD = "5915022"), level = "CSD", geo_format = "sf",
+                        vectors = c(pop = "v_FR_1", "v_FR_2", "v_FR_3"), labels = labels,
+                        api_key = "CensusMapper_test", quiet = TRUE)
+    expect_true("pop" %in% names(named))
+    expect_equal(label_vectors(named)$Vector, c("v_FR_1", "v_FR_2", "v_FR_3"))
+  }
+
+  skip_if_not_installed("sp")
+  expect_equal(label_vectors(census("GEOLV", geo_format = "sp", labels = "short"))$Detail, expected)
+})
+
+test_that("label_vectors and column labels are translated for geographic data", {
+  local_vector_info("GEOFR")
+  local_census_geo_api()
+  french <- c("Population", "Taille de la famille de recensement : 2 personnes", "\u00c2ge")
+  for (labels in c("detailed", "short", "labelled")) {
+    result <- census("GEOFR", geo_format = "sf", labels = labels, language = "fr")
+    expect_s3_class(result, "sf")
+    expect_equal(label_vectors(result)$Detail, french)
+  }
+
+  detailed <- census("GEOFR", geo_format = "sf", labels = "detailed", language = "fr")
+  expect_true("v_FR_3: \u00c2ge" %in% names(detailed))
+
+  named <- get_census("GEOFR", regions = list(CSD = "5915022"), level = "CSD", geo_format = "sf",
+                      vectors = c(age = "v_FR_3"), labels = "labelled", language = "fr",
+                      api_key = "CensusMapper_test", quiet = TRUE)
+  expect_equal(attr(named$age, "label"), "\u00c2ge")
+  expect_true("v_FR_3" %in% label_vectors(named)$Vector)
+})
+
+test_that("label_vectors warns for geographic data without vectors", {
+  local_census_geo_api()
+  result <- get_census("GEONOV", regions = list(CSD = "5915022"), level = "CSD", geo_format = "sf",
+                       labels = "labelled", api_key = "CensusMapper_test", quiet = TRUE)
+  expect_s3_class(result, "sf")
+  expect_warning(label_vectors(result), "does not have variables")
+})
