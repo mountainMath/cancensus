@@ -84,15 +84,8 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
                  area=sf::st_area(geometry) %>% as.numeric(),
                  geometry=geo,
                  api_key=api_key)
-    response <- if (!quiet) {
-      message("Querying CensusMapper API...")
-      httr::POST(url, body = body,
-                 config = httr::accept_json(),
-                 httr::progress())
-    } else {
-      httr::POST(url, body = body,
-                 config = httr::accept_json())
-    }
+    if (!quiet) message("Querying CensusMapper API...")
+    response <- cm_POST(url, body = body, httr::accept_json(), quiet = quiet)
     handle_cm_status_code(response, NULL)
     data_version <- response$headers$`data-version`
 

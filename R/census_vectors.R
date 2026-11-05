@@ -36,12 +36,8 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
-    response <- if (!quiet) {
-      message("Querying CensusMapper API for vectors data...")
-      httr::GET(url, httr::progress())
-    } else {
-      httr::GET(url)
-    }
+    if (!quiet) message("Querying CensusMapper API for vectors data...")
+    response <- cm_GET(url, quiet=quiet)
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {

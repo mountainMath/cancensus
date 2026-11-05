@@ -125,11 +125,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Define the API call
       make_data_call <- function() {
-        if (!quiet) {
-          httr::POST(url, httr::progress(), body=params)
-        } else {
-          httr::POST(url, body=params)
-        }
+        cm_POST(url, body=params, quiet=quiet)
       }
 
       # Execute with or without retry
@@ -210,11 +206,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Define the API call
       make_geo_call <- function() {
-        if (!quiet) {
-          httr::POST(url, httr::progress(), body=params)
-        } else {
-          httr::POST(url, body=params)
-        }
+        cm_POST(url, body=params, quiet=quiet)
       }
 
       # Execute with or without retry
@@ -360,8 +352,8 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for available datasets...")
-    response <- httr::GET("https://censusmapper.ca/api/v1/list_datasets",
-                          httr::accept_json())
+    response <- cm_GET(paste0(cancensus_base_url(),"/api/v1/list_datasets"),
+                       httr::accept_json())
     handle_cm_status_code(response, NULL)
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%

@@ -24,6 +24,47 @@ cancensus_base_url <- function(){
   url
 }
 
+#' User agent sent with CensusMapper API requests
+#'
+#' @description
+#' Identifies the package and its version to the CensusMapper API, in the form
+#' `cancensus/<version> httr/<version> R/<version>`. Packages or tools building on
+#' **cancensus** can identify themselves by setting the `cancensus.user_agent_prefix`
+#' option, e.g. `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which gets
+#' prepended to the user agent string.
+#'
+#' @return A character string
+#' @keywords internal
+cancensus_user_agent <- function(){
+  ua <- paste0("cancensus/", utils::packageVersion("cancensus"),
+               " httr/", utils::packageVersion("httr"),
+               " R/", getRversion())
+  prefix <- getOption("cancensus.user_agent_prefix")
+  if (is.character(prefix) && length(prefix) == 1 && !is.na(prefix)) {
+    # Header values must be a single line without control characters
+    prefix <- trimws(gsub("[[:cntrl:]]+", " ", prefix))
+    if (nchar(prefix) > 0) ua <- paste(prefix, ua)
+  }
+  ua
+}
+
+# Request configuration shared by all CensusMapper API requests
+cm_request_config <- function(quiet = TRUE){
+  config <- httr::user_agent(cancensus_user_agent())
+  if (!quiet) config <- c(config, httr::progress())
+  config
+}
+
+# All requests to the CensusMapper API should go through these wrappers so that
+# they carry the package user agent. Shows a progress bar unless `quiet`.
+cm_GET <- function(url, ..., quiet = TRUE){
+  httr::GET(url, cm_request_config(quiet), ...)
+}
+
+cm_POST <- function(url, body = NULL, ..., quiet = TRUE){
+  httr::POST(url, cm_request_config(quiet), body = body, ...)
+}
+
 valid_api_key <- function(api_key){
   !is.null(api_key) && is.character(api_key) && substr(api_key,1,13)=="CensusMapper_"
 }

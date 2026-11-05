@@ -1,3 +1,11 @@
+# cancensus 0.6.2
+
+## Improvements
+
+- All requests to the CensusMapper API now identify the package and version through the user agent, in the form `cancensus/<version> httr/<version> R/<version>`. This lets the API know which tools are making requests and retain backward compatibility with older package versions as the API evolves
+- Packages and tools building on **cancensus** can identify themselves by setting `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which is prepended to the user agent
+- `list_census_datasets()` and `list_census_regions()` now respect the `cancensus.base_url` option like all other CensusMapper API calls
+
 # cancensus 0.6.1
 
 ## Bug fixes

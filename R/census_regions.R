@@ -48,8 +48,8 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for regions data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
-                                 "/place_names.csv"))
+    response <- cm_GET(paste0(cancensus_base_url(),"/data_sets/", dataset,
+                              "/place_names.csv"))
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {

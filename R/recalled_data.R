@@ -32,17 +32,22 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   path <- recall_data_path()
   if (refresh || !file.exists(path)) {
     url <- paste0(cancensus_base_url(),"/api/v1/recall.csv")
-    tryCatch(
-      utils::download.file(url,path,mode="wb",quiet=TRUE),
-      error = function(e) {
-        warning("Unable to download recall database at this point.")
-        problem <<- TRUE
-      },
-      warning = function(e) {
-        warning("Unable to download recall database at this point.")
-        problem <<- TRUE
+    # Download to a temporary file and only replace the cached copy on success,
+    # so that an error response never gets stored as the recall database.
+    tmp <- tempfile(fileext = ".csv")
+    on.exit(unlink(tmp), add = TRUE)
+    tryCatch({
+      response <- cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
+                         httr::timeout(getOption("timeout", 60)))
+      if (httr::status_code(response) != 200) {
+        stop("HTTP status ", httr::status_code(response))
       }
-    )
+      file.copy(tmp, path, overwrite = TRUE)
+    },
+    error = function(e) {
+      warning("Unable to download recall database at this point.")
+      problem <<- TRUE
+    })
   }
   data <- NULL
   if (!problem) {

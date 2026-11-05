@@ -12,6 +12,7 @@ docs/*
 ^pkgdown$
 .*data_cache/
 R/hex_sticker.R
+^R/local_server_setup\.R$
 ^Meta$
 images
 images/*
