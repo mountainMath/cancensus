@@ -10,18 +10,18 @@
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
-#' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.
+#' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded. Naming the elements of the vector sets the names of the columns, e.g. \code{c(pop = "v_CA21_1")}. With \code{labels = "labelled"}, if a name is already used by another column, like \code{Population}, that column gets a trailing underscore, e.g. \code{Population_}.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.
 #' @param resolution Resolution of the geographic data. By default simplified geometries will be download. For lower level geometries like DB or DA this will be very close to the high resolution data.
 #' Simplification generally increases as the geographic aggregation level increases.
 #' If high resolution geometries are required
 #' then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.
-#' @param labels Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. Column attributes are not retained when \code{geo_format = "sp"}. Use \code{label_vectors(...)} to return variable label information in detail.
+#' @param labels Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
-#' @param language Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the other columns, like \code{Population} or \code{Region Name}. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.
+#' @param language Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the names of the other columns. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
@@ -284,6 +284,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
 
+  # before vectors get renamed, a name chosen for a vector keeps the label of that vector
+  if (labels == "labelled") result <- label_census_columns(result, dataset, language)
+
   if (length(vectors)>0) {
     vector_columns <- names(result)[grep("^v_", names(result))]
     census_vectors <- parse_vector_columns(vector_columns) %>%
@@ -301,6 +304,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!is.null(names(vectors))) {
         # vectors can be partly named, the unnamed ones keep their vector code as column name
         to_rename <- vectors[as.character(vectors) %in% names(result) & nzchar(names(vectors))]
+        if (labels == "labelled") result <- add_underscore_to_clashes(result, names(to_rename))
         if (length(to_rename)>0) result <- result %>% dplyr::rename(!!! to_rename)
       }
     } else if (language != "en") {
@@ -615,6 +619,100 @@ base_name_change <- c("GeoUID"="id",
                       "Households 2016"="hh16",
                       "Dwellings 2011"="dw11",
                       "Dwellings 2016"="dw16")
+
+# Column names and labels for the columns that are not census vectors, used for labels = "labelled".
+# Columns are in the order they get returned in. Column names are the same across datasets and for data
+# and geometry requests, the year goes in the label. {year} is the year of the census the data refers
+# to and {previous_year} that of the census before it.
+census_column_labels <- dplyr::tribble(
+  ~column, ~short_name, ~en, ~fr,
+  "GeoUID", "GeoUID", "Geographic identifier", "Identifiant g\u00e9ographique",
+  "Type", "Type", "Geographic level", "Niveau g\u00e9ographique",
+  "Region Name", "Name", "Region name", "Nom de la r\u00e9gion",
+  "name", "Name", "Region name", "Nom de la r\u00e9gion",
+  "Area (sq km)", "Area", "Area (sq km)", "Superficie (km\u00b2)",
+  "Shape Area", "Area", "Area (sq km)", "Superficie (km\u00b2)",
+  "Population", "Population", "Population {year}", "Population {year}",
+  "Dwellings", "Dwellings", "Dwellings {year}", "Logements {year}",
+  "Households", "Households", "Households {year}", "M\u00e9nages {year}",
+  "Adjusted Population (previous Census)", "Population_Previous", "Population {previous_year}", "Population {previous_year}",
+  "Population 2016", "Population_Previous", "Population 2016", "Population 2016",
+  "Population 2011", "Population_Previous", "Population 2011", "Population 2011",
+  "Dwellings 2016", "Dwellings_Previous", "Dwellings 2016", "Logements 2016",
+  "Dwellings 2011", "Dwellings_Previous", "Dwellings 2011", "Logements 2011",
+  "Households 2016", "Households_Previous", "Households 2016", "M\u00e9nages 2016",
+  "Households 2011", "Households_Previous", "Households 2011", "M\u00e9nages 2011",
+  "NHS Non-Return Rate", "NHS_Non_Response", "NHS non-response rate {year}", "Taux de non-r\u00e9ponse de l'ENM {year}",
+  "Quality Flags", "Quality", "Data quality flags", "Indicateurs de qualit\u00e9 des donn\u00e9es",
+  "key", "Key", "Geographic key", "Cl\u00e9 g\u00e9ographique",
+  "C_UID", "C_UID", "Canada identifier", "Identifiant du Canada",
+  "PR_UID", "PR_UID", "Province or territory identifier", "Identifiant de la province ou du territoire",
+  "CD_UID", "CD_UID", "Census division identifier", "Identifiant de la division de recensement",
+  "CMA_UID", "CMA_UID", "Census metropolitan area or census agglomeration identifier", "Identifiant de la r\u00e9gion m\u00e9tropolitaine de recensement ou de l'agglom\u00e9ration de recensement",
+  "CSD_UID", "CSD_UID", "Census subdivision identifier", "Identifiant de la subdivision de recensement",
+  "CT_UID", "CT_UID", "Census tract identifier", "Identifiant du secteur de recensement",
+  "DA_UID", "DA_UID", "Dissemination area identifier", "Identifiant de l'aire de diffusion"
+)
+
+# The year of the census the base columns of a dataset refer to. Tax and cross-tabulation datasets
+# report these columns for the census they use the geography of, e.g. TX2018 has the 2016 population.
+# Returns NA if the year can't be determined.
+census_year_for_dataset <- function(dataset) {
+  geo_dataset <- dataset
+  if (!grepl("^CA[0-9]+$", dataset)) {
+    datasets <- tryCatch(list_census_datasets(quiet = TRUE), error = function(e) NULL)
+    geo_dataset <- datasets$geo_dataset[match(dataset, datasets$dataset)]
+    if (length(geo_dataset) == 0 || is.na(geo_dataset) || !grepl("^CA[0-9]+$", geo_dataset)) return(NA_integer_)
+  }
+  year <- as.integer(sub("^CA", "", geo_dataset))
+  if (year < 100) year <- year + 2000L
+  year
+}
+
+# Harmonize the columns that are not census vectors for labels = "labelled": give them the same names,
+# types and order for data and geometry requests, and set their "label" attribute.
+label_census_columns <- function(result, dataset, language) {
+  # requests for both data and geometry have these twice, with the same values
+  duplicates <- c("Region Name"="name", "Area (sq km)"="Shape Area")
+  duplicates <- duplicates[names(duplicates) %in% names(result) & duplicates %in% names(result)]
+  if (length(duplicates) > 0) result <- result %>% dplyr::select(-dplyr::all_of(as.character(duplicates)))
+
+  columns <- census_column_labels[census_column_labels$column %in% names(result), ]
+  rename <- !duplicated(columns$short_name)
+  column_names <- ifelse(rename, columns$short_name, columns$column)
+  to_rename <- setNames(columns$column, column_names)[rename & column_names != columns$column]
+  if (length(to_rename) > 0) result <- result %>% dplyr::rename(!!!to_rename)
+
+  for (column in intersect(column_names, "Name")) result[[column]] <- as.character(result[[column]])
+  counts <- c("Population", "Dwellings", "Households")
+  for (column in intersect(column_names, c(counts, paste0(counts, "_Previous")))) {
+    result[[column]] <- as.numeric(result[[column]])
+  }
+
+  year <- census_year_for_dataset(dataset)
+  column_labels <- columns[[language]]
+  column_labels <- gsub("{year}", if (is.na(year)) "" else year, column_labels, fixed = TRUE)
+  column_labels <- gsub("{previous_year}", if (is.na(year)) "" else year - 5L, column_labels, fixed = TRUE)
+  column_labels <- trimws(column_labels)
+  for (i in seq_along(column_names)) attr(result[[column_names[i]]], "label") <- column_labels[i]
+
+  # geometries stay last, sf keeps them when selecting
+  ordered <- setdiff(c(column_names, setdiff(names(result), column_names)), attr(result, "sf_column"))
+  result %>% dplyr::select(dplyr::all_of(ordered))
+}
+
+# For labels = "labelled", names chosen for vectors take priority over the names of the other columns,
+# these get a trailing underscore instead to keep names unique, e.g. Population_ if a vector gets named
+# Population. Other label options leave the column names as they are, and such names remain an error.
+add_underscore_to_clashes <- function(result, chosen_names) {
+  clashes <- setdiff(intersect(chosen_names, names(result)), grep("^v_", names(result), value = TRUE))
+  for (clash in clashes) {
+    new_name <- paste0(clash, "_")
+    while (new_name %in% c(names(result), chosen_names)) new_name <- paste0(new_name, "_")
+    result <- result %>% dplyr::rename(!!!setNames(clash, new_name))
+  }
+  result
+}
 
 # Transform and rename geometry data.
 transform_geo <- function(g, level) {

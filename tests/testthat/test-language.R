@@ -65,6 +65,7 @@ local_census_api <- function(env = parent.frame()) {
     first_run_checks = function() invisible(NULL),
     cache_path = function(...) file.path(cache_dir, paste0(...)),
     warn_if_cache_not_persistent = function(...) invisible(NULL),
+    list_census_datasets = function(...) dplyr::tibble(dataset = c("TX2018", "BROKEN"), geo_dataset = c("CA16", "other")),
     cm_POST = function(...) {
       counter$n <- counter$n + 1
       mock_response(data_csv)
@@ -302,8 +303,159 @@ test_that("labels = 'labelled' names columns by vector and sets label attributes
   expect_equal(attr(result$v_FR_2, "label"), "Size of census family: 2 persons")
   expect_equal(as.numeric(result$v_FR_3), 6)
   expect_equal(label_vectors(result)$Vector, c("v_FR_1", "v_FR_2", "v_FR_3"))
-  # non-vector columns remain unlabelled
-  expect_null(attr(result$Population, "label"))
+})
+
+test_that("labels = 'labelled' labels the other columns with the census year", {
+  local_census_api()
+  result <- census("CA21", labels = "labelled")
+  expect_equal(attr(result$Population, "label"), "Population 2021")
+  expect_equal(attr(result$GeoUID, "label"), "Geographic identifier")
+  expect_equal(attr(result$Name, "label"), "Region name")
+  expect_named(result, c("GeoUID", "Type", "Name", "Population", "v_FR_1", "v_FR_2", "v_FR_3"))
+  # the data does not get changed
+  expect_equal(as.numeric(result$Population), 10)
+  expect_equal(as.character(result$Name), "Vancouver")
+})
+
+test_that("labels = 'labelled' labels the other columns when no vectors are requested", {
+  local_census_api()
+  result <- get_census("CA16", regions = list(CSD = "5915022"), level = "CSD",
+                       api_key = "CensusMapper_test", quiet = TRUE, labels = "labelled")
+  expect_equal(attr(result$Population, "label"), "Population 2016")
+})
+
+test_that("other columns are only labelled for labels = 'labelled'", {
+  local_census_api()
+  expect_null(attr(census("CA21", labels = "short")$Population, "label"))
+  expect_null(attr(census("CA21")$Population, "label"))
+})
+
+test_that("names chosen for vectors are kept with the label of the vector", {
+  local_census_api()
+  result <- get_census("CA21", regions = list(CSD = "5915022"), level = "CSD",
+                       vectors = c(pop = "v_FR_1", name = "v_FR_3"),
+                       api_key = "CensusMapper_test", quiet = TRUE, labels = "labelled")
+  expect_true(all(c("pop", "name", "Population") %in% names(result)))
+  expect_equal(attr(result$pop, "label"), "Population")
+  # not the label for the name column of spatial data
+  expect_equal(attr(result$name, "label"), "Age")
+  expect_equal(attr(result$Population, "label"), "Population 2021")
+})
+
+test_that("census_year_for_dataset uses the census the data refers to", {
+  local_census_api()
+  expect_equal(census_year_for_dataset("CA1996"), 1996L)
+  expect_equal(census_year_for_dataset("CA01"), 2001L)
+  expect_equal(census_year_for_dataset("CA21"), 2021L)
+  expect_equal(census_year_for_dataset("TX2018"), 2016L)
+  expect_true(is.na(census_year_for_dataset("UNKNOWN")))
+  expect_true(is.na(census_year_for_dataset("BROKEN")))
+})
+
+test_that("census_year_for_dataset needs no dataset list for census datasets and survives its failure", {
+  local_mocked_bindings(list_census_datasets = function(...) stop("no connection"))
+  expect_equal(census_year_for_dataset("CA21"), 2021L)
+  expect_true(is.na(census_year_for_dataset("TX2018")))
+})
+
+test_that("label_census_columns fills in years and language", {
+  local_census_api()
+  d <- dplyr::tibble(Population = 1, Dwellings = 2, Households = 3,
+                     `Adjusted Population (previous Census)` = 5, `NHS Non-Return Rate` = 0.1, v_1 = 1)
+  labels_of <- function(x) unname(unlist(lapply(x, attr, "label")))
+  expect_equal(labels_of(label_census_columns(d, "CA11", "en")),
+               c("Population 2011", "Dwellings 2011", "Households 2011", "Population 2006", "NHS non-response rate 2011"))
+  expect_equal(labels_of(label_census_columns(d, "TX2018", "fr")),
+               c("Population 2016", "Logements 2016", "Ménages 2016", "Population 2011", "Taux de non-réponse de l'ENM 2016"))
+  # no dangling placeholders without a year
+  expect_equal(attr(label_census_columns(d, "UNKNOWN", "en")$Population, "label"), "Population")
+  expect_null(attr(label_census_columns(d, "CA21", "en")$v_1, "label"))
+})
+
+test_that("label_census_columns gives data and geometry columns the same names, types and order", {
+  local_census_api()
+  data <- dplyr::tibble(`v_1: A` = 1, GeoUID = "1", Type = factor("CSD"), `Region Name` = factor("Vancouver"),
+                        `Area (sq km)` = 2.5, Population = 10, Dwellings = 5, Households = 4, CD_UID = "59")
+  geo <- dplyr::tibble(`Shape Area` = 2.5, Type = factor("CSD"), Households = 4L, `Quality Flags` = "00000",
+                       `Dwellings 2016` = 3L, name = "Vancouver", GeoUID = "1", Population = 10L,
+                       `Households 2016` = 3L, Dwellings = 5L, CD_UID = "59", `Population 2016` = 9L,
+                       geometry = sf::st_sfc(sf::st_point(c(0, 0)))) %>% sf::st_sf()
+  both <- dplyr::bind_cols(geo, dplyr::tibble(`Region Name` = factor("Vancouver"), `Area (sq km)` = 2.5, `v_1: A` = 1))
+  common <- c("GeoUID", "Type", "Name", "Area", "Population", "Dwellings", "Households")
+  extra <- c("Population_Previous", "Dwellings_Previous", "Households_Previous", "Quality", "CD_UID")
+
+  labelled_data <- label_census_columns(data, "CA21", "en")
+  labelled_geo <- label_census_columns(geo, "CA21", "en")
+  labelled_both <- label_census_columns(both, "CA21", "en")
+  expect_named(labelled_data, c(common, "CD_UID", "v_1: A"))
+  expect_named(labelled_geo, c(common, extra, "geometry"))
+  expect_named(labelled_both, c(common, extra, "v_1: A", "geometry"))
+  expect_s3_class(labelled_both, "sf")
+
+  types <- function(x) vapply(sf::st_drop_geometry(x)[common], function(c) class(c)[1], "")
+  plain_types <- vapply(labelled_data[common], function(c) class(c)[1], "")
+  expect_equal(types(labelled_geo), plain_types)
+  expect_equal(types(labelled_both), plain_types)
+  expect_equal(plain_types[["Name"]], "character")
+  expect_equal(plain_types[["Population"]], "numeric")
+
+  expect_equal(attr(labelled_geo$Population_Previous, "label"), "Population 2016")
+  expect_equal(attr(labelled_geo$Households_Previous, "label"), "Households 2016")
+  expect_equal(attr(labelled_both$Name, "label"), "Region name")
+  expect_equal(attr(labelled_both$Area, "label"), "Area (sq km)")
+})
+
+test_that("with labels = 'labelled' names chosen for vectors win over other columns, which get an underscore", {
+  local_census_api()
+  clashing <- function(...) {
+    get_census("CA21", regions = list(CSD = "5915022"), level = "CSD", vectors = c(Population = "v_FR_1", Age = "v_FR_3"),
+               api_key = "CensusMapper_test", quiet = TRUE, ...)
+  }
+  # other label options keep their behaviour
+  expect_error(clashing(labels = "detailed"))
+  expect_error(clashing(labels = "short"))
+  labelled <- clashing(labels = "labelled")
+  expect_true(all(c("Population", "Population_", "Age") %in% names(labelled)))
+  expect_lt(match("Population_", names(labelled)), match("Population", names(labelled)))
+  expect_equal(attr(labelled$Population, "label"), "Population")
+  expect_equal(attr(labelled$Population_, "label"), "Population 2021")
+
+  named_like_short_name <- get_census("CA21", regions = list(CSD = "5915022"), level = "CSD", vectors = c(Name = "v_FR_3"),
+                                      api_key = "CensusMapper_test", quiet = TRUE, labels = "labelled")
+  expect_equal(attr(named_like_short_name$Name, "label"), "Age")
+  expect_equal(as.character(named_like_short_name$Name_), "Vancouver")
+  expect_equal(attr(named_like_short_name$Name_, "label"), "Region name")
+})
+
+test_that("add_underscore_to_clashes keeps names unique and leaves other columns alone", {
+  d <- dplyr::tibble(a = 1, b = 2, a_ = 3, v_1 = 4)
+  expect_named(add_underscore_to_clashes(d, "b"), c("a", "b_", "a_", "v_1"))
+  expect_named(add_underscore_to_clashes(d, "a"), c("a__", "b", "a_", "v_1"))
+  # a chosen name counts as taken, even before the vector gets renamed
+  expect_named(add_underscore_to_clashes(d, c("b", "b_")), c("a", "b__", "a_", "v_1"))
+  expect_named(add_underscore_to_clashes(d, "other"), names(d))
+  expect_named(add_underscore_to_clashes(d, character(0)), names(d))
+  # vector columns are not moved out of the way
+  expect_named(add_underscore_to_clashes(d, "v_1"), names(d))
+  g <- sf::st_sf(dplyr::tibble(a = 1, geometry = sf::st_sfc(sf::st_point(c(0, 0)))))
+  renamed <- add_underscore_to_clashes(g, "geometry")
+  expect_s3_class(renamed, "sf")
+  expect_equal(attr(renamed, "sf_column"), "geometry_")
+})
+
+test_that("column names only change for labels = 'labelled'", {
+  local_census_api()
+  expect_true("Region Name" %in% names(census("CA21", labels = "short")))
+  expect_true("Region Name" %in% names(census("CA21")))
+})
+
+test_that("census_column_labels covers all columns renamed by the package", {
+  renamed <- unlist(lapply(c("DB", "DA", "CT", "CSD", "CD", "CMA", "PR"), function(l) names(name_change_for_level(l))))
+  expect_true(all(c(names(base_name_change), renamed, "Region Name", "Area (sq km)", "name", "key") %in%
+                    census_column_labels$column))
+  expect_false(any(duplicated(census_column_labels$column)))
+  expect_false(any(grepl("[[:space:]]", census_column_labels$short_name)))
+  expect_false(any(is.na(census_column_labels$en) | is.na(census_column_labels$fr)))
 })
 
 test_that("labels = 'labelled' follows the language and needs no metadata in English", {
@@ -345,7 +497,7 @@ test_that("get_census handles partly named vectors", {
   expect_named(partly_named(labels = "short"), expected)
 
   labelled <- partly_named(labels = "labelled")
-  expect_named(labelled, expected)
+  expect_named(labelled, sub("Region Name", "Name", expected, fixed = TRUE))
   expect_equal(attr(labelled$age, "label"), "Age")
   expect_equal(attr(labelled$v_FR_2, "label"), "Size of census family: 2 persons")
 })
