@@ -6,6 +6,10 @@
 - Packages and tools building on **cancensus** can identify themselves by setting `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which is prepended to the user agent
 - `list_census_datasets()` and `list_census_regions()` now respect the `cancensus.base_url` option like all other CensusMapper API calls
 
+## Bug fixes
+
+- Checking the local cache for recalled data no longer errors when the recall database lists only data recalls or only geometry recalls. Previously this would have made `get_census()` fail for users with a non-empty cache
+
 # cancensus 0.6.1
 
 ## Bug fixes
