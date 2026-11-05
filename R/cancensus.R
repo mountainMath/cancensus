@@ -16,7 +16,7 @@
 #' Simplification generally increases as the geographic aggregation level increases.
 #' If high resolution geometries are required
 #' then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.
-#' @param labels Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.
+#' @param labels Defaults to the \code{cancensus.labels} option, and to "detailed" if that is not set. The default is planned to change to "labelled" in a future version, so to keep code working set this parameter, or set the option with e.g. \code{options(cancensus.labels = "detailed")}. A message points this out once per session if neither is set. "detailed" names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
@@ -63,7 +63,7 @@
 #'}
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
                         resolution = 'simplified',
-                        labels = "detailed",
+                        labels = getOption("cancensus.labels", "detailed"),
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"),
                         retry=0, language = getOption("cancensus.language", "en")) {
 
@@ -72,6 +72,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if (!(is.character(labels) && length(labels) == 1 && labels %in% valid_labels)) {
     stop(paste0("The `labels` parameter must be one of ", paste0("'", valid_labels, "'", collapse = ", "), "."))
   }
+  if (missing(labels) && is.null(getOption("cancensus.labels")) && !quiet) message_labels_default()
 
   # API and data recall checks
   first_run_checks()
@@ -319,6 +320,21 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
   return(result)
+}
+
+# Prepare users for the planned change of the default, once per session. This is a message and not a
+# warning since warnings turn into errors under options(warn = 2), which would break working code.
+message_labels_default <- function() {
+  cache_key <- "labels_default_message"
+  if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
+  session_cache_set(cache_key, TRUE)
+  message("The default of `labels = \"detailed\"` in `get_census()` is planned to change to ",
+          "`labels = \"labelled\"` in a future version. To make sure your code keeps working, set the ",
+          "`labels` parameter or set the option, e.g. `options(cancensus.labels = \"detailed\")`.\n",
+          "Check out `labels = \"labelled\"`, which gives short and consistent column names, with the ",
+          "full descriptions in column labels. See `?get_census` for details.\n",
+          "This message is shown once per session.")
+  invisible(NULL)
 }
 
 # Split column names of the form "<vector>: <label>" into vector and label. Only the first colon

@@ -15,7 +15,7 @@ get_census(
   vectors = c(),
   geo_format = NA,
   resolution = "simplified",
-  labels = "detailed",
+  labels = getOption("cancensus.labels", "detailed"),
   use_cache = TRUE,
   quiet = FALSE,
   api_key = Sys.getenv("CM_API_KEY"),
@@ -39,7 +39,7 @@ Simplification generally increases as the geographic aggregation level increases
 If high resolution geometries are required
 then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.}
 
-\item{labels}{Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.}
+\item{labels}{Defaults to the \code{cancensus.labels} option, and to "detailed" if that is not set. The default is planned to change to "labelled" in a future version, so to keep code working set this parameter, or set the option with e.g. \code{options(cancensus.labels = "detailed")}. A message points this out once per session if neither is set. "detailed" names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 

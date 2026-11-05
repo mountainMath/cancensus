@@ -443,8 +443,46 @@ test_that("add_underscore_to_clashes keeps names unique and leaves other columns
   expect_equal(attr(renamed, "sf_column"), "geometry_")
 })
 
+test_that("the labels default message shows once per session, only when relying on the default", {
+  local_census_api()
+  rlang::local_options(cancensus.labels = NULL)
+  reset_message <- function() {
+    rm(list = intersect("labels_default_message", ls(.cancensus_session_cache)), envir = .cancensus_session_cache)
+  }
+  call_census <- function(...) {
+    get_census("CA21", regions = list(CSD = "5915022"), level = "CSD", vectors = "v_FR_1",
+               api_key = "CensusMapper_test", ...)
+  }
+  labels_message <- "cancensus.labels"
+  reset_message()
+
+  # setting the parameter or quiet = TRUE neither shows the message nor uses it up
+  expect_no_message(call_census(quiet = FALSE, labels = "detailed"), message = labels_message)
+  expect_no_message(call_census(quiet = TRUE))
+  expect_message(call_census(quiet = FALSE), labels_message)
+  expect_no_message(call_census(quiet = FALSE), message = labels_message)
+
+  reset_message()
+  rlang::local_options(cancensus.labels = "detailed")
+  expect_no_message(call_census(quiet = FALSE), message = labels_message)
+  reset_message()
+})
+
+test_that("the cancensus.labels option sets the default for labels", {
+  local_census_api()
+  rlang::local_options(cancensus.labels = NULL)
+  expect_true("v_FR_2: Size of census family: 2 persons" %in% names(census("CA21")))
+  rlang::local_options(cancensus.labels = "labelled")
+  expect_true("Name" %in% names(census("CA21")))
+  # the parameter takes priority over the option
+  expect_true("Region Name" %in% names(census("CA21", labels = "short")))
+  rlang::local_options(cancensus.labels = "other")
+  expect_error(census("CA21"), "labels")
+})
+
 test_that("column names only change for labels = 'labelled'", {
   local_census_api()
+  rlang::local_options(cancensus.labels = NULL)
   expect_true("Region Name" %in% names(census("CA21", labels = "short")))
   expect_true("Region Name" %in% names(census("CA21")))
 })
