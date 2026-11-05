@@ -143,11 +143,47 @@ translate_dataset <- function(dataset) {
   dataset
 }
 
-clean_vector_list <- function(vector_list,dataset=NULL){
+# Validate a language parameter, valid choices are "en" and "fr"
+validate_language <- function(language){
+  valid_languages <- c("en","fr")
+  language <- if (is.character(language) && length(language)==1) tolower(language) else NA_character_
+  if (!(language %in% valid_languages)) {
+    stop(paste0("Language must be one of ",paste0(valid_languages,collapse = ", "),"."), call. = FALSE)
+  }
+  language
+}
+
+# Language of a list of vectors: the explicitly requested language if there is one, otherwise
+# the language the vector list was retrieved in, otherwise the session default.
+vector_list_language <- function(vector_list, language = NULL){
+  if (is.null(language)) language <- attr(vector_list, "language")
+  if (is.null(language)) language <- getOption("cancensus.language", "en")
+  validate_language(language)
+}
+
+is_blank <- function(x){
+  is.na(x) | !nzchar(trimws(x))
+}
+
+# Warn once per session and dataset, per call would flood users querying in a loop
+warn_language_fallback <- function(dataset, n_missing, n_total){
+  cache_key <- paste0("language_fallback_warning_", dataset)
+  if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
+  session_cache_set(cache_key, TRUE)
+  warning(paste0(if (n_missing == n_total) {
+    paste0("French labels are not available for dataset ", dataset, ".")
+  } else {
+    paste0("French labels are not available for ", n_missing, " of ", n_total,
+           " vectors in dataset ", dataset, ".")
+  }, " Using English labels instead."), call. = FALSE)
+  invisible(NULL)
+}
+
+clean_vector_list <- function(vector_list,dataset=NULL,language=getOption("cancensus.language", "en")){
   if (!inherits(vector_list,"data.frame")) {
     if (inherits(vector_list,"character")) {
       if (is.null(dataset))  dataset <- dataset_from_vector_list(vector_list)
-      vector_list = list_census_vectors(dataset) %>%
+      vector_list = list_census_vectors(dataset, language = language) %>%
         dplyr::filter(vector %in% vector_list)
     } else
       stop(paste0("Don't know how to parse vector list: ",vector_list))

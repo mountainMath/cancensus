@@ -2,6 +2,9 @@
 
 ## Improvements
 
+- French labels (#229): `get_census()`, `list_census_vectors()`, `parent_census_vectors()`, `child_census_vectors()`, `find_census_vectors()`, `visualize_vector_hierarchy()` and `dataset_attribution()` gain a `language` parameter, one of `"en"` or `"fr"`. It defaults to the new `cancensus.language` option and otherwise to `"en"`, so `options(cancensus.language = "fr")` switches the language for a session. Column layouts are the same in both languages, and in `get_census()` changing the language does not download the data again or use up API quota. Vectors without French labels, currently the tax and cross-tabulation datasets, fall back to English with a warning once per session and dataset. Region names and the `type`, `units` and `aggregation` columns of `list_census_vectors()` stay as they are
+- `get_census()` gains `labels = "labelled"` (#230), which names columns by vector like `labels = "short"` and stores the label of each variable in the `"label"` attribute of its column
+- `get_census()` now stops with an error for invalid `labels` values, previously these were treated like `labels = "detailed"`
 - All requests to the CensusMapper API now identify the package and version through the user agent, in the form `cancensus/<version> httr/<version> R/<version>`. This lets the API know which tools are making requests and retain backward compatibility with older package versions as the API evolves
 - Packages and tools building on **cancensus** can identify themselves by setting `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which is prepended to the user agent
 - When no persistent cache path is set, **cancensus** now warns once per session when data gets downloaded, instead of emitting a message on package load and on every internal cache lookup, including when nothing was downloaded (#227). `get_census()`, `get_intersecting_geometries()` and the StatCan download functions no longer emit this notice otherwise, and `quiet = TRUE` suppresses it where available. Since this is a warning, it will show up in rendered documents and turns into an error under `options(warn = 2)`, setting a cache path avoids it
@@ -10,6 +13,9 @@
 
 ## Bug fixes
 
+- `label_vectors()` now returns the full label for vectors with colons in their label, e.g. `Size of census family: 2 persons` in CA06 and CA11. Previously the `Detail` column was cut off at the second colon, and the result had a third unnamed column
+- `find_census_vectors()` keyword and semantic search no longer drop non-ASCII letters from the query
+- `get_census()` no longer errors when only some of the `vectors` are named, the unnamed ones keep their vector code as column name
 - Checking the local cache for recalled data no longer errors when the recall database lists only data recalls or only geometry recalls. Previously this would have made `get_census()` fail for users with a non-empty cache
 - `get_census()` and `list_census_regions()` no longer trigger a deprecation warning with readr 2.2.0 or newer when parsing downloaded data, **cancensus** now requires readr 2.0.0 or newer
 - Column selections no longer use `.data`, which is deprecated in tidyselect 1.2.0 and newer

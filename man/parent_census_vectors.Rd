@@ -6,11 +6,15 @@
 variables returned by
 \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.}
 \usage{
-parent_census_vectors(vector_list)
+parent_census_vectors(vector_list, language = NULL)
 }
 \arguments{
 \item{vector_list}{The list of vectors to be used, either a character vector or a filtered tibble
 as returned from \code{list_census_vectors}.}
+
+\item{language}{Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+\code{vector_list} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+if that is not set. See \code{\link{list_census_vectors}}.}
 }
 \description{
 List all parent variables from vector hierarchies given either a list of Census

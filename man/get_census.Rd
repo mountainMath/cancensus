@@ -19,7 +19,8 @@ get_census(
   use_cache = TRUE,
   quiet = FALSE,
   api_key = Sys.getenv("CM_API_KEY"),
-  retry = 0
+  retry = 0,
+  language = getOption("cancensus.language", "en")
 )
 }
 \arguments{
@@ -38,7 +39,7 @@ Simplification generally increases as the geographic aggregation level increases
 If high resolution geometries are required
 then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.}
 
-\item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.}
+\item{labels}{Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. Column attributes are not retained when \code{geo_format = "sp"}. Use \code{label_vectors(...)} to return variable label information in detail.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 
@@ -47,6 +48,8 @@ then this option can be set to 'high'. By default this setting is set to \code{'
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
 
 \item{retry}{Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.}
+
+\item{language}{Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the other columns, like \code{Population} or \code{Region Name}. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.}
 }
 \description{
 This function allows convenient access to Canadian census data and boundary
@@ -78,5 +81,16 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 
 # Get details for truncated vectors:
 label_vectors(census_data)
+
+# Name columns by vector, with the labels in the "label" attribute of the columns:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD', labels="labelled")
+attr(census_data$v_CA16_408, "label")
+
+# Get the labels in French:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD', language="fr")
 }
 }

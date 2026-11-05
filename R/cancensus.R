@@ -16,11 +16,12 @@
 #' Simplification generally increases as the geographic aggregation level increases.
 #' If high resolution geometries are required
 #' then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.
-#' @param labels Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.
+#' @param labels Set to "detailed" by default, which names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. Column attributes are not retained when \code{geo_format = "sp"}. Use \code{label_vectors(...)} to return variable label information in detail.
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
 #' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
+#' @param language Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the other columns, like \code{Population} or \code{Region Name}. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
 #' an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016).
@@ -48,12 +49,29 @@
 #'
 #' # Get details for truncated vectors:
 #' label_vectors(census_data)
+#'
+#' # Name columns by vector, with the labels in the "label" attribute of the columns:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', labels="labelled")
+#' attr(census_data$v_CA16_408, "label")
+#'
+#' # Get the labels in French:
+#' census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+#'                           vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+#'                           level='CSD', language="fr")
 #'}
 get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA,
                         resolution = 'simplified',
                         labels = "detailed",
                         use_cache=TRUE, quiet=FALSE, api_key=Sys.getenv("CM_API_KEY"),
-                        retry=0) {
+                        retry=0, language = getOption("cancensus.language", "en")) {
+
+  language <- validate_language(language)
+  valid_labels <- c("detailed", "short", "labelled")
+  if (!(is.character(labels) && length(labels) == 1 && labels %in% valid_labels)) {
+    stop(paste0("The `labels` parameter must be one of ", paste0("'", valid_labels, "'", collapse = ", "), "."))
+  }
 
   # API and data recall checks
   first_run_checks()
@@ -267,19 +285,28 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
 
   if (length(vectors)>0) {
-    census_vectors <- names(result)[grep("^v_", names(result))] %>%
-      strsplit(., ": ") %>%
-      dplyr::as_tibble(x=do.call(rbind, .),.name_repair = "minimal") %>%
-      setNames(c("Vector", "Detail"))
+    vector_columns <- names(result)[grep("^v_", names(result))]
+    census_vectors <- parse_vector_columns(vector_columns) %>%
+      translate_census_vectors(dataset, language, quiet = quiet)
     attr(result, "census_vectors") <- census_vectors
-    if (labels == "short" | !is.null(names(vectors))) {
+    if (labels != "detailed" | !is.null(names(vectors))) {
       to_rename <- setNames(names(result),gsub(":.*","",names(result)))
       to_rename <- to_rename[names(to_rename)!=as.character(to_rename)]
       if (length(to_rename)>0) result <- result %>% dplyr::rename(!!!to_rename)
+      if (labels == "labelled") {
+        for (i in seq_len(nrow(census_vectors))) {
+          attr(result[[census_vectors$Vector[i]]], "label") <- census_vectors$Detail[i]
+        }
+      }
       if (!is.null(names(vectors))) {
-        to_rename <- vectors[as.character(vectors) %in% names(result)]
+        # vectors can be partly named, the unnamed ones keep their vector code as column name
+        to_rename <- vectors[as.character(vectors) %in% names(result) & nzchar(names(vectors))]
         if (length(to_rename)>0) result <- result %>% dplyr::rename(!!! to_rename)
       }
+    } else if (language != "en") {
+      to_rename <- setNames(vector_columns, paste0(census_vectors$Vector, ": ", census_vectors$Detail))
+      to_rename <- to_rename[names(to_rename)!=as.character(to_rename)]
+      if (length(to_rename)>0) result <- result %>% dplyr::rename(!!!to_rename)
     }
   }
 
@@ -288,6 +315,33 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   }
 
   return(result)
+}
+
+# Split column names of the form "<vector>: <label>" into vector and label. Only the first colon
+# separates the two, labels can contain further colons, e.g. "Size of census family: 2 persons".
+parse_vector_columns <- function(columns) {
+  dplyr::tibble(Vector = sub(":.*$", "", columns),
+                Detail = trimws(sub("^[^:]*:?", "", columns)))
+}
+
+# Replace the English labels the API attaches to the data with the labels for the requested language.
+# Downloaded data is independent of language, so this does not affect the data cache. If the labels
+# can't be retrieved the data is still usable with English labels, so this does not stop.
+translate_census_vectors <- function(census_vectors, dataset, language, quiet = FALSE) {
+  if (language == "en" || nrow(census_vectors) == 0) return(census_vectors)
+  vector_info <- tryCatch(fetch_census_vectors(dataset, quiet = TRUE), error = function(e) {
+    if (!quiet) warning(paste0("Could not retrieve French labels, using English labels instead. ",
+                               conditionMessage(e)), call. = FALSE)
+    NULL
+  })
+  if (is.null(vector_info)) return(census_vectors)
+  localized <- vector_info %>%
+    dplyr::filter(.data$vector %in% census_vectors$Vector) %>%
+    localize_census_vectors(language, warn = !quiet)
+  matches <- match(census_vectors$Vector, localized$vector)
+  found <- !is.na(matches)
+  census_vectors$Detail[found] <- localized$label[matches[found]]
+  census_vectors
 }
 
 #' Deprecated, use `get_census` instead
@@ -380,6 +434,8 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #' Get attribution for datasets
 #'
 #' @param datasets Vector of dataset identifiers
+#' @param language Language of the attribution, one of \code{"en"} or \code{"fr"}. Defaults to the
+#'   \code{cancensus.language} option, and to \code{"en"} if that is not set.
 #'
 #' @return
 #'
@@ -393,11 +449,16 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
 #' # Attribution string for the 2006 and 2016 census datasets
 #' dataset_attribution(c('CA06','CA16'))
 #' }
-dataset_attribution <- function(datasets){
+dataset_attribution <- function(datasets, language = getOption("cancensus.language", "en")){
+  language <- validate_language(language)
   datasets <-   lapply(datasets,translate_dataset) %>% unlist()
-  attribution <-list_census_datasets(quiet=TRUE) %>%
-    dplyr::filter(.data$dataset %in% datasets) %>%
-    dplyr::pull(.data$attribution)
+  dataset_list <- list_census_datasets(quiet=TRUE) %>%
+    dplyr::filter(.data$dataset %in% datasets)
+  attribution <- dataset_list$attribution
+  if (language == "fr" && "attribution_fr" %in% names(dataset_list)) {
+    has_translation <- !is_blank(dataset_list$attribution_fr)
+    attribution[has_translation] <- dataset_list$attribution_fr[has_translation]
+  }
 
   commons <- gsub("\\d{4}","\\\\\\d{4}",attribution) %>%
     unique()
