@@ -22,7 +22,14 @@ optionally return only the `Female` or `Male` aggregations by adding
 ## Usage
 
 ``` r
-find_census_vectors(query, dataset, type = "all", query_type = "exact", ...)
+find_census_vectors(
+  query,
+  dataset,
+  type = "all",
+  query_type = "exact",
+  ...,
+  language = getOption("cancensus.language", "en")
+)
 ```
 
 ## Arguments
@@ -54,6 +61,14 @@ find_census_vectors(query, dataset, type = "all", query_type = "exact", ...)
 
   Other arguments passed to internal functions.
 
+- language:
+
+  Language to search in and return labels in, one of `"en"` or `"fr"`.
+  Defaults to the `cancensus.language` option, and to `"en"` if that is
+  not set. Searches match accents exactly, and the `type` parameter
+  takes the same English values for both languages. See
+  [`list_census_vectors`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md).
+
 ## Examples
 
 ``` r
@@ -76,6 +91,9 @@ find_census_vectors('commute duration', dataset = 'CA16', type = 'female', query
 find_census_vectors('commute duration', dataset = 'CA11', type = 'all', query_type = 'keyword')
 
 find_census_vectors('ukrainian origin', dataset = 'CA16', type = 'total', query_type = 'keyword')
+
+find_census_vectors('revenu total', dataset = 'CA16', type = 'total',
+                    query_type = 'keyword', language = 'fr')
 
 } # }
 ```

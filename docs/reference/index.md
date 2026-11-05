@@ -16,10 +16,8 @@
 - [`as_census_region_list()`](https://mountainmath.github.io/cancensus/reference/as_census_region_list.md)
   :
 
-  Convert a (suitably filtered) data frame from
-  [`list_census_regions`](https://mountainmath.github.io/cancensus/reference/list_census_regions.html)
-  to a list suitable for passing to
-  [`get_census`](https://mountainmath.github.io/cancensus/reference/get_census.html).
+  Convert a (suitably filtered) data frame from `list_census_regions` to
+  a list suitable for passing to `get_census`.
 
 - [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
   : Query the CensusMapper API for available vectors for a given
@@ -97,7 +95,7 @@
 - [`set_cancensus_api_key()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_api_key.md)
   : Set Censusmapper API key
 - [`set_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.md)
-  : Set persistent cancensus cache location
+  : Set cancensus cache location
 - [`show_cancensus_api_key()`](https://mountainmath.github.io/cancensus/reference/show_cancensus_api_key.md)
   : View saved Censusmapper API key
 - [`show_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/show_cancensus_cache_path.md)

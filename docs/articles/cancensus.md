@@ -77,6 +77,20 @@ set_cancensus_cache_path('<local cache path>', install = TRUE)
 Data in the persistent cache can be managed via the functions
 `list_cancensus_cache` and `remove_from_cancensus_cache` if needed.
 
+If a project should have its own cache, for example to back up the data
+with the project for reproducibility, set the cache path without
+`install = TRUE` at the top of a script. This applies for the current R
+session and takes precedence over the cache path stored in your
+`.Renviron`. Use an absolute path and set it before the first call to
+`get_census`, see
+[`?set_cancensus_cache_path`](https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.md)
+for details.
+
+``` r
+
+set_cancensus_cache_path(here::here("data/cancensus_cache"))
+```
+
 ## Accessing Census Data
 
 **cancensus** provides three different functions for retrieving Census
@@ -90,6 +104,21 @@ regions, a vector of Census variables, and a Census geography level. You
 can specify one of three options for spatial formats: `NA` to return
 data only, `sf` to return an sf-class data frame, or `sp` to return a
 SpatialPolygonsDataFrame object.
+
+The `labels` parameter of `get_census` controls how columns are named
+and labelled. It currently defaults to `labels = "detailed"`, but this
+is planned to change to `labels = "labelled"` in a future version. To
+make sure your code keeps working when the default changes, set the
+`cancensus.labels` option to apply a choice to all `get_census` calls in
+a script or session, or set the `labels` parameter in individual calls.
+Without either one, `get_census` shows a message once per session
+pointing this out. We recommend adopting `"labelled"` early, and set the
+option for all calls in this vignette.
+
+``` r
+
+options(cancensus.labels = "labelled")
+```
 
 ``` r
 
@@ -119,6 +148,51 @@ parameter for `get_census`.
 Additional parameters for advanced options can be viewed by running
 [`?get_census`](https://mountainmath.github.io/cancensus/reference/get_census.md).
 
+### Column names and labels
+
+With `labels = "labelled"` Census variables are named by their vector,
+or by the name you give them when naming `vectors`, and the other
+columns have short names like `Name` and `Area` that are the same across
+datasets and with or without geographic data. The full description of
+each column is stored in its `"label"` attribute, which is displayed
+e.g. by the RStudio data viewer.
+
+``` r
+
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                          vectors=c(average_age="v_CA21_386","v_CA21_434"),
+                          level='CSD', quiet = TRUE)
+names(census_data)
+#>  [1] "GeoUID"      "Type"        "Name"        "Area"        "Population" 
+#>  [6] "Dwellings"   "Households"  "PR_UID"      "CD_UID"      "CMA_UID"    
+#> [11] "average_age" "v_CA21_434"
+attr(census_data$Population, "label")
+#> [1] "Population 2021"
+attr(census_data$average_age, "label")
+#> [1] "Average age"
+attr(census_data$v_CA21_434, "label")
+#> [1] "Occupied private dwellings by structural type of dwelling"
+```
+
+The labels of the Census variables are also available through
+`label_vectors(census_data)`, and the `language` parameter of
+`get_census` switches labels to French where available.
+
+Recent versions of `ggplot2` use these labels as default axis and legend
+titles. Be careful with columns you compute yourself: R keeps attributes
+through arithmetic, so a derived column inherits a label that no longer
+describes it. Set the title explicitly with `labs()`, or drop the label
+with [`as.numeric()`](https://rdrr.io/r/base/numeric.html).
+
+``` r
+
+dwellings_per_person <- census_data$Dwellings / census_data$Population
+attr(dwellings_per_person, "label")
+#> [1] "Dwellings 2021"
+attr(as.numeric(dwellings_per_person), "label")
+#> NULL
+```
+
 ### Census Datasets
 
 **cancensus** can access Statistics Canada Census data for Census years
@@ -142,20 +216,22 @@ will show all available datasets alongside their metadata.
 ``` r
 
 list_census_datasets()
-#> # A tibble: 29 × 6
-#>    dataset description           attribution reference reference_url geo_dataset
-#>    <chr>   <chr>                 <chr>       <chr>     <chr>         <chr>      
-#>  1 CA1996  1996 Canada Census    StatCan 19… 92-351-U  https://www1… CA1996     
-#>  2 CA01    2001 Canada Census    StatCan 20… 92-378-X  https://www1… CA01       
-#>  3 CA06    2006 Canada Census    StatCan 20… 92-566-X  https://www1… CA06       
-#>  4 CA11    2011 Canada Census a… StatCan 20… 98-301-X… https://www1… CA11       
-#>  5 CA16    2016 Canada Census    StatCan 20… 98-301-X  https://www1… CA16       
-#>  6 CA21    2021 Canada Census    StatCan 20… 98-301-X  https://www1… CA21       
-#>  7 CA01xSD 2001 Canada Census x… StatCan 20… 92-378-X  https://www1… CA01       
-#>  8 CA06xSD 2006 Canada Census x… StatCan 20… 92-566-X  https://www1… CA06       
-#>  9 CA11xSD 2011 Canada Census x… StatCan 20… 98-301-X  https://www1… CA11       
-#> 10 CA16xSD 2016 Canada Census x… StatCan 20… 98-301-X  https://www1… CA16       
+#> # A tibble: 29 × 11
+#>    dataset description        attribution reference reference_url description_fr
+#>    <chr>   <chr>              <chr>       <chr>     <chr>         <chr>         
+#>  1 CA1996  1996 Canada Census StatCan 19… 92-351-U  https://www1… Recensement d…
+#>  2 CA01    2001 Canada Census StatCan 20… 92-378-X  https://www1… Recensement d…
+#>  3 CA06    2006 Canada Census StatCan 20… 92-566-X  https://www1… Recensement d…
+#>  4 CA11    2011 Canada Censu… StatCan 20… 98-301-X… https://www1… Recensement d…
+#>  5 CA16    2016 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…
+#>  6 CA21    2021 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…
+#>  7 CA01xSD 2001 Canada Censu… StatCan 20… 92-378-X  https://www1… Totalisation …
+#>  8 CA06xSD 2006 Canada Censu… StatCan 20… 92-566-X  https://www1… Totalisation …
+#>  9 CA11xSD 2011 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …
+#> 10 CA16xSD 2016 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …
 #> # ℹ 19 more rows
+#> # ℹ 5 more variables: attribution_fr <chr>, reference_url_fr <chr>,
+#> #   label <chr>, label_fr <chr>, geo_dataset <chr>
 ```
 
 As other Census datasets become available via the CensusMapper API, they
@@ -261,7 +337,7 @@ variables for a given dataset.
 ``` r
 
 list_census_vectors("CA21")
-#> # A tibble: 7,709 × 7
+#> # A tibble: 7,718 × 7
 #>    vector    type   label                units parent_vector aggregation details
 #>    <chr>     <fct>  <chr>                <fct> <chr>         <chr>       <chr>  
 #>  1 v_CA21_1  Total  Population, 2021     Numb… NA            Additive    CA 202…
@@ -274,7 +350,7 @@ list_census_vectors("CA21")
 #>  8 v_CA21_8  Total  Total - Age          Numb… NA            Additive    CA 202…
 #>  9 v_CA21_9  Male   Total - Age          Numb… NA            Additive    CA 202…
 #> 10 v_CA21_10 Female Total - Age          Numb… NA            Additive    CA 202…
-#> # ℹ 7,699 more rows
+#> # ℹ 7,708 more rows
 ```
 
 ### Variable characteristics
