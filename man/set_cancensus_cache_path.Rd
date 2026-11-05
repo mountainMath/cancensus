@@ -2,23 +2,47 @@
 % Please edit documentation in R/user_settings.R
 \name{set_cancensus_cache_path}
 \alias{set_cancensus_cache_path}
-\title{Set persistent cancensus cache location}
+\title{Set cancensus cache location}
 \usage{
 set_cancensus_cache_path(cache_path, overwrite = FALSE, install = FALSE)
 }
 \arguments{
 \item{cache_path}{a local directory to use for saving cached data}
 
-\item{overwrite}{Option to overwrite any existing cache path already stored locally.}
+\item{overwrite}{Option to overwrite any existing cache path already stored in \code{.Renviron}, only
+relevant with \code{install = TRUE}.}
 
-\item{install}{Option to install permanently for use across sessions.}
+\item{install}{Option to install permanently for use across sessions and projects.}
 }
 \description{
-Cancensus provides session caching for retrieved data to increase speeds and reduce API usage. This function will create a persistent cache across sessions.
+Cancensus caches retrieved data to increase speeds and reduce API usage. By default the
+cache only lasts for the R session. This function sets a cache location that persists across
+sessions, either for all projects or for a specific project.
+}
+\details{
+With \code{install = TRUE} the cache path is added to your \code{.Renviron} file and is used across sessions
+and projects.
+
+With \code{install = FALSE} the cache path applies to the current R session, taking precedence over one
+stored in \code{.Renviron}. Calling this at the top of a script gives a project its own cache, for example to
+back up the data together with the project for reproducibility. All cache functions, like
+\code{\link[=list_cancensus_cache]{list_cancensus_cache()}} and \code{\link[=remove_recalled_cached_data]{remove_recalled_cached_data()}}, then work on this project cache.
+\itemize{
+\item Use an absolute path, for example via \code{here::here()}. Relative paths get resolved
+against the working directory at the time of use, which can differ e.g. when knitting a document.
+\item Set the path before the first call to \code{\link[=get_census]{get_census()}}. The check of the whole cache for recalled data
+only runs once per session, data read from a cache set later only gets checked as it is read.
+\item Don't set the cache path in a project-level \code{.Renviron} file unless it also has your API key. R
+reads a project-level \code{.Renviron} file instead of the one in your home directory, not in addition to it.
+}
+
+The cache path is stored in the \code{CM_CACHE_PATH} environment variable. The older
+\code{cancensus.cache_path} option is still supported, but is only used if the environment variable is not set.
 }
 \examples{
 \dontrun{
-set_cancensus_cache_path("~/cancensus_cache")
+# This will set the cache path for the current session, for example for a project-specific cache
+set_cancensus_cache_path("~/my_project/cancensus_cache")
 
 # This will set the cache path permanently until overwritten again
 set_cancensus_cache_path("~/cancensus_cache", install = TRUE)

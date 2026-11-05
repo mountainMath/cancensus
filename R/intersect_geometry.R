@@ -97,6 +97,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     metadata <- dplyr::tibble(dataset=dataset,level=level,created_at=Sys.time(),
                                version=data_version,size=file_info$size)
     saveRDS(metadata, file = meta_file)
+    warn_if_cache_not_persistent(quiet = quiet)
   } else {
     if (!quiet) message("Reading intersection data from local cache.")
     # Load `result` object from cache.

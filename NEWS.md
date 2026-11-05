@@ -4,11 +4,15 @@
 
 - All requests to the CensusMapper API now identify the package and version through the user agent, in the form `cancensus/<version> httr/<version> R/<version>`. This lets the API know which tools are making requests and retain backward compatibility with older package versions as the API evolves
 - Packages and tools building on **cancensus** can identify themselves by setting `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which is prepended to the user agent
+- When no persistent cache path is set, **cancensus** now warns once per session when data gets downloaded, instead of emitting a message on package load and on every internal cache lookup, including when nothing was downloaded (#227). `get_census()`, `get_intersecting_geometries()` and the StatCan download functions no longer emit this notice otherwise, and `quiet = TRUE` suppresses it where available. Since this is a warning, it will show up in rendered documents and turns into an error under `options(warn = 2)`, setting a cache path avoids it
+- Documented how to use `set_cancensus_cache_path()` without `install = TRUE` to set up a project-specific cache
 - `list_census_datasets()` and `list_census_regions()` now respect the `cancensus.base_url` option like all other CensusMapper API calls
 
 ## Bug fixes
 
 - Checking the local cache for recalled data no longer errors when the recall database lists only data recalls or only geometry recalls. Previously this would have made `get_census()` fail for users with a non-empty cache
+- `show_cancensus_cache_path()` now also reports a cache path set via the `cancensus.cache_path` option, previously it reported that no cache path was set
+- The error for a corrupt cache path no longer ends in a stray `FALSE`
 - `get_statcan_geographies()`, `get_statcan_geo_suite()`, `get_statcan_geographic_attributes()` and `get_statcan_geography_relationships()` now fail gracefully when Statistics Canada blocks the download with a Cloudflare browser verification (#228). They return `NULL` with a warning that gives the link for downloading the file in a browser and the location in the cache directory to move it to, and pick up the file from there on the next run. If the download was blocked while refreshing existing cached data with `refresh = TRUE`, they return the cached data with the same warning instead of `NULL`. The file has to stay zipped, so on macOS the warning points out that Safari unzips downloads automatically, and it flags folders that look like an unzipped copy of the file
 - A failed or blocked download with `refresh = TRUE` no longer deletes the cached data in `get_statcan_geographic_attributes()`, and a failed download no longer leaves behind an empty cache directory that caused subsequent calls to fail
 

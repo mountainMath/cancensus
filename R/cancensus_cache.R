@@ -15,8 +15,6 @@ generate_metadata <- function(meta_file,params){
       metadata <- metadata %>% dplyr::mutate(access_count=1)
     }
   } else {
-    pattern <- basename(meta_file) %>% gsub("\\.meta$","",.)
-    path <- dir(cache_path(),pattern = pattern)
     metadata <- dplyr::tibble(last_accessed=Sys.time(),access_count=1)
   }
   if (!is.null(params) & !("dataset" %in% names(metadata)) & "dataset" %in% names(params)) {

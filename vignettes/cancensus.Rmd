@@ -61,6 +61,12 @@ set_cancensus_cache_path('<local cache path>', install = TRUE)
 
 Data in the persistent cache can be managed via the functions `list_cancensus_cache` and `remove_from_cancensus_cache` if needed.
 
+If a project should have its own cache, for example to back up the data with the project for reproducibility, set the cache path without `install = TRUE` at the top of a script. This applies for the current R session and takes precedence over the cache path stored in your `.Renviron`. Use an absolute path and set it before the first call to `get_census`, see `?set_cancensus_cache_path` for details.
+
+```{r project_cache_path, echo=TRUE, eval = FALSE}
+set_cancensus_cache_path(here::here("data/cancensus_cache"))
+```
+
 # Accessing Census Data
 
 **cancensus** provides three different functions for retrieving Census data:

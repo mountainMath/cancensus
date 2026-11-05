@@ -175,6 +175,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                                  created_at=Sys.time(),
                          version=data_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
+      warn_if_cache_not_persistent(quiet = quiet)
     } else {
       if (!quiet) message("Reading vectors data from local cache.")
       check_recalled_data_and_warn(meta_file,params)
@@ -232,6 +233,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                                 resolution=resolution,
                          version=geo_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
+      warn_if_cache_not_persistent(quiet = quiet)
     } else {
       if (!quiet) message("Reading geo data from local cache.")
       check_recalled_data_and_warn(meta_file,params)
@@ -594,20 +596,6 @@ transform_geo <- function(g, level) {
   return(g)
 }
 
-
-
-.onAttach <- function(libname, pkgname) {
- # if (!"cancensus.api_key" %in% names(options())) {
-    # Try to get the API key from the CM_API_KEY environment variable, if it has not already been specified.
-#    options(cancensus.api_key = if (nchar(Sys.getenv("CM_API_KEY")) > 1) { Sys.getenv("CM_API_KEY") } else { NULL })
-#  }
-
-
-  if (!("cancensus.cache_path" %in% names(options())) & nchar(Sys.getenv("CM_CACHE_PATH"))==0) {
-    # Cache in tmp dir by default.
-    packageStartupMessage(cm_no_cache_path_message)
-  }
-}
 
 # Suppress warnings for missing bindings for '.' in R CMD check.
 if (getRversion() >= "2.15.1") utils::globalVariables(c("."))

@@ -6,8 +6,12 @@
 \usage{
 show_cancensus_cache_path()
 }
+\value{
+The cache path, or \code{NULL} with a message if none is set
+}
 \description{
-View saved cache path'
+View the cache path in use, from the \code{CM_CACHE_PATH} environment variable or
+otherwise the \code{cancensus.cache_path} option.
 }
 \examples{
 show_cancensus_cache_path()

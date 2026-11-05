@@ -13,12 +13,6 @@ statcan_downloads_path <- function(base_path = NULL){
   }
 }
 
-statcan_cache_is_persistent <- function(base_path = NULL){
-  !is.null(base_path) ||
-    nchar(Sys.getenv("CM_CACHE_PATH")) > 0 ||
-    !is.null(getOption("cancensus.cache_path"))
-}
-
 # Checks the file signature instead of listing the contents, so that the check also works for
 # large archives and catches HTML pages saved under a .zip name.
 statcan_is_zip <- function(path){
@@ -119,7 +113,7 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
     unlink(tmp)
     if (!quiet) cat("\n") # the progress bar for the challenge page leaves the line open
     if (!dir.exists(downloads_path)) dir.create(downloads_path, recursive = TRUE, showWarnings = FALSE)
-    statcan_warning(statcan_blocked_message(url, manual_file, statcan_cache_is_persistent(base_path), has_cache))
+    statcan_warning(statcan_blocked_message(url, manual_file, cache_is_persistent(base_path), has_cache))
     return(NULL)
   }
   if (httr::http_error(response)) {
@@ -131,5 +125,6 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
     unlink(tmp)
     stop("The download of ", url, " from Statistics Canada did not return a zip file.", call. = FALSE)
   }
+  warn_if_cache_not_persistent(base_path, quiet = quiet)
   tmp
 }

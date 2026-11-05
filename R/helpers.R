@@ -83,12 +83,11 @@ cache_path <- function(...) {
       cache_dir <- getOption("cancensus.cache_path")
     } else {
       cache_dir <- tempdir()
-      message(cm_no_cache_path_message)
     }
   }
   if (!is.character(cache_dir)) {
     stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
-         .call = FALSE)
+         call. = FALSE)
   }
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
@@ -102,6 +101,27 @@ cache_path <- function(...) {
   if (!identical(cache_key, character(0)))
     cache_dir <- file.path(cache_dir, paste0(...))
   cache_dir
+}
+
+# Whether downloaded data outlives the R session. `base_path` is an explicit cache location
+# overriding the cancensus cache path, for functions with a `cache_path` argument.
+cache_is_persistent <- function(base_path = NULL){
+  !is.null(base_path) ||
+    nchar(Sys.getenv("CM_CACHE_PATH")) > 0 ||
+    !is.null(getOption("cancensus.cache_path"))
+}
+
+# Warn that downloaded data won't be kept across sessions. Called after data has been downloaded
+# and saved, so failed requests don't use up the warning and handlers that turn it into an error
+# don't lose the download. Warns once per session, per call would flood users querying in a loop.
+warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE){
+  if (quiet || cache_is_persistent(base_path) ||
+      isTRUE(session_cache_get("cache_warning_shown"))) {
+    return(invisible(NULL))
+  }
+  session_cache_set("cache_warning_shown", TRUE)
+  warning(cm_no_cache_path_warning, call. = FALSE)
+  invisible(NULL)
 }
 
 
