@@ -79,12 +79,14 @@ There is also an interactive tool that is available at the [CensusMapper API](ht
 ```
 # Return data only
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), 
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', labels = "labelled")
 
 # Return an sf-class data frame
 census_data <- get_census(dataset='CA16', regions=list(CMA="59933"), 
-                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels = "labelled")
 ```
+With `labels = "labelled"` columns get short names and the full description of each column is stored in its `"label"` attribute. This will become the default in a future version; set `labels` explicitly, or set `options(cancensus.labels = "labelled")`, to keep your code stable when that happens.
+
 **cancensus** attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded,  **cancensus** will instead access the locally cached equivalent. 
 
 ### Examples of work using cancensus

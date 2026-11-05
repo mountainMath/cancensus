@@ -76,6 +76,12 @@ set_cancensus_cache_path(here::here("data/cancensus_cache"))
 
 `get_census` takes as inputs a dataset parameter, a list of specified regions, a vector of Census variables, and a Census geography level. You can specify one of three options for spatial formats: `NA` to return data only, `sf` to return an sf-class data frame, or `sp` to return a SpatialPolygonsDataFrame object. 
 
+The `labels` parameter of `get_census` controls how columns are named and labelled. It currently defaults to `labels = "detailed"`, but this is planned to change to `labels = "labelled"` in a future version. To make sure your code keeps working when the default changes, set the `cancensus.labels` option to apply a choice to all `get_census` calls in a script or session, or set the `labels` parameter in individual calls. Without either one, `get_census` shows a message once per session pointing this out. We recommend adopting `"labelled"` early, and set the option for all calls in this vignette.
+
+```{r set_labels_option, echo=TRUE}
+options(cancensus.labels = "labelled")
+```
+
 ```{r get_census example, echo=TRUE, warning=FALSE, message=FALSE}
 # Returns a data frame with data only
 census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
@@ -96,6 +102,30 @@ census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
 **cancensus** utilizes caching to increase speed, minimize API token usage, and to make data available offline. Downloaded data is hashed and stored locally so if a call is made to access the same data, **cancensus** will read the local version instead. To force **cancensus** to refresh the data, specify `use_cache = FALSE` as a parameter for `get_census`. 
 
 Additional parameters for advanced options can be viewed by running `?get_census`.
+
+## Column names and labels
+
+With `labels = "labelled"` Census variables are named by their vector, or by the name you give them when naming `vectors`, and the other columns have short names like `Name` and `Area` that are the same across datasets and with or without geographic data. The full description of each column is stored in its `"label"` attribute, which is displayed e.g. by the RStudio data viewer.
+
+```{r labelled_columns, echo=TRUE, warning=FALSE, message=FALSE}
+census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                          vectors=c(average_age="v_CA21_386","v_CA21_434"),
+                          level='CSD', quiet = TRUE)
+names(census_data)
+attr(census_data$Population, "label")
+attr(census_data$average_age, "label")
+attr(census_data$v_CA21_434, "label")
+```
+
+The labels of the Census variables are also available through `label_vectors(census_data)`, and the `language` parameter of `get_census` switches labels to French where available.
+
+Recent versions of `ggplot2` use these labels as default axis and legend titles. Be careful with columns you compute yourself: R keeps attributes through arithmetic, so a derived column inherits a label that no longer describes it. Set the title explicitly with `labs()`, or drop the label with `as.numeric()`.
+
+```{r derived_columns, echo=TRUE}
+dwellings_per_person <- census_data$Dwellings / census_data$Population
+attr(dwellings_per_person, "label")
+attr(as.numeric(dwellings_per_person), "label")
+```
 
 ## Census Datasets
 
