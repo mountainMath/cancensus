@@ -11,6 +11,7 @@
 ## Bug fixes
 
 - Checking the local cache for recalled data no longer errors when the recall database lists only data recalls or only geometry recalls. Previously this would have made `get_census()` fail for users with a non-empty cache
+- `get_census()` and `list_census_regions()` no longer trigger a deprecation warning with readr 2.2.0 or newer when parsing downloaded data, **cancensus** now requires readr 2.0.0 or newer
 - `show_cancensus_cache_path()` now also reports a cache path set via the `cancensus.cache_path` option, previously it reported that no cache path was set
 - The error for a corrupt cache path no longer ends in a stray `FALSE`
 - `get_statcan_geographies()`, `get_statcan_geo_suite()`, `get_statcan_geographic_attributes()` and `get_statcan_geography_relationships()` now fail gracefully when Statistics Canada blocks the download with a Cloudflare browser verification (#228). They return `NULL` with a warning that gives the link for downloading the file in a browser and the location in the cache directory to move it to, and pick up the file from there on the next run. If the download was blocked while refreshing existing cached data with `refresh = TRUE`, they return the cached data with the same warning instead of `NULL`. The file has to stay zipped, so on macOS the warning points out that Safari unzips downloads automatically, and it flags folders that look like an unzipped copy of the file

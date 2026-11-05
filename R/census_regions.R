@@ -58,7 +58,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
                                        stringsAsFactors = FALSE),
                        .name_repair = "minimal")
     } else {
-      readr::read_csv(content,col_types = readr::cols(.default='c'))
+      readr::read_csv(I(content),col_types = readr::cols(.default='c'))
     }
     result <- dplyr::select(result, region = .data$geo_uid, .data$name,
                             level = .data$type, pop = .data$population,

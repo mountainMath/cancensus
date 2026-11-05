@@ -150,6 +150,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       result <- if (requireNamespace("readr", quietly = TRUE)) {
         # Use readr::read_csv if it's available.
         httr::content(response, type = "text", encoding = "UTF-8") %>%
+          I() %>%
           readr::read_csv(na = cancensus_na_strings,
                           col_types = list(.default = "c"))
       } else {
