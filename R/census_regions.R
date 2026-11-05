@@ -60,10 +60,10 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     } else {
       readr::read_csv(I(content),col_types = readr::cols(.default='c'))
     }
-    result <- dplyr::select(result, region = .data$geo_uid, .data$name,
-                            level = .data$type, pop = .data$population,
-                            municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)  %>%
+    result <- dplyr::select(result, region = "geo_uid", "name",
+                            level = "type", pop = "population",
+                            municipal_status = "flag", "CMA_UID",
+                            "CD_UID", "PR_UID")  %>%
       dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
@@ -212,7 +212,7 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
                                         TRUE ~ paste0(.data$Name," (",.data$region,")"))) %>%
-    dplyr::select(-.data$count) %>%
+    dplyr::select(-"count") %>%
     dplyr::ungroup()
 
   if (length(gs)>0) {
