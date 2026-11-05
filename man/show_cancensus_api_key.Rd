@@ -10,5 +10,7 @@ show_cancensus_api_key()
 View saved API key'
 }
 \examples{
+\dontrun{
 show_cancensus_api_key()
+}
 }

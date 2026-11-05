@@ -14,5 +14,7 @@ View the cache path in use, from the \code{CM_CACHE_PATH} environment variable o
 otherwise the \code{cancensus.cache_path} option.
 }
 \examples{
+\dontrun{
 show_cancensus_cache_path()
+}
 }

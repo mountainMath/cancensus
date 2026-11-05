@@ -136,7 +136,9 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' show_cancensus_api_key()
+#' }
 show_cancensus_api_key <- function() {
   key <- Sys.getenv('CM_API_KEY')
   if (key==""){
@@ -157,7 +159,9 @@ show_cancensus_api_key <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' show_cancensus_cache_path()
+#' }
 show_cancensus_cache_path <- function() {
   path <- Sys.getenv('CM_CACHE_PATH')
   if (path=="") path <- getOption("cancensus.cache_path")

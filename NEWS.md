@@ -14,6 +14,7 @@
 
 ## Bug fixes
 
+- The examples of `show_cancensus_api_key()` and `show_cancensus_cache_path()` no longer run when building documentation, which printed the values set on the build machine into the generated pages
 - `label_vectors()` now works for `sf` and `sp` results of `get_census()`. Renaming columns dropped the labels for most requests with geographic data
 - `find_census_vectors(query_type = "keyword")` no longer errors in non-interactive sessions when there are additional matches with less precision. It returns the top matches with a message about the number of additional matches, since the prompt to show them can't be answered
 - `label_vectors()` now returns the full label for vectors with colons in their label, e.g. `Size of census family: 2 persons` in CA06 and CA11. Previously the `Detail` column was cut off at the second colon, and the result had a third unnamed column
