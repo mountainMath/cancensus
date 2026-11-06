@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -24,23 +24,16 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@vb_jens">
 <meta name="twitter:site" content="https://mountainmath.github.io/cancensus/">
-<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script><script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107390160-3');
-</script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +63,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mountainMath/cancensus/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -118,7 +119,7 @@
 <div class="section level3">
 <h3 id="local-cache">Local Cache<a class="anchor" aria-label="anchor" href="#local-cache"></a>
 </h3>
-<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cancensus_cache_path('&lt;local cache path&gt;', install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. Users will be prompted with a suggestion to change their default cache location when making API calls if one has not been set yet.</p>
+<p>For performance reasons, and to avoid unnecessarily drawing down API quotas, <strong>cancensus</strong> caches data queries under the hood. By default, <strong>cancensus</strong> caches in R’s temporary directory, but this cache is not persistent across sessions. In order to speed up performance, reduce quota usage, and reduce the need for unnecessary network calls, we recommend assigning a persistent local cache using <code>set_cancensus_cache_path('&lt;local cache path&gt;', install = TRUE)</code>, this enables more efficient loading and reuse of downloaded data. If no cache path has been set, <strong>cancensus</strong> warns once per session when downloading data. For a project-specific cache, for example to back up the data with the project, call <code>set_cancensus_cache_path('&lt;local cache path&gt;')</code> at the top of a script to set the cache path for that session only.</p>
 <p>Starting with version 0.5.2 <strong>cancensus</strong> will automatically check if for data that has been recalled by Statistics Canada and is stored in the local cache via the new data recall API implemented in <a href="https://censusmapper.ca" class="external-link">CensusMapper</a>. Statistics Canada occasionally detects and corrects errors in their census data releases, and <strong>cancensus</strong> will download a list of recalled data at the first invocation of <code><a href="reference/get_census.html">get_census()</a></code> in each session and emit a warning if it detected locally cached data that has been recalled. Removal of the cached recalled data has to be done explicitly by the user via the <code>remove_recalled_chached_data()</code> function. If data was cached with <strong>cancensus</strong> versions prior to version 0.5.0 there is insufficient metadata to determine all instances of recalled cached data, but the package will check every time cached data is loaded and can identify recalled data at this point at the latest and issues a warning if recalled data is loaded.</p>
 </div>
 <div class="section level3">
@@ -147,11 +148,26 @@
 <p><strong>cancensus</strong> can return census data with or without associated Census geographical information that can be used for mapping and GIS. By default, <strong>cancensus</strong> returns tidy tabular data only, but has options to return spatial data objects in either <a href="https://cran.r-project.org/package=sf" class="external-link"><strong>sf</strong></a> or <a href="https://cran.r-project.org/package=sp" class="external-link"><strong>sp</strong></a> formats.</p>
 <pre><code><span><span class="co"># Return data only</span></span>
 <span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
-<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span><span class="op">)</span></span>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, labels <span class="op">=</span> <span class="st">"labelled"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Return an sf-class data frame</span></span>
 <span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA16'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
-<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA16_408"</span>,<span class="st">"v_CA16_409"</span>,<span class="st">"v_CA16_410"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>, geo_format <span class="op">=</span> <span class="st">"sf"</span>, labels <span class="op">=</span> <span class="st">"labelled"</span><span class="op">)</span></span></code></pre>
+<p>With <code>labels = "labelled"</code> columns get short names and the full description of each column is stored in its <code>"label"</code> attribute. This will become the default in a future version; set <code>labels</code> explicitly, or set <code>options(cancensus.labels = "labelled")</code>, to keep your code stable when that happens.</p>
+</div>
+<div class="section level3">
+<h3 id="french-labels">French labels<a class="anchor" aria-label="anchor" href="#french-labels"></a>
+</h3>
+<p>Census variable labels are available in French for all census datasets by setting <code>language = "fr"</code>, or for a whole session with <code>options(cancensus.language = "fr")</code>. Tax and cross-tabulation datasets don’t have French labels and fall back to English with a warning.</p>
+<pre><code><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>median_hh_income<span class="op">=</span><span class="st">"v_CA21_906"</span><span class="op">)</span>, level<span class="op">=</span><span class="st">'CSD'</span>,</span>
+<span>                          labels <span class="op">=</span> <span class="st">"labelled"</span>, language <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">$</span><span class="va">median_hh_income</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Revenu total médian des ménages en 2020 ($)"</span></span>
+<span></span>
+<span><span class="co"># Find variables using French labels</span></span>
+<span><span class="fu"><a href="reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"revenu total médian des ménages"</span>, dataset <span class="op">=</span> <span class="st">"CA21"</span>, type <span class="op">=</span> <span class="st">"total"</span>, language <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span></code></pre>
+<p>Column names stay the same in both languages, and only the labels change, so the same code runs in either language. With <code>ggplot2</code> version 4.0.0 or later the labels become the default axis and legend titles, so graphs and maps get French titles automatically. See the <a href="https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html">mapping vignette</a> for an example. Region names are not translated.</p>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
 </div>
 <div class="section level3">
@@ -234,14 +250,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.1.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.2.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.1},
+    note = {R package version 0.6.2},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>
@@ -309,7 +325,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

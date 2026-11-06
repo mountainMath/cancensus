@@ -1,6 +1,3 @@
-pandoc: 2.3.1
-pkgdown_sha: ~
-
 url: https://mountainmath.github.io/cancensus/
 
 home:
@@ -92,9 +89,8 @@ authors:
     href: https://dshkol.com
 template:
   bootstrap: 5
-  params:
-    ganalytics: UA-107390160-3
-    bootswatch: simplex
+  light-switch: true
+  bootswatch: simplex
   opengraph:
     image:
       src: 'https://mountainmath.github.io/cancensus/logo.png'

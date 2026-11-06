@@ -75,9 +75,11 @@ persistent across sessions. In order to speed up performance, reduce
 quota usage, and reduce the need for unnecessary network calls, we
 recommend assigning a persistent local cache using
 `set_cancensus_cache_path('<local cache path>', install = TRUE)`, this
-enables more efficient loading and reuse of downloaded data. Users will
-be prompted with a suggestion to change their default cache location
-when making API calls if one has not been set yet.
+enables more efficient loading and reuse of downloaded data. If no cache
+path has been set, **cancensus** warns once per session when downloading
+data. For a project-specific cache, for example to back up the data with
+the project, call `set_cancensus_cache_path('<local cache path>')` at
+the top of a script to set the cache path for that session only.
 
 Starting with version 0.5.2 **cancensus** will automatically check if
 for data that has been recalled by Statistics Canada and is stored in
@@ -148,11 +150,40 @@ to return spatial data objects in either
 
     # Return data only
     census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD')
+                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', labels = "labelled")
 
     # Return an sf-class data frame
     census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
-                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf")
+                              vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"), level='CSD', geo_format = "sf", labels = "labelled")
+
+With `labels = "labelled"` columns get short names and the full
+description of each column is stored in its `"label"` attribute. This
+will become the default in a future version; set `labels` explicitly, or
+set `options(cancensus.labels = "labelled")`, to keep your code stable
+when that happens.
+
+### French labels
+
+Census variable labels are available in French for all census datasets
+by setting `language = "fr"`, or for a whole session with
+`options(cancensus.language = "fr")`. Tax and cross-tabulation datasets
+don’t have French labels and fall back to English with a warning.
+
+    census_data <- get_census(dataset='CA21', regions=list(CMA="59933"),
+                              vectors=c(median_hh_income="v_CA21_906"), level='CSD',
+                              labels = "labelled", language = "fr")
+    attr(census_data$median_hh_income, "label")
+    #> [1] "Revenu total médian des ménages en 2020 ($)"
+
+    # Find variables using French labels
+    find_census_vectors("revenu total médian des ménages", dataset = "CA21", type = "total", language = "fr")
+
+Column names stay the same in both languages, and only the labels
+change, so the same code runs in either language. With `ggplot2` version
+4.0.0 or later the labels become the default axis and legend titles, so
+graphs and maps get French titles automatically. See the [mapping
+vignette](https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html)
+for an example. Region names are not translated.
 
 **cancensus** attempts to minimize bandwidth usage and download time by
 caching downloads. When attempting to download data that has previously
@@ -255,7 +286,7 @@ If you wish to cite cancensus:
 
 von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R
 package to access, retrieve, and work with Canadian Census data and
-geography. v0.6.1.
+geography. v0.6.2.
 
 A BibTeX entry for LaTeX users is
 
@@ -264,7 +295,7 @@ A BibTeX entry for LaTeX users is
         title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
         year = {2026},
         doi = {10.32614/CRAN.package.cancensus},
-        note = {R package version 0.6.1},
+        note = {R package version 0.6.2},
         url = {https://mountainmath.github.io/cancensus/}
       }
 

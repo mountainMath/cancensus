@@ -24,6 +24,47 @@ cancensus_base_url <- function(){
   url
 }
 
+#' User agent sent with CensusMapper API requests
+#'
+#' @description
+#' Identifies the package and its version to the CensusMapper API, in the form
+#' `cancensus/<version> httr/<version> R/<version>`. Packages or tools building on
+#' **cancensus** can identify themselves by setting the `cancensus.user_agent_prefix`
+#' option, e.g. `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which gets
+#' prepended to the user agent string.
+#'
+#' @return A character string
+#' @keywords internal
+cancensus_user_agent <- function(){
+  ua <- paste0("cancensus/", utils::packageVersion("cancensus"),
+               " httr/", utils::packageVersion("httr"),
+               " R/", getRversion())
+  prefix <- getOption("cancensus.user_agent_prefix")
+  if (is.character(prefix) && length(prefix) == 1 && !is.na(prefix)) {
+    # Header values must be a single line without control characters
+    prefix <- trimws(gsub("[[:cntrl:]]+", " ", prefix))
+    if (nchar(prefix) > 0) ua <- paste(prefix, ua)
+  }
+  ua
+}
+
+# Request configuration shared by all CensusMapper API requests
+cm_request_config <- function(quiet = TRUE){
+  config <- httr::user_agent(cancensus_user_agent())
+  if (!quiet) config <- c(config, httr::progress())
+  config
+}
+
+# All requests to the CensusMapper API should go through these wrappers so that
+# they carry the package user agent. Shows a progress bar unless `quiet`.
+cm_GET <- function(url, ..., quiet = TRUE){
+  httr::GET(url, cm_request_config(quiet), ...)
+}
+
+cm_POST <- function(url, body = NULL, ..., quiet = TRUE){
+  httr::POST(url, cm_request_config(quiet), body = body, ...)
+}
+
 valid_api_key <- function(api_key){
   !is.null(api_key) && is.character(api_key) && substr(api_key,1,13)=="CensusMapper_"
 }
@@ -42,12 +83,11 @@ cache_path <- function(...) {
       cache_dir <- getOption("cancensus.cache_path")
     } else {
       cache_dir <- tempdir()
-      message(cm_no_cache_path_message)
     }
   }
   if (!is.character(cache_dir)) {
     stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
-         .call = FALSE)
+         call. = FALSE)
   }
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
@@ -61,6 +101,27 @@ cache_path <- function(...) {
   if (!identical(cache_key, character(0)))
     cache_dir <- file.path(cache_dir, paste0(...))
   cache_dir
+}
+
+# Whether downloaded data outlives the R session. `base_path` is an explicit cache location
+# overriding the cancensus cache path, for functions with a `cache_path` argument.
+cache_is_persistent <- function(base_path = NULL){
+  !is.null(base_path) ||
+    nchar(Sys.getenv("CM_CACHE_PATH")) > 0 ||
+    !is.null(getOption("cancensus.cache_path"))
+}
+
+# Warn that downloaded data won't be kept across sessions. Called after data has been downloaded
+# and saved, so failed requests don't use up the warning and handlers that turn it into an error
+# don't lose the download. Warns once per session, per call would flood users querying in a loop.
+warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE){
+  if (quiet || cache_is_persistent(base_path) ||
+      isTRUE(session_cache_get("cache_warning_shown"))) {
+    return(invisible(NULL))
+  }
+  session_cache_set("cache_warning_shown", TRUE)
+  warning(cm_no_cache_path_warning, call. = FALSE)
+  invisible(NULL)
 }
 
 
@@ -82,11 +143,47 @@ translate_dataset <- function(dataset) {
   dataset
 }
 
-clean_vector_list <- function(vector_list,dataset=NULL){
+# Validate a language parameter, valid choices are "en" and "fr"
+validate_language <- function(language){
+  valid_languages <- c("en","fr")
+  language <- if (is.character(language) && length(language)==1) tolower(language) else NA_character_
+  if (!(language %in% valid_languages)) {
+    stop(paste0("Language must be one of ",paste0(valid_languages,collapse = ", "),"."), call. = FALSE)
+  }
+  language
+}
+
+# Language of a list of vectors: the explicitly requested language if there is one, otherwise
+# the language the vector list was retrieved in, otherwise the session default.
+vector_list_language <- function(vector_list, language = NULL){
+  if (is.null(language)) language <- attr(vector_list, "language")
+  if (is.null(language)) language <- getOption("cancensus.language", "en")
+  validate_language(language)
+}
+
+is_blank <- function(x){
+  is.na(x) | !nzchar(trimws(x))
+}
+
+# Warn once per session and dataset, per call would flood users querying in a loop
+warn_language_fallback <- function(dataset, n_missing, n_total){
+  cache_key <- paste0("language_fallback_warning_", dataset)
+  if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
+  session_cache_set(cache_key, TRUE)
+  warning(paste0(if (n_missing == n_total) {
+    paste0("French labels are not available for dataset ", dataset, ".")
+  } else {
+    paste0("French labels are not available for ", n_missing, " of ", n_total,
+           " vectors in dataset ", dataset, ".")
+  }, " Using English labels instead."), call. = FALSE)
+  invisible(NULL)
+}
+
+clean_vector_list <- function(vector_list,dataset=NULL,language=getOption("cancensus.language", "en")){
   if (!inherits(vector_list,"data.frame")) {
     if (inherits(vector_list,"character")) {
       if (is.null(dataset))  dataset <- dataset_from_vector_list(vector_list)
-      vector_list = list_census_vectors(dataset) %>%
+      vector_list = list_census_vectors(dataset, language = language) %>%
         dplyr::filter(vector %in% vector_list)
     } else
       stop(paste0("Don't know how to parse vector list: ",vector_list))

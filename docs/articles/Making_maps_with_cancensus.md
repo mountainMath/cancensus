@@ -30,7 +30,7 @@ library(sf)
 # retrieve sf dataframe
 toronto <- get_census(dataset='CA21', regions=list(CMA="35535"),
                          vectors=c("median_hh_income"="v_CA21_906"), level='CSD', quiet = TRUE, 
-                         geo_format = 'sf', labels = 'short')
+                         geo_format = 'sf', labels = 'labelled')
 ```
 
 ## Maps with base R graphics
@@ -41,7 +41,7 @@ largely works the same way with most of the same custom graphical
 parameters. One key thing about `sf.plot()` is that it will plot every
 column of a sf data frame separately unless you specify a particular
 column. In this case, the household income variable we selected is
-stored in the `v_CA16_2397` column. Plotting it is easy.
+stored in the `median_hh_income` column. Plotting it is easy.
 
 ``` r
 
@@ -105,6 +105,36 @@ ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
 ![Toronto Median Household Income in
 2020](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-5-1.png)
 
+### Maps with French labels
+
+With `labels = "labelled"` the description of each column is stored in
+its `"label"` attribute, and `ggplot2` version 4.0.0 and later uses that
+attribute as the default axis and legend title. Adding `language = "fr"`
+to the same
+[`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+call therefore gives a French legend title without any change to the
+plotting code. The data is not downloaded again when only the language
+changes.
+
+``` r
+
+toronto_fr <- get_census(dataset='CA21', regions=list(CMA="35535"),
+                         vectors=c("median_hh_income"="v_CA21_906"), level='CSD', quiet = TRUE,
+                         geo_format = 'sf', labels = 'labelled', language = 'fr')
+ggplot(toronto_fr) + geom_sf(aes(fill = median_hh_income))
+```
+
+![Revenu total médian des ménages en 2020 par subdivision de recensement
+de
+Toronto](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-6-1.png)
+
+The column names stay the same in both languages, so code written for
+one language runs unchanged on the other. Region names and any titles
+you set yourself, for example with
+[`labs()`](https://ggplot2.tidyverse.org/reference/labs.html), are not
+translated. To use French labels for a whole session, set
+`options(cancensus.language = "fr")`.
+
 ## Interactive maps with leaflet
 
 The [leaflet](https://leafletjs.com) library is a mainstay behind
@@ -135,7 +165,7 @@ specify the colour ramp to match our needs.
 ``` r
 
 bins <- c(0, 30000,40000, 50000,60000, 70000,80000, 90000,100000, 110000, Inf)
-pal <- colorBin("RdYlBu", domain = toronto$v_CA16_2397, bins = bins)
+pal <- colorBin("RdYlBu", domain = toronto$median_hh_income, bins = bins)
 leaflet(toronto) %>% 
   addProviderTiles(providers$CartoDB.Positron) %>%
   addPolygons(fillColor = ~pal(median_hh_income),

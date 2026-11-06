@@ -32,17 +32,22 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   path <- recall_data_path()
   if (refresh || !file.exists(path)) {
     url <- paste0(cancensus_base_url(),"/api/v1/recall.csv")
-    tryCatch(
-      utils::download.file(url,path,mode="wb",quiet=TRUE),
-      error = function(e) {
-        warning("Unable to download recall database at this point.")
-        problem <<- TRUE
-      },
-      warning = function(e) {
-        warning("Unable to download recall database at this point.")
-        problem <<- TRUE
+    # Download to a temporary file and only replace the cached copy on success,
+    # so that an error response never gets stored as the recall database.
+    tmp <- tempfile(fileext = ".csv")
+    on.exit(unlink(tmp), add = TRUE)
+    tryCatch({
+      response <- cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
+                         httr::timeout(getOption("timeout", 60)))
+      if (httr::status_code(response) != 200) {
+        stop("HTTP status ", httr::status_code(response))
       }
-    )
+      file.copy(tmp, path, overwrite = TRUE)
+    },
+    error = function(e) {
+      warning("Unable to download recall database at this point.")
+      problem <<- TRUE
+    })
   }
   data <- NULL
   if (!problem) {
@@ -79,26 +84,43 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
   recall_database <- get_recalled_database(warn_only_once=warn_only_once)
   if (!is.null(recall_database)) {
     #if (is.null(cached_data)) cached_data <- list_cancensus_cache()
-    vector_recall <- recall_database %>%
-      dplyr::filter(grepl("^d\\.",.data$api_version)) %>%
-      dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-      dplyr::group_map(~dplyr::filter(cached_data %>% dplyr::filter(grepl("^d\\.",.data$version)),
-                                      is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
-                                      .data$version<=.y$api_version,
-                                      .data$dataset==.y$dataset,
-                                      grepl(recalled_vector_pattern(.x$vector),.data$vectors))) %>%
-      dplyr::bind_rows() %>%
-      dplyr::ungroup()
+    # group_map evaluates its function on an empty group when there are no
+    # groups, which fails for the comparisons below. So recalls of a type the
+    # recall database does not have need to be handled separately.
+    data_recalls <- recall_database %>%
+      dplyr::filter(grepl("^d\\.",.data$api_version))
+    cached_vector_data <- cached_data %>%
+      dplyr::filter(grepl("^d\\.",.data$version))
+    vector_recall <- if (nrow(data_recalls)==0) {
+      cached_vector_data[0,]
+    } else {
+      data_recalls %>%
+        dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
+        dplyr::group_map(~dplyr::filter(cached_vector_data,
+                                        is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
+                                        .data$version<=.y$api_version,
+                                        .data$dataset==.y$dataset,
+                                        grepl(recalled_vector_pattern(.x$vector),.data$vectors))) %>%
+        dplyr::bind_rows() %>%
+        dplyr::ungroup()
+    }
 
-    geo_recall <- recall_database %>%
-      dplyr::filter(grepl("^g\\.",.data$api_version)) %>%
-      dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-      dplyr::group_map(~dplyr::filter(cached_data %>% dplyr::filter(grepl("^g\\.",.data$version)),
-                                      is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
-                                      .data$version<=.y$api_version,
-                                      .data$dataset==.y$dataset)) %>%
-      dplyr::bind_rows() %>%
-      dplyr::ungroup()
+    geo_recalls <- recall_database %>%
+      dplyr::filter(grepl("^g\\.",.data$api_version))
+    cached_geo_data <- cached_data %>%
+      dplyr::filter(grepl("^g\\.",.data$version))
+    geo_recall <- if (nrow(geo_recalls)==0) {
+      cached_geo_data[0,]
+    } else {
+      geo_recalls %>%
+        dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
+        dplyr::group_map(~dplyr::filter(cached_geo_data,
+                                        is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
+                                        .data$version<=.y$api_version,
+                                        .data$dataset==.y$dataset)) %>%
+        dplyr::bind_rows() %>%
+        dplyr::ungroup()
+    }
 
     data <- dplyr::bind_rows(vector_recall,geo_recall)
   }

@@ -7,6 +7,11 @@
 #'   available. If set to FALSE, query the API for the data, and
 #'   refresh the local cache with the result.
 #' @param quiet When FALSE, shows messages and warnings. Set to TRUE by default.
+#' @param language Language of the \code{label} and \code{details} columns, one of \code{"en"} or
+#'   \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set.
+#'   Not all datasets have French labels. Vectors without French labels fall back to English, with a warning
+#'   once per session and dataset that is shown independently of \code{quiet}. The \code{type}, \code{units}
+#'   and \code{aggregation} columns are always in English.
 #'
 #' @return
 #' Returns a data frame detailing the available Census vectors (i.e. variables) for a given Census
@@ -25,9 +30,21 @@
 #' \dontrun{
 #' # List all vectors for a given Census dataset in CensusMapper
 #' list_census_vectors('CA16')
+#'
+#' # The same list with French labels
+#' list_census_vectors('CA16', language = 'fr')
 #' }
-list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
+list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE,
+                                language = getOption("cancensus.language", "en")) {
+  language <- validate_language(language)
   dataset <- translate_dataset(dataset)
+  fetch_census_vectors(dataset, use_cache = use_cache, quiet = quiet) %>%
+    localize_census_vectors(language)
+}
+
+# Get the vector metadata in all languages. Caching is independent of language, the language
+# specific view gets created by localize_census_vectors.
+fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_key <- paste0(dataset, "_vectors")
   if (use_cache) {
     cached <- session_cache_get(cache_key)
@@ -36,19 +53,15 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
-    response <- if (!quiet) {
-      message("Querying CensusMapper API for vectors data...")
-      httr::GET(url, httr::progress())
-    } else {
-      httr::GET(url)
-    }
+    if (!quiet) message("Querying CensusMapper API for vectors data...")
+    response <- cm_GET(url, quiet=quiet)
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
       dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
                        .name_repair = "minimal")
     } else {
-      readr::read_csv(content,col_types=readr::cols(.default="c"))
+      readr::read_csv(I(content),col_types=readr::cols(.default="c"))
     }
     result <- dplyr::mutate(
       result, type = factor(.data$type),
@@ -67,9 +80,9 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
         grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
                                  fixed = TRUE)
       )) %>%
-      dplyr::select(.data$vector, .data$type, .data$label, .data$units,
-                    parent_vector = .data$parent, .data$aggregation,
-                    .data$details)
+      dplyr::select("vector", "type", "label", "units",
+                    parent_vector = "parent", "aggregation",
+                    "details", dplyr::any_of(c("label_fr", "details_fr")))
     attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
     save(result, file = cache_file)
@@ -81,12 +94,38 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   }
 }
 
+# Turn vector metadata in all languages into the requested language, keeping the column layout
+# independent of language. Vectors without a translation fall back to English.
+localize_census_vectors <- function(vector_info, language, warn = TRUE) {
+  if (language == "fr") {
+    translation <- function(column) {
+      if (column %in% names(vector_info)) vector_info[[column]] else rep(NA_character_, nrow(vector_info))
+    }
+    label_fr <- translation("label_fr")
+    details_fr <- translation("details_fr")
+    has_label <- !is_blank(label_fr)
+    has_details <- !is_blank(details_fr)
+    vector_info$label[has_label] <- label_fr[has_label]
+    vector_info$details[has_details] <- details_fr[has_details]
+    n_missing <- sum(!(has_label & has_details))
+    if (warn && n_missing > 0) {
+      warn_language_fallback(attr(vector_info, "dataset"), n_missing, nrow(vector_info))
+    }
+  }
+  vector_info <- dplyr::select(vector_info, -dplyr::any_of(c("label_fr", "details_fr")))
+  attr(vector_info, "language") <- language
+  vector_info
+}
+
 #' List all parent variables from vector hierarchies given either a list of Census
 #' variables returned by
 #' \code{list_census_vectors}, \code{search_census_vectors}, \code{find_census_vectors}, or a direct string reference to the vector code.
 #'
 #' @param vector_list The list of vectors to be used, either a character vector or a filtered tibble
 #' as returned from \code{list_census_vectors}.
+#' @param language Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+#' \code{vector_list} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+#' if that is not set. See \code{\link{list_census_vectors}}.
 #'
 #' @export
 #'
@@ -108,13 +147,14 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
 #'   filter(vector == "v_CA16_2519") %>%
 #'   parent_census_vectors()
 #' }
-parent_census_vectors <- function(vector_list){
+parent_census_vectors <- function(vector_list, language = NULL){
+  language <- vector_list_language(vector_list, language)
   dataset <- dataset_from_vector_list(vector_list)
-  vector_list <- clean_vector_list(vector_list,dataset)
+  vector_list <- clean_vector_list(vector_list,dataset,language)
   base_list <- vector_list
 
   # Cache the full vector list once instead of repeated API/cache lookups
-  all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
+  all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE, language = language)
 
   # BFS on plain character vectors; hash-based %in%/match avoids re-binding
   # and re-filtering the full accumulated tibble at every hierarchy level.
@@ -132,6 +172,7 @@ parent_census_vectors <- function(vector_list){
   vector_list <- all_vectors[match(seen, all_vectors$vector), ]
 
   attr(vector_list, "dataset") <- dataset
+  attr(vector_list, "language") <- language
   return(vector_list)
 }
 
@@ -146,6 +187,9 @@ parent_census_vectors <- function(vector_list){
 #' @param max_level optional, maximum depth to look for child vectors. Default is \code{NA} and will return all
 #' child census vectors.
 #' @param keep_parent optional, also return parent vector in list of results. Default is set to \code{FALSE}.
+#' @param language Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+#' \code{vector_list} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+#' if that is not set. See \code{\link{list_census_vectors}}.
 #'
 #' @export
 #'
@@ -175,14 +219,16 @@ parent_census_vectors <- function(vector_list){
 #'   child_census_vectors(TRUE, keep_parent = TRUE)
 #'}
 #'
-child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,keep_parent = FALSE){
-  vector_list <- clean_vector_list(vector_list)
+child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,keep_parent = FALSE,
+                                 language = NULL){
+  language <- vector_list_language(vector_list, language)
+  vector_list <- clean_vector_list(vector_list, language = language)
   base_list <- vector_list
   dataset <- dataset_from_vector_list(vector_list)
   child_level <- 1
   if (!is.null(dataset)) {
     # Cache the full vector list once instead of repeated API/cache lookups
-    all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
+    all_vectors <- list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE, language = language)
 
     # BFS on plain character vectors; hash-based %in% avoids re-binding and
     # re-filtering the full accumulated tibble at every hierarchy level.
@@ -207,6 +253,7 @@ child_census_vectors <- function(vector_list, leaves_only=FALSE,max_level=NA,kee
       vector_list <- dplyr::bind_rows(base_list,vector_list)
     }
     attr(vector_list, "dataset") <- dataset
+    attr(vector_list, "language") <- language
   }
   return(vector_list)
 }

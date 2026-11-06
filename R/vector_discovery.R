@@ -79,6 +79,10 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #' By default, assumes exact string matching, but the alternatives may be better
 #' options in some cases. See description section for more details on query types.
 #' @param ... Other arguments passed to internal functions.
+#' @param language Language to search in and return labels in, one of \code{"en"} or \code{"fr"}. Defaults to
+#' the \code{cancensus.language} option, and to \code{"en"} if that is not set. Searches match accents exactly,
+#' and the \code{type} parameter takes the same English values for both languages.
+#' See \code{\link{list_census_vectors}}.
 #'
 #' @export
 #'
@@ -103,8 +107,12 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
 #'
 #' find_census_vectors('ukrainian origin', dataset = 'CA16', type = 'total', query_type = 'keyword')
 #'
+#' find_census_vectors('revenu total', dataset = 'CA16', type = 'total',
+#'                     query_type = 'keyword', language = 'fr')
+#'
 #' }
-find_census_vectors <- function(query, dataset, type = "all", query_type = "exact", ...) {
+find_census_vectors <- function(query, dataset, type = "all", query_type = "exact", ...,
+                                language = getOption("cancensus.language", "en")) {
   type = tolower(type)
   query_type = tolower(query_type)
 
@@ -118,8 +126,10 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
     call. = FALSE)
   }
   type = tools::toTitleCase(type)
-  census_vector_list <- list_census_vectors(dataset)[, c("vector", "type", "label","details")]
-  census_vector_list$details <- gsub("^(.*)Census; |100% data; ","",census_vector_list$details)
+  census_vector_list <- list_census_vectors(dataset, language = language)[, c("vector", "type", "label","details")]
+  # The French pattern also runs on English text, since vectors without translation fall back to English
+  census_vector_list$details <- gsub("^(.*)Census; |100% data; |^(Recensement|ENM)[^;]*; |Donn\u00e9es int\u00e9grales \\(100.?%\\); ",
+                                     "",census_vector_list$details)
   # filter by type if provided
   if (any(type %in% c("Total", "Male", "Female")))
   {
@@ -160,7 +170,7 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
 semantic_search <- function(query_terms, census_vector_list) {
   sample_vector_list <- census_vector_list$details
   clean_vector_list <- gsub("\\s+"," ",gsub("[[:punct:]]"," ",sample_vector_list))
-  query_words <- unlist(strsplit(tolower(query_terms), "[^a-z]+"))
+  query_words <- unlist(strsplit(tolower(query_terms), "[^[:alpha:]]+"))
   word_count <- length(query_words)
   sentence_word_split <- strsplit(tolower(clean_vector_list), "\\s+")
 
@@ -224,6 +234,9 @@ semantic_search <- function(query_terms, census_vector_list) {
     }
 }
 
+# The interactive parameter of keyword_search masks the base function, this is also easier to mock
+session_is_interactive <- function() base::interactive()
+
 #' Internal function for powering keyword searches in find_census_vectors
 #'
 #' @description Default search behaviour in \code{find_census_vectors()} expects an exact match, but
@@ -241,7 +254,8 @@ semantic_search <- function(query_terms, census_vector_list) {
 #' matching keywords it will prompt the user with an option to show the additional results.
 #' This can be manually overridden by setting \code{interactive=FALSE}, which will result in
 #' only the top matched results showing up, which might be useful if this function is used in
-#' automated scripts.
+#' automated scripts. In non-interactive sessions, where a prompt can't be answered, it returns
+#' the top matched results with a message about the number of additional matches.
 #'
 #' @keywords Internal
 #' @noRd
@@ -252,7 +266,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
   clean_vector_list <- vapply(vector_words, function(x) paste(unique(x), collapse = " "),
                               character(1), USE.NAMES = FALSE)
 
-  query_tokens <- unlist(strsplit(tolower(query_terms), "[^a-z]+"))
+  query_tokens <- unlist(strsplit(tolower(query_terms), "[^[:alpha:]]+"))
   # drop empty tokens (e.g. from queries starting with a digit), an empty
   # regex alternative would match every vector
   query_tokens <- query_tokens[nzchar(query_tokens)]
@@ -278,6 +292,11 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
     if (length(res_df$results) == length(top_res$vector))
       return(top_res)
     else if (!interactive) {return(top_res)}
+    else if (!session_is_interactive()) {
+      message(length(other_res$vector), " additional keyword matches with less precision are not shown ",
+              "since the session is not interactive.")
+      return(top_res)
+    }
     else if (length(other_res$vector) > 0 & interactive){
       print(top_res)
       show_more <-

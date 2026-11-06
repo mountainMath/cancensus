@@ -25,9 +25,17 @@ geographic attributes file. It contains a row for each Census Block, the
 basic building block of census geographies, and tags other levels of
 geography the Census Block lies in.
 
+Statistics Canada may block this download, in which case
+[`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
+returns `NULL` with a warning that explains how to download the file
+manually.
+
 ``` r
 
 attributes <- get_statcan_geographic_attributes("2021")
+```
+
+``` r
 
 attributes %>% colnames()
 #>  [1] "PRUID_PRIDU"                   "PRDGUID_PRIDUGD"              

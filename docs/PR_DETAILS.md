@@ -22,8 +22,7 @@ once instead of repeated
 [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
 calls 2. **List accumulation** - Replace O(n²)
 [`rbind()`](https://rdrr.io/r/base/cbind.html) in loops with efficient
-list +
-[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind_rows.html)
+list + `bind_rows()`
 
 **Impact:** - Eliminates 8+ cache lookups per function call → 1 lookup -
 Prevents memory thrashing from repeated data frame copying - Scales much
@@ -118,9 +117,7 @@ vectors - Memory cost: ~1-5 MB for full vector list - Performance gain:
 
 **Trade-off:** - **Before:** Simple
 [`rbind()`](https://rdrr.io/r/base/cbind.html) in loop (but O(n²)) -
-**After:** List accumulation +
-[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind_rows.html)
-(O(n) but more lines)
+**After:** List accumulation + `bind_rows()` (O(n) but more lines)
 
 **Impact:** - Added ~10 lines of code per function - Inline comments
 explain optimization - Still using familiar dplyr patterns

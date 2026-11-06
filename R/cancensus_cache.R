@@ -15,8 +15,6 @@ generate_metadata <- function(meta_file,params){
       metadata <- metadata %>% dplyr::mutate(access_count=1)
     }
   } else {
-    pattern <- basename(meta_file) %>% gsub("\\.meta$","",.)
-    path <- dir(cache_path(),pattern = pattern)
     metadata <- dplyr::tibble(last_accessed=Sys.time(),access_count=1)
   }
   if (!is.null(params) & !("dataset" %in% names(metadata)) & "dataset" %in% names(params)) {
@@ -99,7 +97,7 @@ list_cancensus_cache <- function(){
     all <- all %>%
       dplyr::left_join(manual_sizes,by="path") %>%
       dplyr::mutate(size=dplyr::coalesce(.data$size,.data$manual_size)) %>%
-      dplyr::select(-.data$manual_size)
+      dplyr::select(-"manual_size")
   }
 
   for (n in setdiff(metadata_columns_c,names(all))) {

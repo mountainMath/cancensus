@@ -13,6 +13,9 @@
 #' @param show_type Logical. If \code{TRUE}, shows the type (Total/Male/Female)
 #'   next to each vector. Default is \code{FALSE}.
 #' @param quiet When \code{TRUE}, suppress messages. Default is \code{FALSE}.
+#' @param language Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+#'   \code{vector} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+#'   if that is not set. See \code{\link{list_census_vectors}}.
 #'
 #' @return Invisibly returns a tibble of the vectors displayed in the tree.
 #'   The tree is printed to the console as a side effect.
@@ -35,7 +38,9 @@
 #'   visualize_vector_hierarchy()
 #' }
 visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
-                                       show_type = FALSE, quiet = FALSE) {
+                                       show_type = FALSE, quiet = FALSE, language = NULL) {
+
+  language <- vector_list_language(vector, language)
 
   # Handle input - either character vector code or tibble
 
@@ -52,7 +57,7 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
     dataset <- translate_dataset(dataset)
 
     # Get the root vector info
-    all_vectors <- list_census_vectors(dataset, quiet = TRUE)
+    all_vectors <- list_census_vectors(dataset, quiet = TRUE, language = language)
     root_info <- all_vectors %>% dplyr::filter(.data$vector %in% !!vector)
 
     if (nrow(root_info) == 0) {
@@ -71,7 +76,7 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
     }
     dataset <- translate_dataset(dataset)
     root_info <- vector
-    all_vectors <- list_census_vectors(dataset, quiet = TRUE)
+    all_vectors <- list_census_vectors(dataset, quiet = TRUE, language = language)
   } else {
     stop("'vector' must be a character string or a tibble from list_census_vectors().",
          call. = FALSE)
@@ -86,7 +91,8 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
   root_vector <- root_info$vector
 
   # Get all children
-  children <- child_census_vectors(root_vector, leaves_only = FALSE, max_level = max_depth)
+  children <- child_census_vectors(root_vector, leaves_only = FALSE, max_level = max_depth,
+                                   language = language)
 
   # Combine root with children
   tree_vectors <- dplyr::bind_rows(root_info, children)

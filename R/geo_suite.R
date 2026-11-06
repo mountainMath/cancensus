@@ -9,7 +9,9 @@
 #' "DB", "DA", "ADA", "CT", "CSD", "CMA", "CD", "PR", "FED", "DPL", "ER", "PN", "POPCTR"
 #' @param census_year census year to get the data for, right now only 2021 is supported
 #' @param refresh (logical) refresh the cache if true
-#' @return tibble with the geosuite data
+#' @return tibble with the geosuite data. If Statistics Canada blocks the download this gives a
+#' warning explaining how to download the file manually, and returns the cached data when
+#' refreshing existing cached data and `NULL` otherwise
 #'
 #'
 #' @examples
@@ -31,23 +33,23 @@ get_statcan_geo_suite <- function(level,census_year="2021",refresh=FALSE){
   }
   path <- cache_path(paste0("geo_suite_",census_year))
   file_path <- file.path(path,"2021_92-150-X_eng",paste0(level,".csv"))
-  if (refresh || !dir.exists(path) || !file.exists(file_path)) {
-    tmp <- tempfile()
+  has_cache <- file.exists(file_path)
+  if (refresh || !has_cache) {
     urls <- c("2016"="https://www12.statcan.gc.ca/census-recensement/2016/geo/ref/geosuite/files-fichiers/GeoSuite_2016_92-150_XBB_eng.zip",
               "2021"="https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/geosuite/files-fichiers/2021_92-150-X_eng.zip",
               "2011"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2011_92-150_XBB_eng.zip",
               "2006"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2006_92-150_XBB_eng.zip",
               "2001"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/92F0150WCB2001000.zip")
-    url <- urls[[census_year]]
-    old_timeout <- getOption("timeout")
-    options(timeout=10000)
-    utils::download.file(url,destfile=tmp, mode = "wb")
-    options(timeout=old_timeout)
-    if (!dir.exists(path)) dir.create(path)
-    if (Sys.info()[['sysname']]=="Darwin") {
-      system(paste0("ditto -V -x -k --sequesterRsrc --rsrc '",tmp,"' '",path,"'"))
-    } else {
-      utils::unzip(tmp,exdir = path)
+    tmp <- statcan_download_zip(urls[[census_year]],has_cache = has_cache)
+    if (is.null(tmp) && !has_cache) return(NULL)
+    if (!is.null(tmp)) {
+      if (!dir.exists(path)) dir.create(path)
+      if (Sys.info()[['sysname']]=="Darwin") {
+        system(paste("ditto -V -x -k --sequesterRsrc --rsrc",shQuote(tmp),shQuote(path)))
+      } else {
+        utils::unzip(tmp,exdir = path)
+      }
+      unlink(tmp)
     }
   }
   gs <- NULL
@@ -83,7 +85,9 @@ get_statcan_geo_suite <- function(level,census_year="2021",refresh=FALSE){
 #' @param census_year census year to get the data for, right now only 2021 is supported, for older
 #' years `get_statcan_geographic_attributes()` can fill in most of the information
 #' @param refresh (logical) refresh the cache if true
-#' @return tibble with the relationship data
+#' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
+#' warning explaining how to download the file manually, and returns the cached data when
+#' refreshing existing cached data and `NULL` otherwise
 #'
 #' @keywords internal
 #'
@@ -100,9 +104,15 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
                 " are supported for the geographic relationship file."))
   }
   file_path <- cache_path(paste0("geography_relationship_",census_year,".zip"))
-  if (refresh || !file.exists(file_path)) {
+  has_cache <- statcan_is_zip(file_path)
+  if (refresh || !has_cache) {
     url <- paste0("https://www12.statcan.gc.ca/census-recensement/",census_year,"/geo/sip-pis/dguid-idugd/files-fichiers/",census_year,"_98260004.zip")
-    utils::download.file(url,  file_path,mode="wb")
+    tmp <- statcan_download_zip(url,has_cache = has_cache)
+    if (is.null(tmp) && !has_cache) return(NULL)
+    if (!is.null(tmp)) {
+      file.copy(tmp,file_path,overwrite = TRUE)
+      unlink(tmp)
+    }
   }
   readr::read_csv(file_path,
                   locale = readr::locale(encoding ="Windows-1252"),
@@ -120,7 +130,9 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 #'
 #' @param census_year census year to get the data for, right now only 2006, 2011, 2016, 2021 are supported
 #' @param refresh (logical) refresh the cache if true
-#' @return tibble with the relationship data
+#' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
+#' warning explaining how to download the file manually, and returns the cached data when
+#' refreshing existing cached data and `NULL` otherwise
 #'
 #' @examples
 #' # list add the cached census data
@@ -143,12 +155,17 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE){
   base_path <- cache_path("attribute_files")
   if (!dir.exists(base_path)) dir.create(base_path)
   base_path_year <- file.path(base_path,census_year)
-  if (refresh || !dir.exists(base_path_year)) {
-    if (dir.exists(base_path_year)) unlink(base_path_year,recursive = TRUE)
-    dir.create(base_path_year)
-    tmp<-tempfile(fileext = ".zip")
-    status <- utils::download.file(urls[[census_year]],tmp,mode="wb")
-    utils::unzip(tmp,exdir = base_path_year)
+  has_cache <- length(dir(base_path_year))>0
+  if (refresh || !has_cache) {
+    tmp <- statcan_download_zip(urls[[census_year]],has_cache = has_cache)
+    if (is.null(tmp) && !has_cache) return(NULL)
+    if (!is.null(tmp)) {
+      # only clear the cache once we have a replacement
+      if (dir.exists(base_path_year)) unlink(base_path_year,recursive = TRUE)
+      dir.create(base_path_year)
+      utils::unzip(tmp,exdir = base_path_year)
+      unlink(tmp)
+    }
   }
   if (census_year=="2021") file <- dir(base_path_year,pattern="\\.csv",full.names = TRUE)
   else file <- dir(base_path_year,pattern="\\.txt",full.names = TRUE)

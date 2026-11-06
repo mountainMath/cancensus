@@ -15,11 +15,12 @@ get_census(
   vectors = c(),
   geo_format = NA,
   resolution = "simplified",
-  labels = "detailed",
+  labels = getOption("cancensus.labels", "detailed"),
   use_cache = TRUE,
   quiet = FALSE,
   api_key = Sys.getenv("CM_API_KEY"),
-  retry = 0
+  retry = 0,
+  language = getOption("cancensus.language", "en")
 )
 }
 \arguments{
@@ -27,9 +28,9 @@ get_census(
 
 \item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
-\item{level}{The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).}
+\item{level}{The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CA"}, \code{"CMACA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016). \code{"CMA"}, \code{"CA"} and \code{"CMACA"} all refer to the same level, which contains both census metropolitan areas and census agglomerations.}
 
-\item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded.}
+\item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded. Naming the elements of the vector sets the names of the columns, e.g. \code{c(pop = "v_CA21_1")}. With \code{labels = "labelled"}, if a name is already used by another column, like \code{Population}, that column gets a trailing underscore, e.g. \code{Population_}.}
 
 \item{geo_format}{By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.}
 
@@ -38,7 +39,7 @@ Simplification generally increases as the geographic aggregation level increases
 If high resolution geometries are required
 then this option can be set to 'high'. By default this setting is set to \code{'simplified'}.}
 
-\item{labels}{Set to "detailed" by default, but truncated Census variable names can be selected by setting labels = "short". Use \code{label_vectors(...)} to return variable label information in detail.}
+\item{labels}{Defaults to the \code{cancensus.labels} option, and to "detailed" if that is not set. The default is planned to change to "labelled" in a future version, so to keep code working set this parameter, or set the option with e.g. \code{options(cancensus.labels = "detailed")}. A message points this out once per session if neither is set. "detailed" names Census variable columns by vector and label, e.g. \code{"v_CA21_1: Population, 2021"}. Truncated Census variable names can be selected by setting labels = "short". Setting labels = "labelled" also names the columns by vector only, and stores the label of each variable in the \code{"label"} attribute of its column, which is displayed e.g. by the RStudio data viewer. The other columns get short names and types that are the same across datasets and with or without \code{geo_format}, e.g. \code{Name}, \code{Area}, \code{Population} and \code{Population_Previous}, and also have a \code{"label"}, e.g. \code{"Population 2021"} for \code{Population}, with the year being that of the census the column refers to. Columns named by naming \code{vectors} get the label of their variable. Use \code{label_vectors(...)} to return variable label information in detail.}
 
 \item{use_cache}{If set to TRUE (the default) data will be read from the local cache if available.}
 
@@ -47,6 +48,8 @@ then this option can be set to 'high'. By default this setting is set to \code{'
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
 
 \item{retry}{Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.}
+
+\item{language}{Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the names of the other columns. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.}
 }
 \description{
 This function allows convenient access to Canadian census data and boundary
@@ -78,5 +81,16 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 
 # Get details for truncated vectors:
 label_vectors(census_data)
+
+# Name columns by vector, with the labels in the "label" attribute of the columns:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD', labels="labelled")
+attr(census_data$v_CA16_408, "label")
+
+# Get the labels in French:
+census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
+                          vectors=c("v_CA16_408","v_CA16_409","v_CA16_410"),
+                          level='CSD', language="fr")
 }
 }

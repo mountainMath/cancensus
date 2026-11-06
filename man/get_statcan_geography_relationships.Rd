@@ -13,7 +13,9 @@ years `get_statcan_geographic_attributes()` can fill in most of the information}
 \item{refresh}{(logical) refresh the cache if true}
 }
 \value{
-tibble with the relationship data
+tibble with the relationship data. If Statistics Canada blocks the download this gives a
+warning explaining how to download the file manually, and returns the cached data when
+refreshing existing cached data and `NULL` otherwise
 }
 \description{
 Reads the Dissemination Geographies Relationship File for the given census year. The table contains

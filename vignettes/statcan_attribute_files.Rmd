@@ -29,9 +29,18 @@ Attribute files describe the detailed relationship of various Statistics Canada 
 ## Match between Census Tracts and Census Subdivisions
 If we are interested in understanding which Census Tracts respect municipal boundaries and which ones don't in 2021 we can consult the geographic attributes file. It contains a row for each Census Block, the basic building block of census geographies, and tags other levels of geography the Census Block lies in.
 
+Statistics Canada may block this download, in which case `get_statcan_geographic_attributes()` returns `NULL` with a warning that explains how to download the file manually.
+
 ```{r}
 attributes <- get_statcan_geographic_attributes("2021")
+```
 
+```{r, include = FALSE}
+# Skip the remaining chunks if the download was blocked, e.g. on CI
+knitr::opts_chunk$set(eval = !is.null(attributes))
+```
+
+```{r}
 attributes %>% colnames()
 ```
 

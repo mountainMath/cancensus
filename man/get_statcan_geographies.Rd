@@ -32,7 +32,9 @@ cached in the "geographies" subdirectory of the cancensus cache path.}
 \item{quiet}{(logical) suppress messages if `TRUE`}
 }
 \value{
-a spatial dataframe with the geographic data
+a spatial dataframe with the geographic data. If Statistics Canada blocks the download
+this gives a warning explaining how to download the file manually, and returns the cached data
+when refreshing existing cached data and `NULL` otherwise
 }
 \description{
 Reads the original unprocessed geographic boundary files from Statistics Canada

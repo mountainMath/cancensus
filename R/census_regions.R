@@ -48,8 +48,8 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 
   if (!use_cache || !file.exists(cache_file)) {
     if (!quiet) message("Querying CensusMapper API for regions data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
-                                 "/place_names.csv"))
+    response <- cm_GET(paste0(cancensus_base_url(),"/data_sets/", dataset,
+                              "/place_names.csv"))
     handle_cm_status_code(response, NULL)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
@@ -58,12 +58,12 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
                                        stringsAsFactors = FALSE),
                        .name_repair = "minimal")
     } else {
-      readr::read_csv(content,col_types = readr::cols(.default='c'))
+      readr::read_csv(I(content),col_types = readr::cols(.default='c'))
     }
-    result <- dplyr::select(result, region = .data$geo_uid, .data$name,
-                            level = .data$type, pop = .data$population,
-                            municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)  %>%
+    result <- dplyr::select(result, region = "geo_uid", "name",
+                            level = "type", pop = "population",
+                            municipal_status = "flag", "CMA_UID",
+                            "CD_UID", "PR_UID")  %>%
       dplyr::mutate(pop=as.integer(.data$pop))
     attr(result, "last_updated") <- Sys.time()
     save(result, file = cache_file)
@@ -212,7 +212,7 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
                                         TRUE ~ paste0(.data$Name," (",.data$region,")"))) %>%
-    dplyr::select(-.data$count) %>%
+    dplyr::select(-"count") %>%
     dplyr::ungroup()
 
   if (length(gs)>0) {
