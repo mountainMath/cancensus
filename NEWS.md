@@ -14,6 +14,7 @@
 
 ## Bug fixes
 
+- `get_census()` now accepts `"CA"` and `"CMACA"` in addition to `"CMA"`, both for the `level` parameter and as names of `regions`. All three refer to the same level, which contains both census metropolitan areas and census agglomerations. This also fixes the error when passing census agglomerations from `list_census_regions()` through `as_census_region_list()` to `get_census()` (#208)
 - The examples of `show_cancensus_api_key()` and `show_cancensus_cache_path()` no longer run when building documentation, which printed the values set on the build machine into the generated pages
 - `label_vectors()` now works for `sf` and `sp` results of `get_census()`. Renaming columns dropped the labels for most requests with geographic data
 - `find_census_vectors(query_type = "keyword")` no longer errors in non-interactive sessions when there are additional matches with less precision. It returns the top matches with a message about the number of additional matches, since the prompt to show them can't be answered

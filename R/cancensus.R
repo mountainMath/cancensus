@@ -9,7 +9,7 @@
 #'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
-#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).
+#' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CA"}, \code{"CMACA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016). \code{"CMA"}, \code{"CA"} and \code{"CMACA"} all refer to the same level, which contains both census metropolitan areas and census agglomerations.
 #' @param vectors An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded. Naming the elements of the vector sets the names of the columns, e.g. \code{c(pop = "v_CA21_1")}. With \code{labels = "labelled"}, if a name is already used by another column, like \code{Population}, that column gets a trailing underscore, e.g. \code{Population_}.
 #' @param geo_format By default is set to \code{NA} and appends no geographic information. To include geographic information with census data, specify one of either \code{"sf"} to return an \code{\link[sf]{sf}} object (requires the \code{sf} package) or \code{"sp"} to return a \code{\link[sp]{SpatialPolygonsDataFrame-class}} object (requires the \code{rgdal} package). If user requests geo-spatial data and neither package is available, a context menu will prompt to install the \code{sf} package.
 #' @param resolution Resolution of the geographic data. By default simplified geometries will be download. For lower level geometries like DB or DA this will be very close to the high resolution data.
@@ -103,7 +103,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
-    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
+    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CA', 'CMACA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
   }
 
   # Check that we can read the requested geo format.
@@ -401,7 +401,7 @@ get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", 
 
 # This is the set of valid census aggregation levels, also used in the named
 # elements of the `regions` parameter.
-VALID_LEVELS <- c("Regions","C","PR", "CMA", "CD", "CSD", "ADA","CT", "DA", 'EA', "DB")
+VALID_LEVELS <- c("Regions","C","PR", "CMA", "CA", "CMACA", "CD", "CSD", "ADA","CT", "DA", 'EA', "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
@@ -608,7 +608,7 @@ name_change_for_level <- function(level){
   } else if (level=='CD') {
     name_change <- c('PR_UID'='rpid',
                      'C_UID'='rgid')
-  } else if (level=='CMA') {
+  } else if (level %in% c('CMA','CA','CMACA')) {
     name_change <- c('PR_UID'='rpid',
                      'C_UID'='rgid')
   } else if (level=='PR') {

@@ -28,7 +28,7 @@ get_census(
 
 \item{regions}{A named list of census regions to retrieve. Names must be valid census aggregation levels.}
 
-\item{level}{The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016).}
+\item{level}{The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CA"}, \code{"CMACA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016). \code{"CMA"}, \code{"CA"} and \code{"CMACA"} all refer to the same level, which contains both census metropolitan areas and census agglomerations.}
 
 \item{vectors}{An R vector containing the CensusMapper variable names of the census variables to download. If no vectors are specified only geographic data will get downloaded. Naming the elements of the vector sets the names of the columns, e.g. \code{c(pop = "v_CA21_1")}. With \code{labels = "labelled"}, if a name is already used by another column, like \code{Population}, that column gets a trailing underscore, e.g. \code{Population_}.}
 
