@@ -2,7 +2,7 @@
 
 ## Breaking changes
 
-- `get_statcan_geographic_attributes()` now reads parquet files hosted at <https://data.mountainmath.ca/census/geo_attributes/> instead of downloading from Statistics Canada, which blocks programmatic downloads of these files (#228, #233). This requires the **duckdb** and **DBI** packages. Column names now follow one convention across census years, so code using the previous names needs updating, e.g. `CTCODE_SRCODE` is now `CTCODE` for 2021, and `DBuid` and `DAlat` are now `DBUID` and `DARPLAT` for 2006 and 2011. Counts are now integers and coordinates are numeric. Data gets downloaded again once, and the previous cache in the `attribute_files` folder of the cache directory is no longer used and can be deleted, as can any copy of these files in the `statcan_downloads` folder
+- `get_statcan_geographic_attributes()` now reads parquet files hosted at <https://data.mountainmath.ca/census/geo_attributes/> instead of downloading from Statistics Canada, which blocks programmatic downloads of these files (#228, #233). This requires the **duckdb** and **DBI** packages. Column names are now simpler and follow one convention across census years, so code using the previous names needs updating, e.g. `CTCODE_SRCODE` is now `CTCODE` for 2021, and `DBuid` and `DAlat` are now `DBUID` and `DARPLAT` for 2006 and 2011. To make up for the simpler names, columns now have labels describing them in the language of choice, set by the new `language` parameter. Counts are now integers and coordinates are numeric. Data gets downloaded again once. The previous cache in the `attribute_files` folder of the cache directory and any copies of these files in the `statcan_downloads` folder are no longer used, and the function shows a command to delete them once per session
 
 ## Improvements
 
@@ -31,7 +31,7 @@
 - Column selections no longer use `.data`, which is deprecated in tidyselect 1.2.0 and newer
 - `show_cancensus_cache_path()` now also reports a cache path set via the `cancensus.cache_path` option, previously it reported that no cache path was set
 - The error for a corrupt cache path no longer ends in a stray `FALSE`
-- `get_statcan_geographic_attributes()` no longer returns misaligned columns for 2006 and 2011, the fixed-width layout it used did not match these files. Moving to the hosted files fixes this
+- `get_statcan_geographic_attributes()` no longer returns misaligned columns for 2006 and 2011, the fixed-width layout it used did not match these files. For 2006 the columns from `DAlamy` on were wrong, for 2011 the columns from `CDuid` on, so results based on these columns from earlier versions should be checked
 - `get_statcan_geographies()`, `get_statcan_geo_suite()` and `get_statcan_geography_relationships()` now fail gracefully when Statistics Canada blocks the download with a Cloudflare browser verification (#228). They return `NULL` with a warning that gives the link for downloading the file in a browser and the location in the cache directory to move it to, and pick up the file from there on the next run. If the download was blocked while refreshing existing cached data with `refresh = TRUE`, they return the cached data with the same warning instead of `NULL`. The file has to stay zipped, so on macOS the warning points out that Safari unzips downloads automatically, and it flags folders that look like an unzipped copy of the file
 
 # cancensus 0.6.1

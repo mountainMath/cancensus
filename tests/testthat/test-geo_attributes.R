@@ -183,6 +183,53 @@ test_that("an invalid cached file gets downloaded again", {
   })
 })
 
+test_that("old attribute files are pointed out once with a working command, and not deleted", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"))
+    mock_no_download()
+    old_dir <- file.path(cancensus:::cache_path("attribute_files"), "2021")
+    dir.create(old_dir, recursive = TRUE)
+    old_file <- file.path(old_dir, "2021_92-151_X.csv")
+    writeBin(raw(2000), old_file)
+    downloads <- cancensus:::statcan_downloads_path()
+    dir.create(downloads)
+    old_zip <- file.path(downloads, "2021_92-151_X.zip")
+    writeBin(raw(1000), old_zip)
+    other_zip <- file.path(downloads, "2021_98260004.zip")
+    writeBin(raw(10), other_zip)
+
+    m <- capture_messages(result <- get_statcan_geographic_attributes("2021"))
+    expect_length(m, 1)
+    expect_match(m, "take up 3 kB", fixed = TRUE)
+    expect_equal(as.vector(result$DBUID), "1001")
+    expect_true(file.exists(old_file))
+    expect_true(file.exists(old_zip))
+
+    # only once per session
+    expect_no_message(get_statcan_geographic_attributes("2021"))
+
+    # the command in the message removes the old files and nothing else
+    command <- trimws(sub(".*\n", "", trimws(m)))
+    expect_match(command, "^unlink\\(c\\(")
+    eval(parse(text = command))
+    expect_false(dir.exists(cancensus:::cache_path("attribute_files")))
+    expect_false(file.exists(old_zip))
+    expect_true(file.exists(other_zip))
+    expect_true(file.exists(cancensus:::cache_path("geo_attributes_2021.parquet")))
+  })
+})
+
+test_that("nothing gets pointed out without old attribute files", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"))
+    mock_no_download()
+    downloads <- cancensus:::statcan_downloads_path()
+    dir.create(downloads)
+    writeBin(raw(10), file.path(downloads, "2021_98260004.zip"))
+    expect_no_message(get_statcan_geographic_attributes("2021"))
+  })
+})
+
 test_that("the hosted files can be read", {
   skip_on_cran()
   skip_if_offline("data.mountainmath.ca")

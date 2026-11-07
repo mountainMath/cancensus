@@ -181,6 +181,7 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
   # check before downloading the file
   rlang::check_installed(c("duckdb","DBI"),version = c("1.5.6",NA),
                          reason = "to read the geographic attributes.")
+  message_unused_attribute_files()
 
   url <- paste0("https://data.mountainmath.ca/census/geo_attributes/geo_attributes_",census_year,".parquet")
   file_path <- cache_path(paste0("geo_attributes_",census_year,".parquet"))
@@ -197,6 +198,31 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
             ". Licence: ",metadata$licence_en,".")
   }
   result
+}
+
+# Attribute files from before the move to hosted parquet files. Nothing reads these any more, so point
+# out how to remove them once per session and cache path. Deleting them is left to the user, as Statistics
+# Canada may not allow downloading them again. This can go after a release or two.
+message_unused_attribute_files <- function(){
+  key <- paste0("unused_attribute_files_",cache_path())
+  if (!is.null(session_cache_get(key))) return(invisible(NULL))
+  session_cache_set(key,TRUE)
+
+  zips <- c("2021_92-151_X.zip","2016_92-151_XBB_txt.zip","2011_92-151_XBB_txt.zip","2006_92-151_XBB_txt.zip")
+  paths <- c(cache_path("attribute_files"),
+             file.path(statcan_downloads_path(),c(zips,sub("\\.zip$","",zips))))
+  paths <- normalizePath(paths[file.exists(paths)],winslash = "/")
+  if (length(paths)==0) return(invisible(NULL))
+
+  files <- c(paths[!dir.exists(paths)],
+             list.files(paths[dir.exists(paths)],recursive = TRUE,all.files = TRUE,full.names = TRUE))
+  size <- format(structure(sum(file.size(files)),class = "object_size"),units = "auto",standard = "SI")
+  quoted <- paste0(encodeString(paths,quote = '"'),collapse = ", ")
+  if (length(paths)>1) quoted <- paste0("c(",quoted,")")
+  message("Previously downloaded Statistics Canada attribute files are no longer used by ",
+          "get_statcan_geographic_attributes() and take up ",size,". These are the original files, which ",
+          "may not be possible to download again. To delete them, run:\n  unlink(",quoted,", recursive = TRUE)")
+  invisible(NULL)
 }
 
 # Parquet files start and end with the same signature, so this also catches truncated downloads
