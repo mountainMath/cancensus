@@ -122,78 +122,154 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 #' Read the Geographic Attributes File
 #'
 #' @description
-#' Reads the Geographies Attributes File for the given census year. The table contains
-#' the information on how all the geographic levels are related for each area, and population, dwelling and household counts.
-#' Data gets cached after first download if the
-#' cancensus cache path has been set. A reference guide is available
+#' Reads the geographic attributes for the given census year, with one row for each area of the lowest
+#' census geography. The table contains the information on how all the geographic levels are related
+#' for each area, along with population and dwelling counts and representative points.
+#'
+#' The data comes from parquet files hosted at \url{https://data.mountainmath.ca/census/geo_attributes/},
+#' as Statistics Canada now blocks programmatic downloads of these files. The files are derived from
+#' Statistics Canada data under the Statistics Canada Open Licence. They get downloaded on first use and
+#' cached if the cancensus cache path has been set, and cached copies only get updated with
+#' `refresh = TRUE`. Reading the files requires the \pkg{duckdb} and \pkg{DBI} packages.
+#'
+#' A reference guide for the 2021 file is available
 #' at https://www150.statcan.gc.ca/n1/en/catalogue/92-151-G2021001
 #'
-#' @param census_year census year to get the data for, right now only 2006, 2011, 2016, 2021 are supported
-#' @param refresh (logical) refresh the cache if true
-#' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
-#' warning explaining how to download the file manually, and returns the cached data when
-#' refreshing existing cached data and `NULL` otherwise
+#' @section Differences between census years:
+#' Column names follow the 2021 file, but the available columns differ between census years. The main
+#' change is between 1996 and 2001:
+#'
+#' * 2001 to 2021 have one row per dissemination block, identified by `DBUID`. There is no 2001 attribute
+#'   file, the 2001 data was derived from the 2001 GeoSuite and has no total dwelling counts or block areas.
+#' * 1981 to 1996 have one row per enumeration area, identified by `EAUID`. These have different
+#'   columns, for example `CTCODE` instead of `CTUID` and no dissemination areas.
+#'
+#' Identifiers are only unique within a census year, the same `DBUID` or `EAUID` in another year
+#' does not generally refer to the same area. In 2001 and 2006 the fields for census metropolitan areas and
+#' agglomerations, census tracts and urban areas were filled outside of those areas to match the files from
+#' 2011 on, so not all of these values are in the source. The `notes_en` entry of the metadata has details
+#' on this and on any problems with the source of each file.
+#'
+#' @param census_year census year to get the data for, one of 1981, 1986, 1991, 1996, 2001, 2006, 2011,
+#' 2016 or 2021
+#' @param refresh (logical) download the file again if true, and report if it has changed
+#' @param language language of the column labels, one of `"en"` or `"fr"`. Defaults to the
+#' `cancensus.language` option, and to `"en"` if that is not set. This does not change the data.
+#' @return tibble with the attribute data, with a description of each column in its `"label"` attribute.
+#' The `"metadata"` attribute of the tibble holds the metadata of the file, including the attribution,
+#' licence, source and notes. If the file can't be downloaded this gives a warning, and returns the cached
+#' data when refreshing existing cached data and `NULL` otherwise.
 #'
 #' @examples
-#' # list add the cached census data
+#' # read the attributes for the 2021 census
 #' \dontrun{
-#' get_statcan_geographic_attributes("2021")
+#' attributes <- get_statcan_geographic_attributes("2021")
+#' # where the data comes from
+#' attr(attributes, "metadata")$attribution_en
 #' }
+#' @md
 #' @export
-get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE){
+get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
+                                              language=getOption("cancensus.language", "en")){
   census_year <- as.character(census_year)[1]
-  valid_years <- seq(2006,2021,5) %>% as.character
-  if (!(as.character(census_year) %in% valid_years)) {
+  valid_years <- as.character(seq(1981,2021,5))
+  if (!(census_year %in% valid_years)) {
     stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
-                " are supported for the geographic relationship file."))
+                " are supported for the geographic attributes."),call. = FALSE)
   }
-  urls <- c("2021"="https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/attribute-attribs/files-fichiers/2021_92-151_X.zip",
-            "2016"="https://www12.statcan.gc.ca/census-recensement/2016/geo/ref/gaf/files-fichiers/2016_92-151_XBB_txt.zip",
-            "2011"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2011_92-151_XBB_txt.zip",
-            "2006"="https://www12.statcan.gc.ca/census-recensement/2011/geo/ref/files-fichiers/2006_92-151_XBB_txt.zip")
+  language <- validate_language(language)
+  # check before downloading the file
+  rlang::check_installed(c("duckdb","DBI"),version = c("1.5.6",NA),
+                         reason = "to read the geographic attributes.")
 
-  base_path <- cache_path("attribute_files")
-  if (!dir.exists(base_path)) dir.create(base_path)
-  base_path_year <- file.path(base_path,census_year)
-  has_cache <- length(dir(base_path_year))>0
+  url <- paste0("https://data.mountainmath.ca/census/geo_attributes/geo_attributes_",census_year,".parquet")
+  file_path <- cache_path(paste0("geo_attributes_",census_year,".parquet"))
+  has_cache <- is_parquet_file(file_path)
+  downloaded <- FALSE
   if (refresh || !has_cache) {
-    tmp <- statcan_download_zip(urls[[census_year]],has_cache = has_cache)
-    if (is.null(tmp) && !has_cache) return(NULL)
-    if (!is.null(tmp)) {
-      # only clear the cache once we have a replacement
-      if (dir.exists(base_path_year)) unlink(base_path_year,recursive = TRUE)
-      dir.create(base_path_year)
-      utils::unzip(tmp,exdir = base_path_year)
-      unlink(tmp)
-    }
+    downloaded <- download_parquet_file(url,file_path,has_cache = has_cache)
+    if (!downloaded && !has_cache) return(NULL)
   }
-  if (census_year=="2021") file <- dir(base_path_year,pattern="\\.csv",full.names = TRUE)
-  else file <- dir(base_path_year,pattern="\\.txt",full.names = TRUE)
-  if (census_year %in% c("2016","2021")) {
-    result <- readr::read_csv(file,col_types = readr::cols(.default="c"),
-                              locale = readr::locale(encoding ="Windows-1252"))
-  } else {
-  headers <- c("DBuid",paste0(c("DBpop","DBtdwell","DBurdwell","DBarea","DB_ir"),census_year),"DAuid",
-               "DAlamx","DAlamy","DAlat","DAlong",
-               "PRuid","PRname", "PRename", "PRfname", "PReabbr", "PRfabbr", "FEDuid",
-               "FEDname", "ERuid", "ERname", "CDuid", "CDname", "CDtype", "CSDuid", "CSDname",
-               "CSDtype","SACtype","SACcode","CCSuid","CCSname","DPLuid","DPLname","DPLtype",
-               "CMAPuid","CMAuid","CMAname","CMAtype","CTuid","CTcode","CTname","POPCTRRAPuid",
-               "POPCTRRAuid","POPCTRRAname","POPCTRRAtype","POPCTRRAclass")
-
-  positions <- c(1,11, 19, 27, 35, 48, 49, 57, 74,91,100,111,113,168,198,228,238,248,253, 338,
-                 342, 427,431, 471, 474,481,536,539,540,543,550,605,611,696,699,704,704,807,
-                 808,818,822,829,835, 839, 939,940)
-  widths <- c(10,8,8,8,13,1,8,17,17,9,11,2,55,30,30,10,10,5,85,4,84,4,40,3,7,44,3,1,3,7,55,
-              6,85,3,5,3,100,1,10,4,7,6,4,100,1,1)
-
-  result <- readr::read_fwf(file,col_types = readr::cols(.default="c"),
-                  locale = readr::locale(encoding ="Windows-1252"),
-                  col_positions = readr::fwf_widths(widths)) %>%
-    setNames(headers)
+  result <- read_parquet_file(file_path,language = language)
+  if (downloaded) {
+    metadata <- attr(result,"metadata")
+    message("Geographic attributes hosted by MountainMath, source: ",metadata$attribution_en,
+            ". Licence: ",metadata$licence_en,".")
   }
-  result %>%
-    dplyr::mutate(dplyr::across(dplyr::matches("DBpop\\d{4}|DBtdwell\\d{4}|DBurdwell\\d{4}|DBarea"),as.numeric))
+  result
+}
+
+# Parquet files start and end with the same signature, so this also catches truncated downloads
+is_parquet_file <- function(path){
+  if (!file.exists(path) || dir.exists(path)) return(FALSE)
+  size <- file.size(path)
+  if (is.na(size) || size < 8) return(FALSE)
+  con <- file(path,"rb")
+  on.exit(close(con))
+  signature <- charToRaw("PAR1")
+  start <- readBin(con,what = "raw",n = 4)
+  seek(con,where = size-4,origin = "start")
+  identical(start,signature) && identical(readBin(con,what = "raw",n = 4),signature)
+}
+
+fetch_parquet_file <- function(url,path,quiet = FALSE){
+  httr::GET(url,cm_request_config(quiet),httr::write_disk(path,overwrite = TRUE),httr::timeout(600))
+}
+
+# Download a hosted parquet file to `path`, which only gets replaced by a valid file. Returns whether
+# that worked, anything else is a warning so that this fails gracefully when the file is unavailable.
+download_parquet_file <- function(url,path,has_cache = FALSE,quiet = FALSE){
+  tmp <- tempfile(fileext = ".parquet",tmpdir = dirname(path))
+  on.exit(unlink(tmp))
+  response <- tryCatch(fetch_parquet_file(url,tmp,quiet = quiet),error = function(e) e)
+  problem <- if (inherits(response,"error")) {
+    conditionMessage(response)
+  } else if (httr::http_error(response)) {
+    paste0("the server responded with HTTP status ",httr::status_code(response))
+  } else if (!is_parquet_file(tmp)) {
+    "the server did not return a complete parquet file"
+  }
+  if (!is.null(problem)) {
+    warning("Could not download ",url,": ",problem,". ",statcan_fallback_message(has_cache),call. = FALSE)
+    return(FALSE)
+  }
+  if (has_cache) {
+    changed <- digest::digest(tmp,file = TRUE) != digest::digest(path,file = TRUE)
+    message(if (changed) "The hosted file has changed, updating the cached copy." else
+      "The hosted file has not changed.")
+  }
+  file.rename(tmp,path)
+  warn_if_cache_not_persistent(quiet = quiet)
+  TRUE
+}
+
+# Read a parquet file along with its metadata. This returns the same "label" and "metadata" attributes as
+# `r2parquet::collect_parquet()`, which can replace this and the two functions above once it is on CRAN.
+# The file gets read locally since remote access needs the httpfs extension, a separate download.
+read_parquet_file <- function(path,language = "en"){
+  # keeps duckdb from storing extensions and secrets in the user's home directory
+  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE))
+  on.exit(DBI::dbDisconnect(con,shutdown = TRUE))
+  source <- DBI::dbQuoteString(con,normalizePath(path,winslash = "/"))
+  data <- DBI::dbGetQuery(con,paste0("SELECT * FROM read_parquet(",source,")")) %>%
+    dplyr::as_tibble()
+  entries <- DBI::dbGetQuery(con,paste0("SELECT decode(key) AS k, decode(value) AS v FROM parquet_kv_metadata(",
+                                        source,")"))
+  metadata <- lapply(stats::setNames(entries$v,entries$k),parse_parquet_metadata_value)
+  for (column in names(data)) {
+    entry <- metadata$columns[[column]]
+    label <- entry[[paste0("label_",language)]]
+    if (is.null(label)) label <- entry[["label_en"]]
+    if (!is.null(label)) attr(data[[column]],"label") <- label
+  }
+  attr(data,"metadata") <- metadata
+  data
+}
+
+# JSON objects and arrays get parsed, the rest stays a string
+parse_parquet_metadata_value <- function(value){
+  if (!grepl("^\\s*[\\[{]",value)) return(value)
+  tryCatch(jsonlite::fromJSON(value),error = function(e) value)
 }
 
 

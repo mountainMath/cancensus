@@ -29,15 +29,20 @@ Attribute files describe the detailed relationship of various Statistics Canada 
 ## Match between Census Tracts and Census Subdivisions
 If we are interested in understanding which Census Tracts respect municipal boundaries and which ones don't in 2021 we can consult the geographic attributes file. It contains a row for each Census Block, the basic building block of census geographies, and tags other levels of geography the Census Block lies in.
 
-Statistics Canada may block this download, in which case `get_statcan_geographic_attributes()` returns `NULL` with a warning that explains how to download the file manually.
+Statistics Canada blocks programmatic downloads of these files, so `get_statcan_geographic_attributes()` reads copies hosted as parquet files, which requires the **duckdb** and **DBI** packages. The result says where the data comes from.
 
 ```{r}
 attributes <- get_statcan_geographic_attributes("2021")
 ```
 
 ```{r, include = FALSE}
-# Skip the remaining chunks if the download was blocked, e.g. on CI
+# Skip the remaining chunks if the download failed, e.g. on CI
 knitr::opts_chunk$set(eval = !is.null(attributes))
+```
+
+```{r}
+attr(attributes, "metadata")$attribution_en
+attr(attributes, "metadata")$licence_en
 ```
 
 ```{r}
@@ -48,11 +53,22 @@ To answer our question, we filter Census Block by the ones that lie within a Cen
 
 ```{r}
 attributes %>%
-  filter(CMATYPE_RMRGENRE %in% c("B","K")) |> # filter areas not in CTs
-  group_by(CTCODE_SRCODE,CMATYPE_RMRGENRE) |>
-  summarise(`Number of municipalities`=length(unique(CSDUID_SDRIDU)),.groups="drop") |>
-  count(`Number of municipalities`,CMATYPE_RMRGENRE) |>
-  arrange(CMATYPE_RMRGENRE,`Number of municipalities`)
+  filter(CMATYPE %in% c("B","K")) |> # filter areas not in CTs
+  group_by(CTCODE,CMATYPE) |>
+  summarise(`Number of municipalities`=length(unique(CSDUID)),.groups="drop") |>
+  count(`Number of municipalities`,CMATYPE) |>
+  arrange(CMATYPE,`Number of municipalities`)
 ```
 
-This shows that most census tracts for both Census Metropolitan Areas (CMATYPE_RMRGENRE="B") and tracted Census Agglomerations (CMATYPE_RMRGENRE="K"), with some census tracts spanning several municipalities.
+This shows that most census tracts for both Census Metropolitan Areas (CMATYPE="B") and tracted Census Agglomerations (CMATYPE="K") lie within a single municipality, with some census tracts spanning several municipalities.
+
+## Older censuses
+Attribute files are available back to 1981. From 2001 on they have a row for each Census Block, identified by `DBUID`. Earlier censuses have a row for each Enumeration Area, identified by `EAUID`, and different columns. Each column has a description in its `"label"` attribute, and the metadata of each file has notes on how it was built and on problems with the source.
+
+```{r}
+attributes_1981 <- get_statcan_geographic_attributes("1981")
+attributes_1981 %>% colnames()
+attr(attributes_1981$EAPHH1981, "label")
+attributes_1981 %>% summarise(Population = sum(EAPOP1981, na.rm = TRUE))
+attr(attributes_1981, "metadata")$notes_en
+```

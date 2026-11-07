@@ -1,21 +1,3 @@
-# Evaluate code with the cancensus cache pointing at a fresh temporary directory
-with_statcan_cache <- function(code) {
-  cache <- tempfile("cancensus_test_cache")
-  dir.create(cache)
-  old_env <- Sys.getenv("CM_CACHE_PATH")
-  Sys.setenv(CM_CACHE_PATH = cache)
-  on.exit({
-    Sys.setenv(CM_CACHE_PATH = old_env)
-    unlink(cache, recursive = TRUE)
-  })
-  force(code)
-}
-
-fake_response <- function(status, headers = list()) {
-  structure(list(status_code = as.integer(status), headers = httr::insensitive(headers)),
-            class = "response")
-}
-
 blocked_response <- function() {
   fake_response(403, list(`cf-mitigated` = "challenge", server = "cloudflare"))
 }
@@ -50,9 +32,9 @@ make_zip <- function(zip_path, files) {
 
 deposit <- function(file_name) file.path(cancensus:::cache_path("statcan_downloads"), file_name)
 
-attributes_zip <- "2021_92-151_X.zip"
-attributes_url <- paste0("https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/",
-                         "attribute-attribs/files-fichiers/", attributes_zip)
+relationships_zip <- "2021_98260004.zip"
+relationships_url <- paste0("https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/",
+                            "dguid-idugd/files-fichiers/", relationships_zip)
 
 
 test_that("Cloudflare blocks are detected and other failures are not", {
@@ -68,18 +50,18 @@ test_that("Cloudflare blocks are detected and other failures are not", {
 test_that("blocked downloads warn with the link and target location and return NULL", {
   with_statcan_cache({
     mock_statcan(blocked_response())
-    expected_file <- deposit(attributes_zip)
+    expected_file <- deposit(relationships_zip)
 
-    w <- capture_warnings(result <- get_statcan_geographic_attributes("2021"))
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021"))
     expect_null(result)
     expect_length(w, 1)
     expect_match(w, "blocked", fixed = TRUE)
-    expect_match(w, attributes_url, fixed = TRUE)
+    expect_match(w, relationships_url, fixed = TRUE)
     expect_match(w, statcan_display_path(expected_file), fixed = TRUE)
 
-    # the folder is ready for the file, and the failure left no empty cache directory behind
+    # the folder is ready for the file, and the failure left no cached file behind
     expect_true(dir.exists(dirname(expected_file)))
-    expect_false(dir.exists(cancensus:::cache_path("attribute_files/2021")))
+    expect_false(file.exists(cancensus:::cache_path("geography_relationship_2021.zip")))
   })
 })
 
@@ -122,21 +104,6 @@ test_that("get_statcan_geographies uses the cache_path argument for the target l
     expect_warning(get_statcan_geographies("2021", "PR", cache_path = custom, quiet = TRUE),
                    statcan_display_path(file.path(custom, "statcan_downloads", "lpr_000b21a_e.zip")),
                    fixed = TRUE)
-  })
-})
-
-test_that("manually downloaded attribute files get picked up and cleaned up", {
-  with_statcan_cache({
-    mock_statcan() # any download attempt fails the test
-    make_zip(deposit(attributes_zip), list("attributes.csv" = c("DBUID,DBPOP2021_IDPOP2021", "1,5")))
-
-    result <- suppressMessages(get_statcan_geographic_attributes("2021"))
-    expect_equal(result$DBUID, "1")
-    expect_equal(result$DBPOP2021_IDPOP2021, 5)
-    expect_false(file.exists(deposit(attributes_zip)))
-
-    # served from cache from now on
-    expect_equal(get_statcan_geographic_attributes("2021")$DBUID, "1")
   })
 })
 
@@ -186,30 +153,30 @@ test_that("manually downloaded geographic boundary files get picked up", {
 
 test_that("a blocked refresh returns the cached data with a warning, and a deposited file refreshes it", {
   with_statcan_cache({
-    make_zip(deposit(attributes_zip), list("attributes.csv" = c("DBUID", "old")))
+    make_zip(deposit(relationships_zip), list("rel.csv" = c("DGUID", "old")))
     mock_statcan()
-    suppressMessages(get_statcan_geographic_attributes("2021"))
+    get_statcan_geography_relationships("2021")
 
     mock_statcan(blocked_response())
-    w <- capture_warnings(result <- get_statcan_geographic_attributes("2021", refresh = TRUE))
-    expect_equal(result$DBUID, "old")
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021", refresh = TRUE))
+    expect_equal(result$DGUID, "old")
     expect_length(w, 1)
     expect_match(w, "blocked", fixed = TRUE)
     expect_match(w, "Returning the existing cached data instead", fixed = TRUE)
     expect_match(w, "with `refresh = TRUE`", fixed = TRUE)
     expect_no_match(w, "Returning NULL", fixed = TRUE)
-    expect_equal(get_statcan_geographic_attributes("2021")$DBUID, "old")
+    expect_equal(get_statcan_geography_relationships("2021")$DGUID, "old")
 
-    make_zip(deposit(attributes_zip), list("attributes.csv" = c("DBUID", "new")))
-    expect_equal(suppressMessages(get_statcan_geographic_attributes("2021", refresh = TRUE))$DBUID, "new")
-    expect_false(file.exists(deposit(attributes_zip)))
+    make_zip(deposit(relationships_zip), list("rel.csv" = c("DGUID", "new")))
+    expect_equal(get_statcan_geography_relationships("2021", refresh = TRUE)$DGUID, "new")
+    expect_false(file.exists(deposit(relationships_zip)))
   })
 })
 
 test_that("a blocked refresh without cached data returns NULL", {
   with_statcan_cache({
     mock_statcan(blocked_response())
-    w <- capture_warnings(result <- get_statcan_geographic_attributes("2021", refresh = TRUE))
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021", refresh = TRUE))
     expect_null(result)
     expect_match(w, "Returning NULL", fixed = TRUE)
     expect_no_match(w, "refresh = TRUE", fixed = TRUE)
@@ -249,33 +216,25 @@ test_that("blocked refreshes return the cached data for the other StatCan functi
 test_that("an invalid deposited file during a refresh falls back on the cached data", {
   with_statcan_cache({
     mock_statcan()
-    make_zip(deposit(attributes_zip), list("attributes.csv" = c("DBUID", "old")))
-    suppressMessages(get_statcan_geographic_attributes("2021"))
+    make_zip(deposit(relationships_zip), list("rel.csv" = c("DGUID", "old")))
+    get_statcan_geography_relationships("2021")
 
-    writeLines("<html>Just a moment...</html>", deposit(attributes_zip))
-    expect_warning(result <- get_statcan_geographic_attributes("2021", refresh = TRUE),
+    writeLines("<html>Just a moment...</html>", deposit(relationships_zip))
+    expect_warning(result <- get_statcan_geography_relationships("2021", refresh = TRUE),
                    "not a valid zip file.*Returning the existing cached data instead")
-    expect_equal(result$DBUID, "old")
-    expect_true(file.exists(deposit(attributes_zip)))
-  })
-})
-
-test_that("empty cache directories from previously failed downloads don't count as cached", {
-  with_statcan_cache({
-    dir.create(cancensus:::cache_path("attribute_files/2021"), recursive = TRUE)
-    mock_statcan(blocked_response())
-    expect_warning(expect_null(get_statcan_geographic_attributes("2021")), "blocked")
+    expect_equal(result$DGUID, "old")
+    expect_true(file.exists(deposit(relationships_zip)))
   })
 })
 
 test_that("invalid manually downloaded files produce a warning and are left in place", {
   with_statcan_cache({
     mock_statcan()
-    target <- deposit(attributes_zip)
+    target <- deposit(relationships_zip)
     dir.create(dirname(target), recursive = TRUE)
     writeLines("<html>Just a moment...</html>", target)
 
-    expect_warning(expect_null(get_statcan_geographic_attributes("2021")),
+    expect_warning(expect_null(get_statcan_geography_relationships("2021")),
                    "not a valid zip file")
     expect_true(file.exists(target))
   })
@@ -284,11 +243,11 @@ test_that("invalid manually downloaded files produce a warning and are left in p
 test_that("other download failures remain errors", {
   with_statcan_cache({
     mock_statcan(fake_response(404, list(server = "nginx")))
-    expect_error(get_statcan_geographic_attributes("2021"), "HTTP status 404")
+    expect_error(get_statcan_geography_relationships("2021"), "HTTP status 404")
 
     # the mock doesn't write a file, same as a response that isn't a zip file
     mock_statcan(fake_response(200))
-    expect_error(get_statcan_geographic_attributes("2021"), "did not return a zip file")
+    expect_error(get_statcan_geography_relationships("2021"), "did not return a zip file")
   })
 })
 
@@ -330,14 +289,14 @@ test_that("paths in messages use native separators on Windows and expand the hom
 test_that("an unzipped copy of the file is pointed out when the download is blocked", {
   with_statcan_cache({
     mock_statcan(blocked_response())
-    w <- capture_warnings(get_statcan_geographic_attributes("2021"))
+    w <- capture_warnings(get_statcan_geography_relationships("2021"))
     expect_no_match(w, "unzipped copy", fixed = TRUE)
 
-    unzipped <- sub("\\.zip$", "", deposit(attributes_zip))
+    unzipped <- sub("\\.zip$", "", deposit(relationships_zip))
     dir.create(unzipped, recursive = TRUE)
-    writeLines("DBUID", file.path(unzipped, "attributes.csv"))
+    writeLines("DGUID", file.path(unzipped, "rel.csv"))
 
-    w <- capture_warnings(result <- get_statcan_geographic_attributes("2021"))
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021"))
     expect_null(result)
     expect_match(w, "unzipped copy", fixed = TRUE)
     expect_match(w, statcan_display_path(unzipped), fixed = TRUE)
