@@ -724,12 +724,14 @@ label_census_columns <- function(result, dataset, language) {
 # Population. Other label options leave the column names as they are, and such names remain an error.
 add_underscore_to_clashes <- function(result, chosen_names) {
   clashes <- setdiff(intersect(chosen_names, names(result)), grep("^v_", names(result), value = TRUE))
-  for (clash in clashes) {
-    new_name <- paste0(clash, "_")
-    while (new_name %in% c(names(result), chosen_names)) new_name <- paste0(new_name, "_")
-    result <- result %>% dplyr::rename(!!!setNames(clash, new_name))
+  if (length(clashes) == 0) return(result)
+  new_names <- paste0(clashes, "_")
+  taken <- intersect(new_names, c(names(result), chosen_names))
+  if (length(taken) > 0) {
+    stop("Names chosen for `vectors` clash with the columns ", paste0("`", taken, "`", collapse = ", "),
+         ", which other columns get renamed to. Choose different names.", call. = FALSE)
   }
-  result
+  dplyr::rename(result, !!!setNames(clashes, new_names))
 }
 
 # Transform and rename geometry data.

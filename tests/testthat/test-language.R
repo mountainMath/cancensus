@@ -430,9 +430,11 @@ test_that("with labels = 'labelled' names chosen for vectors win over other colu
 test_that("add_underscore_to_clashes keeps names unique and leaves other columns alone", {
   d <- dplyr::tibble(a = 1, b = 2, a_ = 3, v_1 = 4)
   expect_named(add_underscore_to_clashes(d, "b"), c("a", "b_", "a_", "v_1"))
-  expect_named(add_underscore_to_clashes(d, "a"), c("a__", "b", "a_", "v_1"))
-  # a chosen name counts as taken, even before the vector gets renamed
-  expect_named(add_underscore_to_clashes(d, c("b", "b_")), c("a", "b__", "a_", "v_1"))
+  d2 <- dplyr::tibble(a = 1, b = 2, v_1 = 3)
+  expect_named(add_underscore_to_clashes(d2, c("a", "b")), c("a_", "b_", "v_1"))
+  # the underscored name is taken, by another column or by a chosen name
+  expect_error(add_underscore_to_clashes(d, "a"), "`a_`")
+  expect_error(add_underscore_to_clashes(d, c("b", "b_")), "`b_`")
   expect_named(add_underscore_to_clashes(d, "other"), names(d))
   expect_named(add_underscore_to_clashes(d, character(0)), names(d))
   # vector columns are not moved out of the way
