@@ -83,48 +83,30 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
   data <- NULL
   recall_database <- get_recalled_database(warn_only_once=warn_only_once)
   if (!is.null(recall_database)) {
-    #if (is.null(cached_data)) cached_data <- list_cancensus_cache()
-    # group_map evaluates its function on an empty group when there are no
-    # groups, which fails for the comparisons below. So recalls of a type the
-    # recall database does not have need to be handled separately.
-    data_recalls <- recall_database %>%
-      dplyr::filter(grepl("^d\\.",.data$api_version))
-    cached_vector_data <- cached_data %>%
-      dplyr::filter(grepl("^d\\.",.data$version))
-    vector_recall <- if (nrow(data_recalls)==0) {
-      cached_vector_data[0,]
-    } else {
-      data_recalls %>%
-        dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-        dplyr::group_map(~dplyr::filter(cached_vector_data,
-                                        is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
-                                        .data$version<=.y$api_version,
-                                        .data$dataset==.y$dataset,
-                                        grepl(recalled_vector_pattern(.x$vector),.data$vectors))) %>%
-        dplyr::bind_rows() %>%
-        dplyr::ungroup()
-    }
-
-    geo_recalls <- recall_database %>%
-      dplyr::filter(grepl("^g\\.",.data$api_version))
-    cached_geo_data <- cached_data %>%
-      dplyr::filter(grepl("^g\\.",.data$version))
-    geo_recall <- if (nrow(geo_recalls)==0) {
-      cached_geo_data[0,]
-    } else {
-      geo_recalls %>%
-        dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
-        dplyr::group_map(~dplyr::filter(cached_geo_data,
-                                        is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
-                                        .data$version<=.y$api_version,
-                                        .data$dataset==.y$dataset)) %>%
-        dplyr::bind_rows() %>%
-        dplyr::ungroup()
-    }
-
-    data <- dplyr::bind_rows(vector_recall,geo_recall)
+    data <- dplyr::bind_rows(
+      recalled_cache_entries(recall_database,cached_data,"d",match_vectors = TRUE),
+      recalled_cache_entries(recall_database,cached_data,"g",match_vectors = FALSE))
   }
   data
+}
+
+# Cached entries affected by recalls of one type, "d" for data and "g" for geometry. Data recalls
+# only affect cached data that contains one of the recalled vectors.
+recalled_cache_entries <- function(recall_database,cached_data,type,match_vectors){
+  pattern <- paste0("^",type,"\\.")
+  recalls <- dplyr::filter(recall_database,grepl(pattern,.data$api_version))
+  cached <- dplyr::filter(cached_data,grepl(pattern,.data$version))
+  # group_map evaluates its function on an empty group when there are no groups,
+  # which fails for the comparisons below
+  if (nrow(recalls)==0) return(cached[0,])
+  recalls %>%
+    dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
+    dplyr::group_map(~dplyr::filter(cached,
+                                    is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
+                                    .data$version<=.y$api_version,
+                                    .data$dataset==.y$dataset,
+                                    if (match_vectors) grepl(recalled_vector_pattern(.x$vector),.data$vectors) else TRUE)) %>%
+    dplyr::bind_rows()
 }
 
 
