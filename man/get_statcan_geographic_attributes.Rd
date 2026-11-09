@@ -7,7 +7,8 @@
 get_statcan_geographic_attributes(
   census_year = "2021",
   refresh = FALSE,
-  language = getOption("cancensus.language", "en")
+  language = getOption("cancensus.language", "en"),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -18,6 +19,9 @@ get_statcan_geographic_attributes(
 
 \item{language}{language of the column labels, one of \code{"en"} or \code{"fr"}. Defaults to the
 \code{cancensus.language} option, and to \code{"en"} if that is not set. This does not change the data.}
+
+\item{quiet}{(logical) suppress messages and the progress bar if \code{TRUE}. Warnings about failed
+downloads are still shown.}
 }
 \value{
 tibble with the attribute data, with a description of each column in its \code{"label"} attribute.

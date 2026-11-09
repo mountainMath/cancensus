@@ -155,6 +155,8 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 #' @param refresh (logical) download the file again if true, and report if it has changed
 #' @param language language of the column labels, one of `"en"` or `"fr"`. Defaults to the
 #' `cancensus.language` option, and to `"en"` if that is not set. This does not change the data.
+#' @param quiet (logical) suppress messages and the progress bar if `TRUE`. Warnings about failed
+#' downloads are still shown.
 #' @return tibble with the attribute data, with a description of each column in its `"label"` attribute.
 #' The `"metadata"` attribute of the tibble holds the metadata of the file, including the attribution,
 #' licence, source and notes. If the file can't be downloaded this gives a warning, and returns the cached
@@ -170,7 +172,8 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 #' @md
 #' @export
 get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
-                                              language=getOption("cancensus.language", "en")){
+                                              language=getOption("cancensus.language", "en"),
+                                              quiet=FALSE){
   census_year <- as.character(census_year)[1]
   valid_years <- as.character(seq(1981,2021,5))
   if (!(census_year %in% valid_years)) {
@@ -181,18 +184,18 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
   # check before downloading the file
   rlang::check_installed(c("duckdb","DBI"),version = c("1.5.6",NA),
                          reason = "to read the geographic attributes.")
-  message_unused_attribute_files()
+  if (!quiet) message_unused_attribute_files()
 
   url <- paste0("https://data.mountainmath.ca/census/geo_attributes/geo_attributes_",census_year,".parquet")
   file_path <- cache_path(paste0("geo_attributes_",census_year,".parquet"))
   has_cache <- is_parquet_file(file_path)
   downloaded <- FALSE
   if (refresh || !has_cache) {
-    downloaded <- download_parquet_file(url,file_path,has_cache = has_cache)
+    downloaded <- download_parquet_file(url,file_path,has_cache = has_cache,quiet = quiet)
     if (!downloaded && !has_cache) return(NULL)
   }
   result <- read_parquet_file(file_path,language = language)
-  if (downloaded) {
+  if (downloaded && !quiet) {
     metadata <- attr(result,"metadata")
     message("Geographic attributes hosted by MountainMath, source: ",metadata$attribution_en,
             ". Licence: ",metadata$licence_en,".")
@@ -259,7 +262,7 @@ download_parquet_file <- function(url,path,has_cache = FALSE,quiet = FALSE){
     warning("Could not download ",url,": ",problem,". ",statcan_fallback_message(has_cache),call. = FALSE)
     return(FALSE)
   }
-  if (has_cache) {
+  if (has_cache && !quiet) {
     changed <- digest::digest(tmp,file = TRUE) != digest::digest(path,file = TRUE)
     message(if (changed) "The hosted file has changed, updating the cached copy." else
       "The hosted file has not changed.")

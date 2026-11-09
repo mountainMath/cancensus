@@ -125,6 +125,24 @@ test_that("a refresh replaces the cached file and reports if it has changed", {
   })
 })
 
+test_that("quiet = TRUE suppresses messages without using up the old files notice", {
+  with_statcan_cache({
+    source <- write_attributes_file(tempfile(fileext = ".parquet"))
+    on.exit(unlink(source), add = TRUE)
+    mock_hosted_file(source)
+    old_dir <- file.path(cancensus:::cache_path("attribute_files"), "2021")
+    dir.create(old_dir, recursive = TRUE)
+    writeBin(raw(10), file.path(old_dir, "2021_92-151_X.csv"))
+
+    expect_no_message(result <- get_statcan_geographic_attributes("2021", quiet = TRUE))
+    expect_equal(as.vector(result$DBUID), "1001")
+    expect_no_message(get_statcan_geographic_attributes("2021", refresh = TRUE, quiet = TRUE))
+
+    # the notice about the old files still shows on the next call that is not quiet
+    expect_message(get_statcan_geographic_attributes("2021"), "no longer used")
+  })
+})
+
 test_that("failed downloads warn and return NULL, and leave no files behind", {
   with_statcan_cache({
     failures <- list(
