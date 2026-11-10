@@ -37,7 +37,10 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
     # interrupted downloads don't get read back as cached metadata on the next call
     tmp <- tempfile(fileext = ".sdmx")
     on.exit(unlink(tmp), add = TRUE)
-    response <- wds_GET(meta_url, httr::write_disk(tmp, overwrite = TRUE))
+    # httr's default Accept header prefers JSON, ask for SDMX-ML explicitly
+    response <- wds_GET(meta_url,
+                        httr::accept("application/vnd.sdmx.structure+xml;version=2.1"),
+                        httr::write_disk(tmp, overwrite = TRUE))
     if (httr::http_error(response) || !is_wds_metadata_file(tmp)) {
       cc_abort("wds_metadata_unavailable", level = level, status = httr::status_code(response))
     }
