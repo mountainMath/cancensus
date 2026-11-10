@@ -2,31 +2,41 @@
 % Please edit documentation in R/geo_suite.R
 \name{get_statcan_geography_relationships}
 \alias{get_statcan_geography_relationships}
-\title{Read the Dissemination Geographies Relationship File}
+\title{Read the Dissemination Geographies Relationship File (deprecated)}
 \usage{
 get_statcan_geography_relationships(census_year = "2021", refresh = FALSE)
 }
 \arguments{
-\item{census_year}{census year to get the data for, right now only 2021 is supported, for older
-years `get_statcan_geographic_attributes()` can fill in most of the information}
+\item{census_year}{census year to get the data for, only 2021 is available}
 
 \item{refresh}{(logical) refresh the cache if true}
 }
 \value{
 tibble with the relationship data. If Statistics Canada blocks the download this gives a
 warning explaining how to download the file manually, and returns the cached data when
-refreshing existing cached data and `NULL` otherwise
+refreshing existing cached data and \code{NULL} otherwise
 }
 \description{
+This function is deprecated and will be removed in the next release, as Statistics Canada blocks
+programmatic downloads of the file (#228). Use \code{get_statcan_geographic_attributes("2021")} instead, which
+has the same DGUIDs for each dissemination block apart from census agricultural regions, along with the
+IDs, names and counts, and covers the censuses back to 1981.
+
+Unlike the relationship file, the attribute file fills \code{CMADGUID} outside census metropolitan areas and
+census agglomerations with the metropolitan influenced zone, and \code{CTDGUID} outside areas with census tracts
+with a placeholder census tract. \code{CMATYPE \%in\% c("B", "D", "K")} selects the blocks in census metropolitan
+areas and census agglomerations. Census agricultural regions (\code{CARDGUID}) are only in the relationship file,
+which can still be downloaded manually from Statistics Canada.
+
 Reads the Dissemination Geographies Relationship File for the given census year. The table contains
 the information on how all the geographic levels are related for each area. Data gets cached after first download if the
 cancensus cache path has been set. A reference guide is available
 at https://www150.statcan.gc.ca/n1/en/catalogue/982600032021001
 }
 \examples{
-# list add the cached census data
 \dontrun{
-get_statcan_geography_relationships("2021")
+# use the attribute file instead
+attributes <- get_statcan_geographic_attributes("2021")
 }
 }
 \keyword{internal}

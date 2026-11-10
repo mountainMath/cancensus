@@ -163,16 +163,26 @@ message_unused_geo_suite_files <- function(){
 }
 
 
-#' Read the Dissemination Geographies Relationship File
+#' Read the Dissemination Geographies Relationship File (deprecated)
 #'
 #' @description
+#' This function is deprecated and will be removed in the next release, as Statistics Canada blocks
+#' programmatic downloads of the file (#228). Use `get_statcan_geographic_attributes("2021")` instead, which
+#' has the same DGUIDs for each dissemination block apart from census agricultural regions, along with the
+#' IDs, names and counts, and covers the censuses back to 1981.
+#'
+#' Unlike the relationship file, the attribute file fills `CMADGUID` outside census metropolitan areas and
+#' census agglomerations with the metropolitan influenced zone, and `CTDGUID` outside areas with census tracts
+#' with a placeholder census tract. `CMATYPE %in% c("B", "D", "K")` selects the blocks in census metropolitan
+#' areas and census agglomerations. Census agricultural regions (`CARDGUID`) are only in the relationship file,
+#' which can still be downloaded manually from Statistics Canada.
+#'
 #' Reads the Dissemination Geographies Relationship File for the given census year. The table contains
 #' the information on how all the geographic levels are related for each area. Data gets cached after first download if the
 #' cancensus cache path has been set. A reference guide is available
 #' at https://www150.statcan.gc.ca/n1/en/catalogue/982600032021001
 #'
-#' @param census_year census year to get the data for, right now only 2021 is supported, for older
-#' years `get_statcan_geographic_attributes()` can fill in most of the information
+#' @param census_year census year to get the data for, only 2021 is available
 #' @param refresh (logical) refresh the cache if true
 #' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
 #' warning explaining how to download the file manually, and returns the cached data when
@@ -181,10 +191,11 @@ message_unused_geo_suite_files <- function(){
 #' @keywords internal
 #'
 #' @examples
-#' # list add the cached census data
 #' \dontrun{
-#' get_statcan_geography_relationships("2021")
+#' # use the attribute file instead
+#' attributes <- get_statcan_geographic_attributes("2021")
 #' }
+#' @md
 #' @export
 get_statcan_geography_relationships <- function(census_year="2021", refresh=FALSE){
   valid_years <- c("2021")
@@ -192,6 +203,7 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
     stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
                 " are supported for the geographic relationship file."))
   }
+  warn_geography_relationships_deprecated()
   file_path <- cache_path(paste0("geography_relationship_",census_year,".zip"))
   has_cache <- statcan_is_zip(file_path)
   if (refresh || !has_cache) {
@@ -206,6 +218,19 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
   readr::read_csv(file_path,
                   locale = readr::locale(encoding ="Windows-1252"),
                   col_types = readr::cols(.default="c"))
+}
+
+# Deprecation warning for get_statcan_geography_relationships(), once per session
+warn_geography_relationships_deprecated <- function(){
+  if (isTRUE(session_cache_get("geography_relationships_deprecated"))) return(invisible(NULL))
+  session_cache_set("geography_relationships_deprecated",TRUE)
+  warning("get_statcan_geography_relationships() is deprecated and will be removed in the next release. ",
+          "Use get_statcan_geographic_attributes(\"2021\") instead, which has the same DGUIDs for each ",
+          "dissemination block apart from census agricultural regions (CARDGUID). Unlike the relationship file, ",
+          "it fills CMADGUID outside CMA/CAs with the metropolitan influenced zone and CTDGUID outside tracted ",
+          "areas with a placeholder census tract, CMATYPE %in% c(\"B\", \"D\", \"K\") selects the blocks in ",
+          "CMA/CAs. This warning is shown once per session.",call. = FALSE)
+  invisible(NULL)
 }
 
 #' Read the Geographic Attributes File

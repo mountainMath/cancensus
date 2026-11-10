@@ -1,3 +1,7 @@
+# These tests use get_statcan_geography_relationships() for the StatCan download fallback, without its
+# deprecation warning, which gets tested separately below
+session_cache_set("geography_relationships_deprecated", TRUE)
+
 blocked_response <- function() {
   fake_response(403, list(`cf-mitigated` = "challenge", server = "cloudflare"))
 }
@@ -281,5 +285,20 @@ test_that("an unzipped copy of the file is pointed out when the download is bloc
     expect_null(result)
     expect_match(w, "unzipped copy", fixed = TRUE)
     expect_match(w, statcan_display_path(unzipped), fixed = TRUE)
+  })
+})
+
+test_that("get_statcan_geography_relationships() warns once per session that it is deprecated", {
+  with_statcan_cache({
+    file_path <- cancensus:::cache_path("geography_relationship_2021.zip")
+    make_zip(file_path, list("2021_98260004.csv" = c("DGUID", "abc")))
+    mock_statcan()
+    session_cache_set("geography_relationships_deprecated", FALSE)
+    on.exit(session_cache_set("geography_relationships_deprecated", TRUE), add = TRUE)
+
+    expect_warning(result <- get_statcan_geography_relationships("2021"),
+                   "deprecated and will be removed in the next release.*get_statcan_geographic_attributes")
+    expect_equal(result$DGUID, "abc")
+    expect_no_warning(get_statcan_geography_relationships("2021"))
   })
 })
