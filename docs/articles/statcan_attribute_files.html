@@ -108,70 +108,156 @@ municipal boundaries and which ones don’t in 2021 we can consult the
 geographic attributes file. It contains a row for each Census Block, the
 basic building block of census geographies, and tags other levels of
 geography the Census Block lies in.</p>
-<p>Statistics Canada may block this download, in which case
-<code><a href="../reference/get_statcan_geographic_attributes.html">get_statcan_geographic_attributes()</a></code> returns
-<code>NULL</code> with a warning that explains how to download the file
-manually.</p>
+<p>Statistics Canada blocks programmatic downloads of these files, so
+<code><a href="../reference/get_statcan_geographic_attributes.html">get_statcan_geographic_attributes()</a></code> reads copies hosted as
+parquet files, which requires the <strong>duckdb</strong> and
+<strong>DBI</strong> packages. The result says where the data comes
+from.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">attributes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_geographic_attributes.html">get_statcan_geographic_attributes</a></span><span class="op">(</span><span class="st">"2021"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">attribution_en</span></span>
+<span><span class="co">#&gt; [1] "Statistics Canada, 2021 Census Geographic Attribute File, product 92-151-X"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">licence_en</span></span>
+<span><span class="co">#&gt; [1] "Statistics Canada Open Licence"</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">attributes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "PRUID_PRIDU"                   "PRDGUID_PRIDUGD"              </span></span>
-<span><span class="co">#&gt;  [3] "PRNAME_PRNOM"                  "PRENAME_PRANOM"               </span></span>
-<span><span class="co">#&gt;  [5] "PRFNAME_PRFNOM"                "PREABBR_PRAABBREV"            </span></span>
-<span><span class="co">#&gt;  [7] "PRFABBR_PRFABBREV"             "CDUID_DRIDU"                  </span></span>
-<span><span class="co">#&gt;  [9] "CDDGUID_DRIDUGD"               "CDNAME_DRNOM"                 </span></span>
-<span><span class="co">#&gt; [11] "CDTYPE_DRGENRE"                "FEDUID_CEFIDU"                </span></span>
-<span><span class="co">#&gt; [13] "FEDDGUID_CEFIDUGD"             "FEDNAME_CEFNOM"               </span></span>
-<span><span class="co">#&gt; [15] "CSDUID_SDRIDU"                 "CSDDGUID_SDRIDUGD"            </span></span>
-<span><span class="co">#&gt; [17] "CSDNAME_SDRNOM"                "CSDTYPE_SDRGENRE"             </span></span>
-<span><span class="co">#&gt; [19] "DPLUID_LDIDU"                  "DPLDGUID_LDIDUGD"             </span></span>
-<span><span class="co">#&gt; [21] "DPLNAME_LDNOM"                 "DPLTYPE_LDGENRE"              </span></span>
-<span><span class="co">#&gt; [23] "ERUID_REIDU"                   "ERDGUID_REIDUGD"              </span></span>
-<span><span class="co">#&gt; [25] "ERNAME_RENOM"                  "CCSUID_SRUIDU"                </span></span>
-<span><span class="co">#&gt; [27] "CCSDGUID_SRUIDUGD"             "CCSNAME_SRUNOM"               </span></span>
-<span><span class="co">#&gt; [29] "SACTYPE_CSSGENRE"              "SACCODE_CSSCODE"              </span></span>
-<span><span class="co">#&gt; [31] "CMAPUID_RMRPIDU"               "CMAPDGUID_RMRPIDUGD"          </span></span>
-<span><span class="co">#&gt; [33] "CMAUID_RMRIDU"                 "CMADGUID_RMRIDUGD"            </span></span>
-<span><span class="co">#&gt; [35] "CMANAME_RMRNOM"                "CMATYPE_RMRGENRE"             </span></span>
-<span><span class="co">#&gt; [37] "CTUID_SRIDU"                   "CTDGUID_SRIDUGD"              </span></span>
-<span><span class="co">#&gt; [39] "CTCODE_SRCODE"                 "CTNAME_SRNOM"                 </span></span>
-<span><span class="co">#&gt; [41] "POPCTRRAPUID_CTRPOPRRPIDU"     "POPCTRRAPDGUID_CTRPOPRRPIDUGD"</span></span>
-<span><span class="co">#&gt; [43] "POPCTRRAUID_CTRPOPRRIDU"       "POPCTRRADGUID_CTRPOPRRIDUGD"  </span></span>
-<span><span class="co">#&gt; [45] "POPCTRRANAME_CTRPOPRRNOM"      "POPCTRRATYPE_CTRPOPRRGENRE"   </span></span>
-<span><span class="co">#&gt; [47] "POPCTRRACLASS_CTRPOPRRCLASSE"  "DAUID_ADIDU"                  </span></span>
-<span><span class="co">#&gt; [49] "DADGUID_ADIDUGD"               "DARPLAMX_ADLAMX"              </span></span>
-<span><span class="co">#&gt; [51] "DARPLAMY_ADLAMY"               "DARPLAT_ADLAT"                </span></span>
-<span><span class="co">#&gt; [53] "DARPLONG_ADLONG"               "DBUID_IDIDU"                  </span></span>
-<span><span class="co">#&gt; [55] "DBDGUID_IDIDUGD"               "DBPOP2021_IDPOP2021"          </span></span>
-<span><span class="co">#&gt; [57] "DBTDWELL2021_IDTLOG2021"       "DBURDWELL2021_IDRHLOG2021"    </span></span>
-<span><span class="co">#&gt; [59] "DBAREA2021_IDSUP2021"          "DBIR2021_IDRI2021"            </span></span>
-<span><span class="co">#&gt; [61] "ADAUID_ADAIDU"                 "ADADGUID_ADAIDUGD"            </span></span>
-<span><span class="co">#&gt; [63] "ADACODE_ADACODE"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "PRUID"          "PRDGUID"        "PRNAME"         "PRENAME"       </span></span>
+<span><span class="co">#&gt;  [5] "PRFNAME"        "PREABBR"        "PRFABBR"        "CDUID"         </span></span>
+<span><span class="co">#&gt;  [9] "CDDGUID"        "CDNAME"         "CDTYPE"         "FEDUID"        </span></span>
+<span><span class="co">#&gt; [13] "FEDDGUID"       "FEDNAME"        "CSDUID"         "CSDDGUID"      </span></span>
+<span><span class="co">#&gt; [17] "CSDNAME"        "CSDTYPE"        "DPLUID"         "DPLDGUID"      </span></span>
+<span><span class="co">#&gt; [21] "DPLNAME"        "DPLTYPE"        "ERUID"          "ERDGUID"       </span></span>
+<span><span class="co">#&gt; [25] "ERNAME"         "CCSUID"         "CCSDGUID"       "CCSNAME"       </span></span>
+<span><span class="co">#&gt; [29] "SACTYPE"        "SACCODE"        "CMAPUID"        "CMAPDGUID"     </span></span>
+<span><span class="co">#&gt; [33] "CMAUID"         "CMADGUID"       "CMANAME"        "CMATYPE"       </span></span>
+<span><span class="co">#&gt; [37] "CTUID"          "CTDGUID"        "CTCODE"         "CTNAME"        </span></span>
+<span><span class="co">#&gt; [41] "POPCTRRAPUID"   "POPCTRRAPDGUID" "POPCTRRAUID"    "POPCTRRADGUID" </span></span>
+<span><span class="co">#&gt; [45] "POPCTRRANAME"   "POPCTRRATYPE"   "POPCTRRACLASS"  "DAUID"         </span></span>
+<span><span class="co">#&gt; [49] "DADGUID"        "DARPLAMX"       "DARPLAMY"       "DARPLAT"       </span></span>
+<span><span class="co">#&gt; [53] "DARPLONG"       "DBUID"          "DBDGUID"        "DBPOP2021"     </span></span>
+<span><span class="co">#&gt; [57] "DBTDWELL2021"   "DBURDWELL2021"  "DBAREA2021"     "DBIR2021"      </span></span>
+<span><span class="co">#&gt; [61] "ADAUID"         "ADADGUID"       "ADACODE"</span></span></code></pre></div>
 <p>To answer our question, we filter Census Block by the ones that lie
 within a Census Tract, and check for the collection of Census Blocks
 within each Census Tract how many municipalities they lie in.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">attributes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">CMATYPE_RMRGENRE</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>,<span class="st">"K"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># filter areas not in CTs</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">CTCODE_SRCODE</span>,<span class="va">CMATYPE_RMRGENRE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>`Number of municipalities`<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">CSDUID_SDRIDU</span><span class="op">)</span><span class="op">)</span>,.groups<span class="op">=</span><span class="st">"drop"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">`Number of municipalities`</span>,<span class="va">CMATYPE_RMRGENRE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">CMATYPE_RMRGENRE</span>,<span class="va">`Number of municipalities`</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">CMATYPE</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>,<span class="st">"K"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># filter areas not in CTs</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">CTCODE</span>,<span class="va">CMATYPE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>`Number of municipalities`<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">CSDUID</span><span class="op">)</span><span class="op">)</span>,.groups<span class="op">=</span><span class="st">"drop"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">`Number of municipalities`</span>,<span class="va">CMATYPE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">CMATYPE</span>,<span class="va">`Number of municipalities`</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 3</span></span></span>
-<span><span class="co">#&gt;   `Number of municipalities` CMATYPE_RMRGENRE     n</span></span>
-<span><span class="co">#&gt;                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                          1 B                 <span style="text-decoration: underline;">5</span>997</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                          2 B                   33</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                          3 B                   13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>                          4 B                    5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>                          6 B                    4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>                          1 K                  194</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>                          2 K                    1</span></span></code></pre></div>
+<span><span class="co">#&gt;   `Number of municipalities` CMATYPE     n</span></span>
+<span><span class="co">#&gt;                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                          1 B        <span style="text-decoration: underline;">5</span>997</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                          2 B          33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                          3 B          13</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>                          4 B           5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>                          6 B           4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>                          1 K         194</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>                          2 K           1</span></span></code></pre></div>
 <p>This shows that most census tracts for both Census Metropolitan Areas
-(CMATYPE_RMRGENRE=“B”) and tracted Census Agglomerations
-(CMATYPE_RMRGENRE=“K”), with some census tracts spanning several
+(CMATYPE=“B”) and tracted Census Agglomerations (CMATYPE=“K”) lie within
+a single municipality, with some census tracts spanning several
 municipalities.</p>
+</div>
+<div class="section level2">
+<h2 id="older-censuses">Older censuses<a class="anchor" aria-label="anchor" href="#older-censuses"></a>
+</h2>
+<p>Attribute files are available back to 1981. From 2001 on they have a
+row for each Census Block, identified by <code>DBUID</code>. Earlier
+censuses have a row for each Enumeration Area, identified by
+<code>EAUID</code>, and different columns. Each column has a description
+in its <code>"label"</code> attribute, and the metadata of each file has
+notes on how it was built and on problems with the source.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">attributes_1981</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_geographic_attributes.html">get_statcan_geographic_attributes</a></span><span class="op">(</span><span class="st">"1981"</span><span class="op">)</span></span>
+<span><span class="va">attributes_1981</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "EAUID"       "PRUID"       "FEDUID"      "FEDNAME"     "EACODE"     </span></span>
+<span><span class="co">#&gt;  [6] "CDUID"       "CDNAME"      "CSDUID"      "CSDNAME"     "CSDTYPE"    </span></span>
+<span><span class="co">#&gt; [11] "CSDTYPECODE" "CSDPOPGROUP" "CCSUID"      "CMAUID"      "CMANAME"    </span></span>
+<span><span class="co">#&gt; [16] "CMATYPE"     "CMAPART"     "CMAPOPGROUP" "CTCODE"      "CTNAME"     </span></span>
+<span><span class="co">#&gt; [21] "SPRUID"      "UACODE"      "UAPOPGROUP"  "EAPOP1981"   "EAPHH1981"  </span></span>
+<span><span class="co">#&gt; [26] "EACF1981"    "EARPUTMZONE" "EARPUTMX"    "EARPUTMY"    "EARPLAT"    </span></span>
+<span><span class="co">#&gt; [31] "EARPLONG"    "EARPLAMX"    "EARPLAMY"    "NTSMAP"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes_1981</span><span class="op">$</span><span class="va">EAPHH1981</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Private households, 1981"</span></span>
+<span><span class="va">attributes_1981</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>Population <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">EAPOP1981</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 1</span></span></span>
+<span><span class="co">#&gt;   Population</span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   24<span style="text-decoration: underline;">343</span>181</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes_1981</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">notes_en</span></span>
+<span><span class="co">#&gt; [1] "One row per enumeration area. Supplied by Statistics Canada as a fixed-width file with a scanned guide, which gives field descriptions but no field names, so the column names here were assigned to match the later years. Coordinates are the population centroid, latitude and longitude as given in degrees and whole minutes. Longitude is stored negative west of Greenwich, the source gives it unsigned. The file has no incomplete enumeration flag, so incompletely enumerated areas cannot be told apart from areas with no population. The subprovincial region is blank in the source on 271 EAs. The 1981 size groups were checked against the summed EA populations."</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="representative-points">Representative points<a class="anchor" aria-label="anchor" href="#representative-points"></a>
+</h2>
+<p>The attribute files have representative points for each area, as
+latitude and longitude and in some years also as projected coordinates.
+The metadata of each coordinate column gives its coordinate reference
+system: the EPSG code in <code>crs_epsg</code> where there is one, the
+PROJ string in <code>crs_proj</code>, and in <code>crs_en</code> how
+this was established. In most years the source documentation doesn’t
+state the datum, so it was inferred by checking the columns against each
+other, which <code>crs_basis</code> records.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">point_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">columns</span><span class="op">$</span><span class="va">DARPLAT</span></span>
+<span><span class="va">point_metadata</span><span class="op">$</span><span class="va">crs_en</span></span>
+<span><span class="co">#&gt; [1] "NAD83 geographic, EPSG:4269. Derived from the Lambert columns, which the 2021 reference guide (92-151-G) documents as NAD83. Fit to them as EPSG:3347: 0.04 m median."</span></span>
+<span><span class="va">point_metadata</span><span class="op">$</span><span class="va">crs_basis</span></span>
+<span><span class="co">#&gt; [1] "inferred"</span></span></code></pre></div>
+<p>From 2006 on the representative points belong to dissemination areas,
+and each point is repeated on every block row of its dissemination area.
+Converting the rows directly would stack all blocks of a dissemination
+area on one point, so we first reduce the data to one row per
+dissemination area, here for Metro Vancouver, before converting it to an
+<strong>sf</strong> object with the CRS from the metadata.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">da_points</span> <span class="op">&lt;-</span> <span class="va">attributes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">CMAUID</span> <span class="op">==</span> <span class="st">"933"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">DAUID</span>, <span class="va">DARPLONG</span>, <span class="va">DARPLAT</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>Population <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">DBPOP2021</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DARPLONG"</span>, <span class="st">"DARPLAT"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="va">point_metadata</span><span class="op">$</span><span class="va">crs_epsg</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">da_points</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">Population</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.3</span>, shape <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size_area</a></span><span class="op">(</span>max_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Metro Vancouver dissemination area representative points, 2021"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="statcan_attribute_files_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
+<p>The points differ between census years:</p>
+<ul>
+<li>2001 is the only year with block level points, in
+<code>DBRPLAT</code> and <code>DBRPLONG</code>, in addition to the
+dissemination area points.</li>
+<li>1981 to 1996 have one point per enumeration area, but on the NAD27
+datum (EPSG:4267) rather than NAD83. Transforming them to NAD83 is most
+accurate with the Canadian NTv2 grid, which PROJ can fetch when network
+access is enabled with <code>sf::sf_proj_network(TRUE)</code>. The
+projected Lambert columns of these years are on NAD27 as well and should
+not be read as EPSG:3347.</li>
+<li>1981 and 1986 give latitude and longitude only to the whole minute,
+about 1.85 km north to south, so many enumeration areas share a point.
+The UTM columns are more precise, but their zone varies by row.</li>
+</ul>
+<p>The <code>precision_en</code> entry of the column metadata has the
+details.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">attributes_1996</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_statcan_geographic_attributes.html">get_statcan_geographic_attributes</a></span><span class="op">(</span><span class="st">"1996"</span><span class="op">)</span></span>
+<span><span class="va">crs_1996</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">attributes_1996</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">columns</span><span class="op">$</span><span class="va">EARPLAT</span><span class="op">$</span><span class="va">crs_epsg</span></span>
+<span><span class="va">crs_1996</span></span>
+<span><span class="co">#&gt; [1] 4267</span></span>
+<span></span>
+<span><span class="va">ea_points</span> <span class="op">&lt;-</span> <span class="va">attributes_1996</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">CMAUID</span> <span class="op">==</span> <span class="st">"933"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EARPLONG"</span>, <span class="st">"EARPLAT"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="va">crs_1996</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">da_points</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

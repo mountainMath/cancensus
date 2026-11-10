@@ -17,7 +17,7 @@ tibble with metadata on cached data
 ``` r
 # list add the cached census data
 list_cancensus_cache()
-#> # A tibble: 3,974 × 11
+#> # A tibble: 4,040 × 11
 #>    path          dataset regions level vectors created_at          version  size
 #>    <chr>         <chr>   <chr>   <chr> <chr>   <dttm>              <chr>   <dbl>
 #>  1 CM_data_0008… CA16    "{\"CS… Regi… "[\"v_… 2023-06-14 15:39:12 d.4       874
@@ -30,7 +30,7 @@ list_cancensus_cache()
 #>  8 CM_data_0068… CA16    "{\"PR… Regi… "[\"v_… 2026-11-05 14:55:52 d.4       396
 #>  9 CM_data_006c… CA21    "{\"CS… Regi… "[\"v_… 2023-05-24 18:29:31 d.4       529
 #> 10 CM_data_007f… CA21    "{\"CM… Regi… "[]"    2023-01-26 07:18:01 d.4      1882
-#> # ℹ 3,964 more rows
+#> # ℹ 4,030 more rows
 #> # ℹ 3 more variables: last_accessed <dttm>, access_count <dbl>,
 #> #   resolution <chr>
 ```

@@ -55,7 +55,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retry_api_call</span><span class="op">(</span><span class="va">call_fn</span>, max_retries <span class="op">=</span> <span class="fl">3</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retry_api_call</span><span class="op">(</span><span class="va">call_fn</span>, max_retries <span class="op">=</span> <span class="fl">3</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, language <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -72,6 +72,10 @@
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
 <dd><p>If TRUE, suppress retry messages</p></dd>
+
+
+<dt id="arg-language">language<a class="anchor" aria-label="anchor" href="#arg-language"></a></dt>
+<dd><p>Language of the retry messages, see <code>message_language</code></p></dd>
 
 </dl></div>
     <div class="section level2">

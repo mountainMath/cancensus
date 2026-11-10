@@ -112,9 +112,9 @@
 - [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
   : Read the Geographic Attributes File
 - [`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)
-  : Read the Dissemination Geographies Relationship File
+  : Read the Dissemination Geographies Relationship File (deprecated)
 - [`get_statcan_geo_suite()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.md)
-  : Read the geosuite data
+  : Read GeoSuite tables
 
 ## Data
 

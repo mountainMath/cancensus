@@ -43,8 +43,10 @@ Canada 1996; 2001; 2006; 2011; 2016).
 - level:
 
   The census aggregation level to retrieve, defaults to `"Regions"`. One
-  of `"Regions"`, `"PR"`, `"CMA"`, `"CD"`, `"CSD"`, `"CT"`, `"DA"`,
-  `"EA"` (for 1996), or `"DB"` (for 2001-2016).
+  of `"Regions"`, `"PR"`, `"CMA"`, `"CA"`, `"CMACA"`, `"CD"`, `"CSD"`,
+  `"CT"`, `"DA"`, `"EA"` (for 1996), or `"DB"` (for 2001-2016). `"CMA"`,
+  `"CA"` and `"CMACA"` all refer to the same level, which contains both
+  census metropolitan areas and census agglomerations.
 
 - vectors:
 
