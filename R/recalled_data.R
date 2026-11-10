@@ -36,18 +36,20 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
     # so that an error response never gets stored as the recall database.
     tmp <- tempfile(fileext = ".csv")
     on.exit(unlink(tmp), add = TRUE)
-    tryCatch({
-      response <- cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
-                         httr::timeout(getOption("timeout", 60)))
-      if (httr::status_code(response) != 200) {
-        stop("HTTP status ", httr::status_code(response))
-      }
-      file.copy(tmp, path, overwrite = TRUE)
-    },
-    error = function(e) {
-      cc_warn("recall_database_unavailable")
-      problem <<- TRUE
-    })
+    response <- tryCatch(cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
+                                httr::timeout(getOption("timeout", 60))),
+                         error = function(e) e)
+    reason <- if (inherits(response, "error")) {
+      conditionMessage(response)
+    } else if (httr::status_code(response) != 200) {
+      cc_msg("hosted_http_status", status = httr::status_code(response))
+    } else if (!file.copy(tmp, path, overwrite = TRUE)) {
+      cc_msg("recall_database_not_saved", path = path)
+    }
+    if (!is.null(reason)) {
+      cc_warn("recall_database_unavailable", reason = reason)
+      problem <- TRUE
+    }
   }
   data <- NULL
   if (!problem) {

@@ -54,3 +54,23 @@ test_that("recalls leave an empty cache alone", {
   expect_length(recalled_paths(mock_recall_database(), mock_cached_data()[0, ]), 0)
   expect_length(recalled_paths(mock_recall_database()[1, ], mock_cached_data()[0, ]), 0)
 })
+
+test_that("failed downloads of the recall database warn with the reason and keep the cached copy", {
+  path <- tempfile(fileext = ".csv")
+  writeLines(c("dataset,level,vector", "CA21,,v_CA21_1"), path)
+  local_mocked_bindings(recall_data_path = function() path)
+
+  local_mocked_bindings(cm_GET = function(...) fake_response(500))
+  expect_warning(result <- get_recalled_database(refresh = TRUE), "HTTP status 500",
+                 class = "cancensus_recall_database_unavailable")
+  expect_null(result)
+  expect_equal(readLines(path)[2], "CA21,,v_CA21_1")
+
+  local_mocked_bindings(cm_GET = function(...) stop("Could not resolve host"))
+  expect_warning(get_recalled_database(refresh = TRUE), "Could not resolve host",
+                 class = "cancensus_recall_database_unavailable")
+  expect_equal(readLines(path)[2], "CA21,,v_CA21_1")
+
+  # without a refresh the cached copy gets read
+  expect_equal(get_recalled_database()$vector, "v_CA21_1")
+})
