@@ -86,15 +86,12 @@ cache_path <- function(...) {
     }
   }
   if (!is.character(cache_dir)) {
-    stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
-         call. = FALSE)
+    cc_abort("cache_path_invalid")
   }
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
     if (!dir.exists(cache_dir)) {
-      stop(paste0("Could not create cache directory '",cache_dir,
-                  "'. Check the 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option."),
-           call. = FALSE)
+      cc_abort("cache_dir_create_failed", path = cache_dir)
     }
   }
   cache_key <- paste0(...)
@@ -114,13 +111,13 @@ cache_is_persistent <- function(base_path = NULL){
 # Warn that downloaded data won't be kept across sessions. Called after data has been downloaded
 # and saved, so failed requests don't use up the warning and handlers that turn it into an error
 # don't lose the download. Warns once per session, per call would flood users querying in a loop.
-warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE){
+warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE, language = NULL){
   if (quiet || cache_is_persistent(base_path) ||
       isTRUE(session_cache_get("cache_warning_shown"))) {
     return(invisible(NULL))
   }
   session_cache_set("cache_warning_shown", TRUE)
-  warning(cm_no_cache_path_warning, call. = FALSE)
+  cc_warn("cache_not_persistent", .language = language)
   invisible(NULL)
 }
 
@@ -148,7 +145,7 @@ validate_language <- function(language){
   valid_languages <- c("en","fr")
   language <- if (is.character(language) && length(language)==1) tolower(language) else NA_character_
   if (!(language %in% valid_languages)) {
-    stop(paste0("Language must be one of ",paste0(valid_languages,collapse = ", "),"."), call. = FALSE)
+    cc_abort("invalid_language", choices = valid_languages)
   }
   language
 }
@@ -166,16 +163,16 @@ is_blank <- function(x){
 }
 
 # Warn once per session and dataset, per call would flood users querying in a loop
-warn_language_fallback <- function(dataset, n_missing, n_total){
+warn_language_fallback <- function(dataset, n_missing, n_total, language = NULL){
   cache_key <- paste0("language_fallback_warning_", dataset)
   if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
   session_cache_set(cache_key, TRUE)
-  warning(paste0(if (n_missing == n_total) {
-    paste0("French labels are not available for dataset ", dataset, ".")
+  if (n_missing == n_total) {
+    cc_warn("french_labels_unavailable_dataset", dataset = dataset, .language = language)
   } else {
-    paste0("French labels are not available for ", n_missing, " of ", n_total,
-           " vectors in dataset ", dataset, ".")
-  }, " Using English labels instead."), call. = FALSE)
+    cc_warn("french_labels_unavailable_vectors", n = format_number(n_missing, language),
+            total = format_number(n_total, language), dataset = dataset, .language = language)
+  }
   invisible(NULL)
 }
 
@@ -186,7 +183,7 @@ clean_vector_list <- function(vector_list,dataset=NULL,language=getOption("cance
       vector_list = list_census_vectors(dataset, language = language) %>%
         dplyr::filter(vector %in% vector_list)
     } else
-      stop(paste0("Don't know how to parse vector list: ",vector_list))
+      cc_abort("vector_list_unparseable", vector_list = vector_list, .language = language)
   }
   vector_list
 }
@@ -196,7 +193,7 @@ dataset_from_vector_list <- function(vector_list){
   if (is.null(dataset)) {
     vectors = if (inherits(vector_list,"character")) vector_list else vector_list$vector
     dataset <- unique(sub("^[^_]+_([^_]+).*$", "\\1", as.character(vectors)))
-    if (length(dataset)!=1) stop("Unable to determine dataset")
+    if (length(dataset)!=1) cc_abort("dataset_undetermined")
   }
   dataset
 }
@@ -208,9 +205,10 @@ cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 #' @param call_fn A function that performs the API call and returns an httr response
 #' @param max_retries Maximum number of retry attempts (default: 3)
 #' @param quiet If TRUE, suppress retry messages
+#' @param language Language of the retry messages, see \code{message_language}
 #' @return The httr response object
 #' @keywords internal
-retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
+retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE, language = NULL) {
  attempt <- 1
  last_error <- NULL
 
@@ -228,8 +226,8 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
          wait_time <- max(wait_time, min(ceiling(retry_after), 60))
        }
        if (!quiet) {
-         message(sprintf("Transient error (HTTP %d), retrying in %ds (attempt %d/%d)...",
-                         status, wait_time, attempt + 1, max_retries))
+         cc_inform("retry_http", status = status, wait = wait_time, attempt = attempt + 1,
+                   max = max_retries, .language = language)
        }
        Sys.sleep(wait_time)
        attempt <- attempt + 1
@@ -245,8 +243,8 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
      if (attempt < max_retries) {
        wait_time <- 2 ^ (attempt - 1)
        if (!quiet) {
-         message(sprintf("Network error: %s. Retrying in %ds (attempt %d/%d)...",
-                         conditionMessage(e), wait_time, attempt + 1, max_retries))
+         cc_inform("retry_network", error = conditionMessage(e), wait = wait_time,
+                   attempt = attempt + 1, max = max_retries, .language = language)
        }
        Sys.sleep(wait_time)
        attempt <<- attempt + 1
@@ -263,12 +261,17 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
 }
 
 #' Format bytes to human-readable size
+#' @param bytes Number of bytes
+#' @param language Language for units and decimal mark, see \code{message_language}
 #' @keywords internal
-format_bytes <- function(bytes) {
- if (bytes < 1024) return(paste0(bytes, " B"))
- if (bytes < 1024^2) return(sprintf("%.1f KB", bytes / 1024))
- if (bytes < 1024^3) return(sprintf("%.1f MB", bytes / 1024^2))
- return(sprintf("%.1f GB", bytes / 1024^3))
+format_bytes <- function(bytes, language = NULL) {
+ language <- message_language(language)
+ units <- if (language == "fr") c("o", "Ko", "Mo", "Go") else c("B", "KB", "MB", "GB")
+ if (bytes < 1024) return(paste0(bytes, " ", units[1]))
+ exponent <- if (bytes < 1024^2) 1 else if (bytes < 1024^3) 2 else 3
+ size <- sprintf("%.1f", bytes / 1024^exponent)
+ if (language == "fr") size <- sub(".", ",", size, fixed = TRUE)
+ paste0(size, " ", units[exponent + 1])
 }
 
 as.num = function(x, na.strings = cancensus_na_strings) {
@@ -289,11 +292,11 @@ as.int = function(x, na.strings = cancensus_na_strings) {
   x
 }
 
-check_recalled_data_and_warn <- function(meta_file,params){
+check_recalled_data_and_warn <- function(meta_file,params,language=NULL){
   cached_data<-generate_metadata(meta_file,params)
   recalled_data <- list_recalled_cached_data(cached_data,warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data.")
+    cc_warn("recalled_loaded_data", .language = language)
   }
   d<-NULL
 }
@@ -301,7 +304,7 @@ check_recalled_data_and_warn <- function(meta_file,params){
 check_for_recalled_data_and_warn <- function(){
   recalled_data <- list_recalled_cached_data(warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data."))
+    cc_warn("recalled_cached_data")
   }
   d<-NULL
 }

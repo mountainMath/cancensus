@@ -58,17 +58,15 @@ get_statcan_geo_suite <- function(level=NULL,census_year="2021",refresh=FALSE,
   census_year <- as.character(census_year)[1]
   valid_years <- names(geo_suite_tables)
   if (!(census_year %in% valid_years)) {
-    stop(paste0("The GeoSuite is only available for census years ",paste0(valid_years,collapse = ", "),
-                ". For older censuses get_statcan_geographic_attributes() has much of the same information."),
-         call. = FALSE)
+    cc_abort("geo_suite_invalid_year",years = valid_years,.language = language)
   }
   language <- validate_language(language)
   if (!is.null(level)) {
-    level <- geo_suite_table_name(level,census_year)
+    level <- geo_suite_table_name(level,census_year,language = language)
     rlang::check_installed(c("duckdb","DBI"),version = c("1.5.6",NA),
                            reason = "to read the GeoSuite.")
   }
-  if (!quiet) message_unused_geo_suite_files()
+  if (!quiet) message_unused_geo_suite_files(language = language)
 
   base_url <- paste0("https://data.mountainmath.ca/census/geo_suite/",census_year,"/")
   if (is.null(level)) {
@@ -78,7 +76,8 @@ get_statcan_geo_suite <- function(level=NULL,census_year="2021",refresh=FALSE,
   }
   read_hosted_parquet(paste0(base_url,level,".parquet"),
                       cache_path("geo_suite/",census_year,"/",level,".parquet"),
-                      description = paste0(census_year," GeoSuite table ",level),
+                      description = cc_msg("geo_suite_table_description",year = census_year,table = level,
+                                           .language = language),
                       refresh = refresh,language = language,quiet = quiet)
 }
 
@@ -103,20 +102,20 @@ geo_suite_tables <- local({
 geo_suite_level_aliases <- c(CMA = "CMA_CA",CA = "CMA_CA",CMACA = "CMA_CA",LOC = "PN",CB = "DB")
 
 # The hosted table name for `level`, with an error listing the tables if there is no such table
-geo_suite_table_name <- function(level,census_year){
+geo_suite_table_name <- function(level,census_year,language = NULL){
   if (!is.character(level) || length(level)!=1 || is.na(level)) {
-    stop("level must be a single table name, e.g. \"DA\".",call. = FALSE)
+    cc_abort("invalid_table_name",.language = language)
   }
   table <- toupper(level)
   if (table %in% names(geo_suite_level_aliases)) table <- geo_suite_level_aliases[[table]]
   tables <- geo_suite_tables[[census_year]]
   if (!(table %in% tables)) {
-    hint <- if (census_year=="1996" && table %in% c("DA","DB","ADA")) {
-      " The 1996 GeoSuite is based on enumeration areas, in the EA table."
-    } else ""
-    stop(paste0("There is no ",level," table in the ",census_year," GeoSuite.",hint," Available tables are ",
-                paste0(sort(tables),collapse = ", "),", get_statcan_geo_suite(census_year = \"",census_year,
-                "\") lists them with descriptions."),call. = FALSE)
+    msg <- function(id,...) cc_msg(id,...,.language = language)
+    rlang::abort(paste(c(msg("geo_suite_no_table",table = level,year = census_year),
+                         if (census_year=="1996" && table %in% c("DA","DB","ADA")) msg("geo_suite_1996_ea"),
+                         msg("geo_suite_available_tables",tables = sort(tables),year = census_year)),
+                       collapse = " "),
+                 class = c("cancensus_geo_suite_no_table","cancensus_error"),call = NULL)
   }
   table
 }
@@ -126,7 +125,7 @@ geo_suite_table_list <- function(url,file_path,refresh,language,quiet){
   has_cache <- is_manifest_file(file_path)
   if (refresh || !has_cache) {
     downloaded <- download_hosted_file(url,file_path,has_cache = has_cache,quiet = quiet,
-                                       is_valid = is_manifest_file,kind = "list of tables")
+                                       is_valid = is_manifest_file,kind = "manifest",language = language)
     if (!downloaded && !has_cache) return(NULL)
   }
   files <- jsonlite::read_json(file_path)$files
@@ -153,13 +152,14 @@ is_manifest_file <- function(path){
 }
 
 # GeoSuite downloads from before the move to hosted parquet files, see message_unused_files()
-message_unused_geo_suite_files <- function(){
+message_unused_geo_suite_files <- function(language = NULL){
   zips <- c("2021_92-150-X_eng.zip","GeoSuite_2016_92-150_XBB_eng.zip","2011_92-150_XBB_eng.zip",
             "2006_92-150_XBB_eng.zip","92F0150WCB2001000.zip")
   message_unused_files("unused_geo_suite_files",
                        c(cache_path(paste0("geo_suite_",seq(2001,2021,5))),
                          file.path(statcan_downloads_path(),c(zips,sub("\\.zip$","",zips)))),
-                       "GeoSuite files","get_statcan_geo_suite()")
+                       cc_msg("unused_what_geo_suite_files",.language = language),"get_statcan_geo_suite()",
+                       language = language)
 }
 
 
@@ -200,8 +200,7 @@ message_unused_geo_suite_files <- function(){
 get_statcan_geography_relationships <- function(census_year="2021", refresh=FALSE){
   valid_years <- c("2021")
   if (!(as.character(census_year) %in% valid_years)) {
-    stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
-                " are supported for the geographic relationship file."))
+    cc_abort("relationships_invalid_year",years = valid_years)
   }
   warn_geography_relationships_deprecated()
   file_path <- cache_path(paste0("geography_relationship_",census_year,".zip"))
@@ -224,12 +223,7 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 warn_geography_relationships_deprecated <- function(){
   if (isTRUE(session_cache_get("geography_relationships_deprecated"))) return(invisible(NULL))
   session_cache_set("geography_relationships_deprecated",TRUE)
-  warning("get_statcan_geography_relationships() is deprecated and will be removed in the next release. ",
-          "Use get_statcan_geographic_attributes(\"2021\") instead, which has the same DGUIDs for each ",
-          "dissemination block apart from census agricultural regions (CARDGUID). Unlike the relationship file, ",
-          "it fills CMADGUID outside CMA/CAs with the metropolitan influenced zone and CTDGUID outside tracted ",
-          "areas with a placeholder census tract, CMATYPE %in% c(\"B\", \"D\", \"K\") selects the blocks in ",
-          "CMA/CAs. This warning is shown once per session.",call. = FALSE)
+  cc_warn("relationships_deprecated")
   invisible(NULL)
 }
 
@@ -291,18 +285,17 @@ get_statcan_geographic_attributes <- function(census_year="2021",refresh=FALSE,
   census_year <- as.character(census_year)[1]
   valid_years <- as.character(seq(1981,2021,5))
   if (!(census_year %in% valid_years)) {
-    stop(paste0("Only census years ",paste0(valid_years,collapse = ", "),
-                " are supported for the geographic attributes."),call. = FALSE)
+    cc_abort("geo_attributes_invalid_year",years = valid_years,.language = language)
   }
   language <- validate_language(language)
     rlang::check_installed(c("duckdb","DBI"),version = c("1.5.6",NA),
                          reason = "to read the geographic attributes.")
-  if (!quiet) message_unused_attribute_files()
+  if (!quiet) message_unused_attribute_files(language = language)
 
   read_hosted_parquet(paste0("https://data.mountainmath.ca/census/geo_attributes/geo_attributes_",
                              census_year,".parquet"),
                       cache_path(paste0("geo_attributes_",census_year,".parquet")),
-                      description = "Geographic attributes",
+                      description = cc_msg("geo_attributes_description",.language = language),
                       refresh = refresh,language = language,quiet = quiet)
 }
 
@@ -312,31 +305,36 @@ read_hosted_parquet <- function(url,file_path,description,refresh = FALSE,langua
   has_cache <- is_parquet_file(file_path)
   downloaded <- FALSE
   if (refresh || !has_cache) {
-    downloaded <- download_hosted_file(url,file_path,has_cache = has_cache,quiet = quiet)
+    downloaded <- download_hosted_file(url,file_path,has_cache = has_cache,quiet = quiet,language = language)
     if (!downloaded && !has_cache) return(NULL)
   }
   result <- read_parquet_file(file_path,language = language)
   if (downloaded && !quiet) {
     metadata <- attr(result,"metadata")
-    message(description," hosted by MountainMath, source: ",metadata$attribution_en,
-            ". Licence: ",metadata$licence_en,".")
+    field <- function(name){
+      value <- metadata[[paste0(name,"_",language)]]
+      if (is.null(value) || !nzchar(value)) metadata[[paste0(name,"_en")]] else value
+    }
+    cc_inform("hosted_source",description = description,attribution = field("attribution"),
+              licence = field("licence"),.language = language)
   }
   result
 }
 
 # Attribute files from before the move to hosted parquet files, see message_unused_files()
-message_unused_attribute_files <- function(){
+message_unused_attribute_files <- function(language = NULL){
   zips <- c("2021_92-151_X.zip","2016_92-151_XBB_txt.zip","2011_92-151_XBB_txt.zip","2006_92-151_XBB_txt.zip")
   message_unused_files("unused_attribute_files",
                        c(cache_path("attribute_files"),
                          file.path(statcan_downloads_path(),c(zips,sub("\\.zip$","",zips)))),
-                       "attribute files","get_statcan_geographic_attributes()")
+                       cc_msg("unused_what_attribute_files",.language = language),
+                       "get_statcan_geographic_attributes()",language = language)
 }
 
 # Point out files from before the move to hosted parquet files that `function_name` no longer reads,
 # with a command to remove them, once per session, `key` and cache path. Deleting them is left to the
 # user, as Statistics Canada may not allow downloading them again. This can go after a release or two.
-message_unused_files <- function(key,paths,what,function_name){
+message_unused_files <- function(key,paths,what,function_name,language = NULL){
   key <- paste0(key,"_",cache_path())
   if (!is.null(session_cache_get(key))) return(invisible(NULL))
   session_cache_set(key,TRUE)
@@ -349,9 +347,8 @@ message_unused_files <- function(key,paths,what,function_name){
   size <- format(structure(sum(file.size(files)),class = "object_size"),units = "auto",standard = "SI")
   quoted <- paste0(encodeString(paths,quote = '"'),collapse = ", ")
   if (length(paths)>1) quoted <- paste0("c(",quoted,")")
-  message("Previously downloaded Statistics Canada ",what," are no longer used by ",
-          function_name," and take up ",size,". These are the original files, which ",
-          "may not be possible to download again. To delete them, run:\n  unlink(",quoted,", recursive = TRUE)")
+  cc_inform("unused_files",what = what,function_name = function_name,size = size,paths = quoted,
+            .language = language)
   invisible(NULL)
 }
 
@@ -375,7 +372,8 @@ fetch_hosted_file <- function(url,path,quiet = FALSE){
 # Download a hosted file to `path`, which only gets replaced by a file that passes `is_valid`. Returns
 # whether that worked, anything else is a warning so that this fails gracefully when the file is unavailable.
 download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
-                                 is_valid = is_parquet_file,kind = "parquet file"){
+                                 is_valid = is_parquet_file,kind = c("parquet","manifest"),language = NULL){
+  kind <- match.arg(kind)
   dir.create(dirname(path),recursive = TRUE,showWarnings = FALSE)
   tmp <- tempfile(fileext = paste0(".",tools::file_ext(path)),tmpdir = dirname(path))
   on.exit(unlink(tmp))
@@ -383,21 +381,21 @@ download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
   problem <- if (inherits(response,"error")) {
     conditionMessage(response)
   } else if (httr::http_error(response)) {
-    paste0("the server responded with HTTP status ",httr::status_code(response))
+    cc_msg("hosted_http_status",status = httr::status_code(response),.language = language)
   } else if (!is_valid(tmp)) {
-    paste0("the server did not return a complete ",kind)
+    cc_msg(paste0("hosted_incomplete_",kind),.language = language)
   }
   if (!is.null(problem)) {
-    warning("Could not download ",url,": ",problem,". ",statcan_fallback_message(has_cache),call. = FALSE)
+    cc_warn("hosted_download_failed",url = url,problem = problem,
+            fallback = statcan_fallback_message(has_cache,language),.language = language)
     return(FALSE)
   }
   if (has_cache && !quiet) {
     changed <- digest::digest(tmp,file = TRUE) != digest::digest(path,file = TRUE)
-    message(if (changed) "The hosted file has changed, updating the cached copy." else
-      "The hosted file has not changed.")
+    cc_inform(if (changed) "hosted_changed" else "hosted_unchanged",.language = language)
   }
   file.rename(tmp,path)
-  warn_if_cache_not_persistent(quiet = quiet)
+  warn_if_cache_not_persistent(quiet = quiet,language = language)
   TRUE
 }
 

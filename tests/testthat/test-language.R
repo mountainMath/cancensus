@@ -149,7 +149,7 @@ test_that("list_census_vectors uses the cancensus.language option", {
 test_that("list_census_vectors falls back to English with one warning per dataset", {
   local_vector_info("VEC3", with_french = FALSE)
   expect_warning(fr <- list_census_vectors("VEC3", language = "fr"),
-                 "French labels are not available for dataset VEC3")
+                 "VEC3", class = "cancensus_french_labels_unavailable_dataset")
   expect_equal(fr$label[3], "Age")
   expect_false(anyNA(fr$details))
   expect_equal(attr(fr, "language"), "fr")
@@ -162,7 +162,12 @@ test_that("localize_census_vectors falls back per vector", {
   info <- dplyr::tibble(vector = c("v_1", "v_2", "v_3"), label = c("a", "b", "c"), details = c("A", "B", "C"),
                         label_fr = c("x", NA, ""), details_fr = c("X", NA, ""))
   attr(info, "dataset") <- "VEC4"
-  expect_warning(fr <- localize_census_vectors(info, "fr"), "for 2 of 3 vectors in dataset VEC4")
+  expect_warning(fr <- localize_census_vectors(info, "fr"), "2 des 3 vecteurs .* VEC4",
+                 class = "cancensus_french_labels_unavailable_vectors")
+  expect_warning(localize_census_vectors(info, "fr", warn = FALSE), NA)
+  rm(list = "language_fallback_warning_VEC4", envir = .cancensus_session_cache)
+  rlang::local_options(cancensus.language = "fr")
+  expect_warning(cancensus:::warn_language_fallback("VEC4", 2, 3, language = "en"), "for 2 of 3 vectors in dataset VEC4")
   expect_equal(fr$label, c("x", "b", "c"))
   expect_equal(fr$details, c("X", "B", "C"))
   expect_no_warning(localize_census_vectors(info[0, ], "fr", warn = TRUE))
@@ -171,7 +176,8 @@ test_that("localize_census_vectors falls back per vector", {
 test_that("localize_census_vectors falls back when the API sends no French columns", {
   info <- dplyr::tibble(vector = "v_1", label = "a", details = "A")
   attr(info, "dataset") <- "VEC5"
-  expect_warning(fr <- localize_census_vectors(info, "fr"), "not available for dataset VEC5")
+  expect_warning(fr <- localize_census_vectors(info, "fr"), "VEC5",
+                 class = "cancensus_french_labels_unavailable_dataset")
   expect_equal(fr$label, "a")
 })
 
@@ -215,7 +221,8 @@ test_that("find_census_vectors searches in the requested language", {
   expect_equal(fr$vector, "v_FR_2")
   expect_equal(fr$details, "Population; Taille de la famille de recensement : 2 personnes")
 
-  expect_warning(find_census_vectors("census family", "VEC7", language = "fr"), "No exact matches")
+  expect_warning(find_census_vectors("census family", "VEC7", language = "fr"),
+                 "Aucune correspondance exacte", class = "cancensus_no_exact_matches")
   # type filter takes English values in both languages
   expect_equal(find_census_vectors("Âge", "VEC7", type = "female", language = "fr")$vector, "v_FR_3")
 })
@@ -271,7 +278,7 @@ test_that("get_census falls back to English when French is unavailable", {
   local_vector_info("GET4", with_french = FALSE)
   expect_warning(
     result <- suppressMessages(census("GET4", language = "fr", quiet = FALSE)),
-    "French labels are not available for dataset GET4"
+    "GET4", class = "cancensus_french_labels_unavailable_dataset"
   )
   expect_true("v_FR_3: Age" %in% names(result))
 })
@@ -280,7 +287,8 @@ test_that("get_census quiet = TRUE suppresses the fallback warning without using
   local_census_api()
   local_vector_info("GET5", with_french = FALSE)
   expect_no_warning(census("GET5", language = "fr"))
-  expect_warning(list_census_vectors("GET5", language = "fr"), "not available for dataset GET5")
+  expect_warning(list_census_vectors("GET5", language = "fr"), "GET5",
+                 class = "cancensus_french_labels_unavailable_dataset")
 })
 
 test_that("get_census keeps English labels when the metadata request fails", {
@@ -291,7 +299,7 @@ test_that("get_census keeps English labels when the metadata request fails", {
   expect_true("v_FR_3: Age" %in% names(result))
   expect_warning(
     suppressMessages(census("GET6", language = "fr", quiet = FALSE)),
-    "Could not retrieve French labels"
+    "offline", class = "cancensus_french_labels_fetch_failed"
   )
 })
 

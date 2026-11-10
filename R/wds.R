@@ -23,10 +23,10 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
   valid_census_years <- c("2021")
   valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA","HR")
   if (!(census_year %in% valid_census_years)) {
-    stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
+    cc_abort("invalid_census_year", choices = valid_census_years)
   }
   if (!(level %in% valid_levels)) {
-    stop(paste0("Level must be one of ",paste0(valid_levels,collapse = ", "),"."))
+    cc_abort("invalid_level_choice", choices = valid_levels)
   }
   meta_url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/dataflow/STC_CP/DF_",level,
                      ifelse(is.null(version),"",paste0("/",version)),
@@ -101,13 +101,9 @@ get_statcan_wds_data <- function(DGUIDs,
   gender <- paste0(toupper(substr(gender,1,1)),substr(gender,2,100))
   valid_genders <- c("All","Total","Male","Female")
   if (!(gender %in% valid_genders)) {
-    stop(paste0("Gender must be one of ",paste0(valid_genders,collapse = ", "),"."))
+    cc_abort("invalid_gender", choices = valid_genders, .language = language)
   }
-  language <- tolower(language)
-  valid_languages <- c("en","fr")
-  if (!(language %in% valid_languages)) {
-    stop(paste0("Language must be one of ",paste0(valid_languages,collapse = ", "),"."))
-  }
+  language <- validate_language(language)
   gender <- c("All"="","Total"="1","Male"="2","Female"="3")[[gender]]
   dguid_string <- paste0(DGUIDs,collapse="+")
   member_string <- paste0(members,collapse = "+")
@@ -125,14 +121,12 @@ get_statcan_wds_data <- function(DGUIDs,
       error_content <- tryCatch(httr::content(response), error = function(e) "")
       unlink(wds_data_tempfile)
       if (!is.null(response$error) && ("curl_error_peer_failed_verification" %in% class(response$error))) {
-        stop(paste0(strwrap(gsub(".+\\): ","",as.character(response$error),80)),collapse = "\n"),"\n",
-             "This means that the authenticity of the StatCan API server can't be verified.\n",
-             "Statistics Canada has a history of failty SSL certificats on their API,\n",
-             "if you are reasonably sure that your connection is not getting hijacked you\n",
-             "can disable peer checking for the duration of the R session by typing\n\n",
-             "httr::set_config(httr::config(ssl_verifypeer=0,ssl_verifystatus=0))","\n\n","into the console.")
+        cc_abort("wds_ssl_error",
+                 error = paste0(strwrap(gsub(".+\\): ","",as.character(response$error)),80),collapse = "\n"),
+                 .language = language)
       }
-      stop(paste0("Invalid request.\n",error_content))
+      cc_abort("wds_invalid_request", details = paste0(as.character(error_content), collapse = "\n"),
+               .language = language)
     }
   }
   census_year <- "2021"

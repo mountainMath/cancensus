@@ -50,8 +50,7 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
       dataset <- tryCatch({
         dataset_from_vector_list(vector)
       }, error = function(e) {
-        stop("Cannot determine dataset from vector code. Please provide the 'dataset' parameter.",
-             call. = FALSE)
+        cc_abort("dataset_from_vector_failed", .language = language)
       })
     }
     dataset <- translate_dataset(dataset)
@@ -61,14 +60,13 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
     root_info <- all_vectors %>% dplyr::filter(.data$vector %in% !!vector)
 
     if (nrow(root_info) == 0) {
-      stop(paste0("Vector '", paste0(vector, collapse = "', '"),
-                  "' not found in dataset '", dataset, "'."),
-           call. = FALSE)
+      cc_abort("vector_not_found", vectors = paste0("'", vector, "'"), dataset = dataset,
+               .language = language)
     }
   } else if (inherits(vector, "data.frame")) {
     # It's a tibble from list_census_vectors
     if (nrow(vector) == 0) {
-      stop("Empty vector tibble provided.", call. = FALSE)
+      cc_abort("empty_vector_tibble", .language = language)
     }
     dataset <- attr(vector, "dataset")
     if (is.null(dataset)) {
@@ -78,13 +76,12 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
     root_info <- vector
     all_vectors <- list_census_vectors(dataset, quiet = TRUE, language = language)
   } else {
-    stop("'vector' must be a character string or a tibble from list_census_vectors().",
-         call. = FALSE)
+    cc_abort("invalid_vector_input", .language = language)
   }
 
   # Use first row if multiple vectors provided
   if (nrow(root_info) > 1) {
-    if (!quiet) message("Multiple vectors provided. Using first vector: ", root_info$vector[1])
+    if (!quiet) cc_inform("multiple_vectors", vector = root_info$vector[1], .language = language)
     root_info <- root_info[1, ]
   }
 
@@ -99,7 +96,8 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
 
   # Build the tree structure
   if (!quiet) {
-    message("Vector hierarchy for ", root_vector, " (", dataset, "):\n")
+    message(cc_msg("vector_hierarchy_header", vector = root_vector, dataset = dataset,
+                   .language = language), "\n")
   }
 
   # Print root

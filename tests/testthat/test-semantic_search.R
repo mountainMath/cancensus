@@ -212,7 +212,7 @@ test_that("keyword search prompts in interactive sessions and follows the answer
   expect_setequal(more$vector, c("v_2", "v_3"))
 
   local_mocked_bindings(menu = function(...) 2L, .package = "utils")
-  capture.output(expect_message(top <- keyword_search("ukrainian origin", keyword_vectors), "top 1 results"))
+  capture.output(expect_message(top <- keyword_search("ukrainian origin", keyword_vectors), "top 1 result"))
   expect_equal(top$vector, "v_1")
 })
 

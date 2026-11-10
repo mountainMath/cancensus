@@ -45,7 +45,7 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
       file.copy(tmp, path, overwrite = TRUE)
     },
     error = function(e) {
-      warning("Unable to download recall database at this point.")
+      cc_warn("recall_database_unavailable")
       problem <<- TRUE
     })
   }
@@ -129,9 +129,9 @@ remove_recalled_cached_data <- function(){
   if (is.null(recalled_data)) {
   } else if (nrow(recalled_data)>0) {
     size<-remove_from_cancensus_cache(recalled_data$path)
-    message(paste0("Removing ",nrow(recalled_data)," datasets totalling ",size," bytes."))
+    cc_inform("removing_recalled", size = format_bytes(size), .n = nrow(recalled_data))
   } else {
-    message("No recalled data in cached data.")
+    cc_inform("no_recalled_data")
   }
   size
 }

@@ -70,9 +70,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   language <- validate_language(language)
   valid_labels <- c("detailed", "short", "labelled")
   if (!(is.character(labels) && length(labels) == 1 && labels %in% valid_labels)) {
-    stop(paste0("The `labels` parameter must be one of ", paste0("'", valid_labels, "'", collapse = ", "), "."))
+    cc_abort("invalid_labels", choices = paste0("'", valid_labels, "'"), .language = language)
   }
-  if (missing(labels) && is.null(getOption("cancensus.labels")) && !quiet) message_labels_default()
+  if (missing(labels) && is.null(getOption("cancensus.labels")) && !quiet) message_labels_default(language)
 
   # API and data recall checks
   first_run_checks()
@@ -88,30 +88,28 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if (is.na(level)) level="Regions"
 
   # Check spatial resolution
-  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) stop("The resolution paramerter needs to be either 'simplified' or 'high'.")
+  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) cc_abort("invalid_resolution", .language = language)
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
-    if (!quiet) warning(paste("Passing `regions` as a character vector is",
-                              "depreciated, and will be removed in future",
-                              "versions"))
+    if (!quiet) cc_warn("regions_character_deprecated", .language = language)
   } else if (is.null(names(regions)) || !all(names(regions) %in% VALID_LEVELS)) {
-    stop("Regions must be composed of valid census aggregation levels.")
+    cc_abort("invalid_regions", .language = language)
   } else {
     regions <- jsonlite::toJSON(lapply(regions,as.character)) # cast to character in case regions are supplied as numeric/interger
   }
 
   # Check if the aggregation level is valid.
   if (!level %in% VALID_LEVELS) {
-    stop("the `level` parameter must be one of 'Regions', 'PR', 'CMA', 'CA', 'CMACA', 'CD', 'CSD', 'CT', 'DA', 'EA' or 'DB'")
+    cc_abort("invalid_level", choices = paste0("'", VALID_LEVELS, "'"), .language = language)
   }
 
   # Check that we can read the requested geo format.
   if (is.na(geo_format)) { # This is ok.
   } else if (!geo_format %in% c("sf", "sp")) {
-    stop("the `geo_format` parameter must be one of 'sf', 'sp', or NA")
+    cc_abort("invalid_geo_format", .language = language)
   } else if (!is.na(geo_format) && !requireNamespace("sf", quietly = TRUE)) {
-    stop("The `sf` package is required to return geographies.")
+    cc_abort("sf_required", .language = language)
   }
 
   # sf availability is already guaranteed by the check above; the previous
@@ -137,10 +135,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(data_file, ".meta")
     if (!use_cache || !file.exists(data_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
+        cc_abort("no_api_key", .language = language)
       }
       url <- paste0(base_url, "data.csv")
-      if (!quiet) message("Querying CensusMapper API for data...")
+      if (!quiet) cc_inform("querying_data", .language = language)
 
       # Define the API call
       make_data_call <- function() {
@@ -149,17 +147,17 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Execute with or without retry
       response <- if (retry>0) {
-        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet)
+        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet, language = language)
       } else {
         make_data_call()
       }
 
-      handle_cm_status_code(response, NULL)
+      handle_cm_status_code(response, NULL, language = language)
 
       # Report download size
       content_length <- as.numeric(response$headers$`content-length`)
       if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
-        message(sprintf("Downloaded %s of data.", format_bytes(content_length)))
+        cc_inform("downloaded_data", size = format_bytes(content_length, language), .language = language)
       }
 
       data_version <- response$headers$`data-version`
@@ -195,10 +193,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                                  created_at=Sys.time(),
                          version=data_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
-      warn_if_cache_not_persistent(quiet = quiet)
+      warn_if_cache_not_persistent(quiet = quiet, language = language)
     } else {
-      if (!quiet) message("Reading vectors data from local cache.")
-      check_recalled_data_and_warn(meta_file,params)
+      if (!quiet) cc_inform("reading_data_cache", .language = language)
+      check_recalled_data_and_warn(meta_file, params, language = language)
       # Load `result` object from cache.
       load(file = data_file)
     }
@@ -220,10 +218,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     meta_file <- paste0(geo_file, ".meta")
     if (!use_cache || !file.exists(geo_file)) {
       if (!have_api_key) {
-        stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
+        cc_abort("no_api_key", .language = language)
       }
       url <- paste0(base_url, "geo.geojson")
-      if (!quiet) message("Querying CensusMapper API for geometry...")
+      if (!quiet) cc_inform("querying_geometry", .language = language)
 
       # Define the API call
       make_geo_call <- function() {
@@ -232,17 +230,17 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
       # Execute with or without retry
       response <- if (retry>0) {
-        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet)
+        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet, language = language)
       } else {
         make_geo_call()
       }
 
-      handle_cm_status_code(response, NULL)
+      handle_cm_status_code(response, NULL, language = language)
 
       # Report download size
       content_length <- as.numeric(response$headers$`content-length`)
       if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
-        message(sprintf("Downloaded %s of geometry.", format_bytes(content_length)))
+        cc_inform("downloaded_geometry", size = format_bytes(content_length, language), .language = language)
       }
 
       geo_version <- response$headers$`data-version`
@@ -253,10 +251,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
                                 resolution=resolution,
                          version=geo_version,size=file_info$size)
       saveRDS(metadata, file = meta_file)
-      warn_if_cache_not_persistent(quiet = quiet)
+      warn_if_cache_not_persistent(quiet = quiet, language = language)
     } else {
-      if (!quiet) message("Reading geo data from local cache.")
-      check_recalled_data_and_warn(meta_file,params)
+      if (!quiet) cc_inform("reading_geo_cache", .language = language)
+      check_recalled_data_and_warn(meta_file, params, language = language)
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
       sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
@@ -264,7 +262,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       # sf::st_sf(agr="constant") # just in case
 
     if (!quiet) {
-      message(sprintf("Processing %s geographic features.", format(nrow(geos), big.mark = ",")))
+      cc_inform("processing_features", .n = nrow(geos), .language = language)
     }
 
     result <- if (is.null(result)) {
@@ -304,7 +302,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!is.null(names(vectors))) {
         # vectors can be partly named, the unnamed ones keep their vector code as column name
         to_rename <- vectors[as.character(vectors) %in% names(result) & nzchar(names(vectors))]
-        if (labels == "labelled") result <- add_underscore_to_clashes(result, names(to_rename))
+        if (labels == "labelled") result <- add_underscore_to_clashes(result, names(to_rename), language)
         if (length(to_rename)>0) result <- result %>% dplyr::rename(!!! to_rename)
       }
     } else if (language != "en") {
@@ -326,16 +324,11 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
 # Prepare users for the planned change of the default, once per session. This is a message and not a
 # warning since warnings turn into errors under options(warn = 2), which would break working code.
-message_labels_default <- function() {
+message_labels_default <- function(language = NULL) {
   cache_key <- "labels_default_message"
   if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
   session_cache_set(cache_key, TRUE)
-  message("The default of `labels = \"detailed\"` in `get_census()` is planned to change to ",
-          "`labels = \"labelled\"` in a future version. To make sure your code keeps working, set the ",
-          "`labels` parameter or set the option, e.g. `options(cancensus.labels = \"detailed\")`.\n",
-          "Check out `labels = \"labelled\"`, which gives short and consistent column names, with the ",
-          "full descriptions in column labels. See `?get_census` for details.\n",
-          "This message is shown once per session.")
+  cc_inform("labels_default", .language = language)
   invisible(NULL)
 }
 
@@ -351,9 +344,8 @@ parse_vector_columns <- function(columns) {
 # can't be retrieved the data is still usable with English labels, so this does not stop.
 translate_census_vectors <- function(census_vectors, dataset, language, quiet = FALSE) {
   if (language == "en" || nrow(census_vectors) == 0) return(census_vectors)
-  vector_info <- tryCatch(fetch_census_vectors(dataset, quiet = TRUE), error = function(e) {
-    if (!quiet) warning(paste0("Could not retrieve French labels, using English labels instead. ",
-                               conditionMessage(e)), call. = FALSE)
+  vector_info <- tryCatch(fetch_census_vectors(dataset, quiet = TRUE, language = language), error = function(e) {
+    if (!quiet) cc_warn("french_labels_fetch_failed", error = conditionMessage(e), .language = language)
     NULL
   })
   if (is.null(vector_info)) return(census_vectors)
@@ -395,7 +387,7 @@ translate_census_vectors <- function(census_vectors, dataset, language, quiet = 
 #' @keywords internal
 get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", ...) {
   .Deprecated("get_census")
-  stop("This function is no longer supported.")
+  cc_abort("function_unsupported")
   #return(get_census(dataset=dataset, regions=regions, level=level, geo_format=geo_format, ...))
 }
 
@@ -430,7 +422,7 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CA", "CMACA", "CD", "CSD", "ADA","
 list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
   if (!use_cache || !file.exists(cache_file)) {
-    if (!quiet) message("Querying CensusMapper API for available datasets...")
+    if (!quiet) cc_inform("querying_datasets")
     response <- cm_GET(paste0(cancensus_base_url(),"/api/v1/list_datasets"),
                        httr::accept_json())
     handle_cm_status_code(response, NULL)
@@ -441,13 +433,12 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
     save(result, file = cache_file)
     result
   } else {
-    if (!quiet) message("Reading dataset list from temporary cache.")
+    if (!quiet) cc_inform("reading_datasets_cache")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
     if (!quiet && (is.null(last_updated) ||
           difftime(Sys.time(), last_updated, units = "days") > 1)) {
-      warning(paste("Cached dataset list may be out of date. Set `use_cache =",
-                    "FALSE` to update it."))
+      cc_warn("datasets_cache_outdated")
     }
     result
   }
@@ -526,7 +517,7 @@ label_vectors <-  function(x) {
   if("census_vectors" %in% names(attributes(x))) {
     attr(x, "census_vectors")
   } else {
-    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?get_census() for more information. ")}
+    cc_warn("no_census_vectors")}
 }
 
 #' Return Census variable names and labels as a tidy data frame (Deprecated)
@@ -552,17 +543,17 @@ label_vectors <-  function(x) {
 #' @keywords internal
 #' @export
 census_vectors <-  function(x) {
-  warning("census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.")
+  cc_warn("census_vectors_deprecated")
   if("census_vectors" %in% names(attributes(x))) {
     attr(x, "census_vectors")
   } else {
-    warning("Data does not have variables to labels. No Census variables selected as vectors. See ?get_census() for more information. ")}
+    cc_warn("no_census_vectors")}
 }
 
 
 
 # Internal function to handle unfavourable HTTP responses
-handle_cm_status_code <- function(response,path){
+handle_cm_status_code <- function(response, path, language = NULL){
   if (httr::status_code(response)!=200) {
     message=httr::content(response,as="text")
     if (!is.null(path)) {
@@ -570,16 +561,11 @@ handle_cm_status_code <- function(response,path){
     }
     if (httr::status_code(response)==401) {
       # Problem with API key
-      stop(paste("Download of Census Data failed.",
-                 "Please ensure that your API key is valid and has a large enough quota left.",
-                 message, sep=' '))
+      cc_abort("download_failed_unauthorized", details = message, .language = language)
     } else if (httr::status_code(response)==500) {
-      stop(paste("Download of Census Data failed.",
-                 "The request triggered a server error, the CensusMapper maintainers have been notified and will fix this as soon as possible.",
-                 message, sep=' '))
+      cc_abort("download_failed_server", details = message, .language = language)
     } else {
-      stop(paste("Download of Census Data failed.",
-                 message, sep=' '))
+      cc_abort("download_failed", details = message, .language = language)
     }
   }
 }
@@ -617,7 +603,7 @@ name_change_for_level <- function(level){
     name_change <- c()
   } else {
     name_change <- c()
-    warning(paste0("Unknown level ",level))
+    cc_warn("unknown_level", level = level)
   }
   name_change
 }
@@ -722,14 +708,13 @@ label_census_columns <- function(result, dataset, language) {
 # For labels = "labelled", names chosen for vectors take priority over the names of the other columns,
 # these get a trailing underscore instead to keep names unique, e.g. Population_ if a vector gets named
 # Population. Other label options leave the column names as they are, and such names remain an error.
-add_underscore_to_clashes <- function(result, chosen_names) {
+add_underscore_to_clashes <- function(result, chosen_names, language = NULL) {
   clashes <- setdiff(intersect(chosen_names, names(result)), grep("^v_", names(result), value = TRUE))
   if (length(clashes) == 0) return(result)
   new_names <- paste0(clashes, "_")
   taken <- intersect(new_names, c(names(result), chosen_names))
   if (length(taken) > 0) {
-    stop("Names chosen for `vectors` clash with the columns ", paste0("`", taken, "`", collapse = ", "),
-         ", which other columns get renamed to. Choose different names.", call. = FALSE)
+    cc_abort("vector_names_clash", columns = paste0("`", taken, "`"), .language = language)
   }
   dplyr::rename(result, !!!setNames(clashes, new_names))
 }

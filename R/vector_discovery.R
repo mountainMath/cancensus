@@ -19,7 +19,7 @@
 #' search_census_vectors('Ojibwe', 'CA16', 'Total')
 #' }
 search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
-  warning("search_census_vectors(). See ?find_census_vectors() for more robust search functions.")
+  cc_warn("search_census_vectors_deprecated")
   veclist <- list_census_vectors(dataset, ...)
   result <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
 
@@ -42,10 +42,10 @@ search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
     names(hintlist) <- "Similarly named objects"
     #
     if (nrow(hintlist) > 0) {
-      warning("No results found. Please use accurate spelling. See above for list of variables with similar named terms.")
+      cc_warn("no_results_similar_vectors")
       print(hintlist)
     } else {
-      stop("No results found.")
+      cc_abort("no_results")
     }
   }
 }
@@ -117,13 +117,11 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
   query_type = tolower(query_type)
 
   if(!(any(type %in% c("total","male","female","all")))) {
-    stop("Type must be one of 'total','female', or 'male'. See ?find_census_vectors() for more details.",
-         call. = FALSE)
+    cc_abort("invalid_vector_type", .language = language)
   }
 
   if(!(any(query_type %in% c("exact","semantic","keyword")))) {
-    stop("Query type must be one of 'exact','semantic', or 'keyword'. See ?find_census_vectors() for more details.",
-    call. = FALSE)
+    cc_abort("invalid_query_type", .language = language)
   }
   type = tools::toTitleCase(type)
   census_vector_list <- list_census_vectors(dataset, language = language)[, c("vector", "type", "label","details")]
@@ -139,14 +137,13 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
     # escape the query so regex metacharacters in census labels like "($)" match literally
     result <- census_vector_list[grep(regex_escape(query), census_vector_list$details, ignore.case = TRUE), ]
     if(length(result$vector)>=1) result else {
-      warning("No exact matches found. Please check spelling and try again or consider using semantic or keyword search.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
-              call. = FALSE)
+      cc_warn("no_exact_matches", .language = language)
     }
   } else if (query_type == "semantic") {
-    semantic_search(query, census_vector_list = census_vector_list)
+    semantic_search(query, census_vector_list = census_vector_list, language = language)
 
   } else if (query_type == "keyword") {
-    keyword_search(query, census_vector_list = census_vector_list, ...)
+    keyword_search(query, census_vector_list = census_vector_list, ..., language = language)
   }
 }
 
@@ -167,7 +164,7 @@ find_census_vectors <- function(query, dataset, type = "all", query_type = "exac
 #' @noRd
 #'
 #' @noMd
-semantic_search <- function(query_terms, census_vector_list) {
+semantic_search <- function(query_terms, census_vector_list, language = NULL) {
   sample_vector_list <- census_vector_list$details
   clean_vector_list <- gsub("\\s+"," ",gsub("[[:punct:]]"," ",sample_vector_list))
   query_words <- unlist(strsplit(tolower(query_terms), "[^[:alpha:]]+"))
@@ -192,7 +189,7 @@ semantic_search <- function(query_terms, census_vector_list) {
 
   ordered_ngram_count <- trimws(names(sort(table(unlist(n_grams)), decreasing = TRUE)), "both")
   if (length(ordered_ngram_count) == 0) {
-    stop("No census vector details available to search against.", call. = FALSE)
+    cc_abort("no_vector_details", .language = language)
   }
   revised_query <- c(query_terms, unlist(strsplit(query_terms, "\\s+")))
   # Levenshtein distance is bounded below by the length difference, so
@@ -213,10 +210,8 @@ semantic_search <- function(query_terms, census_vector_list) {
   )), gsub("\\s+", "_", revised_query))
 
   if(min(lev_dist_df) > 2 | is.infinite(min(lev_dist_df))) {
-    warning(
-      "No close matches found. Please check spelling and try again or consider using keyword search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
-      call. = FALSE
-    )} else {
+    cc_warn("no_close_matches", .language = language)
+    } else {
       # best-matching n-gram for each query component that has a close match
       # (within the distance-2 threshold)
       matching_cols <- which(vapply(lev_dist_df, min, numeric(1)) <= 2)
@@ -228,7 +223,7 @@ semantic_search <- function(query_terms, census_vector_list) {
                                      clean_vector_list, value = FALSE, ignore.case = TRUE)]
 
       if(length(res) == 1) {census_vector_list[which(census_vector_list$details %in% res),]} else if(length(res) >1) {
-        message("Multiple possible matches. Results ordered by closeness.")
+        cc_inform("multiple_matches", .language = language)
         census_vector_list[which(census_vector_list$details %in% res),]
       }
     }
@@ -260,7 +255,7 @@ session_is_interactive <- function() base::interactive()
 #' @keywords Internal
 #' @noRd
 #' @noMd
-keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) {
+keyword_search <- function(query_terms, census_vector_list, interactive = TRUE, language = NULL) {
   sample_vector_list <- census_vector_list$details
   vector_words <- strsplit(gsub("\\s+"," ",gsub("[[:punct:]]"," ",tolower(sample_vector_list))), split = " ")
   clean_vector_list <- vapply(vector_words, function(x) paste(unique(x), collapse = " "),
@@ -276,10 +271,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
   ret_matches <- clean_vector_list[index_matches]
 
   if (length(ret_matches) == 0) {
-    warning(
-      "No matches found. Please check spelling and try again or consider using semantic search instead.\nSee ?find_census_vectors() for more details.\n\nAlternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)",
-      call. = FALSE
-    )
+    cc_warn("no_keyword_matches", .language = language)
   } else {
     res <- regmatches(ret_matches, gregexpr(paste0("\\<",gsub("\\|","\\\\>|\\\\<",query_words),"\\>"), ret_matches, ignore.case = TRUE))
     res_df <-
@@ -293,23 +285,19 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
       return(top_res)
     else if (!interactive) {return(top_res)}
     else if (!session_is_interactive()) {
-      message(length(other_res$vector), " additional keyword matches with less precision are not shown ",
-              "since the session is not interactive.")
+      cc_inform("keyword_more_not_interactive", .n = length(other_res$vector), .language = language)
       return(top_res)
     }
     else if (length(other_res$vector) > 0 & interactive){
       print(top_res)
       show_more <-
         utils::menu(
-          c("Yes", "No"),
-          title = paste0(
-            "\nThere are ",
-            length(other_res$vector),
-            " additional keyword matches with less precision. Show more?"
-          )
+          c(cc_msg("menu_yes", .language = language), cc_msg("menu_no", .language = language)),
+          title = paste0("\n", cc_msg("keyword_show_more", .n = length(other_res$vector),
+                                      .language = language))
         )
       if (show_more == 1) {return(other_res)} else {
-        message(paste0("Showing top ",length(top_res$vector)," results only"))
+        cc_inform("showing_top_results", .n = length(top_res$vector), .language = language)
         return(top_res)}
     }
   }
@@ -339,7 +327,7 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE) 
 #' }
 explore_census_vectors <- function(dataset = "CA21") {
   dataset <- translate_dataset(dataset)
-  message("Opening interactive census variable explorer at censusmapper.ca/api in the browser")
+  cc_inform("opening_vector_explorer")
   # utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_variable"))
   utils::browseURL(paste0("https://censusmapper.ca/api"))
 }
@@ -368,7 +356,7 @@ explore_census_vectors <- function(dataset = "CA21") {
 #' }
 explore_census_regions <- function(dataset = "CA16") {
   dataset <- translate_dataset(dataset)
-  message("Opening interactive census region explorer at censusmapper.ca/api in the browser")
+  cc_inform("opening_region_explorer")
   # utils::browseURL(paste0("https://censusmapper.ca/api/",dataset,"#api_region"))
   utils::browseURL(paste0("https://censusmapper.ca/api"))
 }

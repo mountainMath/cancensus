@@ -47,7 +47,7 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
 
   if (!use_cache || !file.exists(cache_file)) {
-    if (!quiet) message("Querying CensusMapper API for regions data...")
+    if (!quiet) cc_inform("querying_regions")
     response <- cm_GET(paste0(cancensus_base_url(),"/data_sets/", dataset,
                               "/place_names.csv"))
     handle_cm_status_code(response, NULL)
@@ -70,13 +70,12 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     session_cache_set(cache_key, result)
   } else {
-    if (!quiet) message("Reading regions list from local cache.")
+    if (!quiet) cc_inform("reading_regions_cache")
     load(file = cache_file)
     last_updated <- attr(result, "last_updated")
     if (!quiet && (is.null(last_updated) ||
         difftime(Sys.time(), last_updated, units = "days") > 1)) {
-      warning(paste("Cached regions list may be out of date. Set `use_cache =",
-                    "FALSE` to update it."))
+      cc_warn("regions_cache_outdated")
     }
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
     session_cache_set(cache_key, result)
@@ -135,10 +134,10 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
     names(hintlist) <- "Similar named regions"
     #
     if (nrow(hintlist) > 0) {
-      warning("No results found. Please use accurate spelling. See above for list of similarly named regions.")
+      cc_warn("no_results_similar_regions")
       print(hintlist)
     } else {
-      stop("No results found.")
+      cc_abort("no_results")
     }
   }
 }
@@ -170,8 +169,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 as_census_region_list <- function(tbl) {
   # This isn't bulletproof validation, but it should deter some misuse.
   if (!all(c("level", "region") %in% names(tbl))) {
-    stop(paste("`as_region_list()` can only handle data frames",
-               "returned by `list_regions()`."))
+    cc_abort("region_list_invalid")
   }
   nested <- dplyr::group_by(tbl, .data$level) %>%
     # Use the dark magic of list columns...

@@ -1,0 +1,202 @@
+"id","en","fr"
+"invalid_language","Language must be one of {choices}.","La langue doit être l'une des valeurs suivantes : {choices}."
+"cache_path_invalid","Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.","La variable d'environnement 'CM_CACHE_PATH' ou l'option 'cancensus.cache_path' est invalide. Elle doit être un chemin."
+"cache_dir_create_failed","Could not create cache directory '{path}'. Check the 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option.","Impossible de créer le répertoire de cache '{path}'. Vérifiez la variable d'environnement 'CM_CACHE_PATH' ou l'option 'cancensus.cache_path'."
+"cache_not_persistent","No persistent cache path is set, so downloaded data is only kept for this R session and will be downloaded again in the next one. To reuse downloads across sessions and reduce API quota usage, set a cache path with `set_cancensus_cache_path('<local cache path>', install = TRUE)`.","Aucun chemin de cache persistant n'est défini : les données téléchargées ne sont conservées que pour cette session R et seront téléchargées de nouveau lors de la prochaine. Pour réutiliser les téléchargements d'une session à l'autre et réduire l'utilisation du quota d'API, définissez un chemin de cache avec `set_cancensus_cache_path('<chemin du cache local>', install = TRUE)`."
+"french_labels_unavailable_dataset","French labels are not available for dataset {dataset}. Using English labels instead.","Les libellés français ne sont pas disponibles pour l'ensemble de données {dataset}. Les libellés anglais sont utilisés à la place."
+"french_labels_unavailable_vectors","French labels are not available for {n} of {total} vectors in dataset {dataset}. Using English labels instead.","Les libellés français ne sont pas disponibles pour {n} des {total} vecteurs de l'ensemble de données {dataset}. Les libellés anglais sont utilisés à la place."
+"french_labels_fetch_failed","Could not retrieve French labels, using English labels instead. {error}","Impossible de récupérer les libellés français, les libellés anglais sont utilisés à la place. {error}"
+"vector_list_unparseable","Don't know how to parse vector list: {vector_list}","Impossible d'interpréter la liste de vecteurs : {vector_list}"
+"dataset_undetermined","Unable to determine dataset.","Impossible de déterminer l'ensemble de données."
+"retry_http","Transient error (HTTP {status}), retrying in {wait}s (attempt {attempt}/{max})...","Erreur temporaire (HTTP {status}), nouvelle tentative dans {wait} s (tentative {attempt}/{max})..."
+"retry_network","Network error: {error}. Retrying in {wait}s (attempt {attempt}/{max})...","Erreur réseau : {error}. Nouvelle tentative dans {wait} s (tentative {attempt}/{max})..."
+"recalled_loaded_data","Currently loaded data has been recalled. Use
+list_recalled_cached_data()
+to inspect recalled locally cached data and
+remove_recalled_cached_data()
+to remove recalled data.","Les données actuellement chargées ont été retirées. Utilisez
+list_recalled_cached_data()
+pour examiner les données retirées dans le cache local et
+remove_recalled_cached_data()
+pour supprimer les données retirées."
+"recalled_cached_data","Some locally cached data has been recalled. Use
+list_recalled_cached_data()
+to inspect recalled locally cached data and
+remove_recalled_cached_data()
+to remove recalled data.","Certaines données du cache local ont été retirées. Utilisez
+list_recalled_cached_data()
+pour examiner les données retirées dans le cache local et
+remove_recalled_cached_data()
+pour supprimer les données retirées."
+"invalid_labels","The `labels` parameter must be one of {choices}.","Le paramètre `labels` doit être l'une des valeurs suivantes : {choices}."
+"invalid_resolution","The `resolution` parameter must be either 'simplified' or 'high'.","Le paramètre `resolution` doit être 'simplified' ou 'high'."
+"invalid_regions","Regions must be composed of valid census aggregation levels.","Les régions doivent être désignées par des niveaux d'agrégation du recensement valides."
+"invalid_level","The `level` parameter must be one of {choices}.","Le paramètre `level` doit être l'une des valeurs suivantes : {choices}."
+"invalid_geo_format","The `geo_format` parameter must be one of 'sf', 'sp', or NA.","Le paramètre `geo_format` doit être 'sf', 'sp' ou NA."
+"regions_character_deprecated","Passing `regions` as a character vector is deprecated, and will be removed in future versions.","Le passage de `regions` sous forme de vecteur de caractères est obsolète et sera retiré dans une version future."
+"sf_required","The `sf` package is required to return geographies.","Le package `sf` est nécessaire pour obtenir des géographies."
+"no_api_key","No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron.","Aucune clé d'API n'est définie. Utilisez set_cancensus_api_key('<votre clé d'API>') pour en définir une, ou set_cancensus_api_key('<votre clé d'API>', install = TRUE) pour l'enregistrer de façon permanente dans votre .Renviron."
+"querying_data","Querying CensusMapper API for data...","Interrogation de l'API CensusMapper pour les données..."
+"querying_geometry","Querying CensusMapper API for geometry...","Interrogation de l'API CensusMapper pour les géométries..."
+"querying_vectors","Querying CensusMapper API for vectors data...","Interrogation de l'API CensusMapper pour les données sur les vecteurs..."
+"querying_datasets","Querying CensusMapper API for available datasets...","Interrogation de l'API CensusMapper pour les ensembles de données disponibles..."
+"downloaded_data","Downloaded {size} of data.","{size} de données téléchargées."
+"downloaded_geometry","Downloaded {size} of geometry.","{size} de géométries téléchargées."
+"reading_data_cache","Reading vectors data from local cache.","Lecture des données des vecteurs depuis le cache local."
+"reading_geo_cache","Reading geo data from local cache.","Lecture des données géographiques depuis le cache local."
+"reading_vectors_cache","Reading vector information from local cache.","Lecture des informations sur les vecteurs depuis le cache local."
+"reading_datasets_cache","Reading dataset list from temporary cache.","Lecture de la liste des ensembles de données depuis le cache temporaire."
+"datasets_cache_outdated","Cached dataset list may be out of date. Set `use_cache = FALSE` to update it.","La liste des ensembles de données en cache n'est peut-être pas à jour. Utilisez `use_cache = FALSE` pour la mettre à jour."
+"processing_features_one","Processing {n} geographic feature.","Traitement de {n} entité géographique."
+"processing_features_other","Processing {n} geographic features.","Traitement de {n} entités géographiques."
+"labels_default","The default of `labels = ""detailed""` in `get_census()` is planned to change to `labels = ""labelled""` in a future version. To make sure your code keeps working, set the `labels` parameter or set the option, e.g. `options(cancensus.labels = ""detailed"")`.
+Check out `labels = ""labelled""`, which gives short and consistent column names, with the full descriptions in column labels. See `?get_census` for details.
+This message is shown once per session.","La valeur par défaut `labels = ""detailed""` de `get_census()` deviendra `labels = ""labelled""` dans une version future. Pour que votre code continue de fonctionner, définissez le paramètre `labels` ou l'option correspondante, p. ex. `options(cancensus.labels = ""detailed"")`.
+Essayez `labels = ""labelled""`, qui donne des noms de colonnes courts et cohérents, avec les descriptions complètes dans les étiquettes des colonnes. Voir `?get_census` pour plus de détails.
+Ce message ne s'affiche qu'une fois par session."
+"vector_names_clash","Names chosen for `vectors` clash with the columns {columns}, which other columns get renamed to. Choose different names.","Les noms choisis pour `vectors` entrent en conflit avec les colonnes {columns}, vers lesquelles d'autres colonnes sont renommées. Choisissez d'autres noms."
+"function_unsupported","This function is no longer supported.","Cette fonction n'est plus prise en charge."
+"no_census_vectors","Data does not have variables to label. No Census variables selected as vectors. See ?get_census() for more information.","Les données ne contiennent aucune variable à étiqueter, aucune variable du recensement n'a été sélectionnée avec `vectors`. Voir ?get_census() pour plus d'information."
+"census_vectors_deprecated","census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.","census_vectors() est obsolète. Utilisez label_vectors() pour voir les détails des libellés de variables tronqués."
+"download_failed_unauthorized","Download of Census Data failed. Please ensure that your API key is valid and has a large enough quota left. {details}","Le téléchargement des données du recensement a échoué. Vérifiez que votre clé d'API est valide et qu'il vous reste un quota suffisant. {details}"
+"download_failed_server","Download of Census Data failed. The request triggered a server error, the CensusMapper maintainers have been notified and will fix this as soon as possible. {details}","Le téléchargement des données du recensement a échoué. La requête a provoqué une erreur du serveur, les responsables de CensusMapper en ont été informés et la corrigeront dès que possible. {details}"
+"download_failed","Download of Census Data failed. {details}","Le téléchargement des données du recensement a échoué. {details}"
+"unknown_level","Unknown level {level}","Niveau inconnu : {level}"
+"cache_entries_not_found","Could not find cached data for {paths}","Aucune donnée en cache trouvée pour {paths}"
+"querying_regions","Querying CensusMapper API for regions data...","Interrogation de l'API CensusMapper pour les données sur les régions..."
+"reading_regions_cache","Reading regions list from local cache.","Lecture de la liste des régions depuis le cache local."
+"regions_cache_outdated","Cached regions list may be out of date. Set `use_cache = FALSE` to update it.","La liste des régions en cache n'est peut-être pas à jour. Utilisez `use_cache = FALSE` pour la mettre à jour."
+"no_results_similar_regions","No results found. Please use accurate spelling. See above for list of similarly named regions.","Aucun résultat. Vérifiez l'orthographe. Voir ci-dessus la liste des régions aux noms semblables."
+"no_results","No results found.","Aucun résultat."
+"region_list_invalid","`as_census_region_list()` can only handle data frames returned by `list_census_regions()`.","`as_census_region_list()` accepte uniquement les tableaux de données renvoyés par `list_census_regions()`."
+"recall_database_unavailable","Unable to download recall database at this point.","Impossible de télécharger la base de données des retraits pour le moment."
+"removing_recalled_one","Removing {n} dataset totalling {size}.","Suppression de {n} ensemble de données totalisant {size}."
+"removing_recalled_other","Removing {n} datasets totalling {size}.","Suppression de {n} ensembles de données totalisant {size}."
+"no_recalled_data","No recalled data in cached data.","Aucune donnée retirée dans le cache."
+"invalid_census_year","Census year must be one of {choices}.","L'année de recensement doit être l'une des valeurs suivantes : {choices}."
+"invalid_type","Type must be one of {choices}.","Le type doit être l'une des valeurs suivantes : {choices}."
+"invalid_level_choice","Level must be one of {choices}.","Le niveau doit être l'une des valeurs suivantes : {choices}."
+"invalid_gender","Gender must be one of {choices}.","Le genre doit être l'une des valeurs suivantes : {choices}."
+"geographies_level_unsupported","Don't know how to get geographic data for level {level}.","Impossible d'obtenir des données géographiques pour le niveau {level}."
+"reading_geographies_cache","Reading geographic data from local cache.","Lecture des données géographiques depuis le cache local."
+"wds_ssl_error","{error}
+This means that the authenticity of the Statistics Canada API server can't be verified. Statistics Canada has a history of faulty SSL certificates on their API. If you are reasonably sure that your connection is not getting hijacked, you can disable peer checking for the duration of the R session by running
+
+  httr::set_config(httr::config(ssl_verifypeer = 0, ssl_verifystatus = 0))
+
+in the console.","{error}
+L'authenticité du serveur de l'API de Statistique Canada ne peut donc pas être vérifiée. Statistique Canada a déjà eu des certificats SSL défectueux sur son API. Si vous êtes raisonnablement certain que votre connexion n'est pas détournée, vous pouvez désactiver la vérification du pair pour la durée de la session R en exécutant
+
+  httr::set_config(httr::config(ssl_verifypeer = 0, ssl_verifystatus = 0))
+
+dans la console."
+"wds_invalid_request","Invalid request.
+{details}","Requête invalide.
+{details}"
+"invalid_geometry","The `geometry` parameter needs to be of class sf or sfc.","Le paramètre `geometry` doit être de classe sf ou sfc."
+"querying_api","Querying CensusMapper API...","Interrogation de l'API CensusMapper..."
+"reading_intersection_cache","Reading intersection data from local cache.","Lecture des données d'intersection depuis le cache local."
+"dataset_from_vector_failed","Cannot determine dataset from vector code. Please provide the `dataset` parameter.","Impossible de déterminer l'ensemble de données à partir du code du vecteur. Indiquez le paramètre `dataset`."
+"vector_not_found","Vector {vectors} not found in dataset '{dataset}'.","Vecteur {vectors} introuvable dans l'ensemble de données '{dataset}'."
+"empty_vector_tibble","Empty vector tibble provided.","Le tableau de vecteurs fourni est vide."
+"invalid_vector_input","`vector` must be a character string or a tibble from list_census_vectors().","`vector` doit être une chaîne de caractères ou un tableau obtenu avec list_census_vectors()."
+"multiple_vectors","Multiple vectors provided. Using first vector: {vector}","Plusieurs vecteurs fournis. Le premier vecteur est utilisé : {vector}"
+"vector_hierarchy_header","Vector hierarchy for {vector} ({dataset}):","Hiérarchie du vecteur {vector} ({dataset}) :"
+"search_census_vectors_deprecated","search_census_vectors() is deprecated. See ?find_census_vectors() for more robust search functions.","search_census_vectors() est obsolète. Voir ?find_census_vectors() pour des fonctions de recherche plus robustes."
+"no_results_similar_vectors","No results found. Please use accurate spelling. See above for list of variables with similar named terms.","Aucun résultat. Vérifiez l'orthographe. Voir ci-dessus la liste des variables aux termes semblables."
+"invalid_vector_type","Type must be one of 'all', 'total', 'female', or 'male'. See ?find_census_vectors() for more details.","Le type doit être 'all', 'total', 'female' ou 'male'. Voir ?find_census_vectors() pour plus de détails."
+"invalid_query_type","Query type must be one of 'exact', 'semantic', or 'keyword'. See ?find_census_vectors() for more details.","Le type de requête doit être 'exact', 'semantic' ou 'keyword'. Voir ?find_census_vectors() pour plus de détails."
+"no_exact_matches","No exact matches found. Please check spelling and try again or consider using semantic or keyword search.
+See ?find_census_vectors() for more details.
+
+Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)","Aucune correspondance exacte. Vérifiez l'orthographe et réessayez, ou essayez la recherche sémantique ou par mots-clés.
+Voir ?find_census_vectors() pour plus de détails.
+
+Vous pouvez aussi ouvrir l'API web de CensusMapper dans un navigateur avec explore_census_vectors(dataset)"
+"no_close_matches","No close matches found. Please check spelling and try again or consider using keyword search instead.
+See ?find_census_vectors() for more details.
+
+Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)","Aucune correspondance proche. Vérifiez l'orthographe et réessayez, ou essayez plutôt la recherche par mots-clés.
+Voir ?find_census_vectors() pour plus de détails.
+
+Vous pouvez aussi ouvrir l'API web de CensusMapper dans un navigateur avec explore_census_vectors(dataset)"
+"no_keyword_matches","No matches found. Please check spelling and try again or consider using semantic search instead.
+See ?find_census_vectors() for more details.
+
+Alternatively, you can launch the Censusmapper web API in a browser by calling explore_census_vectors(dataset)","Aucune correspondance. Vérifiez l'orthographe et réessayez, ou essayez plutôt la recherche sémantique.
+Voir ?find_census_vectors() pour plus de détails.
+
+Vous pouvez aussi ouvrir l'API web de CensusMapper dans un navigateur avec explore_census_vectors(dataset)"
+"no_vector_details","No census vector details available to search against.","Aucun détail de vecteur du recensement n'est disponible pour la recherche."
+"multiple_matches","Multiple possible matches. Results ordered by closeness.","Plusieurs correspondances possibles. Résultats triés par proximité."
+"keyword_more_not_interactive_one","{n} additional keyword match with less precision is not shown since the session is not interactive.","{n} correspondance supplémentaire moins précise n'est pas affichée, car la session n'est pas interactive."
+"keyword_more_not_interactive_other","{n} additional keyword matches with less precision are not shown since the session is not interactive.","{n} correspondances supplémentaires moins précises ne sont pas affichées, car la session n'est pas interactive."
+"keyword_show_more_one","There is {n} additional keyword match with less precision. Show more?","Il y a {n} correspondance supplémentaire moins précise. En afficher plus ?"
+"keyword_show_more_other","There are {n} additional keyword matches with less precision. Show more?","Il y a {n} correspondances supplémentaires moins précises. En afficher plus ?"
+"menu_yes","Yes","Oui"
+"menu_no","No","Non"
+"showing_top_results_one","Showing the top {n} result only","Affichage du {n} meilleur résultat seulement"
+"showing_top_results_other","Showing top {n} results only","Affichage des {n} meilleurs résultats seulement"
+"opening_vector_explorer","Opening interactive census variable explorer at censusmapper.ca/api in the browser","Ouverture de l'explorateur interactif des variables du recensement sur censusmapper.ca/api dans le navigateur"
+"opening_region_explorer","Opening interactive census region explorer at censusmapper.ca/api in the browser","Ouverture de l'explorateur interactif des régions du recensement sur censusmapper.ca/api dans le navigateur"
+"api_key_adding","Adding key to your .Renviron file. Your original .Renviron will be backed up and stored in your R HOME directory if needed.","Ajout de la clé à votre fichier .Renviron. Votre .Renviron original sera sauvegardé dans votre répertoire R HOME au besoin."
+"api_key_exists","An existing CensusMapper API key is already saved. You can overwrite it with the argument overwrite=TRUE.","Une clé d'API CensusMapper est déjà enregistrée. Vous pouvez la remplacer avec l'argument overwrite=TRUE."
+"api_key_installed","Your API key has been stored in your .Renviron and can be accessed by Sys.getenv(""CM_API_KEY"").","Votre clé d'API a été enregistrée dans votre .Renviron et est accessible avec Sys.getenv(""CM_API_KEY"")."
+"api_key_session","API key set for duration of session. To install your API key for use across sessions, run this function with `install = TRUE`.","Clé d'API définie pour la durée de la session. Pour l'utiliser d'une session à l'autre, exécutez cette fonction avec `install = TRUE`."
+"renviron_backup","Your original .Renviron will be backed up and stored in your R HOME directory if needed.","Votre .Renviron original sera sauvegardé dans votre répertoire R HOME au besoin."
+"cache_path_exists","A saved cache path already exists. You can overwrite it with the argument overwrite=TRUE.","Un chemin de cache est déjà enregistré. Vous pouvez le remplacer avec l'argument overwrite=TRUE."
+"cache_path_installed","Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv(""CM_CACHE_PATH"").","Votre chemin de cache a été enregistré dans votre .Renviron et est accessible avec Sys.getenv(""CM_CACHE_PATH"")."
+"cache_path_session","Cache path set to '{path}' for this R session.","Chemin de cache défini à '{path}' pour cette session R."
+"no_api_key_set","No API key set","Aucune clé d'API n'est définie"
+"no_cache_path_set","No cache path set","Aucun chemin de cache n'est défini"
+"statcan_fallback_cache","Returning the existing cached data instead.","Les données existantes du cache sont renvoyées à la place."
+"statcan_fallback_null","Returning NULL.","La valeur NULL est renvoyée."
+"statcan_http_error","Could not download {url} from Statistics Canada, the server responded with HTTP status {status}.","Impossible de télécharger {url} depuis Statistique Canada, le serveur a répondu avec le statut HTTP {status}."
+"statcan_not_zip","The download of {url} from Statistics Canada did not return a zip file.","Le téléchargement de {url} depuis Statistique Canada n'a pas renvoyé de fichier zip."
+"reading_manual_file","Reading manually downloaded file {path}","Lecture du fichier téléchargé manuellement {path}"
+"geo_suite_invalid_year","The GeoSuite is only available for census years {years}. For older censuses get_statcan_geographic_attributes() has much of the same information.","La GéoSuite n'est disponible que pour les années de recensement {years}. Pour les recensements plus anciens, get_statcan_geographic_attributes() contient une bonne partie de la même information."
+"invalid_table_name","`level` must be a single table name, e.g. ""DA"".","`level` doit être un seul nom de table, p. ex. ""DA""."
+"geo_suite_no_table","There is no {table} table in the {year} GeoSuite.","La GéoSuite {year} ne contient pas de table {table}."
+"geo_suite_1996_ea","The 1996 GeoSuite is based on enumeration areas, in the EA table.","La GéoSuite 1996 est basée sur les secteurs de dénombrement, dans la table EA."
+"geo_suite_available_tables","Available tables are {tables}, get_statcan_geo_suite(census_year = ""{year}"") lists them with descriptions.","Les tables disponibles sont {tables}, get_statcan_geo_suite(census_year = ""{year}"") les liste avec leurs descriptions."
+"relationships_invalid_year","Only census years {years} are supported for the geographic relationship file.","Seules les années de recensement {years} sont prises en charge pour le fichier des relations géographiques."
+"geo_attributes_invalid_year","Only census years {years} are supported for the geographic attributes.","Seules les années de recensement {years} sont prises en charge pour les attributs géographiques."
+"geo_suite_table_description","{year} GeoSuite table {table}","Table {table} de la GéoSuite {year}"
+"geo_attributes_description","Geographic attributes","Attributs géographiques"
+"hosted_source","{description} hosted by MountainMath, source: {attribution}. Licence: {licence}.","{description}, données hébergées par MountainMath. Source : {attribution}. Licence : {licence}."
+"unused_what_attribute_files","attribute files","fichiers d'attributs"
+"unused_what_geo_suite_files","GeoSuite files","fichiers de la GéoSuite"
+"hosted_download_failed","Could not download {url}: {problem}. {fallback}","Impossible de télécharger {url} : {problem}. {fallback}"
+"hosted_http_status","the server responded with HTTP status {status}","le serveur a répondu avec le statut HTTP {status}"
+"hosted_changed","The hosted file has changed, updating the cached copy.","Le fichier hébergé a changé, la copie en cache est mise à jour."
+"hosted_unchanged","The hosted file has not changed.","Le fichier hébergé n'a pas changé."
+"statcan_blocked","Statistics Canada blocked this download with a Cloudflare browser verification, which can't be completed from R. {fallback}","Statistique Canada a bloqué ce téléchargement avec une vérification de navigateur Cloudflare, qui ne peut pas être effectuée depuis R. {fallback}"
+"statcan_manual_download","The data can still be downloaded manually:","Les données peuvent tout de même être téléchargées manuellement :"
+"statcan_manual_step_link","Paste this link into your web browser and complete the verification if prompted:","Collez ce lien dans votre navigateur web et effectuez la vérification si elle est demandée :"
+"statcan_manual_safari","Safari unzips downloads automatically, so use another browser such as Chrome or Firefox, or turn off ""Open 'safe' files after downloading"" in Safari's settings.","Safari décompresse automatiquement les téléchargements, utilisez donc un autre navigateur comme Chrome ou Firefox, ou désactivez « Ouvrir automatiquement les fichiers fiables après téléchargement » dans les réglages de Safari."
+"statcan_manual_step_move","Move the downloaded file, without unzipping or renaming it, to:","Déplacez le fichier téléchargé, sans le décompresser ni le renommer, vers :"
+"statcan_manual_step_rerun","Run this command again. cancensus will load the data from that file, add it to the cache, and remove the downloaded file.","Exécutez de nouveau cette commande. cancensus chargera les données depuis ce fichier, les ajoutera au cache et supprimera le fichier téléchargé."
+"statcan_manual_step_rerun_refresh","Run this command again with `refresh = TRUE`. cancensus will load the data from that file, add it to the cache, and remove the downloaded file.","Exécutez de nouveau cette commande avec `refresh = TRUE`. cancensus chargera les données depuis ce fichier, les ajoutera au cache et supprimera le fichier téléchargé."
+"statcan_unzipped_folder","The folder
+   {path}
+looks like an unzipped copy of this file, which cancensus can't read. It needs the original zip file.","Le dossier
+   {path}
+semble être une copie décompressée de ce fichier, que cancensus ne peut pas lire. Le fichier zip original est nécessaire."
+"statcan_cache_not_persistent","No persistent cache path is set, so this location gets deleted when the R session ends. Set one with `set_cancensus_cache_path()` to keep the data across sessions, the location above will change accordingly.","Aucun chemin de cache persistant n'est défini : cet emplacement sera supprimé à la fin de la session R. Définissez-en un avec `set_cancensus_cache_path()` pour conserver les données d'une session à l'autre, l'emplacement ci-dessus changera en conséquence."
+"statcan_invalid_manual_file","The manually downloaded file is not a valid zip file, it may be incomplete or have been saved in place of the actual data. {fallback}
+
+Please replace
+   {path}
+with a new download from
+   {url}","Le fichier téléchargé manuellement n'est pas un fichier zip valide, il est peut-être incomplet ou a été enregistré à la place des données. {fallback}
+
+Remplacez
+   {path}
+par un nouveau téléchargement depuis
+   {url}"
+"relationships_deprecated","get_statcan_geography_relationships() is deprecated and will be removed in the next release. Use get_statcan_geographic_attributes(""2021"") instead, which has the same DGUIDs for each dissemination block apart from census agricultural regions (CARDGUID). Unlike the relationship file, it fills CMADGUID outside CMA/CAs with the metropolitan influenced zone and CTDGUID outside tracted areas with a placeholder census tract, CMATYPE %in% c(""B"", ""D"", ""K"") selects the blocks in CMA/CAs. This warning is shown once per session.","get_statcan_geography_relationships() est obsolète et sera retirée dans la prochaine version. Utilisez plutôt get_statcan_geographic_attributes(""2021""), qui contient les mêmes IDUGD pour chaque îlot de diffusion, sauf pour les régions agricoles de recensement (CARDGUID). Contrairement au fichier des relations, il remplit CMADGUID hors des RMR/AR avec la zone d'influence métropolitaine et CTDGUID hors des régions comportant des secteurs de recensement avec un secteur de recensement fictif, CMATYPE %in% c(""B"", ""D"", ""K"") sélectionne les îlots des RMR/AR. Cet avertissement ne s'affiche qu'une fois par session."
+"unused_files","Previously downloaded Statistics Canada {what} are no longer used by {function_name} and take up {size}. These are the original files, which may not be possible to download again. To delete them, run:
+  unlink({paths}, recursive = TRUE)","Les {what} de Statistique Canada téléchargés précédemment ne sont plus utilisés par {function_name} et occupent {size}. Il s'agit des fichiers originaux, qu'il ne sera peut-être pas possible de télécharger de nouveau. Pour les supprimer, exécutez :
+  unlink({paths}, recursive = TRUE)"
+"hosted_incomplete_parquet","the server did not return a complete parquet file","le serveur n'a pas renvoyé de fichier parquet complet"
+"hosted_incomplete_manifest","the server did not return a complete list of tables","le serveur n'a pas renvoyé de liste de tables complète"

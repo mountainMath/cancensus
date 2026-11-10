@@ -48,36 +48,26 @@ statcan_display_path <- function(path){
   path
 }
 
-statcan_fallback_message <- function(has_cache){
-  if (has_cache) "Returning the existing cached data instead." else "Returning NULL."
+statcan_fallback_message <- function(has_cache, language = NULL){
+  cc_msg(if (has_cache) "statcan_fallback_cache" else "statcan_fallback_null", .language = language)
 }
 
-statcan_blocked_message <- function(url, manual_file, persistent, has_cache = FALSE){
+statcan_blocked_message <- function(url, manual_file, persistent, has_cache = FALSE, language = NULL){
+  msg <- function(id, ...) cc_msg(id, ..., .language = language)
   unzipped_dir <- sub("\\.zip$", "", manual_file)
   paste0(
-    "Statistics Canada blocked this download with a Cloudflare browser verification, ",
-    "which can't be completed from R. ", statcan_fallback_message(has_cache), "\n\n",
-    "The data can still be downloaded manually:\n",
-    "1. Paste this link into your web browser and complete the verification if prompted:\n",
+    msg("statcan_blocked", fallback = statcan_fallback_message(has_cache, language)), "\n\n",
+    msg("statcan_manual_download"), "\n",
+    "1. ", msg("statcan_manual_step_link"), "\n",
     "   ", url, "\n",
-    if (statcan_os() == "Darwin") {
-      paste0("   Safari unzips downloads automatically, so use another browser such as Chrome or ",
-             "Firefox, or turn off \"Open 'safe' files after downloading\" in Safari's settings.\n")
-    },
-    "2. Move the downloaded file, without unzipping or renaming it, to:\n",
+    if (statcan_os() == "Darwin") paste0("   ", msg("statcan_manual_safari"), "\n"),
+    "2. ", msg("statcan_manual_step_move"), "\n",
     "   ", statcan_display_path(manual_file), "\n",
-    "3. Run this command again", if (has_cache) " with `refresh = TRUE`",
-    ". cancensus will load the data from that file, ",
-    "add it to the cache, and remove the downloaded file.",
+    "3. ", msg(if (has_cache) "statcan_manual_step_rerun_refresh" else "statcan_manual_step_rerun"),
     if (dir.exists(unzipped_dir)) {
-      paste0("\n\nThe folder\n   ", statcan_display_path(unzipped_dir), "\nlooks like an unzipped ",
-             "copy of this file, which cancensus can't read. It needs the original zip file.")
+      paste0("\n\n", msg("statcan_unzipped_folder", path = statcan_display_path(unzipped_dir)))
     },
-    if (!persistent) {
-      paste0("\n\nNo persistent cache path is set, so this location gets deleted when the R ",
-             "session ends. Set one with `set_cancensus_cache_path()` to keep the data across ",
-             "sessions, the location above will change accordingly.")
-    }
+    if (!persistent) paste0("\n\n", msg("statcan_cache_not_persistent"))
   )
 }
 
@@ -87,20 +77,20 @@ statcan_blocked_message <- function(url, manual_file, persistent, has_cache = FA
 # warning if the file can't be obtained because of the Cloudflare block or because the manually
 # downloaded file is invalid. Other download problems are errors. Callers set `has_cache` when
 # refreshing existing cached data, which they then fall back on if this returns NULL.
-statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet = FALSE, has_cache = FALSE){
+statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet = FALSE, has_cache = FALSE,
+                                 language = NULL){
   downloads_path <- statcan_downloads_path(base_path)
   manual_file <- file.path(downloads_path, basename(sub("\\?.*$", "", url)))
 
   if (file.exists(manual_file)) {
     if (!statcan_is_zip(manual_file)) {
-      statcan_warning(paste0(
-        "The manually downloaded file is not a valid zip file, it may be incomplete or have ",
-        "been saved in place of the actual data. ", statcan_fallback_message(has_cache), "\n\n",
-        "Please replace\n   ", statcan_display_path(manual_file),
-        "\nwith a new download from\n   ", url))
+      statcan_warning(cc_msg("statcan_invalid_manual_file",
+                             fallback = statcan_fallback_message(has_cache, language),
+                             path = statcan_display_path(manual_file), url = url,
+                             .language = language))
       return(NULL)
     }
-    if (!quiet) message("Reading manually downloaded file ", statcan_display_path(manual_file))
+    if (!quiet) cc_inform("reading_manual_file", path = statcan_display_path(manual_file), .language = language)
     return(manual_file)
   }
 
@@ -113,18 +103,18 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
     unlink(tmp)
     if (!quiet) cat("\n") # the progress bar for the challenge page leaves the line open
     if (!dir.exists(downloads_path)) dir.create(downloads_path, recursive = TRUE, showWarnings = FALSE)
-    statcan_warning(statcan_blocked_message(url, manual_file, cache_is_persistent(base_path), has_cache))
+    statcan_warning(statcan_blocked_message(url, manual_file, cache_is_persistent(base_path), has_cache,
+                                            language = language))
     return(NULL)
   }
   if (httr::http_error(response)) {
     unlink(tmp)
-    stop("Could not download ", url, " from Statistics Canada, the server responded with HTTP status ",
-         httr::status_code(response), ".", call. = FALSE)
+    cc_abort("statcan_http_error", url = url, status = httr::status_code(response), .language = language)
   }
   if (!statcan_is_zip(tmp)) {
     unlink(tmp)
-    stop("The download of ", url, " from Statistics Canada did not return a zip file.", call. = FALSE)
+    cc_abort("statcan_not_zip", url = url, .language = language)
   }
-  warn_if_cache_not_persistent(base_path, quiet = quiet)
+  warn_if_cache_not_persistent(base_path, quiet = quiet, language = language)
   tmp
 }

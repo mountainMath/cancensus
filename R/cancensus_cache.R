@@ -137,8 +137,7 @@ remove_from_cancensus_cache <- function(paths){
   cache_data <- list_cancensus_cache()
 
   extras <- setdiff(paths,cache_data$path)
-  if (length(extras)>0) warning(paste0("Could not find cached data for ",
-                                       paste0(extras, collapse = ", ")))
+  if (length(extras)>0) cc_warn("cache_entries_not_found", paths = extras)
 
 
   to_delete <- cache_data %>%

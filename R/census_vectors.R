@@ -38,13 +38,13 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE,
                                 language = getOption("cancensus.language", "en")) {
   language <- validate_language(language)
   dataset <- translate_dataset(dataset)
-  fetch_census_vectors(dataset, use_cache = use_cache, quiet = quiet) %>%
+  fetch_census_vectors(dataset, use_cache = use_cache, quiet = quiet, language = language) %>%
     localize_census_vectors(language)
 }
 
 # Get the vector metadata in all languages. Caching is independent of language, the language
 # specific view gets created by localize_census_vectors.
-fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
+fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE, language = NULL) {
   cache_key <- paste0(dataset, "_vectors")
   if (use_cache) {
     cached <- session_cache_get(cache_key)
@@ -53,9 +53,9 @@ fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
   cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
   if (!use_cache || !file.exists(cache_file)) {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
-    if (!quiet) message("Querying CensusMapper API for vectors data...")
+    if (!quiet) cc_inform("querying_vectors", .language = language)
     response <- cm_GET(url, quiet=quiet)
-    handle_cm_status_code(response, NULL)
+    handle_cm_status_code(response, NULL, language = language)
     content <- httr::content(response, type = "text", encoding = "UTF-8")
     result <- if (!requireNamespace("readr", quietly = TRUE)) {
       dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
@@ -88,7 +88,7 @@ fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE) {
     save(result, file = cache_file)
     session_cache_set(cache_key, result)
   } else {
-    if (!quiet) message("Reading vector information from local cache.")
+    if (!quiet) cc_inform("reading_vectors_cache", .language = language)
     load(file = cache_file)
     session_cache_set(cache_key, result)
   }
@@ -109,7 +109,7 @@ localize_census_vectors <- function(vector_info, language, warn = TRUE) {
     vector_info$details[has_details] <- details_fr[has_details]
     n_missing <- sum(!(has_label & has_details))
     if (warn && n_missing > 0) {
-      warn_language_fallback(attr(vector_info, "dataset"), n_missing, nrow(vector_info))
+      warn_language_fallback(attr(vector_info, "dataset"), n_missing, nrow(vector_info), language)
     }
   }
   vector_info <- dplyr::select(vector_info, -dplyr::any_of(c("label_fr", "details_fr")))

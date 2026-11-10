@@ -27,7 +27,7 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
       # Backup original .Renviron before doing anything else here.
       file.copy(renv, file.path(home, ".Renviron_backup"))
       if(isTRUE(overwrite)){
-        message("Adding key to your .Renviron file. Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
+        cc_inform("api_key_adding")
         oldenv=readLines(renv)
         key_lines <- grep("CM_API_KEY", oldenv)
         newenv <- if (length(key_lines) > 0) oldenv[-key_lines] else oldenv
@@ -36,7 +36,7 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
       else{
         tv <- readLines(renv)
         if(any(grepl("CM_API_KEY",tv))){
-          stop("An existing Censusmapper API key is already saved. You can overwrite it with the argument overwrite=TRUE.", call.=FALSE)
+          cc_abort("api_key_exists")
         }
       }
     }
@@ -45,9 +45,9 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
     # Append API key to .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
     Sys.setenv(CM_API_KEY = key)
-    message('Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CM_API_KEY").')
+    cc_inform("api_key_installed")
   } else {
-    message("API key set for duration of session. To install your API key for use across sessions, run this function with `install = TRUE`.")
+    cc_inform("api_key_session")
     Sys.setenv(CM_API_KEY = key)
   }
 
@@ -104,7 +104,7 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
       # Backup original .Renviron before doing anything else here.
       file.copy(renv, file.path(home, ".Renviron_backup"))
       if(isTRUE(overwrite)){
-        message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
+        cc_inform("renviron_backup")
         oldenv=readLines(renv)
         path_lines <- grep("CM_CACHE_PATH", oldenv)
         newenv <- if (length(path_lines) > 0) oldenv[-path_lines] else oldenv
@@ -112,7 +112,7 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
       } else{
         tv <- readLines(renv)
         if(any(grepl("CM_CACHE_PATH",tv))){
-          stop("A saved cache already exists. You can overwrite it with the argument overwrite=TRUE.", call.=FALSE)
+          cc_abort("cache_path_exists")
         }
       }
     }
@@ -120,10 +120,10 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
     keyconcat <- paste0("CM_CACHE_PATH='", cache_path, "'")
     # Append cache path .Renviron file
     write(keyconcat, renv, sep = "\n", append = TRUE)
-    message('Your cache path has been stored in your .Renviron and can be accessed by Sys.getenv("CM_CACHE_PATH").')
+    cc_inform("cache_path_installed")
     Sys.setenv('CM_CACHE_PATH' = cache_path)
   } else {
-    message("Cache path set to '", cache_path, "' for this R session.")
+    cc_inform("cache_path_session", path = cache_path)
     Sys.setenv('CM_CACHE_PATH' = cache_path)
   }
   cache_path
@@ -142,7 +142,7 @@ set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FA
 show_cancensus_api_key <- function() {
   key <- Sys.getenv('CM_API_KEY')
   if (key==""){
-    message("No api key path set")
+    cc_inform("no_api_key_set")
     key <- NULL
   }
   key
@@ -165,12 +165,6 @@ show_cancensus_api_key <- function() {
 show_cancensus_cache_path <- function() {
   path <- Sys.getenv('CM_CACHE_PATH')
   if (path=="") path <- getOption("cancensus.cache_path")
-  if (is.null(path)) message("No cache path set")
+  if (is.null(path)) cc_inform("no_cache_path_set")
   path
 }
-
-cm_no_cache_path_warning <- paste0(
-  "No persistent cache path is set, so downloaded data is only kept for this R session and will ",
-  "be downloaded again in the next one. To reuse downloads across sessions and reduce API quota ",
-  "usage, set a cache path with `set_cancensus_cache_path('<local cache path>', install = TRUE)`."
-)

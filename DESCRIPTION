@@ -25,7 +25,7 @@ Imports: digest (>= 0.1),
     jsonlite (>= 1.0),
     sf,
     geojsonsf,
-    rlang,
+    rlang (>= 1.0.0),
     readr (>= 2.0.0)
 Suggests: DBI,
     duckdb (>= 1.5.6),

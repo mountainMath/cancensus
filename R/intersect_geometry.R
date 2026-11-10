@@ -53,7 +53,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     geometry=sf::st_geometry(geometry)
   }
   if (!("sfc" %in% class(geometry))) {
-    stop("The `geometry` parameter needs to be of class sf or sfc")
+    cc_abort("invalid_geometry")
   }
   if (length(geometry)>1) {
     geometry <- sf::st_union(geometry)
@@ -76,7 +76,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
 
   if (!use_cache || !file.exists(data_file)) {
     if (!have_api_key) {
-      stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
+      cc_abort("no_api_key")
     }
     url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
@@ -84,7 +84,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
                  area=sf::st_area(geometry) %>% as.numeric(),
                  geometry=geo,
                  api_key=api_key)
-    if (!quiet) message("Querying CensusMapper API...")
+    if (!quiet) cc_inform("querying_api")
     response <- cm_POST(url, body = body, httr::accept_json(), quiet = quiet)
     handle_cm_status_code(response, NULL)
     data_version <- response$headers$`data-version`
@@ -99,7 +99,7 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     saveRDS(metadata, file = meta_file)
     warn_if_cache_not_persistent(quiet = quiet)
   } else {
-    if (!quiet) message("Reading intersection data from local cache.")
+    if (!quiet) cc_inform("reading_intersection_cache")
     # Load `result` object from cache.
     load(file = data_file)
   }

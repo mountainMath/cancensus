@@ -29,13 +29,13 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   valid_levels <- c("PR","CD","CMACA","CMA","CA","CSD","CT","ADA","DA","DB","ER","FED","DPL","POPCNTR","POPCTR","FSA","HR")
   valid_types <- c("cartographic","digital")
   if (!(census_year %in% valid_census_years)) {
-    stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
+    cc_abort("invalid_census_year", choices = valid_census_years)
   }
   if (!(type %in% valid_types)) {
-    stop(paste0("Type must be one of ",paste0(valid_types,collapse = ", "),"."))
+    cc_abort("invalid_type", choices = valid_types)
   }
   if (!(level %in% valid_levels)) {
-    stop(paste0("Level must be one of ",paste0(valid_levels,collapse = ", "),"."))
+    cc_abort("invalid_level_choice", choices = valid_levels)
   }
   level_map <-  c("CMACA"="CMA","CA"="CMA","POPCNTR"="PC","POPCTR"="PC")
   if (level %in% names(level_map)) level <-level_map[[level]]
@@ -55,7 +55,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
     if (nchar(level)==2) filler="_000"
     else if (nchar(level)==3) filler="000"
     else {
-      stop(paste0("Problem, don't know how to get geographic data for level ",level,"."))
+      cc_abort("geographies_level_unsupported", level = level)
     }
     url <- paste0("https://www12.statcan.gc.ca/census-recensement/",census_year,"/geo/sip-pis/boundary-limites/files-fichiers/l",tolower(level),filler,typeID,"21a_e.zip")
     if (level=="HR") {
@@ -80,7 +80,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
       }
     }
   } else {
-    if (!quiet) message("Reading geographic data from local cache.")
+    if (!quiet) cc_inform("reading_geographies_cache")
   }
   path <- dir(exdir,"\\.shp$",full.names = TRUE)
 
