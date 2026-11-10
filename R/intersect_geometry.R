@@ -59,6 +59,9 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     geometry <- sf::st_union(geometry)
   }
 
+  if (is.na(sf::st_crs(geometry))) {
+    cc_abort("geometry_without_crs")
+  }
   crs=sf::st_crs(geometry)$epsg
 
   if (is.na(crs) || crs!=4326) {

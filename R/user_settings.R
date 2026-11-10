@@ -19,31 +19,8 @@
 #' }
 set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
   if (install) {
-    home <- Sys.getenv("HOME")
-    renv <- file.path(home, ".Renviron")
-    if(!file.exists(renv)){
-      file.create(renv)
-    } else{
-      # Backup original .Renviron before doing anything else here.
-      file.copy(renv, file.path(home, ".Renviron_backup"))
-      if(isTRUE(overwrite)){
-        cc_inform("api_key_adding")
-        oldenv=readLines(renv)
-        key_lines <- grep("CM_API_KEY", oldenv)
-        newenv <- if (length(key_lines) > 0) oldenv[-key_lines] else oldenv
-        writeLines(newenv, renv, sep = "\n")
-      }
-      else{
-        tv <- readLines(renv)
-        if(any(grepl("CM_API_KEY",tv))){
-          cc_abort("api_key_exists")
-        }
-      }
-    }
-
-    keyconcat <- paste0("CM_API_KEY='", key, "'")
-    # Append API key to .Renviron file
-    write(keyconcat, renv, sep = "\n", append = TRUE)
+    install_renviron_variable("CM_API_KEY", key, overwrite = overwrite,
+                              exists_id = "api_key_exists", backup_id = "api_key_adding")
     Sys.setenv(CM_API_KEY = key)
     cc_inform("api_key_installed")
   } else {
@@ -51,6 +28,24 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
     Sys.setenv(CM_API_KEY = key)
   }
 
+}
+
+# Store an environment variable in the .Renviron file in the home directory, for use across
+# sessions. An existing setting only gets replaced with `overwrite`, and otherwise stops with the
+# message `exists_id`. Other lines are kept as they are, including comments mentioning the variable.
+# The previous version of the file gets kept as .Renviron_backup, announced with `backup_id`.
+install_renviron_variable <- function(name, value, overwrite = FALSE, exists_id, backup_id){
+  home <- Sys.getenv("HOME")
+  renv <- file.path(home, ".Renviron")
+  lines <- if (file.exists(renv)) readLines(renv, warn = FALSE) else character(0)
+  is_setting <- grepl(paste0("^\\s*", name, "\\s*="), lines)
+  if (any(is_setting) && !isTRUE(overwrite)) cc_abort(exists_id)
+  if (file.exists(renv)) {
+    if (isTRUE(overwrite)) cc_inform(backup_id)
+    file.copy(renv, file.path(home, ".Renviron_backup"), overwrite = TRUE)
+  }
+  writeLines(c(lines[!is_setting], paste0(name, "='", value, "'")), renv)
+  invisible(renv)
 }
 
 #' Set cancensus cache location
@@ -96,36 +91,13 @@ set_cancensus_api_key <- function(key, overwrite = FALSE, install = FALSE){
 #' }
 set_cancensus_cache_path <- function(cache_path, overwrite = FALSE, install = FALSE){
   if (install) {
-    home <- Sys.getenv("HOME")
-    renv <- file.path(home, ".Renviron")
-    if(!file.exists(renv)){
-      file.create(renv)
-    } else{
-      # Backup original .Renviron before doing anything else here.
-      file.copy(renv, file.path(home, ".Renviron_backup"))
-      if(isTRUE(overwrite)){
-        cc_inform("renviron_backup")
-        oldenv=readLines(renv)
-        path_lines <- grep("CM_CACHE_PATH", oldenv)
-        newenv <- if (length(path_lines) > 0) oldenv[-path_lines] else oldenv
-        writeLines(newenv, renv, sep = "\n")
-      } else{
-        tv <- readLines(renv)
-        if(any(grepl("CM_CACHE_PATH",tv))){
-          cc_abort("cache_path_exists")
-        }
-      }
-    }
-
-    keyconcat <- paste0("CM_CACHE_PATH='", cache_path, "'")
-    # Append cache path .Renviron file
-    write(keyconcat, renv, sep = "\n", append = TRUE)
+    install_renviron_variable("CM_CACHE_PATH", cache_path, overwrite = overwrite,
+                              exists_id = "cache_path_exists", backup_id = "renviron_backup")
     cc_inform("cache_path_installed")
-    Sys.setenv('CM_CACHE_PATH' = cache_path)
   } else {
     cc_inform("cache_path_session", path = cache_path)
-    Sys.setenv('CM_CACHE_PATH' = cache_path)
   }
+  Sys.setenv('CM_CACHE_PATH' = cache_path)
   cache_path
 }
 

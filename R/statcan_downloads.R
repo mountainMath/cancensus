@@ -30,11 +30,12 @@ statcan_is_cloudflare_block <- function(response){
 }
 
 # Warnings get truncated at the `warning.length` option, which by default is short enough to
-# cut off the instructions when paths are long.
-statcan_warning <- function(message){
-  old <- options(warning.length = 8170L)
+# cut off the instructions when paths are long. They get shown right away and not when the calling
+# code is done, as that code may well fail without the file.
+statcan_warning <- function(id, message){
+  old <- options(warning.length = 8170L, warn = max(1, getOption("warn")))
   on.exit(options(old))
-  warning(message, call. = FALSE, immediate. = TRUE, noBreaks. = TRUE)
+  rlang::warn(message, class = c(paste0("cancensus_", id), "cancensus_warning"))
 }
 
 statcan_os <- function(){
@@ -84,7 +85,8 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
 
   if (file.exists(manual_file)) {
     if (!statcan_is_zip(manual_file)) {
-      statcan_warning(cc_msg("statcan_invalid_manual_file",
+      statcan_warning("statcan_invalid_manual_file",
+                      cc_msg("statcan_invalid_manual_file",
                              fallback = statcan_fallback_message(has_cache, language),
                              path = statcan_display_path(manual_file), url = url,
                              .language = language))
@@ -103,7 +105,7 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
     unlink(tmp)
     if (!quiet) cat("\n") # the progress bar for the challenge page leaves the line open
     if (!dir.exists(downloads_path)) dir.create(downloads_path, recursive = TRUE, showWarnings = FALSE)
-    statcan_warning(statcan_blocked_message(url, manual_file, cache_is_persistent(base_path), has_cache,
+    statcan_warning("statcan_blocked", statcan_blocked_message(url, manual_file, cache_is_persistent(base_path), has_cache,
                                             language = language))
     return(NULL)
   }

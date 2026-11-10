@@ -17,3 +17,9 @@ test_that("get_intersecting_geometries returns a region list, or the region ids 
     expect_identical(ids, c("9330059.17", "9330065.00"))
   })
 })
+
+test_that("get_intersecting_geometries asks for a coordinate reference system", {
+  point <- sf::st_sfc(sf::st_point(c(-123.12, 49.28)))
+  expect_error(get_intersecting_geometries("CA21", "CT", point, api_key = "CensusMapper_test", quiet = TRUE),
+               class = "cancensus_geometry_without_crs")
+})

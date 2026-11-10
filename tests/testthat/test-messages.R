@@ -117,3 +117,10 @@ test_that("byte sizes are formatted for the language", {
   expect_equal(format_bytes(1536, "fr"), "1,5 Ko")
   expect_equal(format_bytes(3 * 1024^3, "fr"), "3,0 Go")
 })
+
+test_that("the count of a message is not confused with other values starting with n", {
+  expect_equal(cc_msg("processing_features", .n = 3, name = "x", .language = "en"),
+               "Processing 3 geographic features.")
+  expect_equal(cc_msg("processing_features", .n = 3, n = "three", .language = "en"),
+               "Processing three geographic features.")
+})

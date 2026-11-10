@@ -46,6 +46,11 @@
 - When the list of recalled data can't be downloaded, **cancensus** now warns once per session instead of trying and warning again on every read from the cache. The list also only gets read once per session
 - `get_statcan_geographies()` no longer leaves empty temporary folders in the cache
 - `find_census_vectors()` with `query_type = "keyword"` no longer returns all vectors for queries without any letters, e.g. `"2021"`
+- The check for recalled data compares data versions as numbers, previously version 10 of the data would have been treated as older than version 3
+- `set_cancensus_api_key()` and `set_cancensus_cache_path()` with `install = TRUE` now keep the previous version of the `.Renviron` file as backup, previously the backup was only made the first time and never updated. They only replace the line setting the key or cache path, and no longer remove other lines that mention `CM_API_KEY` or `CM_CACHE_PATH`, and they no longer append to the last line of a `.Renviron` file that does not end in a line break
+- `get_statcan_wds_metadata()` only caches metadata that is valid, previously an error page or an interrupted download got cached and failed on every call until refreshed. `get_statcan_wds_data()` gives an informative error for DGUIDs it can't determine the geographic level of, and explains failed certificate checks of the Statistics Canada server as intended
+- The warnings of `get_statcan_geographies()` and `get_statcan_geography_relationships()` for blocked downloads and invalid manually downloaded files now have the classes `cancensus_statcan_blocked` and `cancensus_statcan_invalid_manual_file`, like all other conditions of the package
+- `get_intersecting_geometries()` gives an informative error for geometries without a coordinate reference system
 
 # cancensus 0.6.1
 

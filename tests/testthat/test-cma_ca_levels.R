@@ -78,3 +78,10 @@ test_that("get_census checks the resolution when asking for geometries, and only
                class = "cancensus_invalid_resolution")
   expect_no_error(get_census_with_mocked_api(list(C = "01"), "CMA", resolution = "bogus"))
 })
+
+test_that("get_census sends the vectors as a JSON list, also when there are none", {
+  expect_equal(as.character(get_census_with_mocked_api(list(C = "01"), "CMA")$request$vectors), "[]")
+  csv <- "GeoUID,Type,Region Name,Population,rpid,rgid,v_CA21_1: Population\n35562,CMA,Sarnia (K),1,35,01,1\n"
+  request <- get_census_with_mocked_api(list(C = "01"), "CMA", vectors = c(pop = "v_CA21_1"), csv = csv)$request
+  expect_equal(as.character(request$vectors), '["v_CA21_1"]')
+})

@@ -102,6 +102,12 @@ list_recalled_cached_data <- function(cached_data=list_cancensus_cache(),warn_on
   data
 }
 
+# Versions look like "d.3" or "g.10", these get compared as numbers and not as text so that
+# "d.10" is newer than "d.3". Versions that can't be parsed are NA and don't match any recall.
+recall_version <- function(version){
+  numeric_version(sub("^[a-z]+\\.","",version),strict = FALSE)
+}
+
 # Cached entries affected by recalls of one type, "d" for data and "g" for geometry. Data recalls
 # only affect cached data that contains one of the recalled vectors.
 recalled_cache_entries <- function(recall_database,cached_data,type,match_vectors){
@@ -115,7 +121,7 @@ recalled_cache_entries <- function(recall_database,cached_data,type,match_vector
     dplyr::group_by(.data$api_version,.data$dataset,.data$level) %>%
     dplyr::group_map(~dplyr::filter(cached,
                                     is.na(.y$level) | .y$level==.data$level | .data$level=="Regions",
-                                    .data$version<=.y$api_version,
+                                    recall_version(.data$version)<=recall_version(.y$api_version),
                                     .data$dataset==.y$dataset,
                                     if (match_vectors) grepl(recalled_vector_pattern(.x$vector),.data$vectors) else TRUE)) %>%
     dplyr::bind_rows()

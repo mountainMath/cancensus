@@ -73,9 +73,9 @@ test_that("all StatCan download functions fail gracefully when blocked", {
   with_statcan_cache({
     mock_statcan(blocked_response())
     expect_warning(expect_null(get_statcan_geography_relationships("2021")),
-                   "2021_98260004.zip", fixed = TRUE)
+                   "2021_98260004.zip", fixed = TRUE, class = "cancensus_statcan_blocked")
     expect_warning(expect_null(get_statcan_geographies("2021", "PR", quiet = TRUE)),
-                   "lpr_000b21a_e.zip", fixed = TRUE)
+                   "lpr_000b21a_e.zip", fixed = TRUE, class = "cancensus_statcan_blocked")
   })
 })
 

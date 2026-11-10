@@ -114,3 +114,17 @@ test_that("the recall database is parsed once per session", {
   for (i in 1:3) expect_equal(get_recalled_database()$vector, "v_CA21_1")
   expect_equal(reads, 1)
 })
+
+test_that("recall versions are compared as numbers", {
+  cached <- mock_cached_data()
+  cached$version <- c("d.3", "d.10", "g.2", "g.1")
+  recalls <- mock_recall_database()
+  recalls$vector[1] <- "v_CA21_10"
+  # data cached at version 10 is not affected by a recall of version 3, and the other way around it is
+  recalls$api_version <- c("d.3", "g.10")
+  expect_equal(recalled_paths(recalls, cached), "CM_geo_c.geojson")
+  recalls$api_version <- c("d.10", "g.1")
+  expect_equal(recalled_paths(recalls, cached), "CM_data_b.rda")
+  expect_true(recall_version("d.10") > recall_version("d.3"))
+  expect_true(is.na(recall_version(NA_character_)))
+})

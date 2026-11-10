@@ -91,9 +91,12 @@ L'authenticité du serveur de l'API de Statistique Canada ne peut donc pas être
   httr::set_config(httr::config(ssl_verifypeer = 0, ssl_verifystatus = 0))
 
 dans la console."
+"wds_metadata_unavailable","Could not download the metadata for level {level} from Statistics Canada, the server responded with HTTP status {status} and without valid metadata.","Impossible de télécharger les métadonnées pour le niveau {level} de Statistique Canada, le serveur a répondu avec le statut HTTP {status} et sans métadonnées valides."
+"invalid_dguid","Can't determine the geographic level of the DGUID {dguid}. Valid DGUIDs for a geographic level can be queried via `get_statcan_wds_metadata()`.","Impossible de déterminer le niveau géographique de l'IDUGD {dguid}. Les IDUGD valides pour un niveau géographique peuvent être obtenus via `get_statcan_wds_metadata()`."
 "wds_invalid_request","Invalid request.
 {details}","Requête invalide.
 {details}"
+"geometry_without_crs","The `geometry` parameter needs to have a coordinate reference system, it can be set with `sf::st_set_crs()`.","Le paramètre `geometry` doit avoir un système de référence de coordonnées, il peut être défini avec `sf::st_set_crs()`."
 "invalid_geometry","The `geometry` parameter needs to be of class sf or sfc.","Le paramètre `geometry` doit être de classe sf ou sfc."
 "querying_api","Querying CensusMapper API...","Interrogation de l'API CensusMapper..."
 "reading_intersection_cache","Reading intersection data from local cache.","Lecture des données d'intersection depuis le cache local."

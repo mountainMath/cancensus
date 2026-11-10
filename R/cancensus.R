@@ -123,7 +123,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
     params <- list(regions=as.character(regions),
-                   vectors=jsonlite::toJSON(vectors),
+                   vectors=jsonlite::toJSON(as.character(vectors)),
                    level=level,
                    dataset=dataset,
                    api_key=api_key)

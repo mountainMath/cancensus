@@ -394,7 +394,12 @@ download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
     changed <- digest::digest(tmp,file = TRUE) != digest::digest(path,file = TRUE)
     cc_inform(if (changed) "hosted_changed" else "hosted_unchanged",.language = language)
   }
-  file.rename(tmp,path)
+  if (!file.rename(tmp,path)) {
+    cc_warn("hosted_download_failed",url = url,
+            problem = cc_msg("recall_database_not_saved",path = path,.language = language),
+            fallback = statcan_fallback_message(has_cache,language),.language = language)
+    return(FALSE)
+  }
   warn_if_cache_not_persistent(quiet = quiet,language = language)
   TRUE
 }

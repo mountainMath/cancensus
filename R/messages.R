@@ -58,7 +58,7 @@ cc_msg <- function(id, ..., .n = NULL, .language = NULL) {
   if (is.na(template) || !nzchar(template)) template <- catalog$en[id]
   if (is.na(template)) stop("Unknown cancensus message id '", id, "'.", call. = FALSE)
   values <- list(...)
-  if (!is.null(.n) && is.null(values$n)) values$n <- format_number(.n, language)
+  if (!is.null(.n) && is.null(values[["n"]])) values[["n"]] <- format_number(.n, language)
   for (name in names(values)) {
     value <- paste(as.character(values[[name]]), collapse = ", ")
     # split rather than gsub, to not interpret backslashes in the value
