@@ -72,3 +72,50 @@ attr(attributes_1981$EAPHH1981, "label")
 attributes_1981 %>% summarise(Population = sum(EAPOP1981, na.rm = TRUE))
 attr(attributes_1981, "metadata")$notes_en
 ```
+
+## Representative points
+The attribute files have representative points for each area, as latitude and longitude and in some years also as projected coordinates. The metadata of each coordinate column gives its coordinate reference system: the EPSG code in `crs_epsg` where there is one, the PROJ string in `crs_proj`, and in `crs_en` how this was established. In most years the source documentation doesn't state the datum, so it was inferred by checking the columns against each other, which `crs_basis` records.
+
+```{r}
+point_metadata <- attr(attributes, "metadata")$columns$DARPLAT
+point_metadata$crs_en
+point_metadata$crs_basis
+```
+
+From 2006 on the representative points belong to dissemination areas, and each point is repeated on every block row of its dissemination area. Converting the rows directly would stack all blocks of a dissemination area on one point, so we first reduce the data to one row per dissemination area, here for Metro Vancouver, before converting it to an **sf** object with the CRS from the metadata.
+
+```{r}
+library(sf)
+library(ggplot2)
+
+da_points <- attributes %>%
+  filter(CMAUID == "933") %>%
+  group_by(DAUID, DARPLONG, DARPLAT) %>%
+  summarise(Population = sum(DBPOP2021, na.rm = TRUE), .groups = "drop") %>%
+  st_as_sf(coords = c("DARPLONG", "DARPLAT"), crs = point_metadata$crs_epsg)
+
+ggplot(da_points) +
+  geom_sf(aes(size = Population), alpha = 0.3, shape = 16) +
+  scale_size_area(max_size = 3) +
+  theme_void() +
+  labs(title = "Metro Vancouver dissemination area representative points, 2021")
+```
+
+The points differ between census years:
+
+* 2001 is the only year with block level points, in `DBRPLAT` and `DBRPLONG`, in addition to the dissemination area points.
+* 1981 to 1996 have one point per enumeration area, but on the NAD27 datum (EPSG:4267) rather than NAD83. Transforming them to NAD83 is most accurate with the Canadian NTv2 grid, which PROJ can fetch when network access is enabled with `sf::sf_proj_network(TRUE)`. The projected Lambert columns of these years are on NAD27 as well and should not be read as EPSG:3347.
+* 1981 and 1986 give latitude and longitude only to the whole minute, about 1.85 km north to south, so many enumeration areas share a point. The UTM columns are more precise, but their zone varies by row.
+
+The `precision_en` entry of the column metadata has the details.
+
+```{r}
+attributes_1996 <- get_statcan_geographic_attributes("1996")
+crs_1996 <- attr(attributes_1996, "metadata")$columns$EARPLAT$crs_epsg
+crs_1996
+
+ea_points <- attributes_1996 %>%
+  filter(CMAUID == "933") %>%
+  st_as_sf(coords = c("EARPLONG", "EARPLAT"), crs = crs_1996) %>%
+  st_transform(st_crs(da_points))
+```
