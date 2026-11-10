@@ -30,6 +30,10 @@ recalled_vector_pattern <- function(vectors){
 get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   problem <- FALSE
   path <- recall_data_path()
+  # A failed download is not attempted again in this session unless asked for with `refresh`, this
+  # gets called on every read from the cache and would otherwise warn and wait on the network each time.
+  failed_key <- paste0("recall_database_unavailable_",path)
+  if (!refresh && !file.exists(path) && isTRUE(session_cache_get(failed_key))) return(NULL)
   if (refresh || !file.exists(path)) {
     url <- paste0(cancensus_base_url(),"/api/v1/recall.csv")
     # Download to a temporary file and only replace the cached copy on success,
@@ -46,6 +50,7 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
     } else if (!file.copy(tmp, path, overwrite = TRUE)) {
       cc_msg("recall_database_not_saved", path = path)
     }
+    session_cache_set(failed_key, !is.null(reason))
     if (!is.null(reason)) {
       cc_warn("recall_database_unavailable", reason = reason)
       problem <- TRUE
@@ -53,7 +58,12 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
   }
   data <- NULL
   if (!problem) {
-    data <- readr::read_csv(path,col_types = readr::cols(.default="c"))
+    # parsed once per session and version of the file
+    data_key <- paste0("recall_database_",path,"_",file.size(path),"_",as.numeric(file.mtime(path)))
+    data <- session_cache_get(data_key)
+    if (is.null(data)) {
+      data <- session_cache_set(data_key, readr::read_csv(path,col_types = readr::cols(.default="c")))
+    }
   }
   if (length(names(data))==0) {
     if (!warn_only_once && !problem) {

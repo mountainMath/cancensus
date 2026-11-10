@@ -265,6 +265,8 @@ keyword_search <- function(query_terms, census_vector_list, interactive = TRUE, 
   # drop empty tokens (e.g. from queries starting with a digit), an empty
   # regex alternative would match every vector
   query_tokens <- query_tokens[nzchar(query_tokens)]
+  # same for a query without any letters, which leaves no tokens at all
+  if (length(query_tokens) == 0) return(cc_warn("no_keyword_matches", .language = language))
   query_words <- paste(query_tokens, collapse = "|")
   index_matches <- grep(query_words, clean_vector_list, ignore.case = TRUE)
 

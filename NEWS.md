@@ -40,6 +40,12 @@
 - The error for a corrupt cache path no longer ends in a stray `FALSE`
 - `get_statcan_geographic_attributes()` no longer returns misaligned columns for 2006 and 2011, the fixed-width layout it used did not match these files. For 2006 the columns from `DAlamy` on were wrong, for 2011 the columns from `CDuid` on, so results based on these columns from earlier versions should be checked
 - `get_statcan_geographies()` and `get_statcan_geography_relationships()` now fail gracefully when Statistics Canada blocks the download with a Cloudflare browser verification (#228). They return `NULL` with a warning that gives the link for downloading the file in a browser and the location in the cache directory to move it to, and pick up the file from there on the next run. If the download was blocked while refreshing existing cached data with `refresh = TRUE`, they return the cached data with the same warning instead of `NULL`. The file has to stay zipped, so on macOS the warning points out that Safari unzips downloads automatically, and it flags folders that look like an unzipped copy of the file
+- `get_intersecting_geometries()` with `simplified = TRUE` now returns the character vector of region ids, previously it returned them collapsed into a single string. The documentation of `simplified` had the two cases the wrong way around and has been corrected
+- `get_census()` now checks the `resolution` parameter when geometries are requested, previously it was only checked when it was not used
+- `get_census()` now stops with an error pointing to `get_statcan_wds_data()` for the `"ADA"` level, which CensusMapper does not have data for. Previously this warned about an unknown level and returned regions without data
+- When the list of recalled data can't be downloaded, **cancensus** now warns once per session instead of trying and warning again on every read from the cache. The list also only gets read once per session
+- `get_statcan_geographies()` no longer leaves empty temporary folders in the cache
+- `find_census_vectors()` with `query_type = "keyword"` no longer returns all vectors for queries without any letters, e.g. `"2021"`
 
 # cancensus 0.6.1
 

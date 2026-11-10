@@ -302,3 +302,24 @@ test_that("get_statcan_geography_relationships() warns once per session that it 
     expect_no_warning(get_statcan_geography_relationships("2021"))
   })
 })
+
+test_that("boundary files zipped inside a folder get unpacked without leaving a folder behind", {
+  skip_if(Sys.which("zip") == "", "zip utility not available")
+  with_statcan_cache({
+    mock_statcan()
+    src <- tempfile("shp")
+    dir.create(file.path(src, "lpr_000b21a_e"), recursive = TRUE)
+    on.exit(unlink(src, recursive = TRUE))
+    geo <- sf::st_sf(PRUID = "59", geometry = sf::st_sfc(sf::st_point(c(1, 2)), crs = 4326))
+    sf::st_write(geo, file.path(src, "lpr_000b21a_e", "lpr.shp"), quiet = TRUE)
+
+    target <- deposit("lpr_000b21a_e.zip")
+    dir.create(dirname(target), recursive = TRUE)
+    old_wd <- setwd(src)
+    on.exit(setwd(old_wd), add = TRUE, after = FALSE)
+    utils::zip(target, "lpr_000b21a_e", flags = "-q -r")
+
+    expect_equal(get_statcan_geographies("2021", "PR", quiet = TRUE)$PRUID, "59")
+    expect_equal(dir(cancensus:::cache_path("geographies/cartographic")), "PR")
+  })
+})

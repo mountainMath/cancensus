@@ -88,7 +88,10 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   if (is.na(level)) level="Regions"
 
   # Check spatial resolution
-  if (is.na(geo_format) && !(resolution %in% c("simplified","high"))) cc_abort("invalid_resolution", .language = language)
+  if (!is.na(geo_format) && !(resolution %in% c("simplified","high"))) cc_abort("invalid_resolution", .language = language)
+
+  # CensusMapper does not have data for aggregate dissemination areas, point to where it can be found
+  if (identical(level, "ADA") || "ADA" %in% names(regions)) cc_abort("ada_level_unsupported", .language = language)
 
   # Turn the region list into a valid JSON dictionary.
   if (is.character(regions)) {
@@ -393,7 +396,7 @@ get_census_geometry <- function (dataset, regions, level=NA, geo_format = "sf", 
 
 # This is the set of valid census aggregation levels, also used in the named
 # elements of the `regions` parameter.
-VALID_LEVELS <- c("Regions","C","PR", "CMA", "CA", "CMACA", "CD", "CSD", "ADA","CT", "DA", 'EA', "DB")
+VALID_LEVELS <- c("Regions","C","PR", "CMA", "CA", "CMACA", "CD", "CSD", "CT", "DA", 'EA', "DB")
 
 #' Query the CensusMapper API for available datasets.
 #'
@@ -737,14 +740,16 @@ transform_geo <- function(g, level) {
     dplyr::rename(!!to_rename)
 
   if (level != "Regions") {
-    rc <- name_change_for_level(level)[as.character(name_change_for_level(level)) %in% names(g)]
+    rc <- name_change_for_level(level)
+    rc <- rc[as.character(rc) %in% names(g)]
     if (length(rc)>0) g <- g %>%  dplyr::rename(!!!rc)
   } else if ("Type" %in% names(g)) {
     g <- g$Type %>%
       unique %>%
       lapply(function(t){
         g <- g %>%  dplyr::filter(.data$Type==t)
-        rc <- name_change_for_level(t)[as.character(name_change_for_level(t)) %in% names(g)]
+        rc <- name_change_for_level(t)
+        rc <- rc[as.character(rc) %in% names(g)]
         if (length(rc)>0) {
           g <- g %>%
             dplyr::rename(!!!rc) %>%

@@ -12,7 +12,7 @@
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..
 #' @param geometry A valid \code{sf} or \code{sfc} class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.
-#' @param simplified If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.
+#' @param simplified If \code{TRUE} will return a character vector of matching region ids, otherwise (the default) will return a region list compatible with \link{get_census}.
 #' @param use_cache If set to \code{TRUE} (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
@@ -106,6 +106,6 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
 
   touch_metadata(meta_file)
 
-  if(simplified) {result <- c(as.character(result))}
+  if (simplified) result <- as.character(unlist(result, use.names = FALSE))
   result
 }

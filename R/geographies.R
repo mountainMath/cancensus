@@ -76,7 +76,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
         file.rename(exdir,tmp_dir)
         fs <- dir(tmp_dir,full.names = TRUE)
         file.rename(fs,exdir)
-        unlink(tmp_dir)
+        unlink(tmp_dir,recursive = TRUE)
       }
     }
   } else {

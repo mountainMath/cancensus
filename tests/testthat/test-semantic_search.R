@@ -233,3 +233,11 @@ test_that("find_census_vectors keyword search does not error in non-interactive 
                                                  interactive = FALSE))
   expect_equal(quiet$vector, "v_1")
 })
+
+test_that("keyword search without any letters in the query matches nothing", {
+  for (query in c("2021", "", "$ %")) {
+    expect_warning(result <- keyword_search(query, keyword_vectors, interactive = FALSE),
+                   class = "cancensus_no_keyword_matches")
+    expect_false(is.data.frame(result))
+  }
+})

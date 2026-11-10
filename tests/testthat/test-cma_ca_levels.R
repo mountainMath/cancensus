@@ -5,7 +5,8 @@ level_test_response <- function(body) {
 }
 
 # Runs get_census against a mocked endpoint, returning the result and the request body
-get_census_with_mocked_api <- function(regions, level) {
+get_census_with_mocked_api <- function(regions, level, ...,
+                                       csv = "GeoUID,Type,Region Name,Population,rpid,rgid\n35562,CMA,Sarnia (K),1,35,01\n") {
   rlang::local_options(cancensus.cache_path = tempfile("cancensus_test_cache"))
   old_env <- Sys.getenv("CM_CACHE_PATH")
   Sys.unsetenv("CM_CACHE_PATH")
@@ -17,11 +18,11 @@ get_census_with_mocked_api <- function(regions, level) {
     handle_cm_status_code = function(...) invisible(NULL),
     cm_POST = function(url, body, ...) {
       request <<- body
-      level_test_response("GeoUID,Type,Region Name,Population,rpid,rgid\n35562,CMA,Sarnia (K),1,35,01\n")
+      level_test_response(csv)
     }
   )
   result <- get_census("CA21", regions = regions, level = level, api_key = "CensusMapper_test",
-                       labels = "detailed", quiet = TRUE)
+                       labels = "detailed", quiet = TRUE, ...)
   list(result = result, request = request)
 }
 
@@ -60,4 +61,20 @@ test_that("get_census still rejects unknown levels", {
                "`level` parameter must be one of")
   expect_error(get_census("CA21", regions = list(XX = "01"), api_key = "CensusMapper_test"),
                "Regions must be composed of valid census aggregation levels")
+})
+
+test_that("get_census points to the WDS for the ADA level, which CensusMapper does not have", {
+  local_mocked_bindings(cm_POST = function(...) stop("Unexpected request"))
+  expect_error(get_census("CA21", regions = list(CSD = "5915022"), level = "ADA", api_key = "CensusMapper_test"),
+               "get_statcan_wds_data", class = "cancensus_ada_level_unsupported")
+  expect_error(get_census("CA21", regions = list(ADA = "59150019"), api_key = "CensusMapper_test"),
+               "get_statcan_wds_data", class = "cancensus_ada_level_unsupported")
+})
+
+test_that("get_census checks the resolution when asking for geometries, and only then", {
+  local_mocked_bindings(first_run_checks = function() invisible(NULL))
+  expect_error(get_census("CA21", regions = list(C = "01"), geo_format = "sf", resolution = "bogus",
+                          api_key = "CensusMapper_test", labels = "detailed", quiet = TRUE),
+               class = "cancensus_invalid_resolution")
+  expect_no_error(get_census_with_mocked_api(list(C = "01"), "CMA", resolution = "bogus"))
 })

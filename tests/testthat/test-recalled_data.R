@@ -74,3 +74,43 @@ test_that("failed downloads of the recall database warn with the reason and keep
   # without a refresh the cached copy gets read
   expect_equal(get_recalled_database()$vector, "v_CA21_1")
 })
+
+test_that("a failed download of the recall database is not attempted again in the session", {
+  path <- tempfile(fileext = ".csv")
+  local_mocked_bindings(recall_data_path = function() path)
+  attempts <- 0
+  local_mocked_bindings(cm_GET = function(...) {
+    attempts <<- attempts + 1
+    stop("Could not resolve host")
+  })
+  expect_warning(expect_null(get_recalled_database()), class = "cancensus_recall_database_unavailable")
+  expect_no_warning(expect_null(get_recalled_database()))
+  expect_no_warning(expect_null(list_recalled_cached_data(mock_cached_data(), warn_only_once = TRUE)))
+  expect_equal(attempts, 1)
+
+  # a refresh tries again, and a successful one clears the failure
+  expect_warning(get_recalled_database(refresh = TRUE), class = "cancensus_recall_database_unavailable")
+  expect_equal(attempts, 2)
+  local_mocked_bindings(cm_GET = function(url, ...) {
+    attempts <<- attempts + 1
+    writeLines(c("api_version,dataset,level,vector", "d.1,CA21,,v_CA21_1"), list(...)[[1]]$output$path)
+    fake_response(200)
+  })
+  expect_equal(get_recalled_database(refresh = TRUE)$vector, "v_CA21_1")
+  unlink(path)
+  expect_equal(get_recalled_database()$vector, "v_CA21_1")
+  expect_equal(attempts, 4)
+})
+
+test_that("the recall database is parsed once per session", {
+  path <- tempfile(fileext = ".csv")
+  writeLines(c("api_version,dataset,level,vector", "d.1,CA21,,v_CA21_1"), path)
+  local_mocked_bindings(recall_data_path = function() path)
+  reads <- 0
+  local_mocked_bindings(read_csv = function(...) {
+    reads <<- reads + 1
+    dplyr::tibble(api_version = "d.1", dataset = "CA21", level = NA_character_, vector = "v_CA21_1")
+  }, .package = "readr")
+  for (i in 1:3) expect_equal(get_recalled_database()$vector, "v_CA21_1")
+  expect_equal(reads, 1)
+})
