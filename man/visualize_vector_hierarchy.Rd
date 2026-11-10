@@ -9,7 +9,8 @@ visualize_vector_hierarchy(
   dataset = NULL,
   max_depth = NA,
   show_type = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  language = NULL
 )
 }
 \arguments{
@@ -26,6 +27,10 @@ which shows the entire hierarchy.}
 next to each vector. Default is \code{FALSE}.}
 
 \item{quiet}{When \code{TRUE}, suppress messages. Default is \code{FALSE}.}
+
+\item{language}{Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+\code{vector} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+if that is not set. See \code{\link{list_census_vectors}}.}
 }
 \value{
 Invisibly returns a tibble of the vectors displayed in the tree.

@@ -12,7 +12,8 @@ visualize_vector_hierarchy(
   dataset = NULL,
   max_depth = NA,
   show_type = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  language = NULL
 )
 ```
 
@@ -41,6 +42,13 @@ visualize_vector_hierarchy(
 - quiet:
 
   When `TRUE`, suppress messages. Default is `FALSE`.
+
+- language:
+
+  Language of the labels, one of `"en"` or `"fr"`. By default uses the
+  language `vector` was retrieved in, and otherwise the
+  `cancensus.language` option, and `"en"` if that is not set. See
+  [`list_census_vectors`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md).
 
 ## Value
 

@@ -5,7 +5,7 @@ Retry an API call with exponential backoff
 ## Usage
 
 ``` r
-retry_api_call(call_fn, max_retries = 3, quiet = FALSE)
+retry_api_call(call_fn, max_retries = 3, quiet = FALSE, language = NULL)
 ```
 
 ## Arguments
@@ -21,6 +21,10 @@ retry_api_call(call_fn, max_retries = 3, quiet = FALSE)
 - quiet:
 
   If TRUE, suppress retry messages
+
+- language:
+
+  Language of the retry messages, see `message_language`
 
 ## Value
 

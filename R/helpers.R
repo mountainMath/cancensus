@@ -18,10 +18,115 @@ session_cache_set <- function(key, value){
   value
 }
 
+# Whether this is the first time in the session this gets called for `key`, for things that should
+# only happen once per session
+once_per_session <- function(key){
+  if (isTRUE(session_cache_get(key))) return(FALSE)
+  session_cache_set(key, TRUE)
+  TRUE
+}
+
+# Metadata from the CensusMapper API gets kept for the session. `fetch` is a function that gets it
+# from the API, and is called if there is nothing cached yet or if not to `use_cache`. Unless `quiet`
+# says so when reading from the cache with the message `reading_id`, and warns with `outdated_id`
+# if what is cached is more than a day old.
+session_cached <- function(key, use_cache, fetch, quiet = TRUE, reading_id = NULL, outdated_id = NULL){
+  cached <- if (use_cache) session_cache_get(key)
+  if (is.null(cached)) {
+    result <- fetch()
+    attr(result, "last_updated") <- Sys.time()
+    return(session_cache_set(key, result))
+  }
+  if (!quiet) {
+    if (!is.null(reading_id)) cc_inform(reading_id)
+    last_updated <- attr(cached, "last_updated")
+    if (!is.null(outdated_id) &&
+        (is.null(last_updated) || difftime(Sys.time(), last_updated, units = "days") > 1)) {
+      cc_warn(outdated_id)
+    }
+  }
+  cached
+}
+
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"
   url
+}
+
+#' User agent sent with CensusMapper API requests
+#'
+#' @description
+#' Identifies the package and its version to the CensusMapper API, in the form
+#' `cancensus/<version> httr/<version> R/<version>`. Packages or tools building on
+#' **cancensus** can identify themselves by setting the `cancensus.user_agent_prefix`
+#' option, e.g. `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`, which gets
+#' prepended to the user agent string.
+#'
+#' @return A character string
+#' @keywords internal
+cancensus_user_agent <- function(){
+  ua <- paste0("cancensus/", utils::packageVersion("cancensus"),
+               " httr/", utils::packageVersion("httr"),
+               " R/", getRversion())
+  prefix <- getOption("cancensus.user_agent_prefix")
+  if (is.character(prefix) && length(prefix) == 1 && !is.na(prefix)) {
+    # Header values must be a single line without control characters
+    prefix <- trimws(gsub("[[:cntrl:]]+", " ", prefix))
+    if (nchar(prefix) > 0) ua <- paste(prefix, ua)
+  }
+  ua
+}
+
+# Request configuration shared by all CensusMapper API requests
+cm_request_config <- function(quiet = TRUE){
+  config <- httr::user_agent(cancensus_user_agent())
+  if (!quiet) config <- c(config, httr::progress())
+  config
+}
+
+# All requests to the CensusMapper API should go through these wrappers so that
+# they carry the package user agent. Shows a progress bar unless `quiet`.
+cm_GET <- function(url, ..., quiet = TRUE){
+  httr::GET(url, cm_request_config(quiet), ...)
+}
+
+cm_POST <- function(url, body = NULL, ..., quiet = TRUE){
+  httr::POST(url, cm_request_config(quiet), body = body, ...)
+}
+
+# Query the CensusMapper API at `endpoint`, with `retry` further attempts on transient failures.
+# Stops if the request fails. Unless `quiet` says how much got downloaded, with the message `size_id`.
+cm_api_request <- function(endpoint, body, ..., retry = 0, quiet = FALSE, size_id = NULL, language = NULL){
+  url <- paste0(cancensus_base_url(), "/api/v1/", endpoint)
+  make_call <- function() cm_POST(url, body = body, ..., quiet = quiet)
+  response <- if (retry > 0) {
+    retry_api_call(make_call, max_retries = retry + 1, quiet = quiet, language = language)
+  } else {
+    make_call()
+  }
+  handle_cm_status_code(response, NULL, language = language)
+  content_length <- as.numeric(response$headers$`content-length`)
+  if (!quiet && !is.null(size_id) && length(content_length) > 0 && !is.na(content_length) && content_length > 0) {
+    cc_inform(size_id, size = format_bytes(content_length, language), .language = language)
+  }
+  response
+}
+
+# The csv data of a response from the CensusMapper API, with all columns as text
+cm_read_csv <- function(response, ...){
+  readr::read_csv(I(httr::content(response, type = "text", encoding = "UTF-8")),
+                  col_types = readr::cols(.default = "c"), ...)
+}
+
+# Description of why a download failed, or NULL if it did not. `response` is the response or the
+# error raised by the request.
+download_failure <- function(response, language = NULL){
+  if (inherits(response, "error")) {
+    conditionMessage(response)
+  } else if (httr::http_error(response)) {
+    cc_msg("hosted_http_status", status = httr::status_code(response), .language = language)
+  }
 }
 
 valid_api_key <- function(api_key){
@@ -42,25 +147,39 @@ cache_path <- function(...) {
       cache_dir <- getOption("cancensus.cache_path")
     } else {
       cache_dir <- tempdir()
-      message(cm_no_cache_path_message)
     }
   }
   if (!is.character(cache_dir)) {
-    stop("Corrupt 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option. Must be a path.",
-         .call = FALSE)
+    cc_abort("cache_path_invalid")
   }
   if (!file.exists(cache_dir)) {
     dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
     if (!dir.exists(cache_dir)) {
-      stop(paste0("Could not create cache directory '",cache_dir,
-                  "'. Check the 'CM_CACHE_PATH' environment variable or 'cancensus.cache_path' option."),
-           call. = FALSE)
+      cc_abort("cache_dir_create_failed", path = cache_dir)
     }
   }
   cache_key <- paste0(...)
   if (!identical(cache_key, character(0)))
     cache_dir <- file.path(cache_dir, paste0(...))
   cache_dir
+}
+
+# Whether downloaded data outlives the R session. `base_path` is an explicit cache location
+# overriding the cancensus cache path, for functions with a `cache_path` argument.
+cache_is_persistent <- function(base_path = NULL){
+  !is.null(base_path) ||
+    nchar(Sys.getenv("CM_CACHE_PATH")) > 0 ||
+    !is.null(getOption("cancensus.cache_path"))
+}
+
+# Warn that downloaded data won't be kept across sessions. Called after data has been downloaded
+# and saved, so failed requests don't use up the warning and handlers that turn it into an error
+# don't lose the download. Warns once per session, per call would flood users querying in a loop.
+warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE, language = NULL){
+  if (!quiet && !cache_is_persistent(base_path) && once_per_session("cache_warning_shown")) {
+    cc_warn("cache_not_persistent", .language = language)
+  }
+  invisible(NULL)
 }
 
 
@@ -82,14 +201,48 @@ translate_dataset <- function(dataset) {
   dataset
 }
 
-clean_vector_list <- function(vector_list,dataset=NULL){
+# Validate a language parameter, valid choices are "en" and "fr"
+validate_language <- function(language){
+  valid_languages <- c("en","fr")
+  language <- if (is.character(language) && length(language)==1) tolower(language) else NA_character_
+  if (!(language %in% valid_languages)) {
+    cc_abort("invalid_language", choices = valid_languages)
+  }
+  language
+}
+
+# Language of a list of vectors: the explicitly requested language if there is one, otherwise
+# the language the vector list was retrieved in, otherwise the session default.
+vector_list_language <- function(vector_list, language = NULL){
+  if (is.null(language)) language <- attr(vector_list, "language")
+  if (is.null(language)) language <- getOption("cancensus.language", "en")
+  validate_language(language)
+}
+
+is_blank <- function(x){
+  is.na(x) | !nzchar(trimws(x))
+}
+
+# Warn once per session and dataset, per call would flood users querying in a loop
+warn_language_fallback <- function(dataset, n_missing, n_total, language = NULL){
+  if (!once_per_session(paste0("language_fallback_warning_", dataset))) return(invisible(NULL))
+  if (n_missing == n_total) {
+    cc_warn("french_labels_unavailable_dataset", dataset = dataset, .language = language)
+  } else {
+    cc_warn("french_labels_unavailable_vectors", n = format_number(n_missing, language),
+            total = format_number(n_total, language), dataset = dataset, .language = language)
+  }
+  invisible(NULL)
+}
+
+clean_vector_list <- function(vector_list,dataset=NULL,language=getOption("cancensus.language", "en")){
   if (!inherits(vector_list,"data.frame")) {
     if (inherits(vector_list,"character")) {
       if (is.null(dataset))  dataset <- dataset_from_vector_list(vector_list)
-      vector_list = list_census_vectors(dataset) %>%
+      vector_list = list_census_vectors(dataset, language = language) %>%
         dplyr::filter(vector %in% vector_list)
     } else
-      stop(paste0("Don't know how to parse vector list: ",vector_list))
+      cc_abort("vector_list_unparseable", vector_list = vector_list, .language = language)
   }
   vector_list
 }
@@ -99,7 +252,7 @@ dataset_from_vector_list <- function(vector_list){
   if (is.null(dataset)) {
     vectors = if (inherits(vector_list,"character")) vector_list else vector_list$vector
     dataset <- unique(sub("^[^_]+_([^_]+).*$", "\\1", as.character(vectors)))
-    if (length(dataset)!=1) stop("Unable to determine dataset")
+    if (length(dataset)!=1) cc_abort("dataset_undetermined")
   }
   dataset
 }
@@ -111,9 +264,10 @@ cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 #' @param call_fn A function that performs the API call and returns an httr response
 #' @param max_retries Maximum number of retry attempts (default: 3)
 #' @param quiet If TRUE, suppress retry messages
+#' @param language Language of the retry messages, see \code{message_language}
 #' @return The httr response object
 #' @keywords internal
-retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
+retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE, language = NULL) {
  attempt <- 1
  last_error <- NULL
 
@@ -131,8 +285,8 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
          wait_time <- max(wait_time, min(ceiling(retry_after), 60))
        }
        if (!quiet) {
-         message(sprintf("Transient error (HTTP %d), retrying in %ds (attempt %d/%d)...",
-                         status, wait_time, attempt + 1, max_retries))
+         cc_inform("retry_http", status = status, wait = wait_time, attempt = attempt + 1,
+                   max = max_retries, .language = language)
        }
        Sys.sleep(wait_time)
        attempt <- attempt + 1
@@ -148,8 +302,8 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
      if (attempt < max_retries) {
        wait_time <- 2 ^ (attempt - 1)
        if (!quiet) {
-         message(sprintf("Network error: %s. Retrying in %ds (attempt %d/%d)...",
-                         conditionMessage(e), wait_time, attempt + 1, max_retries))
+         cc_inform("retry_network", error = conditionMessage(e), wait = wait_time,
+                   attempt = attempt + 1, max = max_retries, .language = language)
        }
        Sys.sleep(wait_time)
        attempt <<- attempt + 1
@@ -166,12 +320,17 @@ retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE) {
 }
 
 #' Format bytes to human-readable size
+#' @param bytes Number of bytes
+#' @param language Language for units and decimal mark, see \code{message_language}
 #' @keywords internal
-format_bytes <- function(bytes) {
- if (bytes < 1024) return(paste0(bytes, " B"))
- if (bytes < 1024^2) return(sprintf("%.1f KB", bytes / 1024))
- if (bytes < 1024^3) return(sprintf("%.1f MB", bytes / 1024^2))
- return(sprintf("%.1f GB", bytes / 1024^3))
+format_bytes <- function(bytes, language = NULL) {
+ language <- message_language(language)
+ units <- if (language == "fr") c("o", "Ko", "Mo", "Go") else c("B", "KB", "MB", "GB")
+ if (bytes < 1024) return(paste0(bytes, " ", units[1]))
+ exponent <- if (bytes < 1024^2) 1 else if (bytes < 1024^3) 2 else 3
+ size <- sprintf("%.1f", bytes / 1024^exponent)
+ if (language == "fr") size <- sub(".", ",", size, fixed = TRUE)
+ paste0(size, " ", units[exponent + 1])
 }
 
 as.num = function(x, na.strings = cancensus_na_strings) {
@@ -192,32 +351,27 @@ as.int = function(x, na.strings = cancensus_na_strings) {
   x
 }
 
-check_recalled_data_and_warn <- function(meta_file,params){
+check_recalled_data_and_warn <- function(meta_file,params,language=NULL){
   cached_data<-generate_metadata(meta_file,params)
   recalled_data <- list_recalled_cached_data(cached_data,warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning("Currently loaded data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data.")
+    cc_warn("recalled_loaded_data", .language = language)
   }
-  d<-NULL
+  invisible(NULL)
 }
 
 check_for_recalled_data_and_warn <- function(){
   recalled_data <- list_recalled_cached_data(warn_only_once=TRUE)
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
-    warning(paste0("Some locally cached data has been recalled. Use\nlist_recalled_cached_data()\nto inspect recalled locally cached data and\nremove_recalled_cached_data()\nto remove recalled data."))
+    cc_warn("recalled_cached_data")
   }
-  d<-NULL
+  invisible(NULL)
 }
 
+# Check the cache for recalled data, the first time data gets requested in a session
 first_run_checks <- function(){
-  # Check caches for recalled data
-  path=file.path(tempdir(),"cancensus_first_run_checks.info")
-  if (!file.exists(path)) {
-    # first time cancensus is run!
-    check_for_recalled_data_and_warn()
-    readr::write_lines("recall_check\n",path)
-  }
-  d<-NULL
+  if (once_per_session("first_run_checks")) check_for_recalled_data_and_warn()
+  invisible(NULL)
 }
 
 #' A dataset with code table summaries for census data

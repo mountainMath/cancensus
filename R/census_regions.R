@@ -39,48 +39,22 @@
 #' }
 list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   dataset <- translate_dataset(dataset)
-  cache_key <- paste0(dataset, "_regions")
-  if (use_cache) {
-    cached <- session_cache_get(cache_key)
-    if (!is.null(cached)) return(cached)
-  }
-  cache_file <- file.path(tempdir(),paste0(dataset, "_regions.rda"))
-
-  if (!use_cache || !file.exists(cache_file)) {
-    if (!quiet) message("Querying CensusMapper API for regions data...")
-    response <- httr::GET(paste0("https://censusmapper.ca/data_sets/", dataset,
-                                 "/place_names.csv"))
+  session_cached(paste0(dataset, "_regions"), use_cache, quiet = quiet,
+                 outdated_id = "regions_cache_outdated", fetch = function() {
+    if (!quiet) cc_inform("querying_regions")
+    response <- cm_GET(paste0(cancensus_base_url(),"/data_sets/", dataset,
+                              "/place_names.csv"))
     handle_cm_status_code(response, NULL)
-    content <- httr::content(response, type = "text", encoding = "UTF-8")
-    result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_tibble(utils::read.csv(textConnection(content),
-                                       colClasses = 'character',
-                                       stringsAsFactors = FALSE),
-                       .name_repair = "minimal")
-    } else {
-      readr::read_csv(content,col_types = readr::cols(.default='c'))
-    }
-    result <- dplyr::select(result, region = .data$geo_uid, .data$name,
-                            level = .data$type, pop = .data$population,
-                            municipal_status = .data$flag, .data$CMA_UID,
-                            .data$CD_UID, .data$PR_UID)  %>%
+    result <- cm_read_csv(response) %>%
+      dplyr::select(region = "geo_uid", "name",
+                    level = "type", pop = "population",
+                    municipal_status = "flag", "CMA_UID",
+                    "CD_UID", "PR_UID")  %>%
       dplyr::mutate(pop=as.integer(.data$pop))
-    attr(result, "last_updated") <- Sys.time()
-    save(result, file = cache_file)
+    # census agglomerations come labelled as CMA
     result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    session_cache_set(cache_key, result)
-  } else {
-    if (!quiet) message("Reading regions list from local cache.")
-    load(file = cache_file)
-    last_updated <- attr(result, "last_updated")
-    if (!quiet && (is.null(last_updated) ||
-        difftime(Sys.time(), last_updated, units = "days") > 1)) {
-      warning(paste("Cached regions list may be out of date. Set `use_cache =",
-                    "FALSE` to update it."))
-    }
-    result$level[result$level=="CMA"&result$municipal_status == "K"] <- "CA"
-    session_cache_set(cache_key, result)
-  }
+    result
+  })
 }
 
 #' Query the CensusMapper API for regions with names matching a searchterm.
@@ -112,35 +86,9 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
 #' search_census_regions('Victoria', 'CA16', level = "CMA")
 #' }
 search_census_regions <- function(searchterm, dataset, level=NA, ...) {
-  reglist <- list_census_regions(dataset, ...)
-  result <- reglist[grep(searchterm, reglist$name, ignore.case = TRUE),]
-
-  # filter by type if needed
-  if (!is.na(level) && length(rownames(result)) > 0) {
-    result <- result[result$level==level,]
-  }
-
-  # Check if searchterm returned anything
-  if (length(rownames(result)) > 0 ) {
-    attr(result, "dataset") <- dataset
-    return(result)
-  }
-  # If nothing matches, throw a warning and suggested alternatives.
-  # If no suggested alternatives because the typo is too egregious, throw an error.
-  else {
-    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
-    # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, reglist$name, ignore.case = TRUE, value = TRUE)),
-                                 .name_repair = "minimal")
-    names(hintlist) <- "Similar named regions"
-    #
-    if (nrow(hintlist) > 0) {
-      warning("No results found. Please use accurate spelling. See above for list of similarly named regions.")
-      print(hintlist)
-    } else {
-      stop("No results found.")
-    }
-  }
+  search_census_list(list_census_regions(dataset, ...), "name", searchterm, dataset,
+                     filter_column = "level", filter_value = level,
+                     hint_title = "Similar named regions", warn_id = "no_results_similar_regions")
 }
 
 #' Convert a (suitably filtered) data frame from
@@ -170,8 +118,7 @@ search_census_regions <- function(searchterm, dataset, level=NA, ...) {
 as_census_region_list <- function(tbl) {
   # This isn't bulletproof validation, but it should deter some misuse.
   if (!all(c("level", "region") %in% names(tbl))) {
-    stop(paste("`as_region_list()` can only handle data frames",
-               "returned by `list_regions()`."))
+    cc_abort("region_list_invalid")
   }
   nested <- dplyr::group_by(tbl, .data$level) %>%
     # Use the dark magic of list columns...
@@ -212,7 +159,7 @@ add_unique_names_to_region_list <- function(region_list) {
     dplyr::mutate(count=dplyr::n()) %>%
     dplyr::mutate(Name=dplyr::case_when(.data$count==1 ~ Name,
                                         TRUE ~ paste0(.data$Name," (",.data$region,")"))) %>%
-    dplyr::select(-.data$count) %>%
+    dplyr::select(-"count") %>%
     dplyr::ungroup()
 
   if (length(gs)>0) {
@@ -246,49 +193,3 @@ add_unique_names_to_region_list <- function(region_list) {
 #' muni_status("CT")
 #' muni_status("CV")
 #'
-# muni_status = function(code) {
-#   geography <- c("CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD", "CD",
-#                  "CD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
-#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
-#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
-#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
-#                  "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD", "CSD",
-#                  "CSD", "CSD", "CSD", "CSD")
-#   status_code <- c("CDR", "CT", "CTY", "DIS", "DM", "MRC", "RD", "REG", "RM", "TÉ", "TER",
-#             "UC", "C", "CC", "CG", "CN", "COM", "CT", "CU", "CV", "CY", "DM", "HAM",
-#             "ID", "IGD", "IM", "IRI", "LGD", "LOT", "M", "MD", "MÉ", "MU", "NH", "NL",
-#             "NO", "NV", "P", "PE", "RCR", "RDA", "RGM", "RM", "RV", "S-É", "SA", "SC",
-#             "SÉ", "SET", "SG", "SM", "SNO", "SV", "T", "TC", "TI", "TK", "TL", "TP",
-#             "TV", "V", "VC", "VK", "VL", "VN")
-#   status <- c("Census division / Division de recensement", "County / Comté", "County",
-#               "District", "District municipality", "Municipalité régionale de comté",
-#               "Regional district", "Region", "Regional municipality", "Territoire équivalent",
-#               "Territory / Territoire", "United counties", "City / Cité", "Chartered community",
-#               "Community government", "Crown colony / Colonie de la couronne", "Community",
-#               "Canton (municipalité de)", "Cantons unis (municipalité de)", "City / Ville",
-#               "City", "District municipality", "Hamlet", "Improvement district",
-#               "Indian government district", "Island municipality",
-#               "Indian reserve / Réserve indienne", "Local government district",
-#               "Township and royalty", "Municipality / Municipalité", "Municipal district",
-#               "Municipalité", "Municipality", "Northern hamlet", "Nisga'a land",
-#               "Unorganized / Non organisé", "Northern village",
-#               "Parish / Paroisse (municipalité de)", "Paroisse (municipalité de)",
-#               "Rural community / Communauté rurale", "Regional district electoral area",
-#               "Regional municipality", "Rural municipality", "Resort village",
-#               "Indian settlement / Établissement indien", "Special area",
-#               "Subdivision of county municipality / Subdivision municipalité de comté",
-#               "Settlement / Établissement", "Settlement",
-#               "Self-government / Autonomie gouvernementale", "Specialized municipality",
-#               "Subdivision of unorganized / Subdivision non organisée", "Summer village",
-#               "Town", "Terres réservées aux Cris", "Terre inuite",
-#               "Terres réservées aux Naskapis", "Teslin land", "Township", "Town / Ville",
-#               "Ville", "Village cri", "Village naskapi", "Village", "Village nordique")
-#   muni_types <- data.frame(geography = geography, status_code = status_code, status = status)
-#   result <- muni_types[muni_types$status_code == code,]
-#   return(result)
-#   if(nrow(result)>0) result else {
-#     stop(paste0('There is no Census division or subdivision or municipality status with code "',
-#                 code,'"'),
-#          call. = FALSE)
-#   }
-# }

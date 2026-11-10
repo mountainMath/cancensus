@@ -12,7 +12,7 @@
 #' @param dataset A CensusMapper dataset identifier.
 #' @param level The census aggregation level to retrieve. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996 census), or \code{"DB"} (for 2001-2016 censuses)..
 #' @param geometry A valid \code{sf} or \code{sfc} class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.
-#' @param simplified If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.
+#' @param simplified If \code{TRUE} will return a character vector of matching region ids, otherwise (the default) will return a region list compatible with \link{get_census}.
 #' @param use_cache If set to \code{TRUE} (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
@@ -53,12 +53,15 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     geometry=sf::st_geometry(geometry)
   }
   if (!("sfc" %in% class(geometry))) {
-    stop("The `geometry` parameter needs to be of class sf or sfc")
+    cc_abort("invalid_geometry")
   }
   if (length(geometry)>1) {
     geometry <- sf::st_union(geometry)
   }
 
+  if (is.na(sf::st_crs(geometry))) {
+    cc_abort("geometry_without_crs")
+  }
   crs=sf::st_crs(geometry)$epsg
 
   if (is.na(crs) || crs!=4326) {
@@ -76,42 +79,30 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
 
   if (!use_cache || !file.exists(data_file)) {
     if (!have_api_key) {
-      stop(paste("No API key set. Use set_cancensus_api_key('<your API key>') to set one, or set_cancensus_api_key('<your API key>', install = TRUE) to save it permanently in your .Renviron."))
+      cc_abort("no_api_key")
     }
-    url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
                  level=level,
                  area=sf::st_area(geometry) %>% as.numeric(),
                  geometry=geo,
                  api_key=api_key)
-    response <- if (!quiet) {
-      message("Querying CensusMapper API...")
-      httr::POST(url, body = body,
-                 config = httr::accept_json(),
-                 httr::progress())
-    } else {
-      httr::POST(url, body = body,
-                 config = httr::accept_json())
-    }
-    handle_cm_status_code(response, NULL)
-    data_version <- response$headers$`data-version`
+    if (!quiet) cc_inform("querying_api")
+    response <- cm_api_request("intersecting_geographies", body, httr::accept_json(), quiet = quiet)
 
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON()
     attr(result, "last_updated") <- Sys.time()
     save(result, file = data_file)
-    file_info <- file.info(data_file)
-    metadata <- dplyr::tibble(dataset=dataset,level=level,created_at=Sys.time(),
-                               version=data_version,size=file_info$size)
-    saveRDS(metadata, file = meta_file)
+    write_cache_metadata(meta_file, data_file, response, dataset=dataset, level=level)
+    warn_if_cache_not_persistent(quiet = quiet)
   } else {
-    if (!quiet) message("Reading intersection data from local cache.")
+    if (!quiet) cc_inform("reading_intersection_cache")
     # Load `result` object from cache.
     load(file = data_file)
   }
 
   touch_metadata(meta_file)
 
-  if(simplified) {result <- c(as.character(result))}
+  if (simplified) result <- as.character(unlist(result, use.names = FALSE))
   result
 }

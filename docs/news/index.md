@@ -1,6 +1,317 @@
 # Changelog
 
+## cancensus 0.6.2
+
+### Breaking changes
+
+- [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
+  now reads parquet files hosted at
+  <https://data.mountainmath.ca/census/geo_attributes/> instead of
+  downloading from Statistics Canada, which blocks programmatic
+  downloads of these files
+  ([\#228](https://github.com/mountainMath/cancensus/issues/228),
+  [\#233](https://github.com/mountainMath/cancensus/issues/233)). This
+  requires the **duckdb** and **DBI** packages. Column names are now
+  simpler and follow one convention across census years, so code using
+  the previous names needs updating, e.g. `CTCODE_SRCODE` is now
+  `CTCODE` for 2021, and `DBuid` and `DAlat` are now `DBUID` and
+  `DARPLAT` for 2006 and 2011. To make up for the simpler names, columns
+  now have labels describing them in the language of choice, set by the
+  new `language` parameter. Counts are now integers and coordinates are
+  numeric. Data gets downloaded again once. The previous cache in the
+  `attribute_files` folder of the cache directory and any copies of
+  these files in the `statcan_downloads` folder are no longer used, and
+  the function shows a command to delete them once per session
+- [`get_statcan_geo_suite()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.md)
+  now reads parquet files hosted at
+  <https://data.mountainmath.ca/census/geo_suite/> instead of
+  downloading from Statistics Canada, which blocks programmatic
+  downloads of the GeoSuite
+  ([\#228](https://github.com/mountainMath/cancensus/issues/228),
+  [\#234](https://github.com/mountainMath/cancensus/issues/234)). This
+  requires the **duckdb** and **DBI** packages. Column names follow the
+  attribute files from
+  [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md),
+  so code using the previous names needs updating, e.g. `DAuid_ADidu` is
+  now `DAUID`. The English part of the previous name of each column is
+  in the `source_field` entry of the `columns` metadata,
+  e.g. `attr(x, "metadata")$columns$DAPOP2021$source_field` is
+  `"DApop_2021"`. Counts are now integers and representative points
+  numeric, previously these were returned as text. The previous cache in
+  the `geo_suite_<year>` folders of the cache directory and any copies
+  of the GeoSuite in the `statcan_downloads` folder are no longer used,
+  and the function shows a command to delete them once per session
+
+### Deprecations
+
+- [`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)
+  is deprecated and will be removed in the next release, as Statistics
+  Canada blocks programmatic downloads of the relationship file
+  ([\#228](https://github.com/mountainMath/cancensus/issues/228)). It
+  warns once per session. `get_statcan_geographic_attributes("2021")`
+  has the same DGUIDs for each dissemination block, except for census
+  agricultural regions, which are only in the relationship file. Unlike
+  the relationship file, the attribute file fills `CMADGUID` outside
+  census metropolitan areas and census agglomerations with the
+  metropolitan influenced zone, and `CTDGUID` outside areas with census
+  tracts with a placeholder census tract. Use
+  `CMATYPE %in% c("B", "D", "K")` instead of `!is.na(CMADGUID)` to
+  select the blocks in census metropolitan areas and census
+  agglomerations
+
+### Improvements
+
+- [`get_statcan_geo_suite()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.md)
+  now covers the 1996 to 2021 censuses and all tables of the GeoSuite,
+  including census consolidated subdivisions (`CCS`), the parts of areas
+  spanning provinces or other areas (`_P` tables) and the code tables
+  like `CSDTYPE`
+  ([\#234](https://github.com/mountainMath/cancensus/issues/234)).
+  Called without `level` it lists the tables of a census year. Like
+  [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md),
+  it gains the `language` and `quiet` parameters, columns have labels in
+  the `"label"` attribute, and the `"metadata"` attribute of the result
+  has the attribution, licence, source and notes on each table
+- [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
+  now covers the 1981, 1986, 1991, 1996 and 2001 censuses
+  ([\#233](https://github.com/mountainMath/cancensus/issues/233)). 1981
+  to 1996 are at the enumeration area level, 2001 was derived from the
+  2001 GeoSuite. Columns have labels in the `"label"` attribute, in the
+  language given by the new `language` parameter, and the `"metadata"`
+  attribute of the result has the attribution, licence, source and notes
+  on each file. With `refresh = TRUE` it reports whether the hosted file
+  has changed
+- French labels
+  ([\#229](https://github.com/mountainMath/cancensus/issues/229)):
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md),
+  [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md),
+  [`parent_census_vectors()`](https://mountainmath.github.io/cancensus/reference/parent_census_vectors.md),
+  [`child_census_vectors()`](https://mountainmath.github.io/cancensus/reference/child_census_vectors.md),
+  [`find_census_vectors()`](https://mountainmath.github.io/cancensus/reference/find_census_vectors.md),
+  [`visualize_vector_hierarchy()`](https://mountainmath.github.io/cancensus/reference/visualize_vector_hierarchy.md)
+  and
+  [`dataset_attribution()`](https://mountainmath.github.io/cancensus/reference/dataset_attribution.md)
+  gain a `language` parameter, one of `"en"` or `"fr"`. It defaults to
+  the new `cancensus.language` option and otherwise to `"en"`, so
+  `options(cancensus.language = "fr")` switches the language for a
+  session. Column layouts are the same in both languages, and in
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  changing the language does not download the data again or use up API
+  quota. Vectors without French labels, currently the tax and
+  cross-tabulation datasets, fall back to English with a warning once
+  per session and dataset. Region names and the `type`, `units` and
+  `aggregation` columns of
+  [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
+  stay as they are
+- Errors, warnings and messages are now available in English and French.
+  They follow the `language` parameter where a function has one,
+  otherwise the `cancensus.language` option, and otherwise the language
+  of the system locale, e.g. `LANGUAGE=fr`. Data labels still default to
+  English unless the option is set, so that scripts give the same
+  results on all machines. Conditions have classes of the form
+  `cancensus_<id>`, e.g. `cancensus_no_api_key`, along with
+  `cancensus_error`, `cancensus_warning` or `cancensus_message`, so they
+  can be caught independent of the language. Errors from the
+  CensusMapper API and other packages are passed on as they are.
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  gains `labels = "labelled"`
+  ([\#230](https://github.com/mountainMath/cancensus/issues/230)), which
+  names columns by vector like `labels = "short"` and stores the label
+  of each variable in the `"label"` attribute of its column. The other
+  columns get short names, like `Name`, `Area`, `Quality` and
+  `Population_Previous`, that are the same across datasets and for data
+  and geometry requests, along with the same types and column order.
+  Columns that data and geometry requests both return, like the region
+  name and area, only appear once. These columns also get labels in the
+  requested language, including the census year where that applies,
+  e.g. `Population` is labelled `Population 2021` for CA21. Tax and
+  cross-tabulation datasets use the year of the census they take these
+  columns from, e.g. `Population 2016` for TX2018. Columns named by
+  naming `vectors` get the label of their variable, and if that name is
+  already used by another column, that column gets a trailing
+  underscore, e.g. `Population_` for
+  `vectors = c(Population = "v_CA21_1")`. `labels = "detailed"` and
+  `labels = "short"` do not change
+- The default of the `labels` parameter of
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  is planned to change to `"labelled"` in a future version. It now
+  defaults to the new `cancensus.labels` option and otherwise still to
+  `"detailed"`, and
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  shows a message once per session if neither `labels` nor the option
+  are set. Setting either one, e.g. with
+  `options(cancensus.labels = "detailed")`, ensures code keeps working
+  when the default changes, and `quiet = TRUE` suppresses the message
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  now stops with an error for invalid `labels` values, previously these
+  were treated like `labels = "detailed"`
+- All requests to the CensusMapper API now identify the package and
+  version through the user agent, in the form
+  `cancensus/<version> httr/<version> R/<version>`. This lets the API
+  know which tools are making requests and retain backward compatibility
+  with older package versions as the API evolves
+- Packages and tools building on **cancensus** can identify themselves
+  by setting `options(cancensus.user_agent_prefix = "mypackage/1.2.3")`,
+  which is prepended to the user agent
+- When no persistent cache path is set, **cancensus** now warns once per
+  session when data gets downloaded, instead of emitting a message on
+  package load and on every internal cache lookup, including when
+  nothing was downloaded
+  ([\#227](https://github.com/mountainMath/cancensus/issues/227)).
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md),
+  [`get_intersecting_geometries()`](https://mountainmath.github.io/cancensus/reference/get_intersecting_geometries.md)
+  and the StatCan download functions no longer emit this notice
+  otherwise, and `quiet = TRUE` suppresses it where available. Since
+  this is a warning, it will show up in rendered documents and turns
+  into an error under `options(warn = 2)`, setting a cache path avoids
+  it
+- Documented how to use
+  [`set_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.md)
+  without `install = TRUE` to set up a project-specific cache
+- [`list_census_datasets()`](https://mountainmath.github.io/cancensus/reference/list_census_datasets.md)
+  and
+  [`list_census_regions()`](https://mountainmath.github.io/cancensus/reference/list_census_regions.md)
+  now respect the `cancensus.base_url` option like all other
+  CensusMapper API calls
+- The lists of datasets, regions and vectors are kept in memory for the
+  session instead of also being written to the temporary directory,
+  [`list_census_datasets()`](https://mountainmath.github.io/cancensus/reference/list_census_datasets.md)
+  no longer reads its list from disk on every call
+
+### Bug fixes
+
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  now accepts `"CA"` and `"CMACA"` in addition to `"CMA"`, both for the
+  `level` parameter and as names of `regions`. All three refer to the
+  same level, which contains both census metropolitan areas and census
+  agglomerations. This also fixes the error when passing census
+  agglomerations from
+  [`list_census_regions()`](https://mountainmath.github.io/cancensus/reference/list_census_regions.md)
+  through
+  [`as_census_region_list()`](https://mountainmath.github.io/cancensus/reference/as_census_region_list.md)
+  to
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  ([\#208](https://github.com/mountainMath/cancensus/issues/208))
+- The examples of
+  [`show_cancensus_api_key()`](https://mountainmath.github.io/cancensus/reference/show_cancensus_api_key.md)
+  and
+  [`show_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/show_cancensus_cache_path.md)
+  no longer run when building documentation, which printed the values
+  set on the build machine into the generated pages
+- [`label_vectors()`](https://mountainmath.github.io/cancensus/reference/label_vectors.md)
+  now works for `sf` and `sp` results of
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md).
+  Renaming columns dropped the labels for most requests with geographic
+  data
+- `find_census_vectors(query_type = "keyword")` no longer errors in
+  non-interactive sessions when there are additional matches with less
+  precision. It returns the top matches with a message about the number
+  of additional matches, since the prompt to show them can’t be answered
+- [`label_vectors()`](https://mountainmath.github.io/cancensus/reference/label_vectors.md)
+  now returns the full label for vectors with colons in their label,
+  e.g. `Size of census family: 2 persons` in CA06 and CA11. Previously
+  the `Detail` column was cut off at the second colon, and the result
+  had a third unnamed column
+- [`find_census_vectors()`](https://mountainmath.github.io/cancensus/reference/find_census_vectors.md)
+  keyword and semantic search no longer drop non-ASCII letters from the
+  query
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  no longer errors when only some of the `vectors` are named, the
+  unnamed ones keep their vector code as column name
+- Checking the local cache for recalled data no longer errors when the
+  recall database lists only data recalls or only geometry recalls.
+  Previously this would have made
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  fail for users with a non-empty cache
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  and
+  [`list_census_regions()`](https://mountainmath.github.io/cancensus/reference/list_census_regions.md)
+  no longer trigger a deprecation warning with readr 2.2.0 or newer when
+  parsing downloaded data, **cancensus** now requires readr 2.0.0 or
+  newer
+- Column selections no longer use `.data`, which is deprecated in
+  tidyselect 1.2.0 and newer
+- [`show_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/show_cancensus_cache_path.md)
+  now also reports a cache path set via the `cancensus.cache_path`
+  option, previously it reported that no cache path was set
+- The error for a corrupt cache path no longer ends in a stray `FALSE`
+- [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
+  no longer returns misaligned columns for 2006 and 2011, the
+  fixed-width layout it used did not match these files. For 2006 the
+  columns from `DAlamy` on were wrong, for 2011 the columns from `CDuid`
+  on, so results based on these columns from earlier versions should be
+  checked
+- [`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+  and
+  [`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)
+  now fail gracefully when Statistics Canada blocks the download with a
+  Cloudflare browser verification
+  ([\#228](https://github.com/mountainMath/cancensus/issues/228)). They
+  return `NULL` with a warning that gives the link for downloading the
+  file in a browser and the location in the cache directory to move it
+  to, and pick up the file from there on the next run. If the download
+  was blocked while refreshing existing cached data with
+  `refresh = TRUE`, they return the cached data with the same warning
+  instead of `NULL`. The file has to stay zipped, so on macOS the
+  warning points out that Safari unzips downloads automatically, and it
+  flags folders that look like an unzipped copy of the file
+- [`get_intersecting_geometries()`](https://mountainmath.github.io/cancensus/reference/get_intersecting_geometries.md)
+  with `simplified = TRUE` now returns the character vector of region
+  ids, previously it returned them collapsed into a single string. The
+  documentation of `simplified` had the two cases the wrong way around
+  and has been corrected
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  now checks the `resolution` parameter when geometries are requested,
+  previously it was only checked when it was not used
+- [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+  now stops with an error pointing to
+  [`get_statcan_wds_data()`](https://mountainmath.github.io/cancensus/reference/get_statcan_wds_data.md)
+  for the `"ADA"` level, which CensusMapper does not have data for.
+  Previously this warned about an unknown level and returned regions
+  without data
+- When the list of recalled data can’t be downloaded, **cancensus** now
+  warns once per session instead of trying and warning again on every
+  read from the cache. The list also only gets read once per session
+- [`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+  no longer leaves empty temporary folders in the cache
+- [`find_census_vectors()`](https://mountainmath.github.io/cancensus/reference/find_census_vectors.md)
+  with `query_type = "keyword"` no longer returns all vectors for
+  queries without any letters, e.g. `"2021"`
+- The check for recalled data compares data versions as numbers,
+  previously version 10 of the data would have been treated as older
+  than version 3
+- [`set_cancensus_api_key()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_api_key.md)
+  and
+  [`set_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.md)
+  with `install = TRUE` now keep the previous version of the `.Renviron`
+  file as backup, previously the backup was only made the first time and
+  never updated. They only replace the line setting the key or cache
+  path, and no longer remove other lines that mention `CM_API_KEY` or
+  `CM_CACHE_PATH`, and they no longer append to the last line of a
+  `.Renviron` file that does not end in a line break
+- [`get_statcan_wds_metadata()`](https://mountainmath.github.io/cancensus/reference/get_statcan_wds_metadata.md)
+  only caches metadata that is valid, previously an error page or an
+  interrupted download got cached and failed on every call until
+  refreshed.
+  [`get_statcan_wds_data()`](https://mountainmath.github.io/cancensus/reference/get_statcan_wds_data.md)
+  gives an informative error for DGUIDs it can’t determine the
+  geographic level of, and explains failed certificate checks of the
+  Statistics Canada server as intended
+- The warnings of
+  [`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+  and
+  [`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)
+  for blocked downloads and invalid manually downloaded files now have
+  the classes `cancensus_statcan_blocked` and
+  `cancensus_statcan_invalid_manual_file`, like all other conditions of
+  the package
+- [`get_intersecting_geometries()`](https://mountainmath.github.io/cancensus/reference/get_intersecting_geometries.md)
+  gives an informative error for geometries without a coordinate
+  reference system
+
 ## cancensus 0.6.1
+
+CRAN release: 2026-06-19
 
 ### Bug fixes
 

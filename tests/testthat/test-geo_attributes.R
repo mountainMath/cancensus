@@ -1,0 +1,229 @@
+skip_if_not_installed("duckdb", "1.5.6")
+skip_if_not_installed("DBI")
+
+test_that("invalid arguments are errors before anything gets downloaded", {
+  with_statcan_cache({
+    mock_no_download()
+    expect_error(get_statcan_geographic_attributes("1976"), "Only census years 1981, 1986")
+    expect_error(get_statcan_geographic_attributes("2022"), "Only census years")
+    expect_error(get_statcan_geographic_attributes("2021", language = "de"), "Language must be")
+  })
+})
+
+test_that("files get downloaded from the expected URL for all census years", {
+  with_statcan_cache({
+    for (year in seq(1981, 2021, 5)) {
+      source <- write_attributes_file(tempfile(fileext = ".parquet"))
+      url <- NULL
+      local_mocked_bindings(fetch_hosted_file = function(u, path, quiet = FALSE) {
+        url <<- u
+        file.copy(source, path, overwrite = TRUE)
+        fake_response(200)
+      })
+      suppressMessages(get_statcan_geographic_attributes(year))
+      expect_equal(url, paste0("https://data.mountainmath.ca/census/geo_attributes/geo_attributes_",
+                               year, ".parquet"))
+      unlink(source)
+    }
+  })
+})
+
+test_that("data gets returned with labels and metadata and is cached", {
+  with_statcan_cache({
+    source <- write_attributes_file(tempfile(fileext = ".parquet"))
+    on.exit(unlink(source), add = TRUE)
+    mock_hosted_file(source)
+
+    expect_message(result <- get_statcan_geographic_attributes("2021"),
+                   "source: Statistics Canada, a test file. Licence: Test licence.", fixed = TRUE)
+    expect_s3_class(result, "tbl_df")
+    expect_equal(as.vector(result$DBUID), "1001")
+    expect_equal(as.vector(result$DBPOP2021), 5L)
+    expect_type(result$DBPOP2021, "integer")
+    expect_equal(attr(result$DBUID, "label"), "Block ID")
+    expect_null(attr(result$NOTE, "label"))
+
+    metadata <- attr(result, "metadata")
+    expect_equal(metadata$attribution_en, "Statistics Canada, a test file")
+    expect_equal(metadata$primary_key, "DBUID")
+    expect_equal(metadata$title_fr, "Fichier des attributs géographiques")
+    expect_true(file.exists(cancensus:::cache_path("geo_attributes_2021.parquet")))
+
+    # served from the cache from now on, without the message
+    mock_no_download()
+    expect_no_message(cached <- get_statcan_geographic_attributes("2021"))
+    expect_equal(as.vector(cached$DBUID), "1001")
+  })
+})
+
+test_that("labels follow the language and fall back to English", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"))
+    mock_no_download()
+
+    french <- get_statcan_geographic_attributes("2021", language = "fr")
+    expect_equal(attr(french$DBUID, "label"), "IDU de l'îlot")
+    expect_equal(attr(french$DBPOP2021, "label"), "Block population")
+
+    rlang::local_options(cancensus.language = "fr")
+    expect_equal(attr(get_statcan_geographic_attributes("2021")$DBUID, "label"), "IDU de l'îlot")
+  })
+})
+
+test_that("a refresh replaces the cached file and reports if it has changed", {
+  with_statcan_cache({
+    cached <- write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"), uid = "old")
+
+    unchanged <- tempfile(fileext = ".parquet")
+    file.copy(cached, unchanged)
+    on.exit(unlink(unchanged), add = TRUE)
+    mock_hosted_file(unchanged)
+    expect_message(get_statcan_geographic_attributes("2021", refresh = TRUE), "has not changed")
+
+    source <- write_attributes_file(tempfile(fileext = ".parquet"), uid = "new")
+    on.exit(unlink(source), add = TRUE)
+    mock_hosted_file(source)
+    expect_message(result <- get_statcan_geographic_attributes("2021", refresh = TRUE), "has changed")
+    expect_equal(as.vector(result$DBUID), "new")
+
+    mock_no_download()
+    expect_equal(as.vector(get_statcan_geographic_attributes("2021")$DBUID), "new")
+  })
+})
+
+test_that("quiet = TRUE suppresses messages without using up the old files notice", {
+  with_statcan_cache({
+    source <- write_attributes_file(tempfile(fileext = ".parquet"))
+    on.exit(unlink(source), add = TRUE)
+    mock_hosted_file(source)
+    old_dir <- file.path(cancensus:::cache_path("attribute_files"), "2021")
+    dir.create(old_dir, recursive = TRUE)
+    writeBin(raw(10), file.path(old_dir, "2021_92-151_X.csv"))
+
+    expect_no_message(result <- get_statcan_geographic_attributes("2021", quiet = TRUE))
+    expect_equal(as.vector(result$DBUID), "1001")
+    expect_no_message(get_statcan_geographic_attributes("2021", refresh = TRUE, quiet = TRUE))
+
+    # the notice about the old files still shows on the next call that is not quiet
+    expect_message(get_statcan_geographic_attributes("2021"), "no longer used")
+  })
+})
+
+test_that("failed downloads warn and return NULL, and leave no files behind", {
+  with_statcan_cache({
+    failures <- list(
+      list(function(url, path, quiet = FALSE) fake_response(404), "HTTP status 404"),
+      list(function(url, path, quiet = FALSE) stop("Could not resolve host"), "Could not resolve host"),
+      list(function(url, path, quiet = FALSE) {
+        writeLines("<html>Just a moment...</html>", path)
+        fake_response(200)
+      }, "did not return a complete parquet file")
+    )
+    for (failure in failures) {
+      local_mocked_bindings(fetch_hosted_file = failure[[1]])
+      w <- capture_warnings(result <- get_statcan_geographic_attributes("2021"))
+      expect_null(result)
+      expect_length(w, 1)
+      expect_match(w, failure[[2]], fixed = TRUE)
+      expect_match(w, "Returning NULL", fixed = TRUE)
+      expect_length(dir(cancensus:::cache_path(), "parquet"), 0)
+    }
+  })
+})
+
+test_that("a truncated download is not accepted", {
+  with_statcan_cache({
+    source <- write_attributes_file(tempfile(fileext = ".parquet"))
+    on.exit(unlink(source), add = TRUE)
+    bytes <- readBin(source, "raw", file.size(source))
+    local_mocked_bindings(fetch_hosted_file = function(url, path, quiet = FALSE) {
+      writeBin(bytes[seq_len(length(bytes) - 10)], path)
+      fake_response(200)
+    })
+    expect_warning(expect_null(get_statcan_geographic_attributes("2021")), "complete parquet file")
+  })
+})
+
+test_that("a failed refresh returns the cached data with a warning", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"), uid = "old")
+    local_mocked_bindings(fetch_hosted_file = function(url, path, quiet = FALSE) fake_response(503))
+
+    w <- capture_warnings(result <- get_statcan_geographic_attributes("2021", refresh = TRUE))
+    expect_equal(as.vector(result$DBUID), "old")
+    expect_match(w, "HTTP status 503", fixed = TRUE)
+    expect_match(w, "Returning the existing cached data instead", fixed = TRUE)
+    expect_equal(as.vector(get_statcan_geographic_attributes("2021")$DBUID), "old")
+  })
+})
+
+test_that("an invalid cached file gets downloaded again", {
+  with_statcan_cache({
+    writeLines("not parquet", cancensus:::cache_path("geo_attributes_2021.parquet"))
+    source <- write_attributes_file(tempfile(fileext = ".parquet"))
+    on.exit(unlink(source), add = TRUE)
+    mock_hosted_file(source)
+    expect_equal(as.vector(suppressMessages(get_statcan_geographic_attributes("2021"))$DBUID), "1001")
+  })
+})
+
+test_that("old attribute files are pointed out once with a working command, and not deleted", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"))
+    mock_no_download()
+    old_dir <- file.path(cancensus:::cache_path("attribute_files"), "2021")
+    dir.create(old_dir, recursive = TRUE)
+    old_file <- file.path(old_dir, "2021_92-151_X.csv")
+    writeBin(raw(2000), old_file)
+    downloads <- cancensus:::statcan_downloads_path()
+    dir.create(downloads)
+    old_zip <- file.path(downloads, "2021_92-151_X.zip")
+    writeBin(raw(1000), old_zip)
+    other_zip <- file.path(downloads, "2021_98260004.zip")
+    writeBin(raw(10), other_zip)
+
+    m <- capture_messages(result <- get_statcan_geographic_attributes("2021"))
+    expect_length(m, 1)
+    expect_match(m, "take up 3 kB", fixed = TRUE)
+    expect_equal(as.vector(result$DBUID), "1001")
+    expect_true(file.exists(old_file))
+    expect_true(file.exists(old_zip))
+
+    # only once per session
+    expect_no_message(get_statcan_geographic_attributes("2021"))
+
+    # the command in the message removes the old files and nothing else
+    command <- trimws(sub(".*\n", "", trimws(m)))
+    expect_match(command, "^unlink\\(c\\(")
+    eval(parse(text = command))
+    expect_false(dir.exists(cancensus:::cache_path("attribute_files")))
+    expect_false(file.exists(old_zip))
+    expect_true(file.exists(other_zip))
+    expect_true(file.exists(cancensus:::cache_path("geo_attributes_2021.parquet")))
+  })
+})
+
+test_that("nothing gets pointed out without old attribute files", {
+  with_statcan_cache({
+    write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"))
+    mock_no_download()
+    downloads <- cancensus:::statcan_downloads_path()
+    dir.create(downloads)
+    writeBin(raw(10), file.path(downloads, "2021_98260004.zip"))
+    expect_no_message(get_statcan_geographic_attributes("2021"))
+  })
+})
+
+test_that("the hosted files can be read", {
+  skip_on_cran()
+  skip_if_offline("data.mountainmath.ca")
+  with_statcan_cache({
+    result <- suppressMessages(get_statcan_geographic_attributes("1981"))
+    expect_equal(nrow(result), 41197)
+    expect_false(anyDuplicated(result$EAUID) > 0)
+    expect_equal(sum(result$EAPOP1981), 24343181)
+    expect_type(result$EAUID, "character")
+    expect_match(attr(result, "metadata")$attribution_en, "Statistics Canada")
+    expect_false(is.null(attr(result$EAUID, "label")))
+  })
+})

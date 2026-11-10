@@ -4,7 +4,7 @@
 \alias{retry_api_call}
 \title{Retry an API call with exponential backoff}
 \usage{
-retry_api_call(call_fn, max_retries = 3, quiet = FALSE)
+retry_api_call(call_fn, max_retries = 3, quiet = FALSE, language = NULL)
 }
 \arguments{
 \item{call_fn}{A function that performs the API call and returns an httr response}
@@ -12,6 +12,8 @@ retry_api_call(call_fn, max_retries = 3, quiet = FALSE)
 \item{max_retries}{Maximum number of retry attempts (default: 3)}
 
 \item{quiet}{If TRUE, suppress retry messages}
+
+\item{language}{Language of the retry messages, see \code{message_language}}
 }
 \value{
 The httr response object

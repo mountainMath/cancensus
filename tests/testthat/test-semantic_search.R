@@ -186,3 +186,58 @@ test_that("semantic_search n-gram optimization produces identical results", {
     }
   }
 })
+
+keyword_vectors <- data.frame(vector = c("v_1", "v_2", "v_3"), type = "Total", label = c("a", "b", "c"),
+                              details = c("ukrainian origin", "ukrainian language", "origin of trade"),
+                              stringsAsFactors = FALSE)
+
+test_that("keyword search returns top matches with a message in non-interactive sessions", {
+  local_mocked_bindings(session_is_interactive = function() FALSE)
+  expect_message(result <- keyword_search("ukrainian origin", keyword_vectors), "2 additional keyword matches")
+  expect_equal(result$vector, "v_1")
+})
+
+test_that("keyword search with interactive = FALSE returns top matches without a message", {
+  local_mocked_bindings(session_is_interactive = function() {
+    stop("should not be consulted when the prompt is turned off")
+  })
+  expect_no_message(result <- keyword_search("ukrainian origin", keyword_vectors, interactive = FALSE))
+  expect_equal(result$vector, "v_1")
+})
+
+test_that("keyword search prompts in interactive sessions and follows the answer", {
+  local_mocked_bindings(session_is_interactive = function() TRUE)
+  local_mocked_bindings(menu = function(...) 1L, .package = "utils")
+  capture.output(more <- keyword_search("ukrainian origin", keyword_vectors))
+  expect_setequal(more$vector, c("v_2", "v_3"))
+
+  local_mocked_bindings(menu = function(...) 2L, .package = "utils")
+  capture.output(expect_message(top <- keyword_search("ukrainian origin", keyword_vectors), "top 1 result"))
+  expect_equal(top$vector, "v_1")
+})
+
+test_that("keyword search does not prompt when all matches are equally good", {
+  local_mocked_bindings(session_is_interactive = function() stop("should not be consulted"))
+  expect_no_message(result <- keyword_search("ukrainian", keyword_vectors))
+  expect_setequal(result$vector, c("v_1", "v_2"))
+})
+
+test_that("find_census_vectors keyword search does not error in non-interactive sessions", {
+  local_mocked_bindings(list_census_vectors = function(...) keyword_vectors,
+                        session_is_interactive = function() FALSE)
+  expect_message(result <- find_census_vectors("ukrainian origin", dataset = "CA21", query_type = "keyword"),
+                 "additional keyword matches")
+  expect_equal(result$vector, "v_1")
+
+  expect_no_message(quiet <- find_census_vectors("ukrainian origin", dataset = "CA21", query_type = "keyword",
+                                                 interactive = FALSE))
+  expect_equal(quiet$vector, "v_1")
+})
+
+test_that("keyword search without any letters in the query matches nothing", {
+  for (query in c("2021", "", "$ %")) {
+    expect_warning(result <- keyword_search(query, keyword_vectors, interactive = FALSE),
+                   class = "cancensus_no_keyword_matches")
+    expect_false(is.data.frame(result))
+  }
+})

@@ -5,7 +5,7 @@ Get attribution for datasets
 ## Usage
 
 ``` r
-dataset_attribution(datasets)
+dataset_attribution(datasets, language = getOption("cancensus.language", "en"))
 ```
 
 ## Arguments
@@ -13,6 +13,11 @@ dataset_attribution(datasets)
 - datasets:
 
   Vector of dataset identifiers
+
+- language:
+
+  Language of the attribution, one of `"en"` or `"fr"`. Defaults to the
+  `cancensus.language` option, and to `"en"` if that is not set.
 
 ## Value
 

@@ -2,29 +2,73 @@
 % Please edit documentation in R/geo_suite.R
 \name{get_statcan_geo_suite}
 \alias{get_statcan_geo_suite}
-\title{Read the geosuite data}
+\title{Read GeoSuite tables}
 \usage{
-get_statcan_geo_suite(level, census_year = "2021", refresh = FALSE)
+get_statcan_geo_suite(
+  level = NULL,
+  census_year = "2021",
+  refresh = FALSE,
+  language = getOption("cancensus.language", "en"),
+  quiet = FALSE
+)
 }
 \arguments{
-\item{level}{geographic level to return the data for, valid choices are
-"DB", "DA", "ADA", "CT", "CSD", "CMA", "CD", "PR", "FED", "DPL", "ER", "PN", "POPCTR"}
+\item{level}{the table to read, e.g. \code{"DA"}, \code{"CSD"} or \code{"CMA_CA"}. \code{"CMA"}, \code{"CA"} and \code{"CMACA"} read
+\code{"CMA_CA"}, \code{"LOC"} reads \code{"PN"} and \code{"CB"} reads \code{"DB"}. If \code{NULL} this returns the list of tables
+for the census year.}
 
-\item{census_year}{census year to get the data for, right now only 2021 is supported}
+\item{census_year}{census year to get the data for, one of 1996, 2001, 2006, 2011, 2016 or 2021. For
+older censuses \code{get_statcan_geographic_attributes()} has much of the same information.}
 
-\item{refresh}{(logical) refresh the cache if true}
+\item{refresh}{(logical) download the table again if true, and report if it has changed}
+
+\item{language}{language of the column labels and table titles, one of \code{"en"} or \code{"fr"}. Defaults to
+the \code{cancensus.language} option, and to \code{"en"} if that is not set. This does not change the data.}
+
+\item{quiet}{(logical) suppress messages and the progress bar if \code{TRUE}. Warnings about failed
+downloads are still shown.}
 }
 \value{
-tibble with the geosuite data
+tibble with the GeoSuite table, with a description of each column in its \code{"label"} attribute.
+The \code{"metadata"} attribute of the tibble holds the metadata of the table, including the attribution,
+licence, source and notes. If \code{level} is \code{NULL}, a tibble with the \code{table} names, their \code{title} and
+\code{primary_key} and the \code{size} of the file in bytes. If the data can't be downloaded this gives a warning,
+and returns the cached data when refreshing existing cached data and \code{NULL} otherwise.
 }
 \description{
-Reads the geosuite data for the given level and census year. Data gets cached after first download if the
-cancensus cache path has been set. For older
-years `get_statcan_geographic_attributes()` can fill in most of the information
+Reads a table of the Statistics Canada GeoSuite for the given census year. The GeoSuite has a table for
+each geographic level, with the codes and names of the areas, how they relate to other levels, population
+and dwelling counts, land areas and representative points, along with code tables like the census
+subdivision types. Called without \code{level} this lists the tables available for the census year.
+
+The data comes from parquet files hosted at \url{https://data.mountainmath.ca/census/geo_suite/},
+as Statistics Canada now blocks programmatic downloads of the GeoSuite. The files are derived from
+Statistics Canada data under the Statistics Canada Open Licence. They get downloaded on first use and
+cached if the cancensus cache path has been set, and cached copies only get updated with
+\code{refresh = TRUE}. Reading the tables requires the \pkg{duckdb} and \pkg{DBI} packages.
 }
+\section{Tables and columns}{
+
+The GeoSuite is available for the censuses from 1996 to 2021. The tables differ between census years,
+for example 1996 has enumeration areas (\code{EA}) instead of dissemination areas and blocks, 2001 to 2006 have
+urban areas (\code{UA}) and 2011 on population centres (\code{POPCTR}). Tables ending in \verb{_P} hold the parts of
+areas that span provinces or other areas. \code{PN} is the place name table, called \code{LOC} in the source.
+
+Column names follow the attribute files from \code{get_statcan_geographic_attributes()}: the level, the
+measure and the census year, e.g. \code{CSDUID}, \code{CSDPOP2021} or \code{DARPLAT}. The same columns have the same
+names across census years, and the tables can be joined to the attribute files without renaming. A suffix
+\code{A} marks counts of the previous census adjusted to the current boundaries, and \code{C} or \code{AC} corrected
+counts from the count review. Columns referring to other levels hold the code within the parent
+level as in the source, e.g. \code{CSDCODE} instead of \code{CSDUID}. Each column has a description in its
+\code{"label"} attribute, and the Statistics Canada field name in the \code{source_field} entry of the \code{columns}
+metadata.
+}
+
 \examples{
-# list add the cached census data
 \dontrun{
-get_statcan_geo_suite("DA","2021")
+# list the tables of the 2021 GeoSuite
+get_statcan_geo_suite(census_year = "2021")
+# read the dissemination areas
+get_statcan_geo_suite("DA", "2021")
 }
 }
