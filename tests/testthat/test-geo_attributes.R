@@ -1,40 +1,6 @@
 skip_if_not_installed("duckdb", "1.5.6")
 skip_if_not_installed("DBI")
 
-# A small parquet file like the hosted ones, with footer metadata
-write_attributes_file <- function(path, uid = "1001", population = 5L) {
-  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE))
-  on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
-  columns <- paste0('{"DBUID":{"label_en":"Block ID","label_fr":"IDU de l\'\'îlot"},',
-                    '"DBPOP2021":{"label_en":"Block population"}}')
-  DBI::dbExecute(con, paste0(
-    "COPY (SELECT '", uid, "' AS DBUID, ", population, "::INTEGER AS DBPOP2021, 'x' AS NOTE) TO ",
-    DBI::dbQuoteString(con, path), " (FORMAT parquet, KV_METADATA {",
-    "attribution_en: 'Statistics Canada, a test file', licence_en: 'Test licence', ",
-    "title_fr: 'Fichier des attributs géographiques', primary_key: '[\"DBUID\"]', ",
-    "columns: '", columns, "'})"))
-  path
-}
-
-# Serve the file at `source` in place of the hosted file, and fail on any other request
-mock_hosted_file <- function(source, env = parent.frame()) {
-  local_mocked_bindings(
-    fetch_parquet_file = function(url, path, quiet = FALSE) {
-      file.copy(source, path, overwrite = TRUE)
-      fake_response(200)
-    },
-    .env = env
-  )
-}
-
-# Report a failure on any download attempt
-mock_no_download <- function(env = parent.frame()) {
-  local_mocked_bindings(
-    fetch_parquet_file = function(url, path, quiet = FALSE) stop("Unexpected download of ", url),
-    .env = env
-  )
-}
-
 test_that("invalid arguments are errors before anything gets downloaded", {
   with_statcan_cache({
     mock_no_download()
@@ -49,7 +15,7 @@ test_that("files get downloaded from the expected URL for all census years", {
     for (year in seq(1981, 2021, 5)) {
       source <- write_attributes_file(tempfile(fileext = ".parquet"))
       url <- NULL
-      local_mocked_bindings(fetch_parquet_file = function(u, path, quiet = FALSE) {
+      local_mocked_bindings(fetch_hosted_file = function(u, path, quiet = FALSE) {
         url <<- u
         file.copy(source, path, overwrite = TRUE)
         fake_response(200)
@@ -154,7 +120,7 @@ test_that("failed downloads warn and return NULL, and leave no files behind", {
       }, "did not return a complete parquet file")
     )
     for (failure in failures) {
-      local_mocked_bindings(fetch_parquet_file = failure[[1]])
+      local_mocked_bindings(fetch_hosted_file = failure[[1]])
       w <- capture_warnings(result <- get_statcan_geographic_attributes("2021"))
       expect_null(result)
       expect_length(w, 1)
@@ -170,7 +136,7 @@ test_that("a truncated download is not accepted", {
     source <- write_attributes_file(tempfile(fileext = ".parquet"))
     on.exit(unlink(source), add = TRUE)
     bytes <- readBin(source, "raw", file.size(source))
-    local_mocked_bindings(fetch_parquet_file = function(url, path, quiet = FALSE) {
+    local_mocked_bindings(fetch_hosted_file = function(url, path, quiet = FALSE) {
       writeBin(bytes[seq_len(length(bytes) - 10)], path)
       fake_response(200)
     })
@@ -181,7 +147,7 @@ test_that("a truncated download is not accepted", {
 test_that("a failed refresh returns the cached data with a warning", {
   with_statcan_cache({
     write_attributes_file(cancensus:::cache_path("geo_attributes_2021.parquet"), uid = "old")
-    local_mocked_bindings(fetch_parquet_file = function(url, path, quiet = FALSE) fake_response(503))
+    local_mocked_bindings(fetch_hosted_file = function(url, path, quiet = FALSE) fake_response(503))
 
     w <- capture_warnings(result <- get_statcan_geographic_attributes("2021", refresh = TRUE))
     expect_equal(as.vector(result$DBUID), "old")

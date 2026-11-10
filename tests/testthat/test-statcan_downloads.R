@@ -68,8 +68,6 @@ test_that("blocked downloads warn with the link and target location and return N
 test_that("all StatCan download functions fail gracefully when blocked", {
   with_statcan_cache({
     mock_statcan(blocked_response())
-    expect_warning(expect_null(get_statcan_geo_suite("DA", "2021")),
-                   "2021_92-150-X_eng.zip", fixed = TRUE)
     expect_warning(expect_null(get_statcan_geography_relationships("2021")),
                    "2021_98260004.zip", fixed = TRUE)
     expect_warning(expect_null(get_statcan_geographies("2021", "PR", quiet = TRUE)),
@@ -116,17 +114,6 @@ test_that("manually downloaded geography relationship files get picked up", {
     expect_false(file.exists(deposit("2021_98260004.zip")))
     expect_true(file.exists(cancensus:::cache_path("geography_relationship_2021.zip")))
     expect_equal(get_statcan_geography_relationships("2021")$DGUID, "abc")
-  })
-})
-
-test_that("manually downloaded GeoSuite files get picked up", {
-  with_statcan_cache({
-    mock_statcan()
-    make_zip(deposit("2021_92-150-X_eng.zip"),
-             list("2021_92-150-X_eng/DA.csv" = c("DAuid_ADidu", "59150001")))
-
-    expect_equal(suppressMessages(get_statcan_geo_suite("DA", "2021"))$DAuid_ADidu, "59150001")
-    expect_false(file.exists(deposit("2021_92-150-X_eng.zip")))
   })
 })
 
@@ -188,9 +175,6 @@ test_that("blocked refreshes return the cached data for the other StatCan functi
     mock_statcan()
     make_zip(deposit("2021_98260004.zip"), list("rel.csv" = c("DGUID", "abc")))
     get_statcan_geography_relationships("2021")
-    make_zip(deposit("2021_92-150-X_eng.zip"),
-             list("2021_92-150-X_eng/DA.csv" = c("DAuid_ADidu", "59150001")))
-    suppressMessages(get_statcan_geo_suite("DA", "2021"))
 
     shp_dir <- tempfile("shp")
     dir.create(shp_dir)
@@ -204,9 +188,6 @@ test_that("blocked refreshes return the cached data for the other StatCan functi
     expect_warning(rel <- get_statcan_geography_relationships("2021", refresh = TRUE),
                    "Returning the existing cached data instead")
     expect_equal(rel$DGUID, "abc")
-    expect_warning(gs <- get_statcan_geo_suite("DA", "2021", refresh = TRUE),
-                   "Returning the existing cached data instead")
-    expect_equal(gs$DAuid_ADidu, "59150001")
     expect_warning(geos <- get_statcan_geographies("2021", "PR", refresh = TRUE, quiet = TRUE),
                    "Returning the existing cached data instead")
     expect_equal(geos$PRUID, "59")
