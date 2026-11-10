@@ -211,6 +211,19 @@ test_that("visualize_vector_hierarchy prints labels in the requested language", 
   expect_false(any(grepl("Age", output, fixed = TRUE)))
 })
 
+test_that("visualize_vector_hierarchy marks leaves and types in the requested language", {
+  local_vector_info("FR")
+  fr <- capture.output(visualize_vector_hierarchy("v_FR_1", language = "fr", show_type = TRUE, quiet = TRUE))
+  en <- capture.output(visualize_vector_hierarchy("v_FR_1", language = "en", show_type = TRUE, quiet = TRUE))
+  expect_false(any(grepl("(leaf)", fr, fixed = TRUE)))
+  expect_identical(grepl("(feuille)", fr, fixed = TRUE), grepl("(leaf)", en, fixed = TRUE))
+  expect_true(any(grepl("(feuille)", fr, fixed = TRUE)))
+  expect_true(any(grepl("[Femmes]", fr, fixed = TRUE)))
+  expect_true(any(grepl("[Female]", en, fixed = TRUE)))
+  expect_false(any(grepl("[Female]", fr, fixed = TRUE)))
+  expect_equal(vector_type_label(c("Total", "Male", "Female", NA), "fr"), c("Total", "Hommes", "Femmes", NA))
+})
+
 test_that("find_census_vectors searches in the requested language", {
   local_vector_info("VEC7")
   en <- find_census_vectors("census family", "VEC7", language = "en")

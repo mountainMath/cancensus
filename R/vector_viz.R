@@ -103,21 +103,31 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
   # Print root
   root_label <- root_info$label
   if (show_type) {
-    root_label <- paste0(root_label, " [", root_info$type, "]")
+    root_label <- paste0(root_label, " [", vector_type_label(root_info$type, language), "]")
   }
   cat(paste0(root_vector, ": ", root_label, "\n"))
 
   # Recursively print children
   print_children(root_vector, all_vectors, tree_vectors, prefix = "",
-                 show_type = show_type, current_depth = 1, max_depth = max_depth)
+                 show_type = show_type, current_depth = 1, max_depth = max_depth,
+                 language = language)
 
   invisible(tree_vectors)
+}
+
+# The vector type for display, the type column keeps the English values in both languages
+vector_type_label <- function(type, language = NULL) {
+  ids <- c(Total = "vector_type_total", Male = "vector_type_male", Female = "vector_type_female")
+  # type is a factor, iterating over it directly would give the level codes
+  vapply(as.character(type), function(t) {
+    if (!is.na(t) && t %in% names(ids)) cc_msg(ids[[t]], .language = language) else as.character(t)
+  }, character(1), USE.NAMES = FALSE)
 }
 
 #' Internal function to recursively print tree children
 #' @noRd
 print_children <- function(parent_vector, all_vectors, tree_vectors, prefix,
-                           show_type, current_depth, max_depth) {
+                           show_type, current_depth, max_depth, language = NULL) {
 
   # Check depth limit
 
@@ -144,7 +154,7 @@ if (!is.na(max_depth) && current_depth > max_depth) {
     # Build label
     label <- child$label
     if (show_type) {
-      label <- paste0(label, " [", child$type, "]")
+      label <- paste0(label, " [", vector_type_label(child$type, language), "]")
     }
 
     # Check if this is a leaf; consult the full vector list so that nodes
@@ -152,7 +162,7 @@ if (!is.na(max_depth) && current_depth > max_depth) {
     has_children_in_tree <- any(tree_vectors$parent_vector == child$vector, na.rm = TRUE)
     has_children_in_dataset <- any(all_vectors$parent_vector == child$vector, na.rm = TRUE)
     leaf_indicator <- if (!has_children_in_dataset) {
-      " (leaf)"
+      paste0(" ", cc_msg("vector_tree_leaf", .language = language))
     } else if (!has_children_in_tree) {
       " ..."
     } else {
@@ -167,7 +177,8 @@ if (!is.na(max_depth) && current_depth > max_depth) {
                    prefix = paste0(prefix, child_prefix),
                    show_type = show_type,
                    current_depth = current_depth + 1,
-                   max_depth = max_depth)
+                   max_depth = max_depth,
+                   language = language)
   }
 
   invisible(NULL)

@@ -200,3 +200,7 @@ par un nouveau téléchargement depuis
   unlink({paths}, recursive = TRUE)"
 "hosted_incomplete_parquet","the server did not return a complete parquet file","le serveur n'a pas renvoyé de fichier parquet complet"
 "hosted_incomplete_manifest","the server did not return a complete list of tables","le serveur n'a pas renvoyé de liste de tables complète"
+"vector_tree_leaf","(leaf)","(feuille)"
+"vector_type_total","Total","Total"
+"vector_type_male","Male","Hommes"
+"vector_type_female","Female","Femmes"
