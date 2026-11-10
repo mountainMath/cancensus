@@ -221,9 +221,7 @@ get_statcan_geography_relationships <- function(census_year="2021", refresh=FALS
 
 # Deprecation warning for get_statcan_geography_relationships(), once per session
 warn_geography_relationships_deprecated <- function(){
-  if (isTRUE(session_cache_get("geography_relationships_deprecated"))) return(invisible(NULL))
-  session_cache_set("geography_relationships_deprecated",TRUE)
-  cc_warn("relationships_deprecated")
+  if (once_per_session("geography_relationships_deprecated")) cc_warn("relationships_deprecated")
   invisible(NULL)
 }
 
@@ -335,9 +333,7 @@ message_unused_attribute_files <- function(language = NULL){
 # with a command to remove them, once per session, `key` and cache path. Deleting them is left to the
 # user, as Statistics Canada may not allow downloading them again. This can go after a release or two.
 message_unused_files <- function(key,paths,what,function_name,language = NULL){
-  key <- paste0(key,"_",cache_path())
-  if (!is.null(session_cache_get(key))) return(invisible(NULL))
-  session_cache_set(key,TRUE)
+  if (!once_per_session(paste0(key,"_",cache_path()))) return(invisible(NULL))
 
   paths <- normalizePath(paths[file.exists(paths)],winslash = "/")
   if (length(paths)==0) return(invisible(NULL))
@@ -366,7 +362,7 @@ is_parquet_file <- function(path){
 }
 
 fetch_hosted_file <- function(url,path,quiet = FALSE){
-  httr::GET(url,cm_request_config(quiet),httr::write_disk(path,overwrite = TRUE),httr::timeout(600))
+  cm_GET(url,httr::write_disk(path,overwrite = TRUE),httr::timeout(600),quiet = quiet)
 }
 
 # Download a hosted file to `path`, which only gets replaced by a file that passes `is_valid`. Returns
@@ -378,13 +374,8 @@ download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
   tmp <- tempfile(fileext = paste0(".",tools::file_ext(path)),tmpdir = dirname(path))
   on.exit(unlink(tmp))
   response <- tryCatch(fetch_hosted_file(url,tmp,quiet = quiet),error = function(e) e)
-  problem <- if (inherits(response,"error")) {
-    conditionMessage(response)
-  } else if (httr::http_error(response)) {
-    cc_msg("hosted_http_status",status = httr::status_code(response),.language = language)
-  } else if (!is_valid(tmp)) {
-    cc_msg(paste0("hosted_incomplete_",kind),.language = language)
-  }
+  problem <- download_failure(response,language)
+  if (is.null(problem) && !is_valid(tmp)) problem <- cc_msg(paste0("hosted_incomplete_",kind),.language = language)
   if (!is.null(problem)) {
     cc_warn("hosted_download_failed",url = url,problem = problem,
             fallback = statcan_fallback_message(has_cache,language),.language = language)

@@ -52,11 +52,8 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   has_cache <- length(dir(exdir,"\\.shp$"))>0
   if (refresh || !has_cache) {
     if (type=="cartographic") typeID <- "b" else typeID <- "a"
-    if (nchar(level)==2) filler="_000"
-    else if (nchar(level)==3) filler="000"
-    else {
-      cc_abort("geographies_level_unsupported", level = level)
-    }
+    # all valid levels have two or three letters once mapped
+    filler <- if (nchar(level)==2) "_000" else "000"
     url <- paste0("https://www12.statcan.gc.ca/census-recensement/",census_year,"/geo/sip-pis/boundary-limites/files-fichiers/l",tolower(level),filler,typeID,"21a_e.zip")
     if (level=="HR") {
       if (type=="cartographic") {

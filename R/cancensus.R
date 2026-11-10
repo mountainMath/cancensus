@@ -79,8 +79,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   api_key <- robust_api_key(api_key)
   have_api_key <- valid_api_key(api_key)
   result <- NULL
-  data_version<-NULL
-  geo_version<-NULL
 
   dataset <- translate_dataset(dataset)
 
@@ -119,7 +117,6 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
   # installed.packages()-based install prompts were unreachable and scanned
   # the entire package library on every spatial call
 
-  base_url=paste0(cancensus_base_url(),"/api/v1/")
   # load data variables
   if (length(vectors)>0 || is.na(geo_format)) {
     params <- list(regions=as.character(regions),
@@ -140,45 +137,12 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!have_api_key) {
         cc_abort("no_api_key", .language = language)
       }
-      url <- paste0(base_url, "data.csv")
       if (!quiet) cc_inform("querying_data", .language = language)
+      response <- cm_api_request("data.csv", params, retry = retry, quiet = quiet,
+                                 size_id = "downloaded_data", language = language)
 
-      # Define the API call
-      make_data_call <- function() {
-        cm_POST(url, body=params, quiet=quiet)
-      }
-
-      # Execute with or without retry
-      response <- if (retry>0) {
-        retry_api_call(make_data_call, max_retries = retry+1, quiet = quiet, language = language)
-      } else {
-        make_data_call()
-      }
-
-      handle_cm_status_code(response, NULL, language = language)
-
-      # Report download size
-      content_length <- as.numeric(response$headers$`content-length`)
-      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
-        cc_inform("downloaded_data", size = format_bytes(content_length, language), .language = language)
-      }
-
-      data_version <- response$headers$`data-version`
-
-
-      # Read the data file and transform to proper data types
-      result <- if (requireNamespace("readr", quietly = TRUE)) {
-        # Use readr::read_csv if it's available.
-        httr::content(response, type = "text", encoding = "UTF-8") %>%
-          I() %>%
-          readr::read_csv(na = cancensus_na_strings,
-                          col_types = list(.default = "c"))
-      } else {
-        httr::content(response, type = "text", encoding = "UTF-8") %>%
-          textConnection %>%
-          utils::read.csv(colClasses = "character", stringsAsFactors = FALSE, check.names = FALSE) %>%
-          dplyr::as_tibble(.name_repair = "minimal")
-      }
+      # Read the data and transform to proper data types
+      result <- cm_read_csv(response, na = cancensus_na_strings)
 
       result <- result %>%
         dplyr::mutate_at(c(dplyr::intersect(names(.),c("Population","Households","Dwellings","Area (sq km)")),
@@ -189,13 +153,9 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (is.na(geo_format)) result <- result %>% transform_geo(level)
       attr(result, "last_updated") <- Sys.time()
       save(result, file = data_file)
-      file_info <- file.info(data_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
-                                 level=level,
-                                 vectors=jsonlite::toJSON(as.character(vectors))  %>% as.character(),
-                                 created_at=Sys.time(),
-                         version=data_version,size=file_info$size)
-      saveRDS(metadata, file = meta_file)
+      write_cache_metadata(meta_file, data_file, response,
+                           dataset=dataset, regions=as.character(regions), level=level,
+                           vectors=as.character(jsonlite::toJSON(as.character(vectors))))
       warn_if_cache_not_persistent(quiet = quiet, language = language)
     } else {
       if (!quiet) cc_inform("reading_data_cache", .language = language)
@@ -223,37 +183,13 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
       if (!have_api_key) {
         cc_abort("no_api_key", .language = language)
       }
-      url <- paste0(base_url, "geo.geojson")
       if (!quiet) cc_inform("querying_geometry", .language = language)
-
-      # Define the API call
-      make_geo_call <- function() {
-        cm_POST(url, body=params, quiet=quiet)
-      }
-
-      # Execute with or without retry
-      response <- if (retry>0) {
-        retry_api_call(make_geo_call, max_retries = retry+1, quiet = quiet, language = language)
-      } else {
-        make_geo_call()
-      }
-
-      handle_cm_status_code(response, NULL, language = language)
-
-      # Report download size
-      content_length <- as.numeric(response$headers$`content-length`)
-      if (!quiet && length(content_length)>0 && !is.na(content_length) && content_length > 0) {
-        cc_inform("downloaded_geometry", size = format_bytes(content_length, language), .language = language)
-      }
-
-      geo_version <- response$headers$`data-version`
+      response <- cm_api_request("geo.geojson", params, retry = retry, quiet = quiet,
+                                 size_id = "downloaded_geometry", language = language)
       write(httr::content(response, type = "text", encoding = "UTF-8"), file = geo_file) # cache result
-      file_info <- file.info(geo_file)
-      metadata <- dplyr::tibble(dataset=dataset,regions=as.character(regions),
-                                level=level,created_at=Sys.time(),
-                                resolution=resolution,
-                         version=geo_version,size=file_info$size)
-      saveRDS(metadata, file = meta_file)
+      write_cache_metadata(meta_file, geo_file, response,
+                           dataset=dataset, regions=as.character(regions), level=level,
+                           resolution=resolution)
       warn_if_cache_not_persistent(quiet = quiet, language = language)
     } else {
       if (!quiet) cc_inform("reading_geo_cache", .language = language)
@@ -261,8 +197,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     }
     geos <- geojsonsf::geojson_sf(geo_file) %>%
       sf::st_sf(agr="constant") %>% # need to set this, otherwise sf complains
-       transform_geo(level) #%>%
-      # sf::st_sf(agr="constant") # just in case
+      transform_geo(level)
 
     if (!quiet) {
       cc_inform("processing_features", .n = nrow(geos), .language = language)
@@ -270,7 +205,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 
     result <- if (is.null(result)) {
       geos
-    } else if (!is.na(geo_format)) {
+    } else {
       # the sf object needs to be first in join to retain all spatial information
       to_remove <- setdiff(dplyr::intersect(names(geos),names(result)),"GeoUID")
       dplyr::select(result, -dplyr::one_of(to_remove)) %>%
@@ -328,10 +263,7 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
 # Prepare users for the planned change of the default, once per session. This is a message and not a
 # warning since warnings turn into errors under options(warn = 2), which would break working code.
 message_labels_default <- function(language = NULL) {
-  cache_key <- "labels_default_message"
-  if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
-  session_cache_set(cache_key, TRUE)
-  cc_inform("labels_default", .language = language)
+  if (once_per_session("labels_default_message")) cc_inform("labels_default", .language = language)
   invisible(NULL)
 }
 
@@ -423,28 +355,17 @@ VALID_LEVELS <- c("Regions","C","PR", "CMA", "CA", "CMACA", "CD", "CSD", "CT", "
 #' list_census_datasets()
 #' }
 list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
-  cache_file <- file.path(tempdir(),"cancensus_datasets.rda") #cache_path("datasets.rda")
-  if (!use_cache || !file.exists(cache_file)) {
+  session_cached("datasets", use_cache, quiet = quiet,
+                 reading_id = "reading_datasets_cache", outdated_id = "datasets_cache_outdated",
+                 fetch = function() {
     if (!quiet) cc_inform("querying_datasets")
     response <- cm_GET(paste0(cancensus_base_url(),"/api/v1/list_datasets"),
                        httr::accept_json())
     handle_cm_status_code(response, NULL)
-    result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
+    httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
       dplyr::as_tibble(.name_repair = "minimal")
-    attr(result, "last_updated") <- Sys.time()
-    save(result, file = cache_file)
-    result
-  } else {
-    if (!quiet) cc_inform("reading_datasets_cache")
-    load(file = cache_file)
-    last_updated <- attr(result, "last_updated")
-    if (!quiet && (is.null(last_updated) ||
-          difftime(Sys.time(), last_updated, units = "days") > 1)) {
-      cc_warn("datasets_cache_outdated")
-    }
-    result
-  }
+  })
 }
 
 #' Get attribution for datasets
@@ -488,7 +409,6 @@ dataset_attribution <- function(datasets, language = getOption("cancensus.langua
       years <- gsub(p,"",years)
     }
 
-    year_string <- paste0(years,collapse=", ")
     gsub("\\d{4}",paste0(years,collapse=", "),matches[[1]])
   }) %>%
     unlist() %>%
@@ -547,10 +467,7 @@ label_vectors <-  function(x) {
 #' @export
 census_vectors <-  function(x) {
   cc_warn("census_vectors_deprecated")
-  if("census_vectors" %in% names(attributes(x))) {
-    attr(x, "census_vectors")
-  } else {
-    cc_warn("no_census_vectors")}
+  label_vectors(x)
 }
 
 

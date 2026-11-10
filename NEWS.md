@@ -23,6 +23,7 @@
 - When no persistent cache path is set, **cancensus** now warns once per session when data gets downloaded, instead of emitting a message on package load and on every internal cache lookup, including when nothing was downloaded (#227). `get_census()`, `get_intersecting_geometries()` and the StatCan download functions no longer emit this notice otherwise, and `quiet = TRUE` suppresses it where available. Since this is a warning, it will show up in rendered documents and turns into an error under `options(warn = 2)`, setting a cache path avoids it
 - Documented how to use `set_cancensus_cache_path()` without `install = TRUE` to set up a project-specific cache
 - `list_census_datasets()` and `list_census_regions()` now respect the `cancensus.base_url` option like all other CensusMapper API calls
+- The lists of datasets, regions and vectors are kept in memory for the session instead of also being written to the temporary directory, `list_census_datasets()` no longer reads its list from disk on every call
 
 ## Bug fixes
 

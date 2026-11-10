@@ -18,6 +18,36 @@ session_cache_set <- function(key, value){
   value
 }
 
+# Whether this is the first time in the session this gets called for `key`, for things that should
+# only happen once per session
+once_per_session <- function(key){
+  if (isTRUE(session_cache_get(key))) return(FALSE)
+  session_cache_set(key, TRUE)
+  TRUE
+}
+
+# Metadata from the CensusMapper API gets kept for the session. `fetch` is a function that gets it
+# from the API, and is called if there is nothing cached yet or if not to `use_cache`. Unless `quiet`
+# says so when reading from the cache with the message `reading_id`, and warns with `outdated_id`
+# if what is cached is more than a day old.
+session_cached <- function(key, use_cache, fetch, quiet = TRUE, reading_id = NULL, outdated_id = NULL){
+  cached <- if (use_cache) session_cache_get(key)
+  if (is.null(cached)) {
+    result <- fetch()
+    attr(result, "last_updated") <- Sys.time()
+    return(session_cache_set(key, result))
+  }
+  if (!quiet) {
+    if (!is.null(reading_id)) cc_inform(reading_id)
+    last_updated <- attr(cached, "last_updated")
+    if (!is.null(outdated_id) &&
+        (is.null(last_updated) || difftime(Sys.time(), last_updated, units = "days") > 1)) {
+      cc_warn(outdated_id)
+    }
+  }
+  cached
+}
+
 cancensus_base_url <- function(){
   url <- getOption("cancensus.base_url")
   if (is.null(url)) url <- "https://censusmapper.ca"
@@ -63,6 +93,40 @@ cm_GET <- function(url, ..., quiet = TRUE){
 
 cm_POST <- function(url, body = NULL, ..., quiet = TRUE){
   httr::POST(url, cm_request_config(quiet), body = body, ...)
+}
+
+# Query the CensusMapper API at `endpoint`, with `retry` further attempts on transient failures.
+# Stops if the request fails. Unless `quiet` says how much got downloaded, with the message `size_id`.
+cm_api_request <- function(endpoint, body, ..., retry = 0, quiet = FALSE, size_id = NULL, language = NULL){
+  url <- paste0(cancensus_base_url(), "/api/v1/", endpoint)
+  make_call <- function() cm_POST(url, body = body, ..., quiet = quiet)
+  response <- if (retry > 0) {
+    retry_api_call(make_call, max_retries = retry + 1, quiet = quiet, language = language)
+  } else {
+    make_call()
+  }
+  handle_cm_status_code(response, NULL, language = language)
+  content_length <- as.numeric(response$headers$`content-length`)
+  if (!quiet && !is.null(size_id) && length(content_length) > 0 && !is.na(content_length) && content_length > 0) {
+    cc_inform(size_id, size = format_bytes(content_length, language), .language = language)
+  }
+  response
+}
+
+# The csv data of a response from the CensusMapper API, with all columns as text
+cm_read_csv <- function(response, ...){
+  readr::read_csv(I(httr::content(response, type = "text", encoding = "UTF-8")),
+                  col_types = readr::cols(.default = "c"), ...)
+}
+
+# Description of why a download failed, or NULL if it did not. `response` is the response or the
+# error raised by the request.
+download_failure <- function(response, language = NULL){
+  if (inherits(response, "error")) {
+    conditionMessage(response)
+  } else if (httr::http_error(response)) {
+    cc_msg("hosted_http_status", status = httr::status_code(response), .language = language)
+  }
 }
 
 valid_api_key <- function(api_key){
@@ -112,12 +176,9 @@ cache_is_persistent <- function(base_path = NULL){
 # and saved, so failed requests don't use up the warning and handlers that turn it into an error
 # don't lose the download. Warns once per session, per call would flood users querying in a loop.
 warn_if_cache_not_persistent <- function(base_path = NULL, quiet = FALSE, language = NULL){
-  if (quiet || cache_is_persistent(base_path) ||
-      isTRUE(session_cache_get("cache_warning_shown"))) {
-    return(invisible(NULL))
+  if (!quiet && !cache_is_persistent(base_path) && once_per_session("cache_warning_shown")) {
+    cc_warn("cache_not_persistent", .language = language)
   }
-  session_cache_set("cache_warning_shown", TRUE)
-  cc_warn("cache_not_persistent", .language = language)
   invisible(NULL)
 }
 
@@ -164,9 +225,7 @@ is_blank <- function(x){
 
 # Warn once per session and dataset, per call would flood users querying in a loop
 warn_language_fallback <- function(dataset, n_missing, n_total, language = NULL){
-  cache_key <- paste0("language_fallback_warning_", dataset)
-  if (isTRUE(session_cache_get(cache_key))) return(invisible(NULL))
-  session_cache_set(cache_key, TRUE)
+  if (!once_per_session(paste0("language_fallback_warning_", dataset))) return(invisible(NULL))
   if (n_missing == n_total) {
     cc_warn("french_labels_unavailable_dataset", dataset = dataset, .language = language)
   } else {
@@ -298,7 +357,7 @@ check_recalled_data_and_warn <- function(meta_file,params,language=NULL){
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
     cc_warn("recalled_loaded_data", .language = language)
   }
-  d<-NULL
+  invisible(NULL)
 }
 
 check_for_recalled_data_and_warn <- function(){
@@ -306,18 +365,13 @@ check_for_recalled_data_and_warn <- function(){
   if (!is.null(recalled_data) && nrow(recalled_data)>0) {
     cc_warn("recalled_cached_data")
   }
-  d<-NULL
+  invisible(NULL)
 }
 
+# Check the cache for recalled data, the first time data gets requested in a session
 first_run_checks <- function(){
-  # Check caches for recalled data
-  path=file.path(tempdir(),"cancensus_first_run_checks.info")
-  if (!file.exists(path)) {
-    # first time cancensus is run!
-    check_for_recalled_data_and_warn()
-    readr::write_lines("recall_check\n",path)
-  }
-  d<-NULL
+  if (once_per_session("first_run_checks")) check_for_recalled_data_and_warn()
+  invisible(NULL)
 }
 
 #' A dataset with code table summaries for census data

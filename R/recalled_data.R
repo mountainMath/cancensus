@@ -43,12 +43,9 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
     response <- tryCatch(cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
                                 httr::timeout(getOption("timeout", 60))),
                          error = function(e) e)
-    reason <- if (inherits(response, "error")) {
-      conditionMessage(response)
-    } else if (httr::status_code(response) != 200) {
-      cc_msg("hosted_http_status", status = httr::status_code(response))
-    } else if (!file.copy(tmp, path, overwrite = TRUE)) {
-      cc_msg("recall_database_not_saved", path = path)
+    reason <- download_failure(response)
+    if (is.null(reason) && !file.copy(tmp, path, overwrite = TRUE)) {
+      reason <- cc_msg("recall_database_not_saved", path = path)
     }
     session_cache_set(failed_key, !is.null(reason))
     if (!is.null(reason)) {

@@ -1,6 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.travis\.yml$
 ^cran-comments\.md$
 CRAN-RELEASE
 CRAN-SUBMISSION
@@ -30,7 +29,4 @@ lastMiKTeXException
 ^AI_agent_comments/*
 ^\.claude$
 ^\.claude/
-EXECUTIVE_SUMMARY.md
-PERFORMANCE_SUMMARY.md
-PR_DETAILS.md
 ^\.positai$

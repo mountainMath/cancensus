@@ -32,7 +32,6 @@ mock_response <- function(body) {
 reset_dataset <- function(dataset) {
   keys <- c(paste0(dataset, "_vectors"), paste0("language_fallback_warning_", dataset))
   rm(list = intersect(keys, ls(.cancensus_session_cache)), envir = .cancensus_session_cache)
-  unlink(file.path(tempdir(), paste0(dataset, "_vectors.rda")))
 }
 
 # Serve the vector metadata for a dataset unique to the test, to not hit session caches of other tests

@@ -45,53 +45,35 @@ list_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE,
 # Get the vector metadata in all languages. Caching is independent of language, the language
 # specific view gets created by localize_census_vectors.
 fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE, language = NULL) {
-  cache_key <- paste0(dataset, "_vectors")
-  if (use_cache) {
-    cached <- session_cache_get(cache_key)
-    if (!is.null(cached)) return(cached)
-  }
-  cache_file <- file.path(tempdir(),paste0(dataset, "_vectors.rda"))
-  if (!use_cache || !file.exists(cache_file)) {
+  session_cached(paste0(dataset, "_vectors"), use_cache, fetch = function() {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
     if (!quiet) cc_inform("querying_vectors", .language = language)
     response <- cm_GET(url, quiet=quiet)
     handle_cm_status_code(response, NULL, language = language)
-    content <- httr::content(response, type = "text", encoding = "UTF-8")
-    result <- if (!requireNamespace("readr", quietly = TRUE)) {
-      dplyr::as_tibble(utils::read.csv(textConnection(content), stringsAsFactors = FALSE),
-                       .name_repair = "minimal")
-    } else {
-      readr::read_csv(I(content),col_types=readr::cols(.default="c"))
-    }
-    result <- dplyr::mutate(
-      result, type = factor(.data$type),
-      units = factor(units, levels = as.character(1:6),
-                     labels = c("Number", "Percentage ratio (0.0-1.0)",
-                                "Currency", "Ratio", "Percentage (0-100)","Currency (1000s)")),
-      aggregation = dplyr::case_when(
-        add == "1" ~ "Additive",
-        add == "0" ~ "Not additive",
-        grepl("^2.", add) ~ gsub(".", ", ", gsub("^2\\.", "Average of ", add),
-                                 fixed = TRUE),
-        grepl("^3.", add) ~ gsub(".", ", ", gsub("^3\\.", "Median of ", add),
-                                 fixed = TRUE),
-        grepl("^4.", add) ~ gsub(".", ", ", gsub("^4\\.", "Average to ", add),
-                                 fixed = TRUE),
-        grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
-                                 fixed = TRUE)
-      )) %>%
+    result <- cm_read_csv(response) %>%
+      dplyr::mutate(
+        type = factor(.data$type),
+        units = factor(units, levels = as.character(1:6),
+                       labels = c("Number", "Percentage ratio (0.0-1.0)",
+                                  "Currency", "Ratio", "Percentage (0-100)","Currency (1000s)")),
+        aggregation = dplyr::case_when(
+          add == "1" ~ "Additive",
+          add == "0" ~ "Not additive",
+          grepl("^2.", add) ~ gsub(".", ", ", gsub("^2\\.", "Average of ", add),
+                                   fixed = TRUE),
+          grepl("^3.", add) ~ gsub(".", ", ", gsub("^3\\.", "Median of ", add),
+                                   fixed = TRUE),
+          grepl("^4.", add) ~ gsub(".", ", ", gsub("^4\\.", "Average to ", add),
+                                   fixed = TRUE),
+          grepl("^9.", add) ~ gsub(".", ", ", gsub("^9\\.", "Standard error based on ", add),
+                                   fixed = TRUE)
+        )) %>%
       dplyr::select("vector", "type", "label", "units",
                     parent_vector = "parent", "aggregation",
                     "details", dplyr::any_of(c("label_fr", "details_fr")))
-    attr(result, "last_updated") <- Sys.time()
     attr(result, "dataset") <- dataset
-    save(result, file = cache_file)
-    session_cache_set(cache_key, result)
-  } else {
-    if (!quiet) cc_inform("reading_vectors_cache", .language = language)
-    load(file = cache_file)
-    session_cache_set(cache_key, result)
-  }
+    result
+  })
 }
 
 # Turn vector metadata in all languages into the requested language, keeping the column layout

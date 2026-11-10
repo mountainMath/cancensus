@@ -81,25 +81,19 @@ get_intersecting_geometries <- function(dataset, level, geometry, simplified = F
     if (!have_api_key) {
       cc_abort("no_api_key")
     }
-    url <- paste0(cancensus_base_url(),"/api/v1/intersecting_geographies")
     body <- list(dataset=dataset,
                  level=level,
                  area=sf::st_area(geometry) %>% as.numeric(),
                  geometry=geo,
                  api_key=api_key)
     if (!quiet) cc_inform("querying_api")
-    response <- cm_POST(url, body = body, httr::accept_json(), quiet = quiet)
-    handle_cm_status_code(response, NULL)
-    data_version <- response$headers$`data-version`
+    response <- cm_api_request("intersecting_geographies", body, httr::accept_json(), quiet = quiet)
 
     result <- httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON()
     attr(result, "last_updated") <- Sys.time()
     save(result, file = data_file)
-    file_info <- file.info(data_file)
-    metadata <- dplyr::tibble(dataset=dataset,level=level,created_at=Sys.time(),
-                               version=data_version,size=file_info$size)
-    saveRDS(metadata, file = meta_file)
+    write_cache_metadata(meta_file, data_file, response, dataset=dataset, level=level)
     warn_if_cache_not_persistent(quiet = quiet)
   } else {
     if (!quiet) cc_inform("reading_intersection_cache")

@@ -20,33 +20,33 @@
 #' }
 search_census_vectors <- function(searchterm, dataset, type=NA, ...) {
   cc_warn("search_census_vectors_deprecated")
-  veclist <- list_census_vectors(dataset, ...)
-  result <- veclist[grep(searchterm, veclist$label, ignore.case = TRUE),]
+  search_census_list(list_census_vectors(dataset, ...), "label", searchterm, dataset,
+                     filter_column = "type", filter_value = type,
+                     hint_title = "Similarly named objects", warn_id = "no_results_similar_vectors")
+}
 
-  # filter by type if needed
-  if (!is.na(type) && length(rownames(result)) > 0) {
-    result <- result[result$type==type,]
+# The rows of `entries` where `column` matches `searchterm`, optionally only those with
+# `filter_value` in `filter_column`. If nothing matches this warns with `warn_id` and prints
+# similarly named entries under the heading `hint_title`, and stops if there are none of these either.
+search_census_list <- function(entries, column, searchterm, dataset, filter_column, filter_value,
+                               hint_title, warn_id) {
+  result <- entries[grep(searchterm, entries[[column]], ignore.case = TRUE),]
+  if (!is.na(filter_value) && nrow(result) > 0) {
+    result <- result[result[[filter_column]]==filter_value,]
   }
-
-  # Check if searchterm returned anything
-  if (length(rownames(result)) > 0 ) {
+  if (nrow(result) > 0) {
     attr(result, "dataset") <- dataset
     return(result)
   }
-  # If nothing matches, throw a warning and suggested alternatives.
-  # If no suggested alternatives because the typo is too egregious, throw an error.
-  else {
-    # Check for similarly named terms. Uses base function agrep which is based on the Levenshtein edit distance for string similarity.
-    # Default is set to 0.1 - can expand this to be more tolerant still.
-    hintlist <- dplyr::as_tibble(unique(agrep(searchterm, veclist$label, ignore.case = TRUE, value = TRUE)))
-    names(hintlist) <- "Similarly named objects"
-    #
-    if (nrow(hintlist) > 0) {
-      cc_warn("no_results_similar_vectors")
-      print(hintlist)
-    } else {
-      cc_abort("no_results")
-    }
+  # Similarly named entries, agrep is based on the Levenshtein edit distance with a default
+  # tolerance of 0.1
+  hintlist <- dplyr::tibble(unique(agrep(searchterm, entries[[column]], ignore.case = TRUE, value = TRUE)))
+  names(hintlist) <- hint_title
+  if (nrow(hintlist) > 0) {
+    cc_warn(warn_id)
+    print(hintlist)
+  } else {
+    cc_abort("no_results")
   }
 }
 

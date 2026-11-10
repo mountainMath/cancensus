@@ -97,9 +97,7 @@ statcan_download_zip <- function(url, base_path = NULL, timeout = 10000, quiet =
   }
 
   tmp <- tempfile(fileext = ".zip")
-  response <- httr::GET(url, cm_request_config(quiet),
-                        httr::write_disk(tmp, overwrite = TRUE),
-                        httr::timeout(timeout))
+  response <- cm_GET(url, httr::write_disk(tmp, overwrite = TRUE), httr::timeout(timeout), quiet = quiet)
 
   if (statcan_is_cloudflare_block(response)) {
     unlink(tmp)
