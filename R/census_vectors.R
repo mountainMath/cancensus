@@ -48,7 +48,7 @@ fetch_census_vectors <- function(dataset, use_cache = TRUE, quiet = TRUE, langua
   session_cached(paste0(dataset, "_vectors"), use_cache, fetch = function() {
     url <- paste0(cancensus_base_url(),"/api/v1/vector_info/", dataset, ".csv")
     if (!quiet) cc_inform("querying_vectors", .language = language)
-    response <- cm_GET(url, quiet=quiet)
+    response <- cm_GET_retry(url, quiet = quiet, language = language)
     handle_cm_status_code(response, NULL, language = language)
     result <- cm_read_csv(response) %>%
       dplyr::mutate(

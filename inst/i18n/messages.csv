@@ -9,6 +9,7 @@
 "vector_list_unparseable","Don't know how to parse vector list: {vector_list}","Impossible d'interpréter la liste de vecteurs : {vector_list}"
 "dataset_undetermined","Unable to determine dataset.","Impossible de déterminer l'ensemble de données."
 "retry_http","Transient error (HTTP {status}), retrying in {wait}s (attempt {attempt}/{max})...","Erreur temporaire (HTTP {status}), nouvelle tentative dans {wait} s (tentative {attempt}/{max})..."
+"retry_busy","The CensusMapper server is busy (HTTP {status}), retrying in {wait}s (attempt {attempt}/{max})...","Le serveur CensusMapper est occupé (HTTP {status}), nouvelle tentative dans {wait} s (tentative {attempt}/{max})..."
 "retry_network","Network error: {error}. Retrying in {wait}s (attempt {attempt}/{max})...","Erreur réseau : {error}. Nouvelle tentative dans {wait} s (tentative {attempt}/{max})..."
 "recalled_loaded_data","Currently loaded data has been recalled. Use
 list_recalled_cached_data()
@@ -60,6 +61,7 @@ Ce message ne s'affiche qu'une fois par session."
 "census_vectors_deprecated","census_vectors() is deprecated. Please use label_vectors() to view details for truncated variable labels.","census_vectors() est obsolète. Utilisez label_vectors() pour voir les détails des libellés de variables tronqués."
 "download_failed_unauthorized","Download of Census Data failed. Please ensure that your API key is valid and has a large enough quota left. {details}","Le téléchargement des données du recensement a échoué. Vérifiez que votre clé d'API est valide et qu'il vous reste un quota suffisant. {details}"
 "download_failed_server","Download of Census Data failed. The request triggered a server error, the CensusMapper maintainers have been notified and will fix this as soon as possible. {details}","Le téléchargement des données du recensement a échoué. La requête a provoqué une erreur du serveur, les responsables de CensusMapper en ont été informés et la corrigeront dès que possible. {details}"
+"download_failed_busy","Download of Census Data failed. The CensusMapper server is busy, please try again in a few seconds. {details}","Le téléchargement des données du recensement a échoué. Le serveur CensusMapper est occupé, veuillez réessayer dans quelques secondes. {details}"
 "download_failed","Download of Census Data failed. {details}","Le téléchargement des données du recensement a échoué. {details}"
 "unknown_level","Unknown level {level}","Niveau inconnu : {level}"
 "cache_entries_not_found","Could not find cached data for {paths}","Aucune donnée en cache trouvée pour {paths}"

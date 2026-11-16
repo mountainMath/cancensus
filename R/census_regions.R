@@ -42,8 +42,8 @@ list_census_regions <- function(dataset, use_cache = TRUE, quiet = FALSE) {
   session_cached(paste0(dataset, "_regions"), use_cache, quiet = quiet,
                  outdated_id = "regions_cache_outdated", fetch = function() {
     if (!quiet) cc_inform("querying_regions")
-    response <- cm_GET(paste0(cancensus_base_url(),"/data_sets/", dataset,
-                              "/place_names.csv"))
+    response <- cm_GET_retry(paste0(cancensus_base_url(),"/data_sets/", dataset,
+                                    "/place_names.csv"), quiet = quiet, progress = FALSE)
     handle_cm_status_code(response, NULL)
     result <- cm_read_csv(response) %>%
       dplyr::select(region = "geo_uid", "name",

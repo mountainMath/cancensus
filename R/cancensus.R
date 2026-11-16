@@ -20,7 +20,7 @@
 #' @param use_cache If set to TRUE (the default) data will be read from the local cache if available.
 #' @param quiet When TRUE, suppress messages and warnings.
 #' @param api_key An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.
-#' @param retry Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.
+#' @param retry Integer If greater than zero, automatically retry API requests that fail with a network error or a transient server error (HTTP 408, 502 or 504) with exponential backoff for specified maximum number of times. Defaults to 0. Requests are always retried at least twice when the server is busy (HTTP 503 or 429), waiting as long as the server asks.
 #' @param language Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the names of the other columns. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.
 #'
 #' @source Census data and boundary geographies are reproduced and distributed on
@@ -359,8 +359,8 @@ list_census_datasets <- function(use_cache = TRUE, quiet = FALSE) {
                  reading_id = "reading_datasets_cache", outdated_id = "datasets_cache_outdated",
                  fetch = function() {
     if (!quiet) cc_inform("querying_datasets")
-    response <- cm_GET(paste0(cancensus_base_url(),"/api/v1/list_datasets"),
-                       httr::accept_json())
+    response <- cm_GET_retry(paste0(cancensus_base_url(),"/api/v1/list_datasets"),
+                             httr::accept_json(), quiet = quiet, progress = FALSE)
     handle_cm_status_code(response, NULL)
     httr::content(response, type = "text", encoding = "UTF-8") %>%
       jsonlite::fromJSON() %>%
@@ -482,6 +482,8 @@ handle_cm_status_code <- function(response, path, language = NULL){
     if (httr::status_code(response)==401) {
       # Problem with API key
       cc_abort("download_failed_unauthorized", details = message, .language = language)
+    } else if (httr::status_code(response) %in% busy_status_codes) {
+      cc_abort("download_failed_busy", details = message, .language = language)
     } else if (httr::status_code(response)==500) {
       cc_abort("download_failed_server", details = message, .language = language)
     } else {

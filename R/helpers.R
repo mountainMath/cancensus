@@ -95,16 +95,20 @@ cm_POST <- function(url, body = NULL, ..., quiet = TRUE){
   httr::POST(url, cm_request_config(quiet), body = body, ...)
 }
 
+# GET `url` from the CensusMapper API, retrying as `retry_api_call()` does. Unlike `cm_GET()`
+# this always retries when the server is busy, and `retry` sets the number of further attempts on
+# other transient failures. `quiet` suppresses messages about retries, `progress` shows a progress bar.
+cm_GET_retry <- function(url, ..., retry = 0, quiet = TRUE, progress = !quiet, language = NULL){
+  retry_api_call(function() cm_GET(url, ..., quiet = !progress), retries = retry, quiet = quiet,
+                 language = language)
+}
+
 # Query the CensusMapper API at `endpoint`, with `retry` further attempts on transient failures.
 # Stops if the request fails. Unless `quiet` says how much got downloaded, with the message `size_id`.
 cm_api_request <- function(endpoint, body, ..., retry = 0, quiet = FALSE, size_id = NULL, language = NULL){
   url <- paste0(cancensus_base_url(), "/api/v1/", endpoint)
-  make_call <- function() cm_POST(url, body = body, ..., quiet = quiet)
-  response <- if (retry > 0) {
-    retry_api_call(make_call, max_retries = retry + 1, quiet = quiet, language = language)
-  } else {
-    make_call()
-  }
+  response <- retry_api_call(function() cm_POST(url, body = body, ..., quiet = quiet),
+                             retries = retry, quiet = quiet, language = language)
   handle_cm_status_code(response, NULL, language = language)
   content_length <- as.numeric(response$headers$`content-length`)
   if (!quiet && !is.null(size_id) && length(content_length) > 0 && !is.na(content_length) && content_length > 0) {
@@ -259,64 +263,59 @@ dataset_from_vector_list <- function(vector_list){
 
 cancensus_na_strings <- c("x", "X", "F", "...", "..", "-","N","*","**")
 
-#' Retry an API call with exponential backoff
+# HTTP status codes of transient failures. The CensusMapper API answers 503 with a Retry-After
+# header when it is busy, 429 means too many requests. Both always get retried a few times.
+busy_status_codes <- c(429, 503)
+transient_status_codes <- c(408, 502, 504)
+
+# Wrapper so that tests can skip the waiting
+cc_sleep <- function(seconds) Sys.sleep(seconds)
+
+#' Make an API call, retrying on transient failures
 #'
-#' @param call_fn A function that performs the API call and returns an httr response
-#' @param max_retries Maximum number of retry attempts (default: 3)
-#' @param quiet If TRUE, suppress retry messages
-#' @param language Language of the retry messages, see \code{message_language}
-#' @return The httr response object
+#' Retries with exponential backoff, honouring a `Retry-After` header of up to 60 seconds.
+#' Responses saying the server is busy (HTTP 503 or 429) get retried up to
+#' `max(retries, busy_retries)` times, other transient HTTP errors (408, 502, 504) and network
+#' errors up to `retries` times. Other responses, including other server errors, are returned
+#' as they are.
+#'
+#' @param call_fn Function making the request and returning an httr response
+#' @param retries Number of further attempts on transient failures
+#' @param busy_retries Minimum number of further attempts when the server is busy
+#' @param quiet Whether to suppress messages about retries. Waits of more than 2 seconds for a
+#'   busy server are always reported.
+#' @param language Language of the messages, see \code{message_language}
+#' @return The last httr response
 #' @keywords internal
-retry_api_call <- function(call_fn, max_retries = 3, quiet = FALSE, language = NULL) {
- attempt <- 1
- last_error <- NULL
-
- while (attempt <= max_retries) {
-   tryCatch({
-     response <- call_fn()
-
-     # Check for transient HTTP errors (5xx, rate limiting, request timeout)
-     status <- httr::status_code(response)
-     if (((status >= 500 && status < 600) || status %in% c(408, 429)) && attempt < max_retries) {
-       # Transient error - retry, honoring a Retry-After header if present
-       wait_time <- 2 ^ (attempt - 1)  # Exponential backoff: 1, 2, 4 seconds
-       retry_after <- suppressWarnings(as.numeric(httr::headers(response)$`retry-after`))
-       if (length(retry_after) == 1 && !is.na(retry_after) && retry_after > 0) {
-         wait_time <- max(wait_time, min(ceiling(retry_after), 60))
-       }
-       if (!quiet) {
-         cc_inform("retry_http", status = status, wait = wait_time, attempt = attempt + 1,
-                   max = max_retries, .language = language)
-       }
-       Sys.sleep(wait_time)
-       attempt <- attempt + 1
-       next
-     }
-
-     # Success or non-retryable error
-     return(response)
-
-   }, error = function(e) {
-     last_error <<- e
-     # Network errors - retry
-     if (attempt < max_retries) {
-       wait_time <- 2 ^ (attempt - 1)
-       if (!quiet) {
-         cc_inform("retry_network", error = conditionMessage(e), wait = wait_time,
-                   attempt = attempt + 1, max = max_retries, .language = language)
-       }
-       Sys.sleep(wait_time)
-       attempt <<- attempt + 1
-     } else {
-       stop(e)
-     }
-   })
- }
-
- # If we've exhausted retries, throw the last error
- if (!is.null(last_error)) {
-   stop(last_error)
- }
+retry_api_call <- function(call_fn, retries = 0, busy_retries = 2, quiet = FALSE, language = NULL) {
+  done <- 0
+  repeat {
+    response <- tryCatch(call_fn(), error = function(e) e)
+    if (inherits(response, "error")) {
+      if (done >= retries) stop(response)
+      wait_time <- 2 ^ done
+      if (!quiet) {
+        cc_inform("retry_network", error = conditionMessage(response), wait = wait_time,
+                  attempt = done + 2, max = retries + 1, .language = language)
+      }
+    } else {
+      status <- httr::status_code(response)
+      busy <- status %in% busy_status_codes
+      allowed <- if (busy) max(retries, busy_retries) else if (status %in% transient_status_codes) retries else 0
+      if (done >= allowed) return(response)
+      wait_time <- 2 ^ done
+      retry_after <- suppressWarnings(as.numeric(httr::headers(response)$`retry-after`))
+      if (length(retry_after) == 1 && !is.na(retry_after) && retry_after > 0) {
+        wait_time <- max(wait_time, min(ceiling(retry_after), 60))
+      }
+      if (!quiet || (busy && wait_time > 2)) {
+        cc_inform(if (busy) "retry_busy" else "retry_http", status = status, wait = wait_time,
+                  attempt = done + 2, max = allowed + 1, .language = language)
+      }
+    }
+    cc_sleep(wait_time)
+    done <- done + 1
+  }
 }
 
 #' Format bytes to human-readable size

@@ -47,7 +47,7 @@ then this option can be set to 'high'. By default this setting is set to \code{'
 
 \item{api_key}{An API key for the CensusMapper API. Defaults to \code{options()} and then the \code{CM_API_KEY} environment variable.}
 
-\item{retry}{Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.}
+\item{retry}{Integer If greater than zero, automatically retry API requests that fail with a network error or a transient server error (HTTP 408, 502 or 504) with exponential backoff for specified maximum number of times. Defaults to 0. Requests are always retried at least twice when the server is busy (HTTP 503 or 429), waiting as long as the server asks.}
 
 \item{language}{Language of the Census variable labels, one of \code{"en"} or \code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set. This applies to the column names when \code{labels = "detailed"}, to the \code{"label"} attribute when \code{labels = "labelled"}, and to \code{label_vectors(...)}. It does not apply to region names or the names of the other columns. Not all datasets have French labels, vectors without French labels fall back to English with a warning once per session and dataset. Changing the language does not download the data again.}
 }

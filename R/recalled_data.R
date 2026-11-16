@@ -40,8 +40,8 @@ get_recalled_database <- function(refresh=FALSE, warn_only_once=FALSE){
     # so that an error response never gets stored as the recall database.
     tmp <- tempfile(fileext = ".csv")
     on.exit(unlink(tmp), add = TRUE)
-    response <- tryCatch(cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
-                                httr::timeout(getOption("timeout", 60))),
+    response <- tryCatch(cm_GET_retry(url, httr::write_disk(tmp, overwrite = TRUE),
+                                      httr::timeout(getOption("timeout", 60))),
                          error = function(e) e)
     reason <- download_failure(response)
     if (is.null(reason) && !file.copy(tmp, path, overwrite = TRUE)) {
