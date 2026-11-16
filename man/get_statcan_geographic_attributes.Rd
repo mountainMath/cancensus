@@ -34,7 +34,7 @@ Reads the geographic attributes for the given census year, with one row for each
 census geography. The table contains the information on how all the geographic levels are related
 for each area, along with population and dwelling counts and representative points.
 
-The data comes from parquet files hosted at \url{https://data.mountainmath.ca/census/geo_attributes/},
+The data comes from parquet files hosted under \code{https://data.mountainmath.ca/census/geo_attributes/},
 as Statistics Canada now blocks programmatic downloads of these files. The files are derived from
 Statistics Canada data under the Statistics Canada Open Licence. They get downloaded on first use and
 cached if the cancensus cache path has been set, and cached copies only get updated with

@@ -140,9 +140,8 @@ Taken together these packages offer a seamless view into important Canadian data
 There are several other jurisdiction where census data is available via R packages, including
 
 * US: [tidycensus](https://walker-data.com/tidycensus/) and [tigris](https://github.com/walkerke/tigris)
-* Brasil: [geobr](https://github.com/ipeaGIT/geobr)
 * Africa: [afrimapr](https://afrimapr.github.io/afrimapr.website/)
-* Brazil: [geobr](https://ipeagit.github.io/geobr/)
+* Brazil: [geobr](https://ipea.github.io/geobr/)
 * Chile: [chilemapas](https://pacha.dev/chilemapas/)
 * Czech Republic: [RCzechia](https://github.com/jlacko/RCzechia)
 * Finland: [geofi](https://ropengov.github.io/geofi/)

@@ -1,3 +1,28 @@
+# cancensus 0.6.2
+
+This release adds French labels and messages, a new `labels = "labelled"` option for `get_census()`, and retries when the CensusMapper API is busy. It moves `get_statcan_geographic_attributes()` and `get_statcan_geo_suite()` to parquet files hosted by the package maintainers, as Statistics Canada now blocks programmatic downloads of these files. It also fixes a number of bugs. See NEWS.md for details.
+
+## Breaking changes
+
+`get_statcan_geographic_attributes()` and `get_statcan_geo_suite()` return simpler and consistent column names. None of the reverse dependencies use these functions.
+
+## Test environments
+
+* local macOS, R release
+* GitHub Actions: ubuntu-latest (devel, release, oldrel-1), macos-latest (release), windows-latest (release)
+
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
+
+## Reverse dependencies
+
+There are four reverse dependencies on CRAN: bayesiansurpriser, cmhc, griddy and tongfen. None of them use the functions with breaking changes. Their use of the CensusMapper API is skipped on CRAN because it requires an API key.
+
+## Vignettes
+
+Vignettes require API authentication, code chunks are not evaluated when the `COMPILE_VIG` environment variable is not set.
+
 # cancensus 0.6.1
 
 ## Bug fixes
