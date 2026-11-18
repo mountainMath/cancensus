@@ -57,7 +57,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
     url <- paste0("https://www12.statcan.gc.ca/census-recensement/",census_year,"/geo/sip-pis/boundary-limites/files-fichiers/l",tolower(level),filler,typeID,"21a_e.zip")
     if (level=="HR") {
       if (type=="cartographic") {
-        url <- "https://www150.statcan.gc.ca/n1/en/pub/82-402-x/2024001/hrbf-flrs/carto/ArcGIS/HR_000b23a_e.zip?st=wQRRL7PQ"
+        url <- "https://www150.statcan.gc.ca/n1/en/pub/82-402-x/2024001/hrbf-flrs/carto/ArcGIS/HR_000b23a_e.zip"
       } else {
         url <- "https://www150.statcan.gc.ca/n1/en/pub/82-402-x/2024001/hrbf-flrs/digi/ArcGIS/HR_000a23a_e.zip"
       }
