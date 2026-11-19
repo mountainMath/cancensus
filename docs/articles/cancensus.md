@@ -181,8 +181,9 @@ The labels of the Census variables are also available through
 Recent versions of `ggplot2` use these labels as default axis and legend
 titles. Be careful with columns you compute yourself: R keeps attributes
 through arithmetic, so a derived column inherits a label that no longer
-describes it. Set the title explicitly with `labs()`, or drop the label
-with [`as.numeric()`](https://rdrr.io/r/base/numeric.html).
+describes it. Set the title explicitly with
+[`labs()`](https://ggplot2.tidyverse.org/reference/labs.html), or drop
+the label with [`as.numeric()`](https://rdrr.io/r/base/numeric.html).
 
 ``` r
 

@@ -17,9 +17,9 @@ Access, retrieve, and work with Canadian Census data and geography.
 - Provides data and geography at multiple Census geographic levels
   including province, Census Metropolitan Area, Census Division, Census
   Subdivision, Census Tract, Dissemination Areas, Enumeration Areas (for
-  1996), and Dissemination Blocks (for 2001-2021)
-- Provides data for the 2021, 2016, 2011, 2006, 2001, and 1996 Census
-  releases
+  1996 and 1991), and Dissemination Blocks (for 2001-2021)
+- Provides data for the 2021, 2016, 2011, 2006, 2001, 1996, 1991, 1986,
+  and 1981 Census releases
 - Access to taxfiler data at the Census Tract level for tax years 2000
   through 2018
 
@@ -332,8 +332,10 @@ acknowledgement of source:
 - [`as_census_region_list()`](https://mountainmath.github.io/cancensus/reference/as_census_region_list.md)
   :
 
-  Convert a (suitably filtered) data frame from `list_census_regions` to
-  a list suitable for passing to `get_census`.
+  Convert a (suitably filtered) data frame from
+  [`list_census_regions`](https://mountainmath.github.io/cancensus/reference/list_census_regions.html)
+  to a list suitable for passing to
+  [`get_census`](https://mountainmath.github.io/cancensus/reference/get_census.html).
 
 - [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
   : Query the CensusMapper API for available vectors for a given

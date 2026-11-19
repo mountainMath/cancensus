@@ -17,9 +17,9 @@ Access, retrieve, and work with Canadian Census data and geography.
 - Provides data and geography at multiple Census geographic levels
   including province, Census Metropolitan Area, Census Division, Census
   Subdivision, Census Tract, Dissemination Areas, Enumeration Areas (for
-  1996), and Dissemination Blocks (for 2001-2021)
-- Provides data for the 2021, 2016, 2011, 2006, 2001, and 1996 Census
-  releases
+  1996 and 1991), and Dissemination Blocks (for 2001-2021)
+- Provides data for the 2021, 2016, 2011, 2006, 2001, 1996, 1991, 1986,
+  and 1981 Census releases
 - Access to taxfiler data at the Census Tract level for tax years 2000
   through 2018
 

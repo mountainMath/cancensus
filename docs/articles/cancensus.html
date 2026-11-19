@@ -247,7 +247,7 @@ available.</p>
 axis and legend titles. Be careful with columns you compute yourself: R
 keeps attributes through arithmetic, so a derived column inherits a
 label that no longer describes it. Set the title explicitly with
-<code>labs()</code>, or drop the label with
+<code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs()</a></code>, or drop the label with
 <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dwellings_per_person</span> <span class="op">&lt;-</span> <span class="va">census_data</span><span class="op">$</span><span class="va">Dwellings</span> <span class="op">/</span> <span class="va">census_data</span><span class="op">$</span><span class="va">Population</span></span>

@@ -2,6 +2,8 @@
 
 ## cancensus 0.6.2
 
+CRAN release: 2026-11-19
+
 ### Breaking changes
 
 - [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
