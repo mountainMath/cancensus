@@ -114,7 +114,11 @@ plot_data |> slice_max(Share,n=20) |>
 ![Ukrainian ethnic
 origin](statcan_wds_files/figure-html/unnamed-chunk-7-1.png)
 
-To map the data we have to get the geographies.
+To map the data we have to get the geographies. Statistics Canada may
+block this download, in which case
+[`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+returns `NULL` with a warning that explains how to download the file
+manually.
 
 ``` r
 
@@ -137,4 +141,4 @@ fed_geos |>
 ```
 
 ![Ukrainian ethnic origin by (2013) Federal Electoral
-District](statcan_wds_files/figure-html/unnamed-chunk-9-1.png)
+District](statcan_wds_files/figure-html/unnamed-chunk-10-1.png)

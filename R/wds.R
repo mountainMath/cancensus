@@ -23,17 +23,28 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
   valid_census_years <- c("2021")
   valid_levels <- c("PR","CD","CMACA","CSD","CT","ADA","DA","ER","FED","DPL","POPCNTR","FSA","HR")
   if (!(census_year %in% valid_census_years)) {
-    stop(paste0("Census year must be one of ",paste0(valid_census_years,collapse = ", "),"."))
+    cc_abort("invalid_census_year", choices = valid_census_years)
   }
   if (!(level %in% valid_levels)) {
-    stop(paste0("Level must be one of ",paste0(valid_levels,collapse = ", "),"."))
+    cc_abort("invalid_level_choice", choices = valid_levels)
   }
   meta_url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/dataflow/STC_CP/DF_",level,
                      ifelse(is.null(version),"",paste0("/",version)),
                      "?references=all")
   metadata_tempfile <- file.path(tempdir(),paste0("census_wds_metadata_",digest::digest(meta_url),".sdmx"))
   if (refresh || !file.exists(metadata_tempfile)) {
-    utils::download.file(meta_url,metadata_tempfile)
+    # Download to a temporary file and only keep what parses as metadata, so that error pages and
+    # interrupted downloads don't get read back as cached metadata on the next call
+    tmp <- tempfile(fileext = ".sdmx")
+    on.exit(unlink(tmp), add = TRUE)
+    # httr's default Accept header prefers JSON, ask for SDMX-ML explicitly
+    response <- wds_GET(meta_url,
+                        httr::accept("application/vnd.sdmx.structure+xml;version=2.1"),
+                        httr::write_disk(tmp, overwrite = TRUE))
+    if (httr::http_error(response) || !is_wds_metadata_file(tmp)) {
+      cc_abort("wds_metadata_unavailable", level = level, status = httr::status_code(response))
+    }
+    file.copy(tmp, metadata_tempfile, overwrite = TRUE)
   }
   d <- xml2::read_xml(metadata_tempfile)
   code_lists <- xml2::xml_find_all(d,"//structure:Codelist")
@@ -95,45 +106,36 @@ get_statcan_wds_data <- function(DGUIDs,
                            refresh=FALSE) {
   DGUIDs <- sort(DGUIDs)
   members <- sort(members)
-  level <- geo_level_from_DGUID(DGUIDs[1])
+  level <- geo_level_from_DGUID(DGUIDs[1], language = language)
   url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/data/STC_CP")
   gender <- tolower(gender)
   gender <- paste0(toupper(substr(gender,1,1)),substr(gender,2,100))
   valid_genders <- c("All","Total","Male","Female")
   if (!(gender %in% valid_genders)) {
-    stop(paste0("Gender must be one of ",paste0(valid_genders,collapse = ", "),"."))
+    cc_abort("invalid_gender", choices = valid_genders, .language = language)
   }
-  language <- tolower(language)
-  valid_languages <- c("en","fr")
-  if (!(language %in% valid_languages)) {
-    stop(paste0("Language must be one of ",paste0(valid_languages,collapse = ", "),"."))
-  }
+  language <- validate_language(language)
   gender <- c("All"="","Total"="1","Male"="2","Female"="3")[[gender]]
   dguid_string <- paste0(DGUIDs,collapse="+")
   member_string <- paste0(members,collapse = "+")
   add=paste0("DF_",level,ifelse(is.null(version),"",paste0(",",version)),"/A5.",dguid_string,".",gender,".",member_string,".1")
   wds_data_tempfile <- file.path(tempdir(),paste0("wds_data_",digest::digest(add),".csv"))
   if (refresh || !file.exists(wds_data_tempfile)) {
-    response <- httr::GET(paste0(url,",",add),
-                          httr::accept("text/csv"),
-                          httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
-                          httr::write_disk(wds_data_tempfile,overwrite = TRUE))
-    if (!response$status_code=="200") {
-      # write_disk persists the body even on failure; capture it for the error
-      # message, then remove the file so the error response does not get read
-      # back as cached data on the next call
+    # Download to a temporary file, write_disk persists the body even on failure and an error
+    # response should not get read back as cached data on the next call
+    tmp <- tempfile(fileext = ".csv")
+    on.exit(unlink(tmp), add = TRUE)
+    response <- wds_GET(paste0(url,",",add),
+                        httr::accept("text/csv"),
+                        httr::add_headers("Accept-Encoding"="deflate, gzip, br"),
+                        httr::write_disk(tmp,overwrite = TRUE),
+                        language = language)
+    if (httr::status_code(response)!=200) {
       error_content <- tryCatch(httr::content(response), error = function(e) "")
-      unlink(wds_data_tempfile)
-      if (!is.null(response$error) && ("curl_error_peer_failed_verification" %in% class(response$error))) {
-        stop(paste0(strwrap(gsub(".+\\): ","",as.character(response$error),80)),collapse = "\n"),"\n",
-             "This means that the authenticity of the StatCan API server can't be verified.\n",
-             "Statistics Canada has a history of failty SSL certificats on their API,\n",
-             "if you are reasonably sure that your connection is not getting hijacked you\n",
-             "can disable peer checking for the duration of the R session by typing\n\n",
-             "httr::set_config(httr::config(ssl_verifypeer=0,ssl_verifystatus=0))","\n\n","into the console.")
-      }
-      stop(paste0("Invalid request.\n",error_content))
+      cc_abort("wds_invalid_request", details = paste0(as.character(error_content), collapse = "\n"),
+               .language = language)
     }
+    file.copy(tmp, wds_data_tempfile, overwrite = TRUE)
   }
   census_year <- "2021"
   meta_data <- get_statcan_wds_metadata(census_year,level=level,version = version,refresh = refresh)
@@ -151,10 +153,10 @@ get_statcan_wds_data <- function(DGUIDs,
   data <- readr::read_csv(wds_data_tempfile,col_types = readr::cols(.default="c")) %>%
     dplyr::mutate(dplyr::across(dplyr::matches("OBS_VALUE|TNR_CI_"),as.numeric)) %>%
     dplyr::left_join(meta_geos %>%
-                       dplyr::select(GEO_DESC=.data$ID,GEO_NAME=!!as.name(name_field)),
+                       dplyr::select(GEO_DESC="ID",GEO_NAME=!!as.name(name_field)),
                      by="GEO_DESC") %>%
     dplyr::left_join(meta_characteristics %>%
-                       dplyr::select(CHARACTERISTIC=.data$ID,CHARACTERISTIC_NAME=!!as.name(name_field)),
+                       dplyr::select(CHARACTERISTIC="ID",CHARACTERISTIC_NAME=!!as.name(name_field)),
               by="CHARACTERISTIC")
 
   data
@@ -162,8 +164,27 @@ get_statcan_wds_data <- function(DGUIDs,
 
 
 
-geo_level_from_DGUID <- function(DGUID,simple=TRUE){
-  schema <- substr(DGUID,"6","9")
+# Requests to the Statistics Canada API. Failed certificate checks get explained, they have been a
+# recurring problem with this server. httr raises these as errors instead of returning a response.
+wds_GET <- function(url, ..., language = NULL){
+  tryCatch(httr::GET(url, ...), error = function(e) {
+    if (inherits(e, "curl_error_peer_failed_verification") ||
+        grepl("SSL|certificate", conditionMessage(e), ignore.case = TRUE)) {
+      cc_abort("wds_ssl_error", error = paste0(strwrap(conditionMessage(e),80),collapse = "\n"),
+               .language = language)
+    }
+    stop(e)
+  })
+}
+
+is_wds_metadata_file <- function(path){
+  # documents without the namespace warn before failing
+  tryCatch(suppressWarnings(length(xml2::xml_find_all(xml2::read_xml(path),"//structure:Codelist"))>0),
+           error = function(e) FALSE)
+}
+
+geo_level_from_DGUID <- function(DGUID,simple=TRUE,language=NULL){
+  schema <- substr(as.character(DGUID),6,9)
   schema_to_level <- c("0000"="C","0001"="C",
                        "0002"="PR",
                        "0003"="CD",
@@ -185,6 +206,9 @@ geo_level_from_DGUID <- function(DGUID,simple=TRUE){
                        "0512"="DA",
                        "0513"="DB",
                        "0516"="ADA")
+  if (length(schema)!=1 || !(schema %in% names(schema_to_level))) {
+    cc_abort("invalid_dguid", dguid = DGUID, .language = language)
+  }
   level <- schema_to_level[[schema]]
   if (simple){
     simple_translation <- c("LHR"="HR","CMA"="CMACA","CA"="CMACA","CMAP"="CMACA")

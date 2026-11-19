@@ -26,7 +26,7 @@ get_intersecting_geometries(
 
 \item{geometry}{A valid \code{sf} or \code{sfc} class object. As long as the geometry is valid, any projection is accepted. Objects will be reprojected as server-side intersections use lat/lon projection.}
 
-\item{simplified}{If \code{TRUE} will return a region list compatible with \link{get_census}, otherwise will return a character vector of matching region ids.}
+\item{simplified}{If \code{TRUE} will return a character vector of matching region ids, otherwise (the default) will return a region list compatible with \link{get_census}.}
 
 \item{use_cache}{If set to \code{TRUE} (the default) data will be read from the local cache if available.}
 

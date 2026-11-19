@@ -12,7 +12,8 @@ child_census_vectors(
   vector_list,
   leaves_only = FALSE,
   max_level = NA,
-  keep_parent = FALSE
+  keep_parent = FALSE,
+  language = NULL
 )
 ```
 
@@ -37,6 +38,13 @@ child_census_vectors(
 
   optional, also return parent vector in list of results. Default is set
   to `FALSE`.
+
+- language:
+
+  Language of the labels, one of `"en"` or `"fr"`. By default uses the
+  language `vector_list` was retrieved in, and otherwise the
+  `cancensus.language` option, and `"en"` if that is not set. See
+  [`list_census_vectors`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md).
 
 ## Examples
 

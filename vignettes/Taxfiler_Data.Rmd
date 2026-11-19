@@ -74,7 +74,7 @@ plot_data <- years %>%
                  "CFLIM-AT"=paste0("v_",dataset,"_786"))
     
     get_census(dataset,regions=list(CMA="59933"),vectors = vectors,
-                    geo_format = 'sf', level="CT", quiet = TRUE) %>%
+                    geo_format = 'sf', level="CT", labels = "labelled", quiet = TRUE) %>%
       select(c("GeoUID",names(vectors))) %>%
       mutate(Year=year)
   }) %>%

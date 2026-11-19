@@ -4,7 +4,12 @@
 \alias{list_census_vectors}
 \title{Query the CensusMapper API for available vectors for a given dataset.}
 \usage{
-list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
+list_census_vectors(
+  dataset,
+  use_cache = TRUE,
+  quiet = TRUE,
+  language = getOption("cancensus.language", "en")
+)
 }
 \arguments{
 \item{dataset}{The dataset to query for available vectors, e.g.
@@ -16,6 +21,12 @@ available. If set to FALSE, query the API for the data, and
 refresh the local cache with the result.}
 
 \item{quiet}{When FALSE, shows messages and warnings. Set to TRUE by default.}
+
+\item{language}{Language of the \code{label} and \code{details} columns, one of \code{"en"} or
+\code{"fr"}. Defaults to the \code{cancensus.language} option, and to \code{"en"} if that is not set.
+Not all datasets have French labels. Vectors without French labels fall back to English, with a warning
+once per session and dataset that is shown independently of \code{quiet}. The \code{type}, \code{units}
+and \code{aggregation} columns are always in English.}
 }
 \value{
 Returns a data frame detailing the available Census vectors (i.e. variables) for a given Census
@@ -35,5 +46,8 @@ Query the CensusMapper API for available vectors for a given dataset.
 \dontrun{
 # List all vectors for a given Census dataset in CensusMapper
 list_census_vectors('CA16')
+
+# The same list with French labels
+list_census_vectors('CA16', language = 'fr')
 }
 }

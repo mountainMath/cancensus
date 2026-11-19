@@ -52,9 +52,9 @@ Canada 1996; 2001; 2006; 2011; 2016).
 
 - simplified:
 
-  If `TRUE` will return a region list compatible with
-  [get_census](https://mountainmath.github.io/cancensus/reference/get_census.md),
-  otherwise will return a character vector of matching region ids.
+  If `TRUE` will return a character vector of matching region ids,
+  otherwise (the default) will return a region list compatible with
+  [get_census](https://mountainmath.github.io/cancensus/reference/get_census.md).
 
 - use_cache:
 

@@ -92,10 +92,15 @@ plot_data |> slice_max(Share,n=20) |>
        caption="StatCan Census 2021")
 ```
 
-To map the data we have to get the geographies.
+To map the data we have to get the geographies. Statistics Canada may block this download, in which case `get_statcan_geographies()` returns `NULL` with a warning that explains how to download the file manually.
 
 ```{r}
 fed_geos <- get_statcan_geographies("2021","FED")
+```
+
+```{r, include = FALSE}
+# Skip the remaining chunks if the download was blocked, e.g. on CI
+knitr::opts_chunk$set(eval = !is.null(fed_geos))
 ```
 
 With these we can join on our census data and map it.

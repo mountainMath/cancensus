@@ -1,7 +1,7 @@
 Package: cancensus
 Type: Package
 Title: Access, Retrieve, and Work with Canadian Census Data and Geography
-Version: 0.6.1
+Version: 0.6.2
 Authors@R: c(
     person("Jens", "von Bergmann", email = "jens@mountainmath.ca", role = c("aut"), comment = "API creator and maintainer"),
     person("Dmitry", "Shkolnik", email = "shkolnikd@gmail.com", role = c("aut", "cre"), comment = "Package maintainer, responsible for correspondence"),
@@ -25,9 +25,11 @@ Imports: digest (>= 0.1),
     jsonlite (>= 1.0),
     sf,
     geojsonsf,
-    rlang,
-    readr
-Suggests: knitr,
+    rlang (>= 1.0.0),
+    readr (>= 2.0.0)
+Suggests: DBI,
+    duckdb (>= 1.5.6),
+    knitr,
     ggplot2,
     leaflet,
     mapdeck,
@@ -44,4 +46,4 @@ URL: https://github.com/mountainMath/cancensus, https://mountainmath.github.io/c
 BugReports: https://github.com/mountainMath/cancensus/issues
 Depends: 
     R (>= 4.1)
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

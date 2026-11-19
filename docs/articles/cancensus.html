@@ -11,29 +11,22 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="cancensus">
-<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-107390160-3"></script><script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107390160-3');
-</script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +56,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mountainMath/cancensus/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -151,6 +152,15 @@ cache path.</strong></p>
 <p>Data in the persistent cache can be managed via the functions
 <code>list_cancensus_cache</code> and
 <code>remove_from_cancensus_cache</code> if needed.</p>
+<p>If a project should have its own cache, for example to back up the
+data with the project for reproducibility, set the cache path without
+<code>install = TRUE</code> at the top of a script. This applies for the
+current R session and takes precedence over the cache path stored in
+your <code>.Renviron</code>. Use an absolute path and set it before the
+first call to <code>get_census</code>, see
+<code><a href="../reference/set_cancensus_cache_path.html">?set_cancensus_cache_path</a></code> for details.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_cancensus_cache_path.html">set_cancensus_cache_path</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data/cancensus_cache"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -168,7 +178,20 @@ geography level. You can specify one of three options for spatial
 formats: <code>NA</code> to return data only, <code>sf</code> to return
 an sf-class data frame, or <code>sp</code> to return a
 SpatialPolygonsDataFrame object.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>The <code>labels</code> parameter of <code>get_census</code> controls
+how columns are named and labelled. It currently defaults to
+<code>labels = "detailed"</code>, but this is planned to change to
+<code>labels = "labelled"</code> in a future version. To make sure your
+code keeps working when the default changes, set the
+<code>cancensus.labels</code> option to apply a choice to all
+<code>get_census</code> calls in a script or session, or set the
+<code>labels</code> parameter in individual calls. Without either one,
+<code>get_census</code> shows a message once per session pointing this
+out. We recommend adopting <code>"labelled"</code> early, and set the
+option for all calls in this vignette.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>cancensus.labels <span class="op">=</span> <span class="st">"labelled"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Returns a data frame with data only</span></span>
 <span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
 <span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v_CA21_434"</span>,<span class="st">"v_CA21_435"</span>,<span class="st">"v_CA21_440"</span><span class="op">)</span>,</span>
@@ -193,6 +216,47 @@ specify <code>use_cache = FALSE</code> as a parameter for
 <p>Additional parameters for advanced options can be viewed by running
 <code><a href="../reference/get_census.html">?get_census</a></code>.</p>
 <div class="section level3">
+<h3 id="column-names-and-labels">Column names and labels<a class="anchor" aria-label="anchor" href="#column-names-and-labels"></a>
+</h3>
+<p>With <code>labels = "labelled"</code> Census variables are named by
+their vector, or by the name you give them when naming
+<code>vectors</code>, and the other columns have short names like
+<code>Name</code> and <code>Area</code> that are the same across
+datasets and with or without geographic data. The full description of
+each column is stored in its <code>"label"</code> attribute, which is
+displayed e.g. by the RStudio data viewer.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">census_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_census.html">get_census</a></span><span class="op">(</span>dataset<span class="op">=</span><span class="st">'CA21'</span>, regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>CMA<span class="op">=</span><span class="st">"59933"</span><span class="op">)</span>,</span>
+<span>                          vectors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>average_age<span class="op">=</span><span class="st">"v_CA21_386"</span>,<span class="st">"v_CA21_434"</span><span class="op">)</span>,</span>
+<span>                          level<span class="op">=</span><span class="st">'CSD'</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "GeoUID"      "Type"        "Name"        "Area"        "Population" </span></span>
+<span><span class="co">#&gt;  [6] "Dwellings"   "Households"  "PR_UID"      "CD_UID"      "CMA_UID"    </span></span>
+<span><span class="co">#&gt; [11] "average_age" "v_CA21_434"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">$</span><span class="va">Population</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Population 2021"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">$</span><span class="va">average_age</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Average age"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">census_data</span><span class="op">$</span><span class="va">v_CA21_434</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Occupied private dwellings by structural type of dwelling"</span></span></code></pre></div>
+<p>The labels of the Census variables are also available through
+<code>label_vectors(census_data)</code>, and the <code>language</code>
+parameter of <code>get_census</code> switches labels to French where
+available.</p>
+<p>Recent versions of <code>ggplot2</code> use these labels as default
+axis and legend titles. Be careful with columns you compute yourself: R
+keeps attributes through arithmetic, so a derived column inherits a
+label that no longer describes it. Set the title explicitly with
+<code>labs()</code>, or drop the label with
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dwellings_per_person</span> <span class="op">&lt;-</span> <span class="va">census_data</span><span class="op">$</span><span class="va">Dwellings</span> <span class="op">/</span> <span class="va">census_data</span><span class="op">$</span><span class="va">Population</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dwellings_per_person</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Dwellings 2021"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">dwellings_per_person</span><span class="op">)</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="census-datasets">Census Datasets<a class="anchor" aria-label="anchor" href="#census-datasets"></a>
 </h3>
 <p><strong>cancensus</strong> can access Statistics Canada Census data
@@ -210,22 +274,24 @@ for the 2001, 2006, 2011, and 2016 Census years at all levels starting
 with census tract.</p>
 <p>The function <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code> will show all
 available datasets alongside their metadata.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_datasets.html">list_census_datasets</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29 × 6</span></span></span>
-<span><span class="co">#&gt;    dataset description           attribution reference reference_url geo_dataset</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census    StatCan 19… 92-351-U  https://www1… CA1996     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census    StatCan 20… 92-378-X  https://www1… CA01       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census    StatCan 20… 92-566-X  https://www1… CA06       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Census a… StatCan 20… 98-301-X… https://www1… CA11       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census    StatCan 20… 98-301-X  https://www1… CA16       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census    StatCan 20… 98-301-X  https://www1… CA21       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Census x… StatCan 20… 92-378-X  https://www1… CA01       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Census x… StatCan 20… 92-566-X  https://www1… CA06       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Census x… StatCan 20… 98-301-X  https://www1… CA11       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Census x… StatCan 20… 98-301-X  https://www1… CA16       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 19 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29 × 11</span></span></span>
+<span><span class="co">#&gt;    dataset description        attribution reference reference_url description_fr</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CA1996  1996 Canada Census StatCan 19… 92-351-U  https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CA01    2001 Canada Census StatCan 20… 92-378-X  https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CA06    2006 Canada Census StatCan 20… 92-566-X  https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CA11    2011 Canada Censu… StatCan 20… 98-301-X… https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CA16    2016 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CA21    2021 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CA01xSD 2001 Canada Censu… StatCan 20… 92-378-X  https://www1… Totalisation …</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CA06xSD 2006 Canada Censu… StatCan 20… 92-566-X  https://www1… Totalisation …</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CA11xSD 2011 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CA16xSD 2016 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 19 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: attribution_fr &lt;chr&gt;, reference_url_fr &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   label &lt;chr&gt;, label_fr &lt;chr&gt;, geo_dataset &lt;chr&gt;</span></span></span></code></pre></div>
 <p>As other Census datasets become available via the CensusMapper API,
 they will be listed as output when calling
 <code><a href="../reference/list_census_datasets.html">list_census_datasets()</a></code>.</p>
@@ -242,7 +308,7 @@ regions.</p>
 <strong>cancensus</strong> provides a function,
 <code>list_census_regions(dataset)</code>, to display all named census
 regions and their corresponding id for a given census dataset.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,518 × 8</span></span></span>
 <span><span class="co">#&gt;    region name               level    pop municipal_status CMA_UID CD_UID PR_UID</span></span>
@@ -262,7 +328,7 @@ regions and their corresponding id for a given census dataset.</p>
 requires as input a list of region id strings that correspond to that
 regions geoid. You can combine different regions together into region
 lists.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieves Vancouver and Toronto</span></span>
 <span><span class="fu"><a href="../reference/list_census_regions.html">list_census_regions</a></span><span class="op">(</span><span class="st">'CA21'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span> <span class="op">==</span> <span class="st">"CMA"</span>, <span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Vancouver"</span>,<span class="st">"Toronto"</span><span class="op">)</span><span class="op">)</span></span>
@@ -372,9 +438,9 @@ data they are looking for.</p>
 </h3>
 <p>Run <code>list_census_vectors(dataset)</code> to view all available
 Census variables for a given dataset.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA21"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7,709 × 7</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7,718 × 7</span></span></span>
 <span><span class="co">#&gt;    vector    type   label                units parent_vector aggregation details</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> v_CA21_1  Total  Population, 2021     Numb… <span style="color: #BB0000;">NA</span>            Additive    CA 202…</span></span>
@@ -387,7 +453,7 @@ Census variables for a given dataset.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> v_CA21_8  Total  Total - Age          Numb… <span style="color: #BB0000;">NA</span>            Additive    CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> v_CA21_9  Male   Total - Age          Numb… <span style="color: #BB0000;">NA</span>            Additive    CA 202…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> v_CA21_10 Female Total - Age          Numb… <span style="color: #BB0000;">NA</span>            Additive    CA 202…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7,699 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7,708 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="variable-characteristics">Variable characteristics<a class="anchor" aria-label="anchor" href="#variable-characteristics"></a>
@@ -427,7 +493,7 @@ unique matches; and, semantic search which works better with search
 phrases and has tolerance for inexact searches. Switching between search
 modes is done using the <code>query_type</code> argument when calling
 <code>find_census_variables()</code> function.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the number of people of Austrian ethnic origin</span></span>
 <span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Australia"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"total"</span>, query_type <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
@@ -465,7 +531,7 @@ modes is done using the <code>query_type</code> argument when calling
 the variable for the number of people of Austrian ethnic background. We
 can select that vector and quickly look up its entire hierarchy using
 <code>parent_census_vectors</code> on a vector list.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4092"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/parent_census_vectors.html">parent_census_vectors</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -481,7 +547,7 @@ variable stems that share the same aggregate variable. As an example, if
 we want to look the total count of Northern European ethnic origin
 respondents disaggregated by individual countries, it is pretty easy to
 do so.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find the variable indicating the Northern European aggregate</span></span>
 <span><span class="fu"><a href="../reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"Northern European"</span>, dataset <span class="op">=</span> <span class="st">"CA16"</span>, type <span class="op">=</span> <span class="st">"Total"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 4</span></span></span>
@@ -498,7 +564,7 @@ do so.</p>
 represents the aggregate for all Northern European origins. The
 <code>child_census_vectors</code> function can return a list of its
 constituent underlying variables.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show all child variable leaves</span></span>
 <span><span class="fu"><a href="../reference/list_census_vectors.html">list_census_vectors</a></span><span class="op">(</span><span class="st">"CA16"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">vector</span> <span class="op">==</span> <span class="st">"v_CA16_4122"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/child_census_vectors.html">child_census_vectors</a></span><span class="op">(</span>leaves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -528,7 +594,7 @@ hierarchical tree.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

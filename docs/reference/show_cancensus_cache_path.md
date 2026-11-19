@@ -1,6 +1,7 @@
 # View saved cache directory path
 
-View saved cache path'
+View the cache path in use, from the `CM_CACHE_PATH` environment
+variable or otherwise the `cancensus.cache_path` option.
 
 ## Usage
 
@@ -8,9 +9,14 @@ View saved cache path'
 show_cancensus_cache_path()
 ```
 
+## Value
+
+The cache path, or `NULL` with a message if none is set
+
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 show_cancensus_cache_path()
-#> [1] "/Users/jens/data/cancensus.data"
+} # }
 ```

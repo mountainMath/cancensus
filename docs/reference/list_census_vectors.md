@@ -5,7 +5,12 @@ Query the CensusMapper API for available vectors for a given dataset.
 ## Usage
 
 ``` r
-list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
+list_census_vectors(
+  dataset,
+  use_cache = TRUE,
+  quiet = TRUE,
+  language = getOption("cancensus.language", "en")
+)
 ```
 
 ## Arguments
@@ -24,6 +29,15 @@ list_census_vectors(dataset, use_cache = TRUE, quiet = TRUE)
 - quiet:
 
   When FALSE, shows messages and warnings. Set to TRUE by default.
+
+- language:
+
+  Language of the `label` and `details` columns, one of `"en"` or
+  `"fr"`. Defaults to the `cancensus.language` option, and to `"en"` if
+  that is not set. Not all datasets have French labels. Vectors without
+  French labels fall back to English, with a warning once per session
+  and dataset that is shown independently of `quiet`. The `type`,
+  `units` and `aggregation` columns are always in English.
 
 ## Value
 
@@ -45,5 +59,8 @@ within its hierarchical structure.
 if (FALSE) { # \dontrun{
 # List all vectors for a given Census dataset in CensusMapper
 list_census_vectors('CA16')
+
+# The same list with French labels
+list_census_vectors('CA16', language = 'fr')
 } # }
 ```

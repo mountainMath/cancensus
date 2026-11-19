@@ -13,6 +13,9 @@
 #' @param show_type Logical. If \code{TRUE}, shows the type (Total/Male/Female)
 #'   next to each vector. Default is \code{FALSE}.
 #' @param quiet When \code{TRUE}, suppress messages. Default is \code{FALSE}.
+#' @param language Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+#'   \code{vector} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+#'   if that is not set. See \code{\link{list_census_vectors}}.
 #'
 #' @return Invisibly returns a tibble of the vectors displayed in the tree.
 #'   The tree is printed to the console as a side effect.
@@ -35,7 +38,9 @@
 #'   visualize_vector_hierarchy()
 #' }
 visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
-                                       show_type = FALSE, quiet = FALSE) {
+                                       show_type = FALSE, quiet = FALSE, language = NULL) {
+
+  language <- vector_list_language(vector, language)
 
   # Handle input - either character vector code or tibble
 
@@ -45,25 +50,23 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
       dataset <- tryCatch({
         dataset_from_vector_list(vector)
       }, error = function(e) {
-        stop("Cannot determine dataset from vector code. Please provide the 'dataset' parameter.",
-             call. = FALSE)
+        cc_abort("dataset_from_vector_failed", .language = language)
       })
     }
     dataset <- translate_dataset(dataset)
 
     # Get the root vector info
-    all_vectors <- list_census_vectors(dataset, quiet = TRUE)
+    all_vectors <- list_census_vectors(dataset, quiet = TRUE, language = language)
     root_info <- all_vectors %>% dplyr::filter(.data$vector %in% !!vector)
 
     if (nrow(root_info) == 0) {
-      stop(paste0("Vector '", paste0(vector, collapse = "', '"),
-                  "' not found in dataset '", dataset, "'."),
-           call. = FALSE)
+      cc_abort("vector_not_found", vectors = paste0("'", vector, "'"), dataset = dataset,
+               .language = language)
     }
   } else if (inherits(vector, "data.frame")) {
     # It's a tibble from list_census_vectors
     if (nrow(vector) == 0) {
-      stop("Empty vector tibble provided.", call. = FALSE)
+      cc_abort("empty_vector_tibble", .language = language)
     }
     dataset <- attr(vector, "dataset")
     if (is.null(dataset)) {
@@ -71,49 +74,60 @@ visualize_vector_hierarchy <- function(vector, dataset = NULL, max_depth = NA,
     }
     dataset <- translate_dataset(dataset)
     root_info <- vector
-    all_vectors <- list_census_vectors(dataset, quiet = TRUE)
+    all_vectors <- list_census_vectors(dataset, quiet = TRUE, language = language)
   } else {
-    stop("'vector' must be a character string or a tibble from list_census_vectors().",
-         call. = FALSE)
+    cc_abort("invalid_vector_input", .language = language)
   }
 
   # Use first row if multiple vectors provided
   if (nrow(root_info) > 1) {
-    if (!quiet) message("Multiple vectors provided. Using first vector: ", root_info$vector[1])
+    if (!quiet) cc_inform("multiple_vectors", vector = root_info$vector[1], .language = language)
     root_info <- root_info[1, ]
   }
 
   root_vector <- root_info$vector
 
   # Get all children
-  children <- child_census_vectors(root_vector, leaves_only = FALSE, max_level = max_depth)
+  children <- child_census_vectors(root_vector, leaves_only = FALSE, max_level = max_depth,
+                                   language = language)
 
   # Combine root with children
   tree_vectors <- dplyr::bind_rows(root_info, children)
 
   # Build the tree structure
   if (!quiet) {
-    message("Vector hierarchy for ", root_vector, " (", dataset, "):\n")
+    message(cc_msg("vector_hierarchy_header", vector = root_vector, dataset = dataset,
+                   .language = language), "\n")
   }
 
   # Print root
   root_label <- root_info$label
   if (show_type) {
-    root_label <- paste0(root_label, " [", root_info$type, "]")
+    root_label <- paste0(root_label, " [", vector_type_label(root_info$type, language), "]")
   }
   cat(paste0(root_vector, ": ", root_label, "\n"))
 
   # Recursively print children
   print_children(root_vector, all_vectors, tree_vectors, prefix = "",
-                 show_type = show_type, current_depth = 1, max_depth = max_depth)
+                 show_type = show_type, current_depth = 1, max_depth = max_depth,
+                 language = language)
 
   invisible(tree_vectors)
+}
+
+# The vector type for display, the type column keeps the English values in both languages
+vector_type_label <- function(type, language = NULL) {
+  ids <- c(Total = "vector_type_total", Male = "vector_type_male", Female = "vector_type_female")
+  # type is a factor, iterating over it directly would give the level codes
+  vapply(as.character(type), function(t) {
+    if (!is.na(t) && t %in% names(ids)) cc_msg(ids[[t]], .language = language) else as.character(t)
+  }, character(1), USE.NAMES = FALSE)
 }
 
 #' Internal function to recursively print tree children
 #' @noRd
 print_children <- function(parent_vector, all_vectors, tree_vectors, prefix,
-                           show_type, current_depth, max_depth) {
+                           show_type, current_depth, max_depth, language = NULL) {
 
   # Check depth limit
 
@@ -140,7 +154,7 @@ if (!is.na(max_depth) && current_depth > max_depth) {
     # Build label
     label <- child$label
     if (show_type) {
-      label <- paste0(label, " [", child$type, "]")
+      label <- paste0(label, " [", vector_type_label(child$type, language), "]")
     }
 
     # Check if this is a leaf; consult the full vector list so that nodes
@@ -148,7 +162,7 @@ if (!is.na(max_depth) && current_depth > max_depth) {
     has_children_in_tree <- any(tree_vectors$parent_vector == child$vector, na.rm = TRUE)
     has_children_in_dataset <- any(all_vectors$parent_vector == child$vector, na.rm = TRUE)
     leaf_indicator <- if (!has_children_in_dataset) {
-      " (leaf)"
+      paste0(" ", cc_msg("vector_tree_leaf", .language = language))
     } else if (!has_children_in_tree) {
       " ..."
     } else {
@@ -163,7 +177,8 @@ if (!is.na(max_depth) && current_depth > max_depth) {
                    prefix = paste0(prefix, child_prefix),
                    show_type = show_type,
                    current_depth = current_depth + 1,
-                   max_depth = max_depth)
+                   max_depth = max_depth,
+                   language = language)
   }
 
   invisible(NULL)

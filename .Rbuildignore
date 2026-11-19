@@ -1,17 +1,15 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.travis\.yml$
 ^cran-comments\.md$
 CRAN-RELEASE
 CRAN-SUBMISSION
 ^docs$
 docs/
 docs/*
-^docs_old$
-^docs_old/
 ^pkgdown$
 .*data_cache/
 R/hex_sticker.R
+^R/local_server_setup\.R$
 ^Meta$
 images
 images/*
@@ -31,7 +29,4 @@ lastMiKTeXException
 ^AI_agent_comments/*
 ^\.claude$
 ^\.claude/
-EXECUTIVE_SUMMARY.md
-PERFORMANCE_SUMMARY.md
-PR_DETAILS.md
 ^\.positai$

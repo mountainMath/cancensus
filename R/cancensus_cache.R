@@ -1,10 +1,28 @@
-metadata_columns <- c("path" , "dataset", "regions", "level", "vectors", "created_at",
-                      "version", "size" ,"last_accessed", "access_count",  "resolution")
 metadata_columns_c <- c("path" , "dataset", "regions", "level", "vectors", "version", "resolution")
-metadata_columns_d <- c("created_at","last_accessed")
 metadata_columns_n <- c("size" , "access_count")
 
+# Add the metadata columns that are missing, older cache entries don't have all of them
+fill_metadata_columns <- function(metadata){
+  for (n in setdiff(metadata_columns_c,names(metadata))) {
+    metadata[,n]=NA_character_
+  }
+  for (n in setdiff(metadata_columns_n,names(metadata))) {
+    metadata[,n]=NA_real_
+  }
+  metadata
+}
 
+# Record what a cached file holds, for list_cancensus_cache() and the check for recalled data. The
+# version of the data comes with the `response` of the API, further fields get passed by name.
+write_cache_metadata <- function(meta_file,data_file,response,...){
+  metadata <- dplyr::tibble(...,created_at=Sys.time(),
+                            version=response$headers$`data-version`,
+                            size=file.info(data_file)$size)
+  saveRDS(metadata,file = meta_file)
+}
+
+# The metadata of a cached file with updated access information. Cache entries from before the
+# metadata was introduced get it filled in from the `params` of the request where possible.
 generate_metadata <- function(meta_file,params){
   if (file.exists(meta_file)) {
     metadata <- readRDS(meta_file) %>%
@@ -15,23 +33,12 @@ generate_metadata <- function(meta_file,params){
       metadata <- metadata %>% dplyr::mutate(access_count=1)
     }
   } else {
-    pattern <- basename(meta_file) %>% gsub("\\.meta$","",.)
-    path <- dir(cache_path(),pattern = pattern)
     metadata <- dplyr::tibble(last_accessed=Sys.time(),access_count=1)
   }
-  if (!is.null(params) & !("dataset" %in% names(metadata)) & "dataset" %in% names(params)) {
-    metadata$dataset=params$dataset
+  for (n in setdiff(intersect(c("dataset","level","regions","resolution"),names(params)),names(metadata))) {
+    metadata[[n]]=as.character(params[[n]])
   }
-  if (!is.null(params) & !("level" %in% names(metadata)) & "level" %in% names(params)) {
-    metadata$level=params$level
-  }
-  if (!is.null(params) & !("regions" %in% names(metadata)) & "regions" %in% names(params)) {
-    metadata$regions=as.character(params$regions)
-  }
-  if (!is.null(params) & !("resolution" %in% names(metadata)) & "resolution" %in% names(params)) {
-    metadata$resolution=as.character(params$resolution)
-  }
-  if (!is.null(params) & !("vectors" %in% names(metadata)) & "vectors" %in% names(params)) {
+  if (!("vectors" %in% names(metadata)) && "vectors" %in% names(params)) {
     metadata$vectors=jsonlite::toJSON(as.character(params$vectors))  %>% as.character()
   }
   if (!("version" %in% names(metadata))) {
@@ -40,17 +47,7 @@ generate_metadata <- function(meta_file,params){
     if (grepl("^CM_data_",path)) metadata$version="d.1"
   }
 
-  for (n in setdiff(metadata_columns_c,names(metadata))) {
-    metadata[,n]=NA_character_
-  }
-  # for (n in setdiff(metadata_columns_d,names(metadata))) {
-  #   metadata[,n]=NA
-  # }
-  for (n in setdiff(metadata_columns_n,names(metadata))) {
-    metadata[,n]=NA_real_
-  }
-
-  metadata
+  fill_metadata_columns(metadata)
 }
 
 touch_metadata <- function(meta_file,params=NULL){
@@ -99,21 +96,10 @@ list_cancensus_cache <- function(){
     all <- all %>%
       dplyr::left_join(manual_sizes,by="path") %>%
       dplyr::mutate(size=dplyr::coalesce(.data$size,.data$manual_size)) %>%
-      dplyr::select(-.data$manual_size)
+      dplyr::select(-"manual_size")
   }
 
-  for (n in setdiff(metadata_columns_c,names(all))) {
-    all[,n]=NA_character_
-  }
-  # for (n in setdiff(metadata_columns_d,names(metadata))) {
-  #   metadata[,n]=NA
-  # }
-  for (n in setdiff(metadata_columns_n,names(all))) {
-    all[,n]=NA_real_
-  }
-
-
-  all
+  fill_metadata_columns(all)
 }
 
 
@@ -139,8 +125,7 @@ remove_from_cancensus_cache <- function(paths){
   cache_data <- list_cancensus_cache()
 
   extras <- setdiff(paths,cache_data$path)
-  if (length(extras)>0) warning(paste0("Could not find cached data for ",
-                                       paste0(extras, collapse = ", ")))
+  if (length(extras)>0) cc_warn("cache_entries_not_found", paths = extras)
 
 
   to_delete <- cache_data %>%

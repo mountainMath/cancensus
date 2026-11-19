@@ -4,10 +4,13 @@
 \alias{dataset_attribution}
 \title{Get attribution for datasets}
 \usage{
-dataset_attribution(datasets)
+dataset_attribution(datasets, language = getOption("cancensus.language", "en"))
 }
 \arguments{
 \item{datasets}{Vector of dataset identifiers}
+
+\item{language}{Language of the attribution, one of \code{"en"} or \code{"fr"}. Defaults to the
+\code{cancensus.language} option, and to \code{"en"} if that is not set.}
 }
 \value{
 Returns a string to be used as attribution for the given datasets.

@@ -88,7 +88,8 @@ The named vector labels the census variables we are about to query.
 dwelling_types <- setdiff(names(variables),"Total dwellings")
 
 # Grab the census data and compute shares for each dwelling type
-census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), vectors = variables, quiet = TRUE) %>%
+census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), vectors = variables,
+                          labels = "labelled", quiet = TRUE) %>%
   pivot_longer(cols = all_of(dwelling_types)) %>%
   mutate(share=value/`Total dwellings`)
 ```
@@ -123,7 +124,7 @@ vars <- c(Total="v_CA16xSD_1", Unoccupied="v_CA16xSD_28")
 
 # Retrieve data with attached geography
 census_data <- get_census("CA16xSD",regions=list(CSD="3520005"), level="CT", quiet = TRUE, geo_format = "sf",
-                          vectors = vars,use_cache = FALSE) %>%
+                          vectors = vars, labels = "labelled", use_cache = FALSE) %>%
   mutate(share=Unoccupied/Total)
 
 # Visualize

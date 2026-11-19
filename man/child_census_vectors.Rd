@@ -10,7 +10,8 @@ child_census_vectors(
   vector_list,
   leaves_only = FALSE,
   max_level = NA,
-  keep_parent = FALSE
+  keep_parent = FALSE,
+  language = NULL
 )
 }
 \arguments{
@@ -24,6 +25,10 @@ i.e. terminal vectors that themselves do not have children.}
 child census vectors.}
 
 \item{keep_parent}{optional, also return parent vector in list of results. Default is set to \code{FALSE}.}
+
+\item{language}{Language of the labels, one of \code{"en"} or \code{"fr"}. By default uses the language
+\code{vector_list} was retrieved in, and otherwise the \code{cancensus.language} option, and \code{"en"}
+if that is not set. See \code{\link{list_census_vectors}}.}
 }
 \description{
 List all child variables from vector hierarchies given either a list of Census

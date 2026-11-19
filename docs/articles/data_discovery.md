@@ -20,20 +20,22 @@ status for residences. These crosstabs are available for the 2001, 2006,
 ``` r
 
 list_census_datasets()
-#> # A tibble: 29 × 6
-#>    dataset description           attribution reference reference_url geo_dataset
-#>    <chr>   <chr>                 <chr>       <chr>     <chr>         <chr>      
-#>  1 CA1996  1996 Canada Census    StatCan 19… 92-351-U  https://www1… CA1996     
-#>  2 CA01    2001 Canada Census    StatCan 20… 92-378-X  https://www1… CA01       
-#>  3 CA06    2006 Canada Census    StatCan 20… 92-566-X  https://www1… CA06       
-#>  4 CA11    2011 Canada Census a… StatCan 20… 98-301-X… https://www1… CA11       
-#>  5 CA16    2016 Canada Census    StatCan 20… 98-301-X  https://www1… CA16       
-#>  6 CA21    2021 Canada Census    StatCan 20… 98-301-X  https://www1… CA21       
-#>  7 CA01xSD 2001 Canada Census x… StatCan 20… 92-378-X  https://www1… CA01       
-#>  8 CA06xSD 2006 Canada Census x… StatCan 20… 92-566-X  https://www1… CA06       
-#>  9 CA11xSD 2011 Canada Census x… StatCan 20… 98-301-X  https://www1… CA11       
-#> 10 CA16xSD 2016 Canada Census x… StatCan 20… 98-301-X  https://www1… CA16       
+#> # A tibble: 29 × 11
+#>    dataset description        attribution reference reference_url description_fr
+#>    <chr>   <chr>              <chr>       <chr>     <chr>         <chr>         
+#>  1 CA1996  1996 Canada Census StatCan 19… 92-351-U  https://www1… Recensement d…
+#>  2 CA01    2001 Canada Census StatCan 20… 92-378-X  https://www1… Recensement d…
+#>  3 CA06    2006 Canada Census StatCan 20… 92-566-X  https://www1… Recensement d…
+#>  4 CA11    2011 Canada Censu… StatCan 20… 98-301-X… https://www1… Recensement d…
+#>  5 CA16    2016 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…
+#>  6 CA21    2021 Canada Census StatCan 20… 98-301-X  https://www1… Recensement d…
+#>  7 CA01xSD 2001 Canada Censu… StatCan 20… 92-378-X  https://www1… Totalisation …
+#>  8 CA06xSD 2006 Canada Censu… StatCan 20… 92-566-X  https://www1… Totalisation …
+#>  9 CA11xSD 2011 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …
+#> 10 CA16xSD 2016 Canada Censu… StatCan 20… 98-301-X  https://www1… Totalisation …
 #> # ℹ 19 more rows
+#> # ℹ 5 more variables: attribution_fr <chr>, reference_url_fr <chr>,
+#> #   label <chr>, label_fr <chr>, geo_dataset <chr>
 ```
 
 The
@@ -58,7 +60,7 @@ from 1,715 in the `CA01` dataset to 6,623 in the `CA16` one.
 ``` r
 
 list_census_vectors('CA21')
-#> # A tibble: 7,709 × 7
+#> # A tibble: 7,718 × 7
 #>    vector    type   label                units parent_vector aggregation details
 #>    <chr>     <fct>  <chr>                <fct> <chr>         <chr>       <chr>  
 #>  1 v_CA21_1  Total  Population, 2021     Numb… NA            Additive    CA 202…
@@ -71,7 +73,7 @@ list_census_vectors('CA21')
 #>  8 v_CA21_8  Total  Total - Age          Numb… NA            Additive    CA 202…
 #>  9 v_CA21_9  Male   Total - Age          Numb… NA            Additive    CA 202…
 #> 10 v_CA21_10 Female Total - Age          Numb… NA            Additive    CA 202…
-#> # ℹ 7,699 more rows
+#> # ℹ 7,708 more rows
 ```
 
 `list_census_vectors(dataset)` retrieves an index of all available

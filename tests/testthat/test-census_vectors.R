@@ -15,7 +15,7 @@ test_that("parent_census_vectors returns all parent vectors", {
 
   # Mock the list_census_vectors function temporarily
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     {
@@ -56,7 +56,7 @@ test_that("child_census_vectors works with mock data", {
   attr(mock_vectors, "dataset") <- "TEST"
 
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     {
@@ -105,7 +105,7 @@ test_that("parent_census_vectors handles empty results", {
   attr(mock_vectors, "dataset") <- "TEST"
 
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     {
@@ -136,7 +136,7 @@ test_that("child_census_vectors handles empty results", {
   attr(mock_vectors, "dataset") <- "TEST"
 
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     {
@@ -167,13 +167,13 @@ test_that("parent_census_vectors handles character vector input", {
   attr(mock_vectors, "dataset") <- "TEST"
 
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     dataset_from_vector_list = function(x) {
       "TEST"
     },
-    clean_vector_list = function(x, dataset = NULL) {
+    clean_vector_list = function(x, dataset = NULL, language = "en") {
       if (is.character(x)) {
         mock_vectors[mock_vectors$vector %in% x, , drop = FALSE]
       } else {
@@ -205,13 +205,13 @@ test_that("child_census_vectors handles character vector input", {
   attr(mock_vectors, "dataset") <- "TEST"
 
   with_mocked_bindings(
-    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE) {
+    list_census_vectors = function(dataset, use_cache = TRUE, quiet = TRUE, language = "en") {
       mock_vectors
     },
     dataset_from_vector_list = function(x) {
       "TEST"
     },
-    clean_vector_list = function(x) {
+    clean_vector_list = function(x, dataset = NULL, language = "en") {
       if (is.character(x)) {
         result <- mock_vectors[mock_vectors$vector %in% x, , drop = FALSE]
         attr(result, "dataset") <- "TEST"

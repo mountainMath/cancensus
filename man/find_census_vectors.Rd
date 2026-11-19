@@ -4,7 +4,14 @@
 \alias{find_census_vectors}
 \title{Query the CensusMapper API for vectors using exact, semantic, or keyword search}
 \usage{
-find_census_vectors(query, dataset, type = "all", query_type = "exact", ...)
+find_census_vectors(
+  query,
+  dataset,
+  type = "all",
+  query_type = "exact",
+  ...,
+  language = getOption("cancensus.language", "en")
+)
 }
 \arguments{
 \item{query}{The term or phrase to search for e.g. \code{'Oji-cree'}.
@@ -22,6 +29,11 @@ By default, assumes exact string matching, but the alternatives may be better
 options in some cases. See description section for more details on query types.}
 
 \item{...}{Other arguments passed to internal functions.}
+
+\item{language}{Language to search in and return labels in, one of \code{"en"} or \code{"fr"}. Defaults to
+the \code{cancensus.language} option, and to \code{"en"} if that is not set. Searches match accents exactly,
+and the \code{type} parameter takes the same English values for both languages.
+See \code{\link{list_census_vectors}}.}
 }
 \description{
 Query the available list of Census vectors based on their label and return
@@ -60,6 +72,9 @@ find_census_vectors('commute duration', dataset = 'CA16', type = 'female', query
 find_census_vectors('commute duration', dataset = 'CA11', type = 'all', query_type = 'keyword')
 
 find_census_vectors('ukrainian origin', dataset = 'CA16', type = 'total', query_type = 'keyword')
+
+find_census_vectors('revenu total', dataset = 'CA16', type = 'total',
+                    query_type = 'keyword', language = 'fr')
 
 }
 }

@@ -8,7 +8,7 @@ reference to the vector code.
 ## Usage
 
 ``` r
-parent_census_vectors(vector_list)
+parent_census_vectors(vector_list, language = NULL)
 ```
 
 ## Arguments
@@ -17,6 +17,13 @@ parent_census_vectors(vector_list)
 
   The list of vectors to be used, either a character vector or a
   filtered tibble as returned from `list_census_vectors`.
+
+- language:
+
+  Language of the labels, one of `"en"` or `"fr"`. By default uses the
+  language `vector_list` was retrieved in, and otherwise the
+  `cancensus.language` option, and `"en"` if that is not set. See
+  [`list_census_vectors`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md).
 
 ## Examples
 

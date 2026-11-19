@@ -4,7 +4,12 @@
 \alias{format_bytes}
 \title{Format bytes to human-readable size}
 \usage{
-format_bytes(bytes)
+format_bytes(bytes, language = NULL)
+}
+\arguments{
+\item{bytes}{Number of bytes}
+
+\item{language}{Language for units and decimal mark, see \code{message_language}}
 }
 \description{
 Format bytes to human-readable size
