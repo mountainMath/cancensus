@@ -5,8 +5,8 @@
 ### Breaking changes
 
 - [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
-  now reads parquet files hosted at
-  <https://data.mountainmath.ca/census/geo_attributes/> instead of
+  now reads parquet files hosted under
+  `https://data.mountainmath.ca/census/geo_attributes/` instead of
   downloading from Statistics Canada, which blocks programmatic
   downloads of these files
   ([\#228](https://github.com/mountainMath/cancensus/issues/228),
@@ -23,8 +23,8 @@
   these files in the `statcan_downloads` folder are no longer used, and
   the function shows a command to delete them once per session
 - [`get_statcan_geo_suite()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.md)
-  now reads parquet files hosted at
-  <https://data.mountainmath.ca/census/geo_suite/> instead of
+  now reads parquet files hosted under
+  `https://data.mountainmath.ca/census/geo_suite/` instead of
   downloading from Statistics Canada, which blocks programmatic
   downloads of the GeoSuite
   ([\#228](https://github.com/mountainMath/cancensus/issues/228),
@@ -168,6 +168,22 @@
 - Documented how to use
   [`set_cancensus_cache_path()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_cache_path.md)
   without `install = TRUE` to set up a project-specific cache
+- Requests to the CensusMapper API are now always retried up to twice
+  when the server is busy (HTTP 503 or 429), waiting as long as the
+  server asks through the `Retry-After` header, even with the default
+  `retry = 0`
+  ([\#235](https://github.com/mountainMath/cancensus/issues/235)). This
+  applies to
+  [`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md),
+  [`get_intersecting_geometries()`](https://mountainmath.github.io/cancensus/reference/get_intersecting_geometries.md),
+  [`list_census_datasets()`](https://mountainmath.github.io/cancensus/reference/list_census_datasets.md),
+  [`list_census_regions()`](https://mountainmath.github.io/cancensus/reference/list_census_regions.md),
+  [`list_census_vectors()`](https://mountainmath.github.io/cancensus/reference/list_census_vectors.md)
+  and the check for recalled data. If the server stays busy, the error
+  now says so instead of reporting a generic download failure. With
+  `retry` greater than zero, other transient failures are retried as
+  before, except that HTTP 500 errors are no longer retried, as they now
+  point to a problem with the request rather than server load
 - [`list_census_datasets()`](https://mountainmath.github.io/cancensus/reference/list_census_datasets.md)
   and
   [`list_census_regions()`](https://mountainmath.github.io/cancensus/reference/list_census_regions.md)

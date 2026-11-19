@@ -5,8 +5,8 @@ for each area of the lowest census geography. The table contains the
 information on how all the geographic levels are related for each area,
 along with population and dwelling counts and representative points.
 
-The data comes from parquet files hosted at
-<https://data.mountainmath.ca/census/geo_attributes/>, as Statistics
+The data comes from parquet files hosted under
+`https://data.mountainmath.ca/census/geo_attributes/`, as Statistics
 Canada now blocks programmatic downloads of these files. The files are
 derived from Statistics Canada data under the Statistics Canada Open
 Licence. They get downloaded on first use and cached if the cancensus

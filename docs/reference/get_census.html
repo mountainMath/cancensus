@@ -127,7 +127,7 @@ then this option can be set to 'high'. By default this setting is set to <code>'
 
 
 <dt id="arg-retry">retry<a class="anchor" aria-label="anchor" href="#arg-retry"></a></dt>
-<dd><p>Integer If greater than zero, automatically retry failed API requests with exponential backoff for specified maximum number of times. Defaults to 0.</p></dd>
+<dd><p>Integer If greater than zero, automatically retry API requests that fail with a network error or a transient server error (HTTP 408, 502 or 504) with exponential backoff for specified maximum number of times. Defaults to 0. Requests are always retried at least twice when the server is busy (HTTP 503 or 429), waiting as long as the server asks.</p></dd>
 
 
 <dt id="arg-language">language<a class="anchor" aria-label="anchor" href="#arg-language"></a></dt>

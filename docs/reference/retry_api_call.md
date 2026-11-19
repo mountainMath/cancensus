@@ -1,31 +1,47 @@
-# Retry an API call with exponential backoff
+# Make an API call, retrying on transient failures
 
-Retry an API call with exponential backoff
+Retries with exponential backoff, honouring a \`Retry-After\` header of
+up to 60 seconds. Responses saying the server is busy (HTTP 503 or 429)
+get retried up to \`max(retries, busy_retries)\` times, other transient
+HTTP errors (408, 502, 504) and network errors up to \`retries\` times.
+Other responses, including other server errors, are returned as they
+are.
 
 ## Usage
 
 ``` r
-retry_api_call(call_fn, max_retries = 3, quiet = FALSE, language = NULL)
+retry_api_call(
+  call_fn,
+  retries = 0,
+  busy_retries = 2,
+  quiet = FALSE,
+  language = NULL
+)
 ```
 
 ## Arguments
 
 - call_fn:
 
-  A function that performs the API call and returns an httr response
+  Function making the request and returning an httr response
 
-- max_retries:
+- retries:
 
-  Maximum number of retry attempts (default: 3)
+  Number of further attempts on transient failures
+
+- busy_retries:
+
+  Minimum number of further attempts when the server is busy
 
 - quiet:
 
-  If TRUE, suppress retry messages
+  Whether to suppress messages about retries. Waits of more than 2
+  seconds for a busy server are always reported.
 
 - language:
 
-  Language of the retry messages, see `message_language`
+  Language of the messages, see `message_language`
 
 ## Value
 
-The httr response object
+The last httr response

@@ -117,9 +117,12 @@ Canada 1996; 2001; 2006; 2011; 2016).
 
 - retry:
 
-  Integer If greater than zero, automatically retry failed API requests
-  with exponential backoff for specified maximum number of times.
-  Defaults to 0.
+  Integer If greater than zero, automatically retry API requests that
+  fail with a network error or a transient server error (HTTP 408, 502
+  or 504) with exponential backoff for specified maximum number of
+  times. Defaults to 0. Requests are always retried at least twice when
+  the server is busy (HTTP 503 or 429), waiting as long as the server
+  asks.
 
 - language:
 

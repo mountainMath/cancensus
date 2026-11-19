@@ -7,8 +7,8 @@ dwelling counts, land areas and representative points, along with code
 tables like the census subdivision types. Called without `level` this
 lists the tables available for the census year.
 
-The data comes from parquet files hosted at
-<https://data.mountainmath.ca/census/geo_suite/>, as Statistics Canada
+The data comes from parquet files hosted under
+`https://data.mountainmath.ca/census/geo_suite/`, as Statistics Canada
 now blocks programmatic downloads of the GeoSuite. The files are derived
 from Statistics Canada data under the Statistics Canada Open Licence.
 They get downloaded on first use and cached if the cancensus cache path
