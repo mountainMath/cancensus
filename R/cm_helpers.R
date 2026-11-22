@@ -661,3 +661,340 @@ cm_download_tile <- function(url, api_key, path) {
   file.rename(tmp, path)
   invisible(path)
 }
+
+# CensusMapper's functions for function strings that have no short vectorised
+# R form. Each takes its vectors as matrices with one row per region (e.g.
+# cbind(a, b, c) inside dplyr::mutate()), or as a plain vector that is the same
+# for every region, and returns one value per region. As on CensusMapper, any
+# missing input gives NA. The reference implementations are in CensusMapper's
+# components/customFunctions.tsx.
+
+#' Gini coefficient from income brackets, as on CensusMapper
+#'
+#' CensusMapper's \code{gini()}: the Gini coefficient from counts per income
+#' bracket and the brackets' lower cutoffs, one value per region. Incomes are
+#' taken at the bracket midpoints. The top bracket's income is twice its lower
+#' cutoff less the previous cutoff, or is estimated from the total income when
+#' that is given.
+#'
+#' @param counts Counts per bracket: a matrix with one row per region and one
+#' column per bracket, e.g. \code{cbind(v1, v2, v3)} inside
+#' \code{dplyr::mutate()}.
+#' @param lower_cutoffs The brackets' lower cutoffs, a vector that is the same
+#' for every region, or a matrix like \code{counts}.
+#' @param total Total income per region, or 0 (the default) for none.
+#'
+#' @return A numeric vector with one value per region, NA where any input is
+#' missing.
+#' @export
+#'
+#' @examples
+#' cm_gini(cbind(c(10, 5), c(20, 10), c(5, 20)), c(0, 20000, 50000))
+cm_gini <- function(counts, lower_cutoffs, total = 0) {
+  cm_per_region(counts, lower_cutoffs, total, function(x, cut, total) {
+    k <- length(cut)
+    income <- c((cut[-k] + cut[-1]) / 2, 2 * cut[k] - cut[k - 1])
+    if (total != 0 && x[k] > 0) {
+      top <- (total - sum(income[-k] * x[-k])) / x[k]
+      if (top > cut[k]) income[k] <- if (top > income[k]) top else (top + income[k]) / 2
+    }
+    share <- x / sum(x)
+    s <- c(0, cumsum(income * share))
+    1 - sum(share * (s[-(k + 1)] + s[-1])) / s[k + 1]
+  })
+}
+
+#' Gini coefficient from income brackets, CensusMapper's gini2()
+#'
+#' Like \code{\link{cm_gini}}, but the top bracket's income total is the larger
+#' of its estimate from the bracket width and what the total income leaves
+#' after the other brackets.
+#'
+#' @inheritParams cm_gini
+#' @inherit cm_gini return
+#' @export
+#'
+#' @examples
+#' cm_gini2(cbind(c(10, 5), c(20, 10), c(5, 20)), c(0, 20000, 50000), c(1e6, 2e6))
+cm_gini2 <- function(counts, lower_cutoffs, total = 0) {
+  cm_per_region(counts, lower_cutoffs, total, function(x, cut, total) {
+    k <- length(cut)
+    income <- c(x[-k] * (cut[-k] + cut[-1]) / 2, x[k] * (2 * cut[k] - cut[k - 1]))
+    if (total != 0 && x[k] > 0) income[k] <- max(income[k], total - sum(income[-k]))
+    s <- cumsum(income)
+    1 - sum(x * (s + c(0, s[-k]))) / s[k] / sum(x)
+  })
+}
+
+#' Quantile from brackets, as on CensusMapper
+#'
+#' CensusMapper's \code{binned_quantile()} (and \code{quantile()}): the
+#' p-quantile, e.g. the median income, from counts per bracket and the brackets'
+#' lower cutoffs, interpolating linearly within the bracket. The lowest bracket
+#' starts at 0 and the top bracket ends at twice its lower cutoff.
+#'
+#' @inheritParams cm_gini
+#' @param p The quantile, between 0 and 1, the same for every region or one per
+#' region.
+#'
+#' @return A numeric vector with one value per region, NA where any input is
+#' missing and NaN where there are no counts.
+#' @export
+#'
+#' @examples
+#' cm_binned_quantile(cbind(c(10, 5), c(20, 10), c(5, 20)), c(0, 20000, 50000), 0.5)
+cm_binned_quantile <- function(counts, lower_cutoffs, p) {
+  cm_per_region(counts, lower_cutoffs, p, function(x, cut, p) {
+    target <- sum(x) * p
+    if (!(target > 0)) return(NaN)
+    k <- length(x)
+    cum <- cumsum(x)
+    j <- which(cum >= target)[1]
+    if (is.na(j)) j <- k
+    below <- if (j > 1) cum[j - 1] else 0
+    lo <- if (j > 1) cut[j] else 0
+    hi <- if (j < k) cut[j + 1] else 2 * cut[k]
+    a <- (target - below) / (cum[j] - below)
+    hi * a + lo * (1 - a)
+  })
+}
+
+#' Wasserstein distance per region, as on CensusMapper
+#'
+#' CensusMapper's \code{wasserstein()}: the p-Wasserstein distance between two
+#' samples of the same size for each region, using
+#' \code{transport::wasserstein1d()}. Needs the transport package.
+#'
+#' @param a,b The samples: matrices with one row per region, e.g.
+#' \code{cbind(v1, v2, v3)} inside \code{dplyr::mutate()}, or vectors that are
+#' the same for every region.
+#' @param p The order of the distance, the same for every region or one per
+#' region.
+#'
+#' @return A numeric vector with one value per region, NA where any input is
+#' missing.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2))
+#' }
+cm_wasserstein <- function(a, b, p = 1) {
+  if (!requireNamespace("transport", quietly = TRUE)) {
+    stop("cm_wasserstein() needs the transport package: install.packages(\"transport\")")
+  }
+  cm_per_region(a, b, p, function(a, b, p) transport::wasserstein1d(a, b, p = p))
+}
+
+# x as a matrix with n rows: a matrix with n rows as is, or a vector (or
+# one-row matrix) repeated for every row
+cm_rows <- function(x, n) {
+  if (is.matrix(x) && nrow(x) == n) return(x)
+  if (is.matrix(x) && nrow(x) == 1) x <- x[1, ]
+  matrix(x, nrow = n, ncol = length(x), byrow = TRUE)
+}
+
+# Applies f(x, y, value) to each region's rows of the vectors x and y and its
+# single value (a column, or one value for all regions); NA if any is missing.
+cm_per_region <- function(x, y, value, f) {
+  n <- max(1, unlist(lapply(list(x, y), function(v) if (is.matrix(v)) nrow(v))), length(value))
+  x <- cm_rows(x, n)
+  y <- cm_rows(y, n)
+  value <- rep_len(value, n)
+  vapply(seq_len(n), function(i) {
+    if (anyNA(c(x[i, ], y[i, ], value[i]))) NA_real_ else f(x[i, ], y[i, ], value[i])
+  }, numeric(1))
+}
+
+#' Binned colour scale for choropleth maps, as on CensusMapper
+#'
+#' A discrete fill (or colour) scale for numeric values that bins them at
+#' \code{breaks} and colours the bins from a palette, with legend labels for
+#' the bins formatted for the kind of values shown. Values below the first
+#' break go in the first bin and values at or above the last break in the
+#' last, as in CensusMapper's maps. It extends \code{ggplot2::scale_fill_manual()}:
+#' \code{values} sets the colours directly and \code{labels} the legend labels.
+#'
+#' @param palette The palette the colours come from: the name of a ColorBrewer
+#' palette (e.g. \code{"Blues"} or \code{"YlOrRd"}, via RColorBrewer, as on
+#' CensusMapper), of a viridis palette (\code{"viridis"}, \code{"magma"},
+#' \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"},
+#' \code{"mako"} or \code{"turbo"}, via viridisLite), or of a palette of
+#' \code{grDevices::hcl.colors()}. Or a function that returns n colours.
+#' @param breaks The cutoffs between the bins, in increasing order. By default
+#' \code{n} bins with about as many regions in each, at rounded cutoffs.
+#' @param n The number of bins when there are no \code{breaks}.
+#' @param direction 1 for the palette's colours in their order, -1 for the
+#' reverse.
+#' @param units What the values are, for formatting the labels:
+#' \code{"number"} (1.2k, 3.4M), \code{"percentage"} (shares, 0.12 is 12\%),
+#' \code{"percentage_100"} (percentages, 12 is 12\%), \code{"ratio"} (1,234.5),
+#' \code{"currency"} ($1.2k) or \code{"currency_1000"} (currency in thousands).
+#' @param lang Language for formatting the labels, \code{"en"} or \code{"fr"}.
+#' @param values Colours for the bins, from the lowest to the highest,
+#' instead of the palette's.
+#' @param labels Labels for the bins instead of the ones made from
+#' \code{breaks}: a character vector, or a function that gets the breaks and
+#' returns the labels for the bins.
+#' @param na.value The colour for missing values.
+#' @param ... Other arguments passed on to \code{ggplot2::discrete_scale()},
+#' e.g. \code{name} or \code{guide}.
+#' @param aesthetics The aesthetics the scale works with, e.g.
+#' \code{c("fill", "colour")}.
+#'
+#' @return A ggplot2 scale.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' census_data <- get_census("CA21", regions = list(CMA = "59933"),
+#'                           vectors = c(lim_at = "v_CA21_1085"),
+#'                           level = "CT", geo_format = "sf")
+#' ggplot(census_data) +
+#'   geom_sf(aes(fill = lim_at / 100), colour = NA) +
+#'   scale_fill_cm_bins(palette = "YlOrRd", breaks = c(0.05, 0.1, 0.15, 0.2),
+#'                      units = "percentage") +
+#'   coord_sf(datum = NA)
+#' }
+scale_fill_cm_bins <- function(palette = "Blues", breaks = NULL, n = 5, direction = 1,
+                               units = c("number", "percentage", "percentage_100", "ratio",
+                                         "currency", "currency_1000"),
+                               lang = c("en", "fr"), values = NULL, labels = NULL,
+                               na.value = "grey60", ..., aesthetics = "fill") {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("scale_fill_cm_bins() needs the ggplot2 package")
+  }
+  units <- match.arg(units)
+  lang <- match.arg(lang)
+  if (!is.null(breaks)) {
+    breaks <- sort(unique(as.numeric(breaks)))
+    n <- length(breaks) + 1
+  }
+  if (!is.null(values) && length(values) < n) {
+    stop("scale_fill_cm_bins() needs ", n, " values, one for each bin, got ", length(values))
+  }
+  pal <- function(k) {
+    if (!is.null(values)) return(unname(values[seq_len(k)]))
+    cm_palette(palette, k, direction)
+  }
+  ggplot2::discrete_scale(aesthetics = aesthetics, palette = pal, na.value = na.value,
+                          drop = FALSE, ..., super = cm_bins_scale(breaks, n, units, lang, labels))
+}
+
+#' @rdname scale_fill_cm_bins
+#' @export
+scale_colour_cm_bins <- function(..., aesthetics = "colour") {
+  scale_fill_cm_bins(..., aesthetics = aesthetics)
+}
+
+# The scale's class: a discrete scale that bins numeric values when ggplot
+# transforms the data, before the scale is trained, so that the legend gets
+# all bins, labelled with the ranges of values in them.
+cm_bins_scale <- function(breaks, n, units, lang, labels) {
+  ggplot2::ggproto(NULL, ggplot2::ScaleDiscrete,
+    cm_breaks = breaks, cm_n = n, cm_units = units, cm_lang = lang, cm_labels = labels,
+    transform = function(self, x) {
+      if (!is.numeric(x)) return(x)
+      if (is.null(self$cm_breaks)) self$cm_breaks <- cm_auto_breaks(x, self$cm_n)
+      k <- length(self$cm_breaks) + 1
+      factor(findInterval(x, self$cm_breaks), levels = seq_len(k) - 1)
+    },
+    get_labels = function(self, breaks = self$get_breaks()) {
+      if (is.null(breaks)) return(NULL)
+      b <- self$cm_breaks
+      labels <- self$cm_labels
+      if (is.function(labels)) labels <- labels(b)
+      if (is.null(labels)) labels <- cm_bin_labels(b, self$cm_units, self$cm_lang)
+      out <- labels[as.integer(as.character(breaks)) + 1]
+      out[is.na(breaks)] <- "NA"
+      out
+    })
+}
+
+# Cutoffs for n bins with about the same number of values in each, rounded to
+# two significant digits (or more if needed to keep them apart).
+cm_auto_breaks <- function(x, n) {
+  x <- x[is.finite(x)]
+  if (length(x) == 0 || n < 2) return(numeric(0))
+  q <- unique(stats::quantile(x, seq_len(n - 1) / n, names = FALSE))
+  for (digits in 2:6) {
+    b <- unique(signif(q, digits))
+    if (length(b) == length(q)) break
+  }
+  b
+}
+
+# Labels for the bins between breaks: "< a", "a - b", ..., ">= z" (with an en
+# dash and a greater-than-or-equal sign).
+cm_bin_labels <- function(breaks, units = "number", lang = "en") {
+  if (length(breaks) == 0) return("All")
+  l <- cm_format_values(breaks, units, lang)
+  k <- length(l)
+  c(paste0("< ", l[1]),
+    if (k > 1) paste0(l[-k], " \u2013 ", l[-1]),
+    paste0("\u2265 ", l[k]))
+}
+
+# Values formatted for units like CensusMapper's legends. Each value gets as
+# many significant digits as it needs, up to three (more if needed to keep the
+# values apart), so that 125000 is $125k and 0.153 is 15.3%.
+cm_format_values <- function(x, units = "number", lang = "en") {
+  v <- x * switch(units, percentage = 100, currency_1000 = 1000, 1)
+  short <- units %in% c("number", "currency", "currency_1000")
+  fr <- lang == "fr"
+  num <- function(r) {
+    # digits = 15 shows the rounded values without floating point noise
+    vapply(r, function(ri) format(ri, digits = 15, scientific = FALSE, trim = TRUE,
+                                  big.mark = if (fr) "\u202f" else ",",
+                                  decimal.mark = if (fr) "," else "."), "")
+  }
+  need <- vapply(v, function(vi) {
+    for (d in 1:3) if (isTRUE(abs(signif(vi, d) - vi) <= 1e-9 * abs(vi))) return(d)
+    3
+  }, numeric(1))
+  for (extra in 0:3) {
+    digits <- need + extra
+    r <- signif(v, digits)
+    out <- if (short) {
+      p <- pmin(3, pmax(0, floor(log10(pmax(abs(r), 1)) / 3)))
+      suffix <- (if (fr) c("", "k", "M", "G") else c("", "k", "M", "B"))[p + 1]
+      paste0(num(signif(abs(r) / 1000^p, digits)), suffix)
+    } else {
+      num(r)
+    }
+    if (!anyDuplicated(out)) break
+  }
+  neg <- if (short) ifelse(r < 0, "-", "") else ""
+  switch(units,
+    percentage = , percentage_100 = paste0(out, if (fr) "\u00a0%" else "%"),
+    currency = , currency_1000 = if (fr) paste0(neg, out, "\u00a0$") else paste0(neg, "$", out),
+    paste0(neg, out))
+}
+
+# n colours from a named palette (or a function), in the palette's order or,
+# with direction -1, the reverse.
+cm_palette <- function(palette, n, direction = 1) {
+  viridis <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
+  cols <- if (is.function(palette)) {
+    palette(n)
+  } else if (palette %in% rownames(RColorBrewer::brewer.pal.info)) {
+    max <- RColorBrewer::brewer.pal.info[palette, "maxcolors"]
+    if (n < 3) {
+      # ColorBrewer palettes start at 3 colours: their middle, or ends
+      RColorBrewer::brewer.pal(3, palette)[list(2, c(1, 3))[[max(1, n)]]]
+    } else if (n <= max) {
+      RColorBrewer::brewer.pal(n, palette)
+    } else {
+      grDevices::colorRampPalette(RColorBrewer::brewer.pal(max, palette))(n)
+    }
+  } else if (tolower(palette) %in% viridis) {
+    viridisLite::viridis(n, option = tolower(palette))
+  } else if (palette %in% grDevices::hcl.pals()) {
+    grDevices::hcl.colors(n, palette)
+  } else {
+    stop("Unknown palette '", palette, "': use a ColorBrewer, viridis or hcl.colors() palette, ",
+         "or set the colours with values")
+  }
+  if (direction < 0) rev(cols) else cols
+}

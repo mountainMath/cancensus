@@ -6,6 +6,10 @@ A new `geom_cm_context()` function that adds a context layer to a census map sim
 
 A new `cm_context()` function returns the features of the CensusMapper base map (water, landcover, landuse, airports, buildings, roads, places and road labels) for an sf object or bounding box as a list of sf data frames, for styling them differently or using them with other mapping packages.
 
+New functions `cm_gini()`, `cm_gini2()`, `cm_binned_quantile()` and `cm_wasserstein()` compute CensusMapper's `gini()`, `gini2()`, `binned_quantile()` and `wasserstein()` per region, e.g. inside `dplyr::mutate()`, for reproducing CensusMapper maps in R. `cm_wasserstein()` needs the **transport** package.
+
+New `scale_fill_cm_bins()` and `scale_colour_cm_bins()` scales for choropleth maps bin numeric values at given cutoffs (or at quantiles), colour the bins from a ColorBrewer, viridis or `hcl.colors()` palette, and label them with formatted ranges for numbers, percentages, ratios or currency, in English or French. Like `scale_fill_manual()`, `values` and `labels` set the colours and labels directly.
+
 # cancensus 0.6.2
 
 ## Breaking changes
