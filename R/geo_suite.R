@@ -399,8 +399,9 @@ download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
 # `r2parquet::collect_parquet()`, which can replace this and the two functions above once it is on CRAN.
 # The file gets read locally since remote access needs the httpfs extension, a separate download.
 read_parquet_file <- function(path,language = "en"){
-  # keeps duckdb from storing extensions and secrets in the user's home directory
-  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE))
+  # keeps duckdb from storing extensions and secrets in the user's home directory, parquet support is built in
+  # so no extensions are needed, which also avoids the startup message on libc++ Linux builds
+  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE,allow_extensions = FALSE))
   on.exit(DBI::dbDisconnect(con,shutdown = TRUE))
   source <- DBI::dbQuoteString(con,normalizePath(path,winslash = "/"))
   data <- DBI::dbGetQuery(con,paste0("SELECT * FROM read_parquet(",source,")")) %>%
