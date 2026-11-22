@@ -162,7 +162,7 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.6.2.
+  access, retrieve, and work with Canadian Census data and geography. v0.6.3.
 
 
 A BibTeX entry for LaTeX users is
@@ -172,7 +172,7 @@ A BibTeX entry for LaTeX users is
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.2},
+    note = {R package version 0.6.3},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```

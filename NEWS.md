@@ -1,3 +1,9 @@
+# cancensus 0.6.3
+
+## Improvements
+
+A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does.
+
 # cancensus 0.6.2
 
 ## Breaking changes
