@@ -12,7 +12,8 @@ geom_cm_context(
   scale = 1,
   lang = c("en", "fr"),
   family = NULL,
-  tile_server = "https://censusmapper.ca"
+  tile_server = "https://censusmapper.ca",
+  api_key = Sys.getenv("CM_API_KEY")
 )
 }
 \arguments{
@@ -36,6 +37,11 @@ Larger values show more detail, with relatively smaller lines and labels.}
 CensusMapper, if the systemfonts package finds it, otherwise "sans".}
 
 \item{tile_server}{Where to get the tiles from.}
+
+\item{api_key}{An API key for the CensusMapper API. Defaults to the
+\code{CM_API_KEY} environment variable, as set with
+\code{\link{set_cancensus_api_key}()}. The key is looked up when the base
+map is created and kept with it.}
 }
 \value{
 An object to add to a ggplot with \code{+}.
@@ -54,9 +60,13 @@ drawn: that zoom level decides which features, roads and labels are shown,
 and lines and labels keep their size relative to the map whatever size the
 plot is drawn at. Labels are thinned out so that they don't overlap.
 
-Tiles are downloaded from the tile server and cached for the session.
+Tiles are downloaded from the tile server and cached for the session. They
+need a CensusMapper API key, the same as for the census data, though tiles
+count against a separate tile quota. Set it once with
+\code{\link{set_cancensus_api_key}()} or pass it with \code{api_key}.
 Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
-tiles.
+tiles. To style the base map differently, or to use it with other mapping
+packages, get its features with \code{\link{cm_context}()}.
 }
 \examples{
 \dontrun{
@@ -70,4 +80,7 @@ ggplot(census_data) +
   geom_cm_context() +
   coord_sf(datum = NA)
 }
+}
+\seealso{
+\code{\link{cm_context}()} for the features of the base map as sf data.
 }

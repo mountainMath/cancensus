@@ -28,6 +28,8 @@ reference:
     - parent_census_vectors
     - visualize_vector_hierarchy
     - dataset_attribution
+    - geom_cm_context
+    - cm_context
   - title: Managing cached data
   - contents:
     - list_cancensus_cache

@@ -2,7 +2,9 @@
 
 ## Improvements
 
-A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does.
+A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does. The base map tiles need a CensusMapper API key, taken from `set_cancensus_api_key()` or the new `api_key` argument, and count against a separate tile quota. Refused tile requests (invalid or inactive key, exceeded tile quota) now stop with an error instead of leaving the base map empty (#236).
+
+A new `cm_context()` function returns the features of the CensusMapper base map (water, landcover, landuse, airports, buildings, roads, places and road labels) for an sf object or bounding box as a list of sf data frames, for styling them differently or using them with other mapping packages.
 
 # cancensus 0.6.2
 

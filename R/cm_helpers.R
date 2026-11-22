@@ -14,9 +14,13 @@
 #' and lines and labels keep their size relative to the map whatever size the
 #' plot is drawn at. Labels are thinned out so that they don't overlap.
 #'
-#' Tiles are downloaded from the tile server and cached for the session.
+#' Tiles are downloaded from the tile server and cached for the session. They
+#' need a CensusMapper API key, the same as for the census data, though tiles
+#' count against a separate tile quota. Set it once with
+#' \code{\link{set_cancensus_api_key}()} or pass it with \code{api_key}.
 #' Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
-#' tiles.
+#' tiles. To style the base map differently, or to use it with other mapping
+#' packages, get its features with \code{\link{cm_context}()}.
 #'
 #' @param layers Which parts of the base map to draw, any of \code{"landuse"},
 #' \code{"water"}, \code{"buildings"}, \code{"roads"} and \code{"labels"}.
@@ -31,8 +35,13 @@
 #' @param family Font family of the labels. By default "Noto Sans", as on
 #' CensusMapper, if the systemfonts package finds it, otherwise "sans".
 #' @param tile_server Where to get the tiles from.
+#' @param api_key An API key for the CensusMapper API. Defaults to the
+#' \code{CM_API_KEY} environment variable, as set with
+#' \code{\link{set_cancensus_api_key}()}. The key is looked up when the base
+#' map is created and kept with it.
 #'
 #' @return An object to add to a ggplot with \code{+}.
+#' @seealso \code{\link{cm_context}()} for the features of the base map as sf data.
 #' @export
 #'
 #' @examples
@@ -50,18 +59,170 @@
 geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads", "labels"),
                             data = NULL, zoom = NULL, pixels = 800, scale = 1,
                             lang = c("en", "fr"), family = NULL,
-                            tile_server = "https://censusmapper.ca") {
+                            tile_server = "https://censusmapper.ca",
+                            api_key = Sys.getenv("CM_API_KEY")) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("geom_cm_context() needs the ggplot2 package")
   }
   layers <- match.arg(layers, several.ok = TRUE)
   structure(list(layers = layers, data = data, zoom = zoom, pixels = pixels, scale = scale,
-                 lang = match.arg(lang), family = family, tile_server = tile_server),
-            class = "cm_context")
+                 lang = match.arg(lang), family = family, tile_server = tile_server,
+                 api_key = cm_tile_api_key(api_key, "geom_cm_context()")),
+            class = "cm_context_layer")
+}
+
+#' The features of CensusMapper's base map as sf data
+#'
+#' Gets the features of CensusMapper's base map for the extent of some sf data
+#' or a bounding box from CensusMapper's vector tiles: water, landcover,
+#' landuse, airports, buildings, roads, and places and road labels. These are
+#' the features \code{\link{geom_cm_context}()} draws, unstyled, for drawing
+#' them in other ways or with other mapping packages.
+#'
+#' The tiles, and with them the detail of the features, are those CensusMapper
+#' uses at the zoom level at which the data spans \code{pixels} pixels, or at
+#' \code{zoom}. Which classes of features exist at a zoom level is decided by
+#' the tiles; \code{\link{geom_cm_context}()} additionally shows some classes
+#' (minor roads, buildings, road labels) only at higher zoom levels.
+#'
+#' Tiles are downloaded from the tile server and cached for the session. They
+#' need a CensusMapper API key, the same as for the census data, though tiles
+#' count against a separate tile quota. Needs GDAL with its MVT driver for sf
+#' to read the tiles.
+#'
+#' @param data sf data, an sfc or a bounding box whose extent to get the base
+#' map for.
+#' @param layers Which layers to get, any of \code{"water"},
+#' \code{"landcover"}, \code{"landuse"}, \code{"aeroway"}, \code{"buildings"},
+#' \code{"roads"}, \code{"places"} and \code{"road_labels"}.
+#' @param zoom Zoom level (as on CensusMapper) whose tiles to use. By default
+#' the zoom level at which the data spans \code{pixels} pixels.
+#' @param pixels The width, in pixels, of the CensusMapper map whose zoom level
+#' to use.
+#' @param lang Language of the names, \code{"en"} or \code{"fr"}.
+#' @param tile_server Where to get the tiles from.
+#' @param api_key An API key for the CensusMapper API. Defaults to the
+#' \code{CM_API_KEY} environment variable, as set with
+#' \code{\link{set_cancensus_api_key}()}.
+#'
+#' @return A named list with an sf data frame for each layer, in the CRS of
+#' \code{data} and cropped to its bounding box. A layer without features is an
+#' sf data frame without rows. Features have their \code{class}, and places and
+#' road labels their \code{name} in the language \code{lang} (or the local
+#' name). Road labels are points along named roads, with the \code{angle} (in
+#' degrees) to turn labels by and the \code{length} of the road (in metres). The
+#' other columns come from the tiles and may change. The zoom level is in the
+#' \code{"zoom"} attribute.
+#' @seealso \code{\link{geom_cm_context}()} to add the base map to a ggplot map.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' census_data <- get_census("CA21", regions = list(CSD = "5915022"),
+#'                           vectors = c(population = "v_CA21_1"),
+#'                           level = "DA", geo_format = "sf")
+#' context <- cm_context(census_data, layers = c("water", "roads", "places"))
+#' major <- context$roads[context$roads$class %in% c("motorway", "trunk", "primary"), ]
+#' ggplot(census_data) +
+#'   geom_sf(aes(fill = population / `Shape Area`), colour = NA) +
+#'   geom_sf(data = context$water, fill = "lightblue", colour = NA) +
+#'   geom_sf(data = major, colour = "grey30") +
+#'   geom_sf_text(data = context$places[context$places$class == "suburb", ],
+#'                aes(label = name), size = 3) +
+#'   coord_sf(datum = NA)
+#' }
+cm_context <- function(data,
+                       layers = c("water", "landcover", "landuse", "aeroway", "buildings",
+                                  "roads", "places", "road_labels"),
+                       zoom = NULL, pixels = 800, lang = c("en", "fr"),
+                       tile_server = "https://censusmapper.ca",
+                       api_key = Sys.getenv("CM_API_KEY")) {
+  if (!inherits(data, c("sf", "sfc", "bbox"))) stop("cm_context() needs sf data, an sfc or a bounding box")
+  layers <- match.arg(layers, several.ok = TRUE)
+  api_key <- cm_tile_api_key(api_key, "cm_context()")
+  cm_context_data(data, layers, cm_view(data, zoom, pixels), match.arg(lang), tile_server, api_key)
+}
+
+# The API key for the tiles, or an error before any tiles are fetched
+cm_tile_api_key <- function(api_key, caller) {
+  api_key <- robust_api_key(api_key)
+  if (!valid_api_key(api_key)) {
+    stop(caller, " needs a CensusMapper API key for the base map tiles. ",
+         "Set it with set_cancensus_api_key() or pass it with the api_key argument. ",
+         "Get a free API key at https://censusmapper.ca/users/sign_up", call. = FALSE)
+  }
+  api_key
+}
+
+# The data's CRS and bbox, its extent and width in web mercator, the zoom level
+# to draw at and the zoom level of the tiles
+cm_view <- function(data, zoom = NULL, pixels = 800) {
+  world <- 2 * pi * 6378137
+  merc <- sf::st_bbox(sf::st_transform(sf::st_as_sfc(sf::st_bbox(data)), 3857))
+  span <- merc[["xmax"]] - merc[["xmin"]]
+  z <- zoom
+  if (is.null(z)) z <- log2(pixels * world / (512 * span)) # MapLibre's 512px tiles
+  z <- max(0, min(z, 20))
+  list(crs = sf::st_crs(data), bbox = sf::st_bbox(data), merc = merc, span = span,
+       z = z, tz = min(13, floor(z)))
+}
+
+# The layers of the base map for view v. Road labels only for
+# road_label_classes, if given.
+cm_context_data <- function(data, layers, v, lang, server, api_key, road_label_classes = NULL) {
+  get <- function(layer, source = "canada", zoom = v$tz) {
+    d <- cm_tile_layer(v$merc, zoom, layer, source, server, api_key)
+    if (is.null(d) || nrow(d) == 0) return(NULL)
+    # Crop in a planar CRS; a lon/lat box is the same box in web mercator
+    planar <- sf::st_is_longlat(v$crs)
+    if (!planar) d <- sf::st_transform(d, v$crs)
+    crop <- function(d) suppressWarnings(sf::st_crop(d, if (planar) v$merc else v$bbox))
+    d <- tryCatch(crop(d), error = function(e) crop(sf::st_make_valid(d)))
+    d <- d[!sf::st_is_empty(d), ]
+    if (planar) d <- sf::st_transform(d, v$crs)
+    d
+  }
+  # Names in the language lang, or the local name
+  named <- function(d) {
+    if (is.null(d)) return(NULL)
+    n <- if (lang == "fr" && "name.fr" %in% names(d)) d$name.fr else if ("name.en" %in% names(d)) d$name.en
+    if (is.null(n)) n <- d$name
+    d$name <- ifelse(is.na(n) | n == "", d$name, n)
+    d[!is.na(d$name) & d$name != "", ]
+  }
+  one <- function(layer) switch(layer,
+    water = {
+      water <- if (v$tz >= 6) get("water")
+      if (v$z < 9) water <- cm_rbind(get("water", "world_low", min(v$tz, 8)), water)
+      water
+    },
+    landcover = get("landcover_natural"),
+    landuse = get("landuse"),
+    aeroway = get("aeroway"),
+    buildings = get("building"),
+    roads = {
+      roads <- get("transportation")
+      if (!is.null(roads)) roads <- roads[!sf::st_is(roads, c("POLYGON", "MULTIPOLYGON", "POINT", "MULTIPOINT")), ]
+      roads
+    },
+    places = named(get("place")),
+    road_labels = {
+      roads <- named(get("transportation_name"))
+      if (!is.null(roads) && !is.null(road_label_classes)) roads <- roads[roads$class %in% road_label_classes, ]
+      if (!is.null(roads) && nrow(roads) > 0) cm_road_label_points(roads, v$z)
+    })
+  empty <- sf::st_sf(geometry = sf::st_sfc(crs = v$crs))
+  out <- lapply(stats::setNames(layers, layers), function(layer) {
+    d <- one(layer)
+    if (is.null(d) || nrow(d) == 0) empty else d
+  })
+  attr(out, "zoom") <- v$z
+  out
 }
 
 #' @exportS3Method ggplot2::ggplot_add
-ggplot_add.cm_context <- function(object, plot, ...) {
+ggplot_add.cm_context_layer <- function(object, plot, ...) {
   data <- object$data
   if (is.null(data)) data <- plot$data
   if (!inherits(data, c("sf", "sfc", "bbox"))) {
@@ -74,32 +235,48 @@ ggplot_add.cm_context <- function(object, plot, ...) {
   plot
 }
 
-cm_context_layers <- function(data, o) {
-  crs <- sf::st_crs(data)
-  box <- sf::st_as_sfc(sf::st_bbox(data))
-  merc <- sf::st_bbox(sf::st_transform(box, 3857))
-  world <- 2 * pi * 6378137
-  # The data's bbox, and its width in web mercator, to scale lines and labels
-  # to the panel when drawn
-  bbox <- as.numeric(sf::st_bbox(data))
-  span <- merc[["xmax"]] - merc[["xmin"]]
-  z <- o$zoom
-  if (is.null(z)) z <- log2(o$pixels * world / (512 * span)) # MapLibre's 512px tiles
-  z <- max(0, min(z, 20))
-  tz <- min(13, floor(z))
+# Label styles in MapLibre's priority order. Sizes, halos and padding are in
+# pixels; labels are placed when the plot is drawn (makeContent.cm_labels).
+cm_label_styles <- function() {
+  st <- function(classes, min, max, size, colour, bold, halo, pad = 2, upper = FALSE, road = FALSE)
+    list(classes = classes, min = min, max = max, size = size, colour = colour,
+         bold = bold, halo = halo, pad = pad, upper = upper, road = road)
+  list(
+    st("country", 1, 5, list(c(1, 12), c(4, 18)), "#2a2a2a", TRUE, 2, upper = TRUE),
+    st("state", 3, 8, list(c(3, 10), c(6, 14)), "#4a4a4a", FALSE, 2, upper = TRUE),
+    st("city", 5, Inf, list(c(5, 12), c(8, 16), c(12, 22)), "#000000", TRUE, 2, upper = TRUE),
+    st("town", 8, Inf, list(c(8, 11), c(12, 14)), "#0a0a0a", TRUE, 2),
+    st("village", 10, Inf, list(c(0, 11)), "#1a1a1a", FALSE, 1.5),
+    st(c("motorway", "trunk", "primary"), 10, Inf, list(c(10, 11), c(13, 14)), "#3a3a3a", FALSE, 1.5, 20,
+       road = TRUE),
+    st(c("secondary", "tertiary"), 12, Inf, list(c(12, 11), c(14, 13)), "#4a4a4a", FALSE, 1.5, 30,
+       road = TRUE),
+    st(c("residential", "unclassified", "living_street", "service"), 14, Inf, list(c(0, 12)),
+       "#5a5a5a", FALSE, 1.5, 40, road = TRUE))
+}
 
-  get <- function(layer, source = "canada", zoom = tz) {
-    d <- cm_tile_layer(merc, zoom, layer, source, o$tile_server)
-    if (is.null(d) || nrow(d) == 0) return(NULL)
-    # Crop in a planar CRS; a lon/lat box is the same box in web mercator
-    planar <- sf::st_is_longlat(crs)
-    if (!planar) d <- sf::st_transform(d, crs)
-    crop <- function(d) suppressWarnings(sf::st_crop(d, if (planar) merc else sf::st_bbox(data)))
-    d <- tryCatch(crop(d), error = function(e) crop(sf::st_make_valid(d)))
-    d <- d[!sf::st_is_empty(d), ]
-    if (planar) d <- sf::st_transform(d, crs)
-    d
-  }
+# The ggplot layers of the base map: the features from cm_context_data(),
+# styled like CensusMapper
+cm_context_layers <- function(data, o) {
+  v <- cm_view(data, o$zoom, o$pixels)
+  z <- v$z
+  bbox <- as.numeric(v$bbox)
+  span <- v$span
+
+  styles <- cm_label_styles()
+  wanted <- vapply(styles, function(s) z >= s$min && z < s$max, logical(1))
+  is_road <- vapply(styles, function(s) s$road, logical(1))
+  labels <- "labels" %in% o$layers
+  need <- c(if ("landuse" %in% o$layers && z > 9) c("landcover", "landuse"),
+            if ("water" %in% o$layers) "water",
+            if ("roads" %in% o$layers) c(if (z > 9) "aeroway", "roads"),
+            if ("buildings" %in% o$layers && z > 14.5) "buildings",
+            if (labels && any(wanted & !is_road)) "places",
+            if (labels && any(wanted & is_road)) "road_labels")
+  ctx <- cm_context_data(data, need, v, o$lang, o$tile_server, o$api_key,
+                         road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
+  has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
+
   rows <- function(d, ...) {
     if (is.null(d) || nrow(d) == 0) return(NULL)
     v <- list(...)
@@ -125,124 +302,93 @@ cm_context_layers <- function(data, o) {
 
   out <- list()
 
-  if ("landuse" %in% o$layers && z > 9) {
+  if (has("landcover") || has("landuse")) {
     a <- ramp(list(c(9, 0), c(10, 0.85)))
-    natural <- rows(get("landcover_natural"), fill = "#a8a8a8", alpha = a)
-    industrial <- get("landuse")
-    industrial <- rows(industrial[industrial$class %in% "industrial", ], fill = "#9a9a9a", alpha = a)
+    natural <- rows(ctx$landcover, fill = "#a8a8a8", alpha = a)
+    industrial <- if (has("landuse")) ctx$landuse[ctx$landuse$class %in% "industrial", ]
+    industrial <- rows(industrial, fill = "#9a9a9a", alpha = a)
     out <- c(out, list(fill_layer(cm_rbind(natural, industrial))))
   }
-  if ("water" %in% o$layers) {
-    water <- if (tz >= 6) get("water")
-    if (z < 9) water <- cm_rbind(get("water", "world_low", min(tz, 8)), water)
-    out <- c(out, list(fill_layer(rows(water, fill = "#d0d0d0", alpha = 1))))
+  if (has("water")) {
+    out <- c(out, list(fill_layer(rows(ctx$water, fill = "#d0d0d0", alpha = 1))))
   }
-  if ("roads" %in% o$layers && z > 9) {
-    aero <- get("aeroway")
-    if (!is.null(aero)) {
-      a <- ramp(list(c(9, 0), c(10, 0.9)))
-      poly <- sf::st_is(aero, c("POLYGON", "MULTIPOLYGON"))
-      out <- c(out, list(
-        fill_layer(rows(aero[poly & aero$class %in% "runway", ], fill = "#2a2a2a", alpha = a)),
-        line_layer(rows(aero[!poly & aero$class %in% "taxiway", ], colour = "#4a4a4a",
-                        linetype = "solid", alpha = a, style = 1),
-                   list(list(min = 0, width = list(c(0, 2)))))))
-    }
+  if (has("aeroway")) {
+    aero <- ctx$aeroway
+    a <- ramp(list(c(9, 0), c(10, 0.9)))
+    poly <- sf::st_is(aero, c("POLYGON", "MULTIPOLYGON"))
+    out <- c(out, list(
+      fill_layer(rows(aero[poly & aero$class %in% "runway", ], fill = "#2a2a2a", alpha = a)),
+      line_layer(rows(aero[!poly & aero$class %in% "taxiway", ], colour = "#4a4a4a",
+                      linetype = "solid", alpha = a, style = 1),
+                 list(list(min = 0, width = list(c(0, 2)))))))
   }
-  if ("buildings" %in% o$layers && z > 14.5) {
-    b <- get("building")
+  if (has("buildings")) {
     a <- ramp(list(c(14.5, 0), c(15.5, 0.9)))
     out <- c(out, list(
-      fill_layer(rows(b, fill = "#d0d0d0", alpha = a)),
-      line_layer(rows(b, colour = "#a0a0a0", linetype = "solid", alpha = a, style = 1),
+      fill_layer(rows(ctx$buildings, fill = "#d0d0d0", alpha = a)),
+      line_layer(rows(ctx$buildings, colour = "#a0a0a0", linetype = "solid", alpha = a, style = 1),
                  list(list(min = 0, width = list(c(0, 0.5)))))))
   }
-  if ("roads" %in% o$layers) {
-    roads <- get("transportation")
-    if (!is.null(roads)) {
-      roads <- roads[!sf::st_is(roads, c("POLYGON", "MULTIPOLYGON", "POINT", "MULTIPOINT")), ]
-      parts <- list()
-      styles <- list()
-      add <- function(classes, minzoom, colour, width, casing = NULL, linetype = "solid") {
-        if (z < minzoom) return()
-        d <- roads[roads$class %in% classes, ]
-        if (nrow(d) == 0) return()
-        for (w in list(casing, width)) {
-          if (is.null(w)) next
-          styles[[length(styles) + 1]] <<- list(min = minzoom, width = w)
-          parts[[length(parts) + 1]] <<- rows(d, colour = if (identical(w, casing)) "#000000" else colour,
-                                              linetype = if (identical(w, casing)) "solid" else linetype,
-                                              alpha = 1, style = length(styles))
-        }
+  if (has("roads")) {
+    roads <- ctx$roads
+    parts <- list()
+    line_styles <- list()
+    add <- function(classes, minzoom, colour, width, casing = NULL, linetype = "solid") {
+      if (z < minzoom) return()
+      d <- roads[roads$class %in% classes, ]
+      if (nrow(d) == 0) return()
+      for (w in list(casing, width)) {
+        if (is.null(w)) next
+        line_styles[[length(line_styles) + 1]] <<- list(min = minzoom, width = w)
+        parts[[length(parts) + 1]] <<- rows(d, colour = if (identical(w, casing)) "#000000" else colour,
+                                            linetype = if (identical(w, casing)) "solid" else linetype,
+                                            alpha = 1, style = length(line_styles))
       }
-      add("motorway", 0, "#1a1a1a", list(c(4, 1), c(8, 3), c(14, 8)), list(c(4, 1.5), c(8, 4), c(14, 10)))
-      add("trunk", 5, "#2a2a2a", list(c(5, 0.5), c(8, 2), c(14, 6)), list(c(5, 1), c(8, 3), c(14, 8)))
-      add("primary", 6, "#3a3a3a", list(c(6, 0.5), c(8, 2), c(14, 5)), list(c(6, 0.8), c(8, 2.5), c(14, 6)))
-      add("secondary", 8, "#4a4a4a", list(c(8, 1), c(14, 4)), list(c(8, 1.5), c(14, 5)))
-      add("tertiary", 9, "#5a5a5a", list(c(9, 0.5), c(14, 3)))
-      add(c("residential", "unclassified", "living_street"), 10, "#6a6a6a", list(c(10, 0.5), c(14, 2)))
-      add("service", 11, "#808080", list(c(0, 1)))
-      add(c("path", "footway", "cycleway", "bridleway"), 11, "#909090", list(c(0, 1)), linetype = "22")
-      out <- c(out, list(line_layer(do.call(cm_rbind, parts), styles)))
     }
+    add("motorway", 0, "#1a1a1a", list(c(4, 1), c(8, 3), c(14, 8)), list(c(4, 1.5), c(8, 4), c(14, 10)))
+    add("trunk", 5, "#2a2a2a", list(c(5, 0.5), c(8, 2), c(14, 6)), list(c(5, 1), c(8, 3), c(14, 8)))
+    add("primary", 6, "#3a3a3a", list(c(6, 0.5), c(8, 2), c(14, 5)), list(c(6, 0.8), c(8, 2.5), c(14, 6)))
+    add("secondary", 8, "#4a4a4a", list(c(8, 1), c(14, 4)), list(c(8, 1.5), c(14, 5)))
+    add("tertiary", 9, "#5a5a5a", list(c(9, 0.5), c(14, 3)))
+    add(c("residential", "unclassified", "living_street"), 10, "#6a6a6a", list(c(10, 0.5), c(14, 2)))
+    add("service", 11, "#808080", list(c(0, 1)))
+    add(c("path", "footway", "cycleway", "bridleway"), 11, "#909090", list(c(0, 1)), linetype = "22")
+    out <- c(out, list(line_layer(do.call(cm_rbind, parts), line_styles)))
   }
-  if ("labels" %in% o$layers) {
+  if (labels) {
     family <- o$family
     if (is.null(family)) {
       family <- "sans"
       if (requireNamespace("systemfonts", quietly = TRUE) &&
           "Noto Sans" %in% systemfonts::system_fonts()$family) family <- "Noto Sans"
     }
-    name_of <- function(d) {
-      n <- if (o$lang == "fr" && "name.fr" %in% names(d)) d$name.fr else if ("name.en" %in% names(d)) d$name.en
-      if (is.null(n)) n <- d$name
-      ifelse(is.na(n) | n == "", d$name, n)
-    }
-    # Label styles in MapLibre's priority order. Sizes, halos and padding are in
-    # pixels; labels are placed when the plot is drawn (makeContent.cm_labels).
-    st <- function(classes, min, max, size, colour, bold, halo, pad = 2, upper = FALSE)
-      list(classes = classes, min = min, max = max, size = size, colour = colour,
-           bold = bold, halo = halo, pad = pad, upper = upper)
-    styles <- list(
-      st("country", 1, 5, list(c(1, 12), c(4, 18)), "#2a2a2a", TRUE, 2, upper = TRUE),
-      st("state", 3, 8, list(c(3, 10), c(6, 14)), "#4a4a4a", FALSE, 2, upper = TRUE),
-      st("city", 5, Inf, list(c(5, 12), c(8, 16), c(12, 22)), "#000000", TRUE, 2, upper = TRUE),
-      st("town", 8, Inf, list(c(8, 11), c(12, 14)), "#0a0a0a", TRUE, 2),
-      st("village", 10, Inf, list(c(0, 11)), "#1a1a1a", FALSE, 1.5),
-      st(c("motorway", "trunk", "primary"), 10, Inf, list(c(10, 11), c(13, 14)), "#3a3a3a", FALSE, 1.5, 20),
-      st(c("secondary", "tertiary"), 12, Inf, list(c(12, 11), c(14, 13)), "#4a4a4a", FALSE, 1.5, 30),
-      st(c("residential", "unclassified", "living_street", "service"), 14, Inf, list(c(0, 12)),
-         "#5a5a5a", FALSE, 1.5, 40))
-    wanted <- vapply(styles, function(s) z >= s$min && z < s$max, logical(1))
-    is_road <- seq_along(styles) >= 6
     style_of <- function(class, which) {
       m <- rep(NA_integer_, length(class))
       for (i in rev(which(wanted & which))) m[class %in% styles[[i]]$classes] <- i
       m
     }
+    cols <- c("label", "style", "angle", "length")
 
-    places <- if (any(wanted & !is_road)) get("place")
-    if (!is.null(places)) {
-      places$label <- name_of(places)
+    places <- NULL
+    if (has("places")) {
+      places <- ctx$places
+      places$label <- places$name
       places$style <- style_of(places$class, !is_road)
-      places <- places[!is.na(places$style) & !is.na(places$label) & places$label != "", ]
+      places <- places[!is.na(places$style), ]
       upper <- vapply(styles, function(s) s$upper, logical(1))[places$style]
       places$label[upper] <- toupper(places$label[upper])
       places <- places[!duplicated(paste(places$class, places$label)), ]
       places$angle <- rep(0, nrow(places))
       places$length <- rep(NA_real_, nrow(places))
-      places <- places[order(places$style), c("label", "style", "angle", "length")]
+      places <- places[order(places$style), cols]
     }
     roads <- NULL
-    if (any(wanted & is_road)) {
-      names <- get("transportation_name")
-      if (!is.null(names)) {
-        names$label <- name_of(names)
-        names$style <- style_of(names$class, is_road)
-        names <- names[!is.na(names$style) & !is.na(names$label) & names$label != "", ]
-        if (nrow(names) > 0) roads <- cm_road_label_points(names, z)
-      }
-      if (!is.null(roads)) roads <- roads[order(roads$style, -roads$length), ]
+    if (has("road_labels")) {
+      roads <- ctx$road_labels
+      roads$label <- roads$name
+      roads$style <- style_of(roads$class, is_road)
+      roads <- roads[!is.na(roads$style), ]
+      roads <- roads[order(roads$style, -roads$length), cols]
     }
     lab <- cm_rbind(places, roads)
     if (!is.null(lab) && nrow(lab) > 0) {
@@ -386,12 +532,13 @@ cm_boxes_separated <- function(x, y, w, h, a) {
   FALSE
 }
 
-# Label candidates for named roads: one per merged piece that is long enough
-# for its label at zoom z, at the piece's midpoint and turned along it.
+# Label candidates for named roads: one per merged piece of a road (same class
+# and name) that is long enough for its label at zoom z, at the piece's
+# midpoint and turned along it.
 cm_road_label_points <- function(d, z) {
   crs <- sf::st_crs(d)
   d <- sf::st_transform(d, 3857)
-  key <- paste(d$style, d$label, sep = "|")
+  key <- paste(d$class, d$name, sep = "|")
   pieces <- lapply(split(seq_len(nrow(d)), key), function(i) {
     g <- sf::st_union(sf::st_geometry(d)[i])
     g <- sf::st_cast(sf::st_line_merge(sf::st_cast(g, "MULTILINESTRING")), "LINESTRING")
@@ -399,7 +546,7 @@ cm_road_label_points <- function(d, z) {
   })
   p <- sf::st_sf(do.call(rbind, pieces), crs = 3857)
   m_per_px <- 2 * pi * 6378137 / (512 * 2^z)
-  p <- p[as.numeric(sf::st_length(p)) >= nchar(d$label[p$row]) * 10 * 0.6 * m_per_px, ]
+  p <- p[as.numeric(sf::st_length(p)) >= nchar(d$name[p$row]) * 10 * 0.6 * m_per_px, ]
   if (nrow(p) == 0) return(NULL)
   coords <- do.call(rbind, lapply(sf::st_geometry(p), function(l) {
     xy <- sf::st_coordinates(l)[, 1:2, drop = FALSE]
@@ -413,7 +560,7 @@ cm_road_label_points <- function(d, z) {
     if (a < -90) a <- a + 180
     c(pt, a)
   }))
-  out <- data.frame(label = d$label[p$row], style = d$style[p$row], angle = coords[, 3],
+  out <- data.frame(class = d$class[p$row], name = d$name[p$row], angle = coords[, 3],
                     length = as.numeric(sf::st_length(p)))
   out <- sf::st_sf(out, geometry = sf::st_sfc(lapply(seq_len(nrow(coords)), function(i)
     sf::st_point(coords[i, 1:2])), crs = 3857))
@@ -445,8 +592,8 @@ cm_rbind <- function(...) {
 }
 
 # The features of one tile layer for a bounding box in EPSG:3857. Tiles are
-# cached for the session.
-cm_tile_layer <- function(merc, z, layer, source, server) {
+# cached for the session, by source, zoom and tile (not by API key).
+cm_tile_layer <- function(merc, z, layer, source, server, api_key) {
   world <- 2 * pi * 6378137
   n <- 2^z
   tx <- function(x) min(n - 1, max(0, floor((x + world / 2) / world * n)))
@@ -465,13 +612,7 @@ cm_tile_layer <- function(merc, z, layer, source, server) {
     y <- tiles$y[i]
     path <- file.path(dir, paste0(x, "_", y, ".pbf"))
     if (!file.exists(path)) {
-      url <- sprintf("%s/%s/%d/%d/%d", server, source, z, x, y)
-      ok <- tryCatch(utils::download.file(url, path, mode = "wb", quiet = TRUE) == 0,
-                     error = function(e) FALSE, warning = function(w) FALSE)
-      if (!ok) {
-        unlink(path)
-        return(NULL)
-      }
+      cm_download_tile(sprintf("%s/%s/%d/%d/%d", server, source, z, x, y), api_key, path)
     }
     if (file.size(path) == 0) return(NULL)
     opts <- c(paste0("X=", x), paste0("Y=", y), paste0("Z=", z))
@@ -488,4 +629,35 @@ cm_tile_layer <- function(merc, z, layer, source, server) {
   d <- do.call(cm_rbind, ds)
   if (!is.null(d)) d <- d[!sf::st_is_empty(d), ]
   d
+}
+
+# Download a tile to path. Stops if the server refuses the API key or the tile
+# quota is used up (401, 403), or on other failures, so that a base map isn't
+# silently left empty. An empty tile (no features) is an empty file.
+cm_download_tile <- function(url, api_key, path) {
+  tmp <- paste0(path, ".part")
+  on.exit(unlink(tmp))
+  response <- tryCatch(cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
+                              query = list(api_key = api_key)),
+                       error = function(e) {
+                         stop("geom_cm_context(): could not download base map tile ", url, ": ",
+                              conditionMessage(e), call. = FALSE)
+                       })
+  status <- httr::status_code(response)
+  if (status %in% c(401, 403)) {
+    reason <- httr::headers(response)[["x-tile-auth-reason"]]
+    stop("geom_cm_context(): the CensusMapper tile server refused the base map tiles (HTTP ", status,
+         if (!is.null(reason) && nzchar(reason)) paste0(": ", reason), "). ",
+         if (status == 401) "Check your API key, set with set_cancensus_api_key()."
+         else "Your API key may be inactive, or its tile quota used up.",
+         call. = FALSE)
+  }
+  if (httr::http_error(response)) {
+    stop("geom_cm_context(): could not download base map tile ", url, " (HTTP ", status, ")",
+         call. = FALSE)
+  }
+  # An empty response (e.g. 204) may not leave a file behind
+  if (!file.exists(tmp)) file.create(tmp)
+  file.rename(tmp, path)
+  invisible(path)
 }
