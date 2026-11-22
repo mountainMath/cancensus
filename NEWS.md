@@ -1,5 +1,9 @@
 # cancensus 0.6.3
 
+## Bug fixes
+
+- `get_statcan_geographic_attributes()` and `get_statcan_geo_suite()` no longer show a message from **duckdb** about disabled extensions every time they read data. Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ instead of libstdc++, like CRAN's fedora-clang check machine, and announce this with a message. This made the package checks fail there. **cancensus** only reads local parquet files, which **duckdb** supports without extensions, so it now opens the database with extensions disabled, which also avoids the message.
+
 ## Improvements
 
 A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does. The base map tiles need a CensusMapper API key, taken from `set_cancensus_api_key()` or the new `api_key` argument, and count against a separate tile quota. Refused tile requests (invalid or inactive key, exceeded tile quota) now stop with an error instead of leaving the base map empty (#236).
@@ -10,7 +14,7 @@ New functions `cm_gini()`, `cm_gini2()`, `cm_binned_quantile()` and `cm_wasserst
 
 A new `coord_cm_bbox()` limits a ggplot map to a bounding box in any CRS, e.g. the view of a CensusMapper map, and shows all data with `bbox = NULL`. `geom_cm_context()` covers the area the plot shows, following `coord_cm_bbox()` or `coord_sf()` limits, and is drawn in the plot's CRS whatever CRS the data are in.
 
-New `scale_fill_cm_bins()` and `scale_colour_cm_bins()` scales for choropleth maps bin numeric values at given cutoffs (or at quantiles), colour the bins from a ColorBrewer, viridis or `hcl.colors()` palette, and label them with formatted ranges for numbers, percentages, ratios or currency, in English or French. Like `scale_fill_manual()`, `values` and `labels` set the colours and labels directly.
+New `scale_fill_cm_bins()` and `scale_colour_cm_bins()` scales for choropleth maps bin numeric values at given cutoffs (or at quantiles), colour the bins from a ColorBrewer, viridis or `hcl.colors()` palette, and label them with formatted ranges for numbers, percentages, ratios or currency, in English or French. Like `scale_fill_manual()`, `values` and `labels` set the colours and labels directly. The legend shows every bin, including bins without data.
 
 # cancensus 0.6.2
 
