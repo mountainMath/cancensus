@@ -15,6 +15,12 @@
 #' and lines and labels keep their size relative to the map whatever size the
 #' plot is drawn at. Labels are thinned out so that they don't overlap.
 #'
+#' The base map covers the area the plot shows: by default all its sf data, or
+#' the limits set with \code{\link{coord_cm_bbox}()} or
+#' \code{ggplot2::coord_sf()}. It is drawn in the plot's CRS, whatever CRS the
+#' data are in. The tiles are fetched when the plot is first drawn, and the
+#' features kept for redrawing it.
+#'
 #' Tiles are downloaded from the tile server and cached for the session. They
 #' need a CensusMapper API key, the same as for the census data, though tiles
 #' count against a separate tile quota. Set it once with
@@ -25,10 +31,8 @@
 #'
 #' @param layers Which parts of the base map to draw, any of \code{"landuse"},
 #' \code{"water"}, \code{"buildings"}, \code{"roads"} and \code{"labels"}.
-#' @param data sf data (or a bounding box) whose extent the base map covers. By
-#' default the plot's data, or the first layer with sf data.
 #' @param zoom Zoom level (as on CensusMapper) to draw the base map at. By
-#' default the zoom level at which the data spans \code{pixels} pixels.
+#' default the zoom level at which the area shown spans \code{pixels} pixels.
 #' @param pixels The width, in pixels, of the CensusMapper map the plot mimics.
 #' Larger values show more detail, with relatively smaller lines and labels.
 #' @param scale Factor to make lines and labels larger or smaller.
@@ -58,7 +62,7 @@
 #'   coord_sf(datum = NA)
 #' }
 geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads", "labels"),
-                            data = NULL, zoom = NULL, pixels = 800, scale = 1,
+                            zoom = NULL, pixels = 800, scale = 1,
                             lang = c("en", "fr"), family = NULL,
                             tile_server = "https://censusmapper.ca",
                             api_key = Sys.getenv("CM_API_KEY")) {
@@ -66,7 +70,7 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
     stop("geom_cm_context() needs the ggplot2 package")
   }
   layers <- match.arg(layers, several.ok = TRUE)
-  structure(list(layers = layers, data = data, zoom = zoom, pixels = pixels, scale = scale,
+  structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
                  lang = match.arg(lang), family = family, tile_server = tile_server,
                  api_key = cm_tile_api_key(api_key, "geom_cm_context()")),
             class = "cm_context_layer")
@@ -74,16 +78,102 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
 
 #' @exportS3Method ggplot2::ggplot_add
 ggplot_add.cm_context_layer <- function(object, plot, ...) {
-  data <- object$data
-  if (is.null(data)) data <- plot$data
-  if (!inherits(data, c("sf", "sfc", "bbox"))) {
-    data <- Find(function(l) inherits(l$data, "sf"), plot$layers)$data
-  }
-  if (is.null(data)) stop("geom_cm_context() needs sf data in the plot, or its data argument")
-  for (l in cm_context_layers(data, object)) plot <- plot + l
-  # The labels' x and y would otherwise title the axes
-  if ("labels" %in% object$layers) plot <- plot + ggplot2::labs(x = NULL, y = NULL)
+  # One layer that draws the whole base map when the panel is drawn, for the
+  # panel's extent, in the CRS of the plot's coord_sf()
+  plot <- plot + ggplot2::layer(
+    geom = cm_geom("context"), stat = "identity", position = "identity",
+    data = data.frame(cm_context = 1), mapping = NULL, inherit.aes = FALSE,
+    show.legend = FALSE, params = list(cm = object))
+  # Like geom_sf(), a map needs coord_sf()
+  if (isTRUE(plot$coordinates$default)) plot <- plot + ggplot2::coord_sf(default = TRUE)
   plot
+}
+
+#' Show the area of a bounding box on a ggplot map
+#'
+#' A \code{ggplot2::coord_sf()} that limits a map to a bounding box, e.g. the
+#' area of a CensusMapper map's view, while the data can extend beyond it. The
+#' box can be in any CRS: it is turned into the map's CRS. With
+#' \code{bbox = NULL} the map shows all its data, as with \code{coord_sf()},
+#' so that cropping is switched off by setting the box to \code{NULL}.
+#' \code{\link{geom_cm_context}()} covers the area shown.
+#'
+#' @param bbox The area to show: a bounding box (\code{sf::st_bbox()}), or sf
+#' data or an sfc whose bounding box to show, or a numeric vector
+#' \code{c(xmin, ymin, xmax, ymax)}. A box without a CRS, and a numeric vector,
+#' are taken to be in the CRS of the map's data (of the plot, or of its first
+#' sf layer). \code{NULL} to show all data.
+#' @param crs The CRS of the map. By default that of the map's data.
+#' @param datum The CRS of the graticule; by default none.
+#' @param ... Other arguments passed on to \code{ggplot2::coord_sf()}, e.g.
+#' \code{expand}.
+#'
+#' @return An object to add to a ggplot with \code{+}.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' census_data <- get_census("CA21", regions = list(CMA = "59933"),
+#'                           vectors = c(population = "v_CA21_1"),
+#'                           level = "CT", geo_format = "sf")
+#' view_bbox <- sf::st_bbox(c(xmin = -123.19, ymin = 49.24, xmax = -123.05, ymax = 49.30),
+#'                          crs = 4326)
+#' ggplot(census_data) +
+#'   geom_sf(aes(fill = population / `Shape Area`), colour = NA) +
+#'   geom_cm_context() +
+#'   coord_cm_bbox(view_bbox)
+#' }
+coord_cm_bbox <- function(bbox = NULL, crs = NULL, datum = NA, ...) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("coord_cm_bbox() needs the ggplot2 package")
+  }
+  if (!is.null(bbox)) {
+    if (inherits(bbox, c("sf", "sfc"))) {
+      bbox <- sf::st_bbox(bbox)
+    } else if (!inherits(bbox, "bbox")) {
+      if (!is.numeric(bbox) || length(bbox) != 4) {
+        stop("coord_cm_bbox() needs a bounding box, sf data, an sfc or c(xmin, ymin, xmax, ymax)")
+      }
+      if (!is.null(names(bbox))) bbox <- bbox[c("xmin", "ymin", "xmax", "ymax")]
+      bbox <- sf::st_bbox(stats::setNames(as.numeric(bbox), c("xmin", "ymin", "xmax", "ymax")))
+    }
+    if (anyNA(as.numeric(bbox))) stop("coord_cm_bbox(): the bounding box has missing values")
+  }
+  structure(list(bbox = bbox, crs = crs, datum = datum, args = list(...)), class = "cm_bbox_coord")
+}
+
+#' @exportS3Method ggplot2::ggplot_add
+ggplot_add.cm_bbox_coord <- function(object, plot, ...) {
+  b <- object$bbox
+  args <- c(list(crs = object$crs, datum = object$datum), object$args)
+  if (!is.null(b)) {
+    box_crs <- sf::st_crs(b)
+    # A box without a CRS is in the CRS of the map's data
+    if (is.na(box_crs)) {
+      data <- plot$data
+      if (!inherits(data, c("sf", "sfc"))) {
+        data <- Find(function(l) inherits(l$data, c("sf", "sfc")), plot$layers)$data
+      }
+      if (!is.null(data)) box_crs <- sf::st_crs(data)
+      warning("coord_cm_bbox(): the bounding box has no CRS, taking it to be in ",
+              if (!is.na(box_crs)) paste0("the CRS of the map's data, ", cm_crs_name(box_crs))
+              else "the CRS of the map",
+              ". Set it with sf::st_bbox(..., crs = ) to avoid this warning.", call. = FALSE)
+    }
+    # Limits in the box's CRS, turned into the map's CRS by coord_sf(); the
+    # area shown covers all of the box. Without any CRS the limits are in the
+    # map's CRS.
+    args <- c(list(xlim = as.numeric(b[c("xmin", "xmax")]), ylim = as.numeric(b[c("ymin", "ymax")]),
+                   default_crs = if (!is.na(box_crs)) box_crs, lims_method = "box"),
+              args)
+  }
+  plot + do.call(ggplot2::coord_sf, args)
+}
+
+# A CRS's EPSG code, e.g. "EPSG:4326", or else its name
+cm_crs_name <- function(crs) {
+  if (!is.na(crs$epsg)) paste0("EPSG:", crs$epsg) else crs$Name
 }
 
 # Label styles in MapLibre's priority order. Sizes, halos and padding are in
@@ -106,14 +196,90 @@ cm_label_styles <- function() {
        "#5a5a5a", FALSE, 1.5, 40, road = TRUE))
 }
 
-# The ggplot layers of the base map: the features from cm_context_data(),
-# styled like CensusMapper
-cm_context_layers <- function(data, o) {
-  v <- cm_view(data, o$zoom, o$pixels)
-  z <- v$z
-  bbox <- as.numeric(v$bbox)
-  span <- v$span
+# The base map for a panel, as grobs. The panel's extent (x_range, y_range)
+# is in the panel's CRS, which coord_sf() takes from its crs argument or the
+# first sf layer; the features are turned into that CRS, so the base map
+# matches the data whatever CRS the data, the coord or its limits are in.
+cm_context_grob <- function(o, panel_params, coord) {
+  crs <- panel_params$crs
+  if (!inherits(coord, "CoordSf") || is.null(crs) || is.na(crs)) {
+    stop("geom_cm_context() needs a map with coord_sf() and sf data with a CRS", call. = FALSE)
+  }
+  xr <- panel_params$x_range
+  yr <- panel_params$y_range
+  panel <- sf::st_bbox(c(xmin = xr[1], ymin = yr[1], xmax = xr[2], ymax = yr[2]), crs = crs)
+  # Width of the panel in web mercator, along its middle
+  mid <- sf::st_sfc(sf::st_point(c(xr[1], mean(yr))), sf::st_point(c(xr[2], mean(yr))), crs = crs)
+  m <- sf::st_coordinates(sf::st_transform(mid, 3857))
+  span <- sqrt(sum((m[2, 1:2] - m[1, 1:2])^2))
+  z <- o$zoom
+  if (is.null(z)) z <- log2(o$pixels * 2 * pi * 6378137 / (512 * span)) # MapLibre's 512px tiles
+  v <- cm_view(panel, z)
+  v$span <- span
+  f <- cm_context_features_cached(v, o)
 
+  # Features with their geometry in npc, as a plain data frame
+  npc <- function(d) {
+    g <- sf::st_geometry(d)
+    d <- sf::st_drop_geometry(d)
+    d$geometry <- g
+    coord$transform(d, panel_params)
+  }
+  children <- lapply(f, function(p) {
+    d <- npc(p$d)
+    switch(p$type,
+      fill = {
+        key <- paste(d$fill, d$alpha)
+        do.call(grid::gList, lapply(split(seq_len(nrow(d)), key), function(i) {
+          sf::st_as_grob(d$geometry[i], gp = grid::gpar(col = NA, fill = ggplot2::alpha(d$fill[i[1]], d$alpha[i[1]])))
+        }))
+      },
+      lines = grid::gTree(data = d, styles = p$styles, bbox_npc = 1, span = v$span, z = v$z,
+                          scale = o$scale, cl = "cm_lines"),
+      labels = {
+        xy <- sf::st_coordinates(d$geometry)
+        d$x <- xy[, 1]
+        d$y <- xy[, 2]
+        # The direction of road labels in the panel: a point a little way along
+        # the road (whose angle is in web mercator), in the panel's CRS
+        d$dx <- 1
+        d$dy <- 0
+        road <- !is.na(d$length)
+        if (any(road)) {
+          pm <- sf::st_coordinates(sf::st_transform(p$d[road, ], 3857))
+          step <- 2 * pi * 6378137 / (512 * 2^v$z)
+          a <- d$angle[road] * pi / 180
+          ahead <- sf::st_as_sf(data.frame(x = pm[, 1] + step * cos(a), y = pm[, 2] + step * sin(a)),
+                                coords = c("x", "y"), crs = 3857)
+          ahead <- sf::st_coordinates(npc(sf::st_transform(ahead, crs))$geometry)
+          d$dx[road] <- ahead[, 1] - d$x[road]
+          d$dy[road] <- ahead[, 2] - d$y[road]
+        }
+        d$geometry <- NULL
+        grid::gTree(data = d, styles = p$styles, bbox_npc = 1, span = v$span, z = v$z,
+                    family = p$family, scale = o$scale, cl = "cm_labels")
+      })
+  })
+  grid::gTree(children = do.call(grid::gList, Filter(Negate(is.null), children)))
+}
+
+# The base map's features are kept for the session, for redrawing plots
+.cm_context_cache <- new.env(parent = emptyenv())
+
+cm_context_features_cached <- function(v, o) {
+  key <- digest::digest(list(as.numeric(v$bbox), v$crs$wkt, v$z,
+                             o[c("layers", "lang", "family", "tile_server")]))
+  if (is.null(.cm_context_cache[[key]])) {
+    if (length(ls(.cm_context_cache)) >= 20) rm(list = ls(.cm_context_cache), envir = .cm_context_cache)
+    .cm_context_cache[[key]] <- cm_context_features(v, o)
+  }
+  .cm_context_cache[[key]]
+}
+
+# The features of the base map for view v, styled like CensusMapper, in the
+# order to draw them: a list of fills, lines and labels.
+cm_context_features <- function(v, o) {
+  z <- v$z
   styles <- cm_label_styles()
   wanted <- vapply(styles, function(s) z >= s$min && z < s$max, logical(1))
   is_road <- vapply(styles, function(s) s$road, logical(1))
@@ -124,7 +290,7 @@ cm_context_layers <- function(data, o) {
             if ("buildings" %in% o$layers && z > 14.5) "buildings",
             if (labels && any(wanted & !is_road)) "places",
             if (labels && any(wanted & is_road)) "road_labels")
-  ctx <- cm_context_data(data, need, v, o$lang, o$tile_server, o$api_key,
+  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, o$api_key,
                          road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
   has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
 
@@ -137,18 +303,12 @@ cm_context_layers <- function(data, o) {
   ramp <- function(stops, base = 1) cm_interpolate(z, stops, base)
   fill_layer <- function(d) {
     if (is.null(d) || nrow(d) == 0) return(NULL)
-    ggplot2::geom_sf(data = d, ggplot2::aes(fill = I(.data$fill), alpha = I(.data$alpha)),
-                     colour = NA, inherit.aes = FALSE)
+    list(type = "fill", d = d)
   }
   # Lines with widths (in pixels, by zoom) from styles[[d$style]], drawn to scale
   line_layer <- function(d, styles) {
     if (is.null(d) || nrow(d) == 0) return(NULL)
-    ggplot2::layer_sf(
-      geom = cm_geom("lines"), stat = "sf", position = "identity", data = d,
-      mapping = ggplot2::aes(colour = I(.data$colour), linetype = I(.data$linetype),
-                             alpha = I(.data$alpha), style = .data$style),
-      inherit.aes = FALSE, show.legend = FALSE,
-      params = list(styles = styles, bbox = bbox, span = span, z = z, scale = o$scale))
+    list(type = "lines", d = d, styles = styles)
   }
 
   out <- list()
@@ -243,54 +403,28 @@ cm_context_layers <- function(data, o) {
     }
     lab <- cm_rbind(places, roads)
     if (!is.null(lab) && nrow(lab) > 0) {
-      xy <- sf::st_coordinates(lab)
-      lab <- sf::st_drop_geometry(lab)
-      lab$x <- xy[, 1]
-      lab$y <- xy[, 2]
       lab$priority <- seq_len(nrow(lab))
-      out <- c(out, list(ggplot2::layer(
-        geom = cm_geom("labels"), stat = "identity", position = "identity", data = lab,
-        mapping = ggplot2::aes(x = .data$x, y = .data$y, label = .data$label, style = .data$style,
-                               angle = .data$angle, length = .data$length, priority = .data$priority),
-        inherit.aes = FALSE, show.legend = FALSE,
-        params = list(styles = styles, bbox = bbox, span = span, z = z, family = family, scale = o$scale))))
+      out <- c(out, list(list(type = "labels", d = lab, styles = styles, family = family)))
     }
   }
   Filter(Negate(is.null), out)
 }
 
+# The base map's geom, made when first needed, as ggplot2 is only suggested.
 # Labels and lines are grobs that are laid out when drawn, when the panel's
-# size, and with it the size of a CensusMapper pixel, is known. Their geoms are
-# made when first needed, as ggplot2 is only suggested.
+# size, and with it the size of a CensusMapper pixel, is known.
 .cm_geoms <- new.env(parent = emptyenv())
 
 cm_geom <- function(name) {
   if (is.null(.cm_geoms[[name]])) {
     .cm_geoms[[name]] <- switch(name,
-      labels = ggplot2::ggproto("GeomCmLabels", ggplot2::Geom,
-        required_aes = c("x", "y", "label"),
-        default_aes = ggplot2::aes(style = 1, angle = 0, length = NA, priority = 0),
+      context = ggplot2::ggproto("GeomCmContext", ggplot2::Geom,
         draw_key = ggplot2::draw_key_blank,
-        draw_panel = function(data, panel_params, coord, styles, bbox, span, z, family = "sans", scale = 1) {
-          data <- coord$transform(data, panel_params)
-          grid::gTree(data = data, styles = styles, bbox_npc = cm_bbox_npc(bbox, panel_params, coord),
-                      span = span, z = z, family = family, scale = scale, cl = "cm_labels")
-        }),
-      lines = ggplot2::ggproto("GeomCmLines", ggplot2::GeomSf,
-        optional_aes = "style",
-        draw_panel = function(self, data, panel_params, coord, styles, bbox, span, z, scale = 1) {
-          data <- coord$transform(data, panel_params)
-          grid::gTree(data = data, styles = styles, bbox_npc = cm_bbox_npc(bbox, panel_params, coord),
-                      span = span, z = z, scale = scale, cl = "cm_lines")
+        draw_panel = function(data, panel_params, coord, cm) {
+          cm_context_grob(cm, panel_params, coord)
         }))
   }
   .cm_geoms[[name]]
-}
-
-# Width of the data's bbox in the panel (0-1)
-cm_bbox_npc <- function(bbox, panel_params, coord) {
-  corners <- coord$transform(data.frame(x = bbox[c(1, 3)], y = bbox[c(2, 2)]), panel_params)
-  abs(diff(corners$x))
 }
 
 # Size of a CensusMapper pixel at zoom z in the panel being drawn, in inches
@@ -329,6 +463,10 @@ makeContent.cm_labels <- function(x) {
   ok <- z >= get("min") & z < get("max") & (!road | d$length / m_per_px >= nch * size * 0.6)
   X <- d$x * W
   Y <- d$y * H
+  # The labels' angles on the page, from their direction in the panel (dx, dy
+  # in npc), turned to read left to right
+  d$angle <- atan2(d$dy * H, d$dx * W) * 180 / pi
+  d$angle <- ifelse(d$angle > 90, d$angle - 180, ifelse(d$angle < -90, d$angle + 180, d$angle))
   a <- d$angle * pi / 180
   w <- (nch * 0.6 + 0.5) * size * inch / 2  # half extents of the label box
   h <- 0.7 * size * inch

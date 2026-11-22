@@ -90,13 +90,26 @@ cm_tile_api_key <- function(api_key, caller) {
 # to draw at and the zoom level of the tiles
 cm_view <- function(data, zoom = NULL, pixels = 800) {
   world <- 2 * pi * 6378137
-  merc <- sf::st_bbox(sf::st_transform(sf::st_as_sfc(sf::st_bbox(data)), 3857))
+  if (is.na(sf::st_crs(data))) stop("The data for the base map need a CRS", call. = FALSE)
+  merc <- cm_bbox_merc(sf::st_bbox(data))
   span <- merc[["xmax"]] - merc[["xmin"]]
   z <- zoom
   if (is.null(z)) z <- log2(pixels * world / (512 * span)) # MapLibre's 512px tiles
   z <- max(0, min(z, 20))
   list(crs = sf::st_crs(data), bbox = sf::st_bbox(data), merc = merc, span = span,
        z = z, tz = min(13, floor(z)))
+}
+
+# A bounding box in web mercator covering bbox, which may be in any CRS: its
+# edges, which can be curved in web mercator, are followed at 20 points each.
+cm_bbox_merc <- function(bbox) {
+  t <- seq(0, 1, length.out = 21)
+  x <- bbox[["xmin"]] + t * (bbox[["xmax"]] - bbox[["xmin"]])
+  y <- bbox[["ymin"]] + t * (bbox[["ymax"]] - bbox[["ymin"]])
+  pts <- rbind(cbind(x, bbox[["ymin"]]), cbind(x, bbox[["ymax"]]),
+               cbind(bbox[["xmin"]], y), cbind(bbox[["xmax"]], y))
+  pts <- sf::st_as_sf(as.data.frame(pts), coords = 1:2, crs = sf::st_crs(bbox))
+  sf::st_bbox(sf::st_transform(pts, 3857))
 }
 
 # The layers of the base map for view v. Road labels only for

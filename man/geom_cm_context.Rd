@@ -6,7 +6,6 @@
 \usage{
 geom_cm_context(
   layers = c("landuse", "water", "buildings", "roads", "labels"),
-  data = NULL,
   zoom = NULL,
   pixels = 800,
   scale = 1,
@@ -20,11 +19,8 @@ geom_cm_context(
 \item{layers}{Which parts of the base map to draw, any of \code{"landuse"},
 \code{"water"}, \code{"buildings"}, \code{"roads"} and \code{"labels"}.}
 
-\item{data}{sf data (or a bounding box) whose extent the base map covers. By
-default the plot's data, or the first layer with sf data.}
-
 \item{zoom}{Zoom level (as on CensusMapper) to draw the base map at. By
-default the zoom level at which the data spans \code{pixels} pixels.}
+default the zoom level at which the area shown spans \code{pixels} pixels.}
 
 \item{pixels}{The width, in pixels, of the CensusMapper map the plot mimics.
 Larger values show more detail, with relatively smaller lines and labels.}
@@ -59,6 +55,12 @@ wide (or at \code{zoom}), scaled to the size of the plot's panel when it is
 drawn: that zoom level decides which features, roads and labels are shown,
 and lines and labels keep their size relative to the map whatever size the
 plot is drawn at. Labels are thinned out so that they don't overlap.
+
+The base map covers the area the plot shows: by default all its sf data, or
+the limits set with \code{\link{coord_cm_bbox}()} or
+\code{ggplot2::coord_sf()}. It is drawn in the plot's CRS, whatever CRS the
+data are in. The tiles are fetched when the plot is first drawn, and the
+features kept for redrawing it.
 
 Tiles are downloaded from the tile server and cached for the session. They
 need a CensusMapper API key, the same as for the census data, though tiles

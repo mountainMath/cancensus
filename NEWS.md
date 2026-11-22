@@ -8,6 +8,8 @@ A new `cm_context()` function returns the features of the CensusMapper base map 
 
 New functions `cm_gini()`, `cm_gini2()`, `cm_binned_quantile()` and `cm_wasserstein()` compute CensusMapper's `gini()`, `gini2()`, `binned_quantile()` and `wasserstein()` per region, e.g. inside `dplyr::mutate()`, for reproducing CensusMapper maps in R. `cm_wasserstein()` needs the **transport** package.
 
+A new `coord_cm_bbox()` limits a ggplot map to a bounding box in any CRS, e.g. the view of a CensusMapper map, and shows all data with `bbox = NULL`. `geom_cm_context()` covers the area the plot shows, following `coord_cm_bbox()` or `coord_sf()` limits, and is drawn in the plot's CRS whatever CRS the data are in.
+
 New `scale_fill_cm_bins()` and `scale_colour_cm_bins()` scales for choropleth maps bin numeric values at given cutoffs (or at quantiles), colour the bins from a ColorBrewer, viridis or `hcl.colors()` palette, and label them with formatted ranges for numbers, percentages, ratios or currency, in English or French. Like `scale_fill_manual()`, `values` and `labels` set the colours and labels directly.
 
 # cancensus 0.6.2
