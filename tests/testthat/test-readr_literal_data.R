@@ -26,7 +26,7 @@ test_that("get_census parses downloaded data without readr deprecation warnings"
 
   expect_no_readr_literal_warning(result <- get_census("CA16", regions = list(CSD = "5915022"), level = "CSD",
                                          vectors = "v_CA16_408", api_key = "CensusMapper_test",
-                                         quiet = TRUE))
+                                         labels = "detailed", quiet = TRUE))
   expect_equal(result$GeoUID, "5915022")
   expect_equal(result[["v_CA16_408: Total"]], 1)
 })

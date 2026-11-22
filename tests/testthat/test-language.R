@@ -100,7 +100,7 @@ test_that("parse_vector_columns handles empty input and missing labels", {
 
 test_that("get_census keeps full labels containing colons in label_vectors", {
   local_census_api()
-  result <- census("COLON1")
+  result <- census("COLON1", labels = "detailed")
   expect_named(label_vectors(result), c("Vector", "Detail"))
   expect_equal(label_vectors(result)$Detail,
                c("Population", "Size of census family: 2 persons", "Age"))
@@ -250,7 +250,7 @@ test_that("find_census_vectors handles accented queries in keyword and semantic 
 test_that("get_census translates column names and label_vectors", {
   local_census_api()
   local_vector_info("GET1")
-  result <- census("GET1", language = "fr")
+  result <- census("GET1", language = "fr", labels = "detailed")
   expect_true(all(c("v_FR_1: Population",
                     "v_FR_2: Taille de la famille de recensement : 2 personnes",
                     "v_FR_3: Âge") %in% names(result)))
@@ -263,12 +263,12 @@ test_that("get_census translates column names and label_vectors", {
 test_that("changing the language does not download data again and English needs no metadata", {
   downloads <- local_census_api()
   metadata <- local_vector_info("GET2")
-  en <- census("GET2", language = "en")
+  en <- census("GET2", language = "en", labels = "detailed")
   expect_equal(metadata$n, 0)
-  fr <- census("GET2", language = "fr")
+  fr <- census("GET2", language = "fr", labels = "detailed")
   expect_equal(downloads$n, 1)
   expect_equal(metadata$n, 1)
-  en2 <- census("GET2", language = "en")
+  en2 <- census("GET2", language = "en", labels = "detailed")
   expect_equal(names(en), names(en2))
   expect_equal(downloads$n, 1)
 })
@@ -289,7 +289,7 @@ test_that("get_census falls back to English when French is unavailable", {
   local_census_api()
   local_vector_info("GET4", with_french = FALSE)
   expect_warning(
-    result <- suppressMessages(census("GET4", language = "fr", quiet = FALSE)),
+    result <- suppressMessages(census("GET4", language = "fr", labels = "detailed", quiet = FALSE)),
     "GET4", class = "cancensus_french_labels_unavailable_dataset"
   )
   expect_true("v_FR_3: Age" %in% names(result))
@@ -307,7 +307,7 @@ test_that("get_census keeps English labels when the metadata request fails", {
   local_census_api()
   reset_dataset("GET6")
   local_mocked_bindings(cm_GET = function(...) stop("offline"))
-  expect_no_warning(result <- census("GET6", language = "fr"))
+  expect_no_warning(result <- census("GET6", language = "fr", labels = "detailed"))
   expect_true("v_FR_3: Age" %in% names(result))
   expect_warning(
     suppressMessages(census("GET6", language = "fr", quiet = FALSE)),
@@ -347,7 +347,7 @@ test_that("labels = 'labelled' labels the other columns when no vectors are requ
 test_that("other columns are only labelled for labels = 'labelled'", {
   local_census_api()
   expect_null(attr(census("CA21", labels = "short")$Population, "label"))
-  expect_null(attr(census("CA21")$Population, "label"))
+  expect_null(attr(census("CA21", labels = "detailed")$Population, "label"))
 })
 
 test_that("names chosen for vectors are kept with the label of the vector", {
@@ -493,11 +493,13 @@ test_that("the labels default message shows once per session, only when relying 
 test_that("the cancensus.labels option sets the default for labels", {
   local_census_api()
   rlang::local_options(cancensus.labels = NULL)
-  expect_true("v_FR_2: Size of census family: 2 persons" %in% names(census("CA21")))
-  rlang::local_options(cancensus.labels = "labelled")
-  expect_true("Name" %in% names(census("CA21")))
+  expect_named(census("CA21"), names(census("CA21", labels = default_labels())))
+  # an option that differs from the default, whichever it is
+  other <- setdiff(c("detailed", "labelled"), default_labels())[1]
+  rlang::local_options(cancensus.labels = other)
+  expect_named(census("CA21"), names(census("CA21", labels = other)))
   # the parameter takes priority over the option
-  expect_true("Region Name" %in% names(census("CA21", labels = "short")))
+  expect_false(identical(names(census("CA21", labels = default_labels())), names(census("CA21"))))
   rlang::local_options(cancensus.labels = "other")
   expect_error(census("CA21"), "labels")
 })
@@ -506,7 +508,7 @@ test_that("column names only change for labels = 'labelled'", {
   local_census_api()
   rlang::local_options(cancensus.labels = NULL)
   expect_true("Region Name" %in% names(census("CA21", labels = "short")))
-  expect_true("Region Name" %in% names(census("CA21")))
+  expect_true("Region Name" %in% names(census("CA21", labels = "detailed")))
 })
 
 test_that("census_column_labels covers all columns renamed by the package", {
@@ -553,7 +555,7 @@ test_that("get_census handles partly named vectors", {
                vectors = c(pop = "v_FR_1", "v_FR_2", age = "v_FR_3"), quiet = TRUE, ...)
   }
   expected <- c("GeoUID", "Type", "Region Name", "Population", "pop", "v_FR_2", "age")
-  expect_named(partly_named(), expected)
+  expect_named(partly_named(labels = "detailed"), expected)
   expect_named(partly_named(labels = "short"), expected)
 
   labelled <- partly_named(labels = "labelled")
