@@ -71,6 +71,12 @@ break go in the first bin and values at or above the last break in the
 last, as in CensusMapper's maps. It extends \code{ggplot2::scale_fill_manual()}:
 \code{values} sets the colours directly and \code{labels} the legend labels.
 }
+\details{
+The legend shows every bin in its colour, including bins without data. If
+you pass your own \code{guide}, add \code{override.aes = list(.draw = TRUE)}
+to it, or \code{show.legend = TRUE} to the layer, to keep this with
+ggplot2 3.5 or later.
+}
 \examples{
 \dontrun{
 library(ggplot2)

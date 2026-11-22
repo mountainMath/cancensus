@@ -541,6 +541,11 @@ cm_interpolate <- function(z, stops, base = 1) {
 #' last, as in CensusMapper's maps. It extends \code{ggplot2::scale_fill_manual()}:
 #' \code{values} sets the colours directly and \code{labels} the legend labels.
 #'
+#' The legend shows every bin in its colour, including bins without data. If
+#' you pass your own \code{guide}, add \code{override.aes = list(.draw = TRUE)}
+#' to it, or \code{show.legend = TRUE} to the layer, to keep this with
+#' ggplot2 3.5 or later.
+#'
 #' @param palette The palette the colours come from: the name of a ColorBrewer
 #' palette (e.g. \code{"Blues"} or \code{"YlOrRd"}, via RColorBrewer, as on
 #' CensusMapper), of a viridis palette (\code{"viridis"}, \code{"magma"},
@@ -604,8 +609,16 @@ scale_fill_cm_bins <- function(palette = "Blues", breaks = NULL, n = 5, directio
     if (!is.null(values)) return(unname(values[seq_len(k)]))
     cm_palette(palette, k, direction)
   }
-  ggplot2::discrete_scale(aesthetics = aesthetics, palette = pal, na.value = na.value,
-                          drop = FALSE, ..., super = cm_bins_scale(breaks, n, units, lang, labels))
+  args <- list(...)
+  if (is.null(args$guide)) {
+    # Since ggplot2 3.5 the legend leaves keys without data in the layer blank
+    # (via the internal .draw column) unless the layer has show.legend = TRUE.
+    # Bins should always show the whole colour ramp, so draw every key.
+    args$guide <- ggplot2::guide_legend(override.aes = list(.draw = TRUE))
+  }
+  do.call(ggplot2::discrete_scale,
+          c(list(aesthetics = aesthetics, palette = pal, na.value = na.value, drop = FALSE),
+            args, list(super = cm_bins_scale(breaks, n, units, lang, labels))))
 }
 
 #' @rdname scale_fill_cm_bins
