@@ -7,6 +7,13 @@
 #' and \code{\link{list_census_vectors}}, or check out the interactive selection
 #' tool at \url{https://censusmapper.ca/api} by calling \code{explore_census_vectors()}
 #'
+#' Each region is identified by its \code{GeoUID}, and also by its Statistics Canada Dissemination Geography
+#' Unique Identifier in the \code{DGUID} column, right after \code{GeoUID}. DGUIDs are character strings like
+#' \code{"2021S051259150004"} for a dissemination area, and \code{NA} for regions that don't have one, like those of
+#' the CA1116 dataset. Enumeration areas (CA1991 and CA1996) get CensusMapper codes of the same form with type
+#' \code{X}. Data downloaded before the CensusMapper API added DGUIDs doesn't have this column, use
+#' \code{use_cache = FALSE} to download it again.
+#'
 #' @param dataset A CensusMapper dataset identifier.
 #' @param regions A named list of census regions to retrieve. Names must be valid census aggregation levels.
 #' @param level The census aggregation level to retrieve, defaults to \code{"Regions"}. One of \code{"Regions"}, \code{"PR"}, \code{"CMA"}, \code{"CA"}, \code{"CMACA"}, \code{"CD"}, \code{"CSD"}, \code{"CT"}, \code{"DA"}, \code{"EA"} (for 1996), or \code{"DB"} (for 2001-2016). \code{"CMA"}, \code{"CA"} and \code{"CMACA"} all refer to the same level, which contains both census metropolitan areas and census agglomerations.
@@ -219,6 +226,8 @@ get_census <- function (dataset, regions, level=NA, vectors=c(), geo_format = NA
     result <- result %>%
       sf::st_sf(agr="constant")
   }
+
+  result <- tidy_dguid(result)
 
 
   # before vectors get renamed, a name chosen for a vector keeps the label of that vector
@@ -531,6 +540,7 @@ name_change_for_level <- function(level){
 }
 
 base_name_change <- c("GeoUID"="id",
+                      "DGUID"="dguid",
                       "Shape Area"="a",
                       "Type"="t",
                       "Dwellings"="dw",
@@ -553,6 +563,7 @@ base_name_change <- c("GeoUID"="id",
 census_column_labels <- dplyr::tribble(
   ~column, ~short_name, ~en, ~fr,
   "GeoUID", "GeoUID", "Geographic identifier", "Identifiant g\u00e9ographique",
+  "DGUID", "DGUID", "Dissemination Geography Unique Identifier", "Identificateur g\u00e9ographique unique de diffusion",
   "Type", "Type", "Geographic level", "Niveau g\u00e9ographique",
   "Region Name", "Name", "Region name", "Nom de la r\u00e9gion",
   "name", "Name", "Region name", "Nom de la r\u00e9gion",
@@ -641,9 +652,20 @@ add_underscore_to_clashes <- function(result, chosen_names, language = NULL) {
   dplyr::rename(result, !!!setNames(clashes, new_names))
 }
 
+# The CensusMapper API returns StatCan's DGUID for each region (#238), data downloaded before that and
+# read from the cache doesn't have it. DGUIDs are character since census tracts have a decimal point,
+# regions without a DGUID (CA1116) come as empty strings in data and as null in geometries, both become NA.
+# The column goes right after GeoUID, geometry requests don't guarantee the order of properties.
+tidy_dguid <- function(result) {
+  if (!"DGUID" %in% names(result)) return(result)
+  result$DGUID <- dplyr::na_if(as.character(result$DGUID), "")
+  if ("GeoUID" %in% names(result)) result <- dplyr::relocate(result, "DGUID", .after = "GeoUID")
+  result
+}
+
 # Transform and rename geometry data.
 transform_geo <- function(g, level) {
-  as_character=c("id","rpid","rgid","ruid","rguid","q")
+  as_character=c("id","dguid","rpid","rgid","ruid","rguid","q")
   as_numeric=c("a","nrr")
   as_factor=c("t")
   as_integer=c("pop","dw","hh","pop2","pop11","pop16","hh11","hh16","dw11","dw16")

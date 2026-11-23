@@ -59,6 +59,13 @@ files through the CensusMapper API. An API key is required to retrieve data.
 For help selecting regions and vectors, see \code{\link{list_census_regions}}
 and \code{\link{list_census_vectors}}, or check out the interactive selection
 tool at \url{https://censusmapper.ca/api} by calling \code{explore_census_vectors()}
+
+Each region is identified by its \code{GeoUID}, and also by its Statistics Canada Dissemination Geography
+Unique Identifier in the \code{DGUID} column, right after \code{GeoUID}. DGUIDs are character strings like
+\code{"2021S051259150004"} for a dissemination area, and \code{NA} for regions that don't have one, like those of
+the CA1116 dataset. Enumeration areas (CA1991 and CA1996) get CensusMapper codes of the same form with type
+\code{X}. Data downloaded before the CensusMapper API added DGUIDs doesn't have this column, use
+\code{use_cache = FALSE} to download it again.
 }
 \examples{
 # Query the API for data on dwellings in Vancouver, at the census subdivision
