@@ -28,8 +28,21 @@ reference:
     - parent_census_vectors
     - visualize_vector_hierarchy
     - dataset_attribution
+  - title: CensusMapper-style maps
+    desc: ggplot2 helpers to reproduce CensusMapper map styling
+  - contents:
     - geom_cm_context
     - cm_context
+    - coord_cm_bbox
+    - scale_fill_cm_bins
+    - geom_cm_tricolore
+    - cm_tricolore
+  - title: Summary statistics
+  - contents:
+    - cm_binned_quantile
+    - cm_gini
+    - cm_gini2
+    - cm_wasserstein
   - title: Managing cached data
   - contents:
     - list_cancensus_cache
