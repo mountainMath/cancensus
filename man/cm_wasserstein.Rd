@@ -24,7 +24,7 @@ samples of the same size for each region, using
 \code{transport::wasserstein1d()}. Needs the transport package.
 }
 \examples{
-\dontrun{
-cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2))
+if (requireNamespace("transport", quietly = TRUE)) {
+  cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2))
 }
 }

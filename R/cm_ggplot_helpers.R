@@ -66,9 +66,7 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
                             lang = c("en", "fr"), family = NULL,
                             tile_server = "https://censusmapper.ca",
                             api_key = Sys.getenv("CM_API_KEY")) {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("geom_cm_context() needs the ggplot2 package")
-  }
+  rlang::check_installed("ggplot2", reason = "for geom_cm_context().")
   layers <- match.arg(layers, several.ok = TRUE)
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
                  lang = match.arg(lang), family = family, tile_server = tile_server,
@@ -125,20 +123,18 @@ ggplot_add.cm_context_layer <- function(object, plot, ...) {
 #'   coord_cm_bbox(view_bbox)
 #' }
 coord_cm_bbox <- function(bbox = NULL, crs = NULL, datum = NA, ...) {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("coord_cm_bbox() needs the ggplot2 package")
-  }
+  rlang::check_installed("ggplot2", reason = "for coord_cm_bbox().")
   if (!is.null(bbox)) {
     if (inherits(bbox, c("sf", "sfc"))) {
       bbox <- sf::st_bbox(bbox)
     } else if (!inherits(bbox, "bbox")) {
       if (!is.numeric(bbox) || length(bbox) != 4) {
-        stop("coord_cm_bbox() needs a bounding box, sf data, an sfc or c(xmin, ymin, xmax, ymax)")
+        cc_abort("cm_bbox_invalid")
       }
       if (!is.null(names(bbox))) bbox <- bbox[c("xmin", "ymin", "xmax", "ymax")]
       bbox <- sf::st_bbox(stats::setNames(as.numeric(bbox), c("xmin", "ymin", "xmax", "ymax")))
     }
-    if (anyNA(as.numeric(bbox))) stop("coord_cm_bbox(): the bounding box has missing values")
+    if (anyNA(as.numeric(bbox))) cc_abort("cm_bbox_missing_values")
   }
   structure(list(bbox = bbox, crs = crs, datum = datum, args = list(...)), class = "cm_bbox_coord")
 }
@@ -156,10 +152,8 @@ ggplot_add.cm_bbox_coord <- function(object, plot, ...) {
         data <- Find(function(l) inherits(l$data, c("sf", "sfc")), plot$layers)$data
       }
       if (!is.null(data)) box_crs <- sf::st_crs(data)
-      warning("coord_cm_bbox(): the bounding box has no CRS, taking it to be in ",
-              if (!is.na(box_crs)) paste0("the CRS of the map's data, ", cm_crs_name(box_crs))
-              else "the CRS of the map",
-              ". Set it with sf::st_bbox(..., crs = ) to avoid this warning.", call. = FALSE)
+      if (!is.na(box_crs)) cc_warn("cm_bbox_no_crs_data", crs = cm_crs_name(box_crs))
+      else cc_warn("cm_bbox_no_crs_map")
     }
     # Limits in the box's CRS, turned into the map's CRS by coord_sf(); the
     # area shown covers all of the box. Without any CRS the limits are in the
@@ -203,7 +197,7 @@ cm_label_styles <- function() {
 cm_context_grob <- function(o, panel_params, coord) {
   crs <- panel_params$crs
   if (!inherits(coord, "CoordSf") || is.null(crs) || is.na(crs)) {
-    stop("geom_cm_context() needs a map with coord_sf() and sf data with a CRS", call. = FALSE)
+    cc_abort("cm_context_needs_coord_sf")
   }
   xr <- panel_params$x_range
   yr <- panel_params$y_range
@@ -593,9 +587,7 @@ scale_fill_cm_bins <- function(palette = "Blues", breaks = NULL, n = 5, directio
                                          "currency", "currency_1000"),
                                lang = c("en", "fr"), values = NULL, labels = NULL,
                                na.value = "grey60", ..., aesthetics = "fill") {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("scale_fill_cm_bins() needs the ggplot2 package")
-  }
+  rlang::check_installed("ggplot2", reason = "for scale_fill_cm_bins().")
   units <- match.arg(units)
   lang <- match.arg(lang)
   if (!is.null(breaks)) {
@@ -603,7 +595,7 @@ scale_fill_cm_bins <- function(palette = "Blues", breaks = NULL, n = 5, directio
     n <- length(breaks) + 1
   }
   if (!is.null(values) && length(values) < n) {
-    stop("scale_fill_cm_bins() needs ", n, " values, one for each bin, got ", length(values))
+    cc_abort("cm_bins_values_count", n = n, got = length(values))
   }
   pal <- function(k) {
     if (!is.null(values)) return(unname(values[seq_len(k)]))
@@ -667,7 +659,7 @@ cm_auto_breaks <- function(x, n) {
 # Labels for the bins between breaks: "< a", "a - b", ..., ">= z" (with an en
 # dash and a greater-than-or-equal sign).
 cm_bin_labels <- function(breaks, units = "number", lang = "en") {
-  if (length(breaks) == 0) return("All")
+  if (length(breaks) == 0) return(cc_msg("cm_bins_all", .language = lang))
   l <- cm_format_values(breaks, units, lang)
   k <- length(l)
   c(paste0("< ", l[1]),
@@ -711,13 +703,21 @@ cm_format_values <- function(x, units = "number", lang = "en") {
     paste0(neg, out))
 }
 
+# The names of the ColorBrewer palettes, as in rownames(RColorBrewer::brewer.pal.info), so that
+# palette names can be recognized without RColorBrewer installed
+cm_brewer_palettes <- c("BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral",
+                        "Accent", "Dark2", "Paired", "Pastel1", "Pastel2", "Set1", "Set2", "Set3",
+                        "Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu",
+                        "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")
+
 # n colours from a named palette (or a function), in the palette's order or,
 # with direction -1, the reverse.
 cm_palette <- function(palette, n, direction = 1) {
   viridis <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
   cols <- if (is.function(palette)) {
     palette(n)
-  } else if (palette %in% rownames(RColorBrewer::brewer.pal.info)) {
+  } else if (palette %in% cm_brewer_palettes) {
+    rlang::check_installed("RColorBrewer", reason = paste0("for the ColorBrewer palette '", palette, "'."))
     max <- RColorBrewer::brewer.pal.info[palette, "maxcolors"]
     if (n < 3) {
       # ColorBrewer palettes start at 3 colours: their middle, or ends
@@ -728,12 +728,12 @@ cm_palette <- function(palette, n, direction = 1) {
       grDevices::colorRampPalette(RColorBrewer::brewer.pal(max, palette))(n)
     }
   } else if (tolower(palette) %in% viridis) {
+    rlang::check_installed("viridisLite", reason = paste0("for the viridis palette '", palette, "'."))
     viridisLite::viridis(n, option = tolower(palette))
   } else if (palette %in% grDevices::hcl.pals()) {
     grDevices::hcl.colors(n, palette)
   } else {
-    stop("Unknown palette '", palette, "': use a ColorBrewer, viridis or hcl.colors() palette, ",
-         "or set the colours with values")
+    cc_abort("cm_unknown_palette", palette = palette)
   }
   if (direction < 0) rev(cols) else cols
 }

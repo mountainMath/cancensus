@@ -69,19 +69,18 @@ cm_context <- function(data,
                        zoom = NULL, pixels = 800, lang = c("en", "fr"),
                        tile_server = "https://censusmapper.ca",
                        api_key = Sys.getenv("CM_API_KEY")) {
-  if (!inherits(data, c("sf", "sfc", "bbox"))) stop("cm_context() needs sf data, an sfc or a bounding box")
+  if (!inherits(data, c("sf", "sfc", "bbox"))) cc_abort("cm_context_invalid_data")
   layers <- match.arg(layers, several.ok = TRUE)
   api_key <- cm_tile_api_key(api_key, "cm_context()")
-  cm_context_data(data, layers, cm_view(data, zoom, pixels), match.arg(lang), tile_server, api_key)
+  cm_context_data(data, layers, cm_view(data, zoom, pixels), match.arg(lang), tile_server, api_key,
+                  caller = "cm_context()")
 }
 
 # The API key for the tiles, or an error before any tiles are fetched
 cm_tile_api_key <- function(api_key, caller) {
   api_key <- robust_api_key(api_key)
   if (!valid_api_key(api_key)) {
-    stop(caller, " needs a CensusMapper API key for the base map tiles. ",
-         "Set it with set_cancensus_api_key() or pass it with the api_key argument. ",
-         "Get a free API key at https://censusmapper.ca/users/sign_up", call. = FALSE)
+    cc_abort("cm_tile_api_key", caller = caller)
   }
   api_key
 }
@@ -90,7 +89,7 @@ cm_tile_api_key <- function(api_key, caller) {
 # to draw at and the zoom level of the tiles
 cm_view <- function(data, zoom = NULL, pixels = 800) {
   world <- 2 * pi * 6378137
-  if (is.na(sf::st_crs(data))) stop("The data for the base map need a CRS", call. = FALSE)
+  if (is.na(sf::st_crs(data))) cc_abort("cm_context_no_crs")
   merc <- cm_bbox_merc(sf::st_bbox(data))
   span <- merc[["xmax"]] - merc[["xmin"]]
   z <- zoom
@@ -113,10 +112,11 @@ cm_bbox_merc <- function(bbox) {
 }
 
 # The layers of the base map for view v. Road labels only for
-# road_label_classes, if given.
-cm_context_data <- function(data, layers, v, lang, server, api_key, road_label_classes = NULL) {
+# road_label_classes, if given. Problems with the tiles name the caller.
+cm_context_data <- function(data, layers, v, lang, server, api_key, road_label_classes = NULL,
+                            caller = "geom_cm_context()") {
   get <- function(layer, source = "canada", zoom = v$tz) {
-    d <- cm_tile_layer(v$merc, zoom, layer, source, server, api_key)
+    d <- cm_tile_layer(v$merc, zoom, layer, source, server, api_key, caller)
     if (is.null(d) || nrow(d) == 0) return(NULL)
     # Crop in a planar CRS; a lon/lat box is the same box in web mercator
     planar <- sf::st_is_longlat(v$crs)
@@ -215,7 +215,7 @@ cm_rbind <- function(...) {
 
 # The features of one tile layer for a bounding box in EPSG:3857. Tiles are
 # cached for the session, by source, zoom and tile (not by API key).
-cm_tile_layer <- function(merc, z, layer, source, server, api_key) {
+cm_tile_layer <- function(merc, z, layer, source, server, api_key, caller = "geom_cm_context()") {
   world <- 2 * pi * 6378137
   n <- 2^z
   tx <- function(x) min(n - 1, max(0, floor((x + world / 2) / world * n)))
@@ -223,8 +223,7 @@ cm_tile_layer <- function(merc, z, layer, source, server, api_key) {
   xs <- tx(merc$xmin):tx(merc$xmax)
   ys <- ty(merc$ymax):ty(merc$ymin)
   if (length(xs) * length(ys) > 100) {
-    warning("geom_cm_context(): ", length(xs) * length(ys), " tiles at zoom ", z,
-            "; set a lower zoom or fewer pixels")
+    cc_warn("cm_too_many_tiles", caller = caller, n = length(xs) * length(ys), zoom = z)
   }
   dir <- file.path(tempdir(), "cm_tiles", source, z)
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
@@ -234,7 +233,7 @@ cm_tile_layer <- function(merc, z, layer, source, server, api_key) {
     y <- tiles$y[i]
     path <- file.path(dir, paste0(x, "_", y, ".pbf"))
     if (!file.exists(path)) {
-      cm_download_tile(sprintf("%s/%s/%d/%d/%d", server, source, z, x, y), api_key, path)
+      cm_download_tile(sprintf("%s/%s/%d/%d/%d", server, source, z, x, y), api_key, path, caller)
     }
     if (file.size(path) == 0) return(NULL)
     opts <- c(paste0("X=", x), paste0("Y=", y), paste0("Z=", z))
@@ -256,27 +255,23 @@ cm_tile_layer <- function(merc, z, layer, source, server, api_key) {
 # Download a tile to path. Stops if the server refuses the API key or the tile
 # quota is used up (401, 403), or on other failures, so that a base map isn't
 # silently left empty. An empty tile (no features) is an empty file.
-cm_download_tile <- function(url, api_key, path) {
+cm_download_tile <- function(url, api_key, path, caller = "geom_cm_context()") {
   tmp <- paste0(path, ".part")
   on.exit(unlink(tmp))
   response <- tryCatch(cm_GET(url, httr::write_disk(tmp, overwrite = TRUE),
                               query = list(api_key = api_key)),
                        error = function(e) {
-                         stop("geom_cm_context(): could not download base map tile ", url, ": ",
-                              conditionMessage(e), call. = FALSE)
+                         cc_abort("cm_tile_download_failed", caller = caller, url = url,
+                                  problem = conditionMessage(e))
                        })
   status <- httr::status_code(response)
   if (status %in% c(401, 403)) {
     reason <- httr::headers(response)[["x-tile-auth-reason"]]
-    stop("geom_cm_context(): the CensusMapper tile server refused the base map tiles (HTTP ", status,
-         if (!is.null(reason) && nzchar(reason)) paste0(": ", reason), "). ",
-         if (status == 401) "Check your API key, set with set_cancensus_api_key()."
-         else "Your API key may be inactive, or its tile quota used up.",
-         call. = FALSE)
+    cc_abort(if (status == 401) "cm_tile_unauthorized" else "cm_tile_forbidden", caller = caller,
+             status = status, reason = if (!is.null(reason) && nzchar(reason)) paste0(": ", reason) else "")
   }
   if (httr::http_error(response)) {
-    stop("geom_cm_context(): could not download base map tile ", url, " (HTTP ", status, ")",
-         call. = FALSE)
+    cc_abort("cm_tile_download_failed", caller = caller, url = url, problem = paste0("HTTP ", status))
   }
   # An empty response (e.g. 204) may not leave a file behind
   if (!file.exists(tmp)) file.create(tmp)
@@ -366,7 +361,7 @@ cm_gini2 <- function(counts, lower_cutoffs, total = 0) {
 #' @examples
 #' cm_binned_quantile(cbind(c(10, 5), c(20, 10), c(5, 20)), c(0, 20000, 50000), 0.5)
 cm_binned_quantile <- function(counts, lower_cutoffs, p) {
-  cm_per_region(counts, lower_cutoffs, p, function(x, cut, p) {
+  cm_per_region(counts, lower_cutoffs, p, names = c("counts", "lower_cutoffs", "p"), function(x, cut, p) {
     target <- sum(x) * p
     if (!(target > 0)) return(NaN)
     k <- length(x)
@@ -398,14 +393,12 @@ cm_binned_quantile <- function(counts, lower_cutoffs, p) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2))
+#' if (requireNamespace("transport", quietly = TRUE)) {
+#'   cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2))
 #' }
 cm_wasserstein <- function(a, b, p = 1) {
-  if (!requireNamespace("transport", quietly = TRUE)) {
-    stop("cm_wasserstein() needs the transport package: install.packages(\"transport\")")
-  }
-  cm_per_region(a, b, p, function(a, b, p) transport::wasserstein1d(a, b, p = p))
+  rlang::check_installed("transport", reason = "for cm_wasserstein().")
+  cm_per_region(a, b, p, names = c("a", "b", "p"), function(a, b, p) transport::wasserstein1d(a, b, p = p))
 }
 
 # x as a matrix with n rows: a matrix with n rows as is, or a vector (or
@@ -418,8 +411,17 @@ cm_rows <- function(x, n) {
 
 # Applies f(x, y, value) to each region's rows of the vectors x and y and its
 # single value (a column, or one value for all regions); NA if any is missing.
-cm_per_region <- function(x, y, value, f) {
+# The names are those of the caller's arguments, for errors about their lengths.
+cm_per_region <- function(x, y, value, f, names = c("counts", "lower_cutoffs", "total")) {
   n <- max(1, unlist(lapply(list(x, y), function(v) if (is.matrix(v)) nrow(v))), length(value))
+  check <- function(got, what) {
+    if (!got %in% c(1, n)) cc_abort("cm_regions_mismatch", n = n, what = what, got = got)
+  }
+  for (i in 1:2) {
+    v <- list(x, y)[[i]]
+    if (is.matrix(v)) check(nrow(v), names[i])
+  }
+  check(length(value), names[3])
   x <- cm_rows(x, n)
   y <- cm_rows(y, n)
   value <- rep_len(value, n)

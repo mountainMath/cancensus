@@ -53,17 +53,7 @@ cm_tricolore <- function(p1, p2, p3, center = rep(1/3, 3), breaks = 3,
   colours <- rep(NA_character_, nrow(P))
   if (!any(ok)) return(colours)
   P <- P[ok, , drop = FALSE] / total[ok]
-  if (breaks < 100) {
-    # The centroid of the mesh triangle each composition is in
-    C <- cm_ternary_mesh_centroids(breaks)
-    nearest <- apply(P, 1, function(p) {
-      Q <- t(p - t(C))
-      # The sum of the cross products of the differences is minus half their
-      # squared length, so the nearest centroid has the largest
-      which.max(Q[, 2] * Q[, 3] + Q[, 3] * Q[, 1] + Q[, 1] * Q[, 2])
-    })
-    P <- C[nearest, , drop = FALSE]
-  }
+  if (breaks < 100) P <- cm_ternary_centroid_of(P, breaks)
   # Perturb by the inverse of the centre, then power scale; as in tricolore,
   # including its rounded constants, so the colours match it exactly
   P <- t(t(P) / center)
@@ -80,19 +70,47 @@ cm_tricolore <- function(p1, p2, p3, center = rep(1/3, 3), breaks = 3,
 
 cm_check_tricolore_options <- function(center, breaks, hue, chroma, lightness, contrast, spread) {
   if (!is.numeric(center) || length(center) != 3 || any(!is.finite(center)) || any(center <= 0)) {
-    stop("the tricolore center needs three positive numbers", call. = FALSE)
+    cc_abort("tricolore_invalid_center")
   }
   if (!is.numeric(breaks) || length(breaks) != 1 || is.na(breaks) || breaks < 1 ||
       (is.finite(breaks) && breaks != round(breaks))) {
-    stop("the tricolore breaks need to be a whole number of at least 1, or Inf", call. = FALSE)
+    cc_abort("tricolore_invalid_breaks")
   }
   for (x in list(hue, chroma, lightness, contrast, spread)) {
     if (!is.numeric(x) || length(x) != 1 || !is.finite(x)) {
-      stop("the tricolore hue, chroma, lightness, contrast and spread need to be numbers", call. = FALSE)
+      cc_abort("tricolore_invalid_options")
     }
   }
-  if (chroma <= 0) stop("the tricolore chroma needs to be positive", call. = FALSE)
-  if (spread <= 0) stop("the tricolore spread needs to be positive", call. = FALSE)
+  if (chroma <= 0) cc_abort("tricolore_invalid_chroma")
+  if (spread <= 0) cc_abort("tricolore_invalid_spread")
+}
+
+# The centroid of the mesh triangle each composition (a row of P, summing to
+# 1) is in, for a triangle split into k triangles along each side. With
+# a, b, c the compositions' parts times k rounded down, a triangle pointing up
+# has a + b + c = k - 1 and its centroid at (a, b, c) + 1/3, one pointing down
+# a + b + c = k - 2 and its centroid at (a, b, c) + 2/3. That is the nearest
+# centroid, the same as tricolore's. Compositions on or very near the edges
+# between triangles (where rounding errors decide) are matched to the nearest
+# centroid as tricolore does, so that ties go the same way.
+cm_ternary_centroid_of <- function(P, k) {
+  scaled <- P * k
+  A <- pmin(floor(scaled), k - 1)
+  frac <- scaled - floor(scaled)
+  s <- rowSums(A)
+  edge <- rowSums(frac < 1e-9 | frac > 1 - 1e-9) > 0 | !(s %in% c(k - 1, k - 2))
+  out <- (A + ifelse(s == k - 1, 1 / 3, 2 / 3)) / k
+  if (any(edge)) {
+    C <- cm_ternary_mesh_centroids(k)
+    nearest <- apply(P[edge, , drop = FALSE], 1, function(p) {
+      Q <- t(p - t(C))
+      # The sum of the cross products of the differences is minus half their
+      # squared length, so the nearest centroid has the largest
+      which.max(Q[, 2] * Q[, 3] + Q[, 3] * Q[, 1] + Q[, 1] * Q[, 2])
+    })
+    out[edge, ] <- C[nearest, , drop = FALSE]
+  }
+  out
 }
 
 # The centroids of the k^2 triangles of a triangle split into k triangles along
@@ -163,13 +181,10 @@ geom_cm_tricolore <- function(mapping = NULL, data = NULL, ..., labels = NULL, n
                               lightness = 80, contrast = 0.4, spread = 1,
                               na.value = "grey60", show_data = TRUE, key_size = 5,
                               show.legend = TRUE) {
-  if (!requireNamespace("ggplot2", quietly = TRUE) ||
-      utils::packageVersion("ggplot2") < "3.5.0") {
-    stop("geom_cm_tricolore() needs the ggplot2 package, version 3.5.0 or later")
-  }
+  rlang::check_installed("ggplot2", version = "3.5.0", reason = "for geom_cm_tricolore().")
   cm_check_tricolore_options(center, breaks, hue, chroma, lightness, contrast, spread)
   if (!is.null(labels) && length(labels) != 3) {
-    stop("geom_cm_tricolore() needs three labels, one for each part")
+    cc_abort("tricolore_invalid_labels")
   }
   structure(list(mapping = mapping, data = data, args = list(...), labels = labels, name = name,
                  options = list(center = center, breaks = breaks, hue = hue, chroma = chroma,
@@ -190,12 +205,11 @@ ggplot_add.cm_tricolore_layer <- function(object, plot, ...) {
   }
   missing_parts <- parts[vapply(parts, function(p) is.null(mapping[[p]]), logical(1))]
   if (length(missing_parts) > 0) {
-    stop("geom_cm_tricolore() needs the aesthetics p1, p2 and p3, missing: ",
-         paste(missing_parts, collapse = ", "), call. = FALSE)
+    cc_abort("tricolore_missing_aesthetics", missing = missing_parts)
   }
   data <- if (!is.null(object$data)) object$data else plot$data
   if (!inherits(data, "data.frame")) {
-    stop("geom_cm_tricolore() needs data, set in ggplot() or in the layer", call. = FALSE)
+    cc_abort("tricolore_no_data")
   }
   values <- lapply(parts, function(p) rlang::eval_tidy(mapping[[p]], data))
   colours <- do.call(cm_tricolore, c(values, object$options))

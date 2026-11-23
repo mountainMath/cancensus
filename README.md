@@ -107,7 +107,7 @@ Column names stay the same in both languages, and only the labels change, so the
 
 ### Data from CensusMapper maps
 
-Any CensusMapper map can easily be reproduced in R by clicking on the *Map actions* menu, the three vertical dots at the top right of a map side panel, and selecting the **R code for this view* option. That brings up R code that, when copy-pasted and run, reproduces the current map view. It can be easily adapted to fit the user's needs.
+Any CensusMapper map can easily be reproduced in R by clicking on the *Map actions* menu, the three vertical dots at the top right of a map side panel, and selecting the **R code for this view** option. That brings up R code that, when copy-pasted and run, reproduces the current map view. It can be easily adapted to fit the user's needs.
 
 ### Examples of work using cancensus
 

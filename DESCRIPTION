@@ -13,7 +13,7 @@ Description: Integrated, convenient, and uniform access to Canadian
     keys are freely available with free registration at <https://censusmapper.ca/api>.
     Census data and boundary geometries are reproduced and distributed on an "as
     is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006;
-    2011; 2016; 2021).
+    2011; 2016; 2021; 2026).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: yes

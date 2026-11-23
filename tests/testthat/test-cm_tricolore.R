@@ -32,8 +32,9 @@ test_that("cm_tricolore() gives NA for compositions without parts", {
   expect_true(is.na(colours[2]) && is.na(colours[3]) && is.na(colours[4]))
   expect_equal(colours[1], colours[5])
   expect_match(colours[1], "^#[0-9A-F]{6}$")
-  expect_error(cm_tricolore(1, 1, 1, breaks = 2.5), "breaks")
-  expect_error(cm_tricolore(1, 1, 1, center = c(0.5, 0.5, 0)), "center")
+  expect_error(cm_tricolore(1, 1, 1, breaks = 2.5), class = "cancensus_tricolore_invalid_breaks")
+  expect_error(cm_tricolore(1, 1, 1, center = c(0.5, 0.5, 0)), class = "cancensus_tricolore_invalid_center")
+  expect_error(cm_tricolore(1, 1, 1, spread = 0), class = "cancensus_tricolore_invalid_spread")
 })
 
 test_that("geom_cm_tricolore() fills the map and adds a key", {
@@ -51,5 +52,23 @@ test_that("geom_cm_tricolore() fills the map and adds a key", {
   expect_equal(fill[3:4], c("grey50", "grey50"))
   expect_s3_class(ggplot2::ggplotGrob(p), "gtable")
   expect_error(print(ggplot2::ggplot(data) + geom_cm_tricolore(ggplot2::aes(p1 = a))),
-               "missing: p2, p3")
+               "p2, p3", class = "cancensus_tricolore_missing_aesthetics")
+  expect_error(geom_cm_tricolore(labels = c("a", "b")), class = "cancensus_tricolore_invalid_labels")
+})
+
+test_that("the direct lookup of mesh triangles matches the nearest centroid", {
+  nearest <- function(P, k) {
+    C <- cm_ternary_mesh_centroids(k)
+    C[apply(P, 1, function(p) {
+      Q <- t(p - t(C))
+      which.max(Q[, 2] * Q[, 3] + Q[, 3] * Q[, 1] + Q[, 1] * Q[, 2])
+    }), , drop = FALSE]
+  }
+  set.seed(1)
+  # random compositions, and compositions of small counts, many of them on edges between triangles
+  P <- rbind(matrix(stats::rexp(3 * 500), ncol = 3), unname(as.matrix(expand.grid(0:6, 0:6, 0:6)))[-1, ])
+  P <- P / rowSums(P)
+  for (k in c(1:7, 12, 99)) {
+    expect_equal(cm_ternary_centroid_of(P, k), nearest(P, k), label = paste("breaks", k))
+  }
 })

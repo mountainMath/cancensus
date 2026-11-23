@@ -68,6 +68,7 @@ statcan_geography_url <- function(census_year, level, type = "cartographic", pre
 get_statcan_geographies <- function(census_year,level,type="cartographic",
                                     cache_path = NULL,timeout=1000,
                                     refresh=FALSE,quiet=FALSE,precision="detailed") {
+  census_year <- as.character(census_year)[1]
   valid_census_years <- names(statcan_geography_levels)
   level_map <-  c("CMACA"="CMA","CA"="CMA","POPCNTR"="PC","POPCTR"="PC")
   valid_types <- c("cartographic","digital")
@@ -86,6 +87,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   if (!(level %in% valid_levels)) {
     cc_abort("invalid_level_choice", choices = valid_levels)
   }
+  requested_level <- level
   if (level %in% names(level_map)) level <-level_map[[level]]
   if (precision == "generalized") {
     if (as.integer(census_year) < 2026) cc_abort("generalized_not_available", year = census_year)
@@ -94,7 +96,7 @@ get_statcan_geographies <- function(census_year,level,type="cartographic",
   }
   release <- statcan_geography_releases[[census_year]][level]
   if (length(release) == 1 && !is.na(release) && Sys.Date() < as.Date(release)) {
-    cc_abort("geography_not_released", level = level, year = census_year,
+    cc_abort("geography_not_released", level = requested_level, year = census_year,
              date = format(as.Date(release), "%Y-%m-%d"))
   }
 

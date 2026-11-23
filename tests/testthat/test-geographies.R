@@ -33,7 +33,7 @@ test_that("boundary files that aren't released yet give an error with the releas
   local_mocked_bindings(Sys.Date = function() as.Date("2026-11-23"), .package = "base")
   expect_error(get_statcan_geographies("2026", "CT"), "2027-02-10", class = "cancensus_geography_not_released")
   expect_error(get_statcan_geographies("2026", "CMACA"), class = "cancensus_geography_not_released")
-  expect_error(get_statcan_geographies("2026", "POPCNTR"), class = "cancensus_geography_not_released")
+  expect_error(get_statcan_geographies("2026", "POPCNTR"), "for POPCNTR", class = "cancensus_geography_not_released")
   expect_error(get_statcan_geographies("2026", "FSA"), "2027-09-28")
 
   with_statcan_cache({
@@ -58,4 +58,21 @@ test_that("each year and precision gets its own cache folder", {
     expect_true(dir.exists(file.path(geo, "cartographic")))
   })
   expect_equal(basename(urls), c("lpr_000b26a_e.zip", "lpr_000c26a_e.zip", "lpr_000b21a_e.zip"))
+})
+
+test_that("census years can be given as numbers", {
+  urls <- character(0)
+  local_mocked_bindings(statcan_download_zip = function(url, ...) {
+    urls <<- c(urls, url)
+    NULL
+  })
+  with_statcan_cache({
+    expect_null(get_statcan_geographies(2021, "PR", quiet = TRUE))
+    expect_null(get_statcan_geographies(2026, "CAR", quiet = TRUE))
+    geo <- cancensus:::cache_path("geographies")
+    expect_true(dir.exists(file.path(geo, "2026", "cartographic")))
+  })
+  expect_equal(basename(urls), c("lpr_000b21a_e.zip", "lcar000b26a_e.zip"))
+  local_mocked_bindings(Sys.Date = function() as.Date("2026-11-23"), .package = "base")
+  expect_error(get_statcan_geographies(2026, "CT"), class = "cancensus_geography_not_released")
 })

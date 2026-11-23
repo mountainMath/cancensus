@@ -82,10 +82,10 @@ ggplot(toronto) +
 
 There is also the option to add contextual layers similar to how CensusMapper styles map via the `geom_cm_context()` function.
 
-```{r fig.alt="Toronto Median Household Income in 2020"}
-ggplot(toronto) + 
+```{r fig.alt="Toronto Median Household Income in 2020 with CensusMapper's base map of water, roads and place names"}
+ggplot(toronto) +
   geom_sf(aes(fill = median_hh_income), colour = "grey") +
-  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + 
+  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) +
   geom_cm_context() +
   theme_minimal() +
   coord_sf(datum=NA) +

@@ -1,3 +1,34 @@
+# cancensus 0.6.3
+
+This release fixes the check failure on CRAN's r-devel-linux-x86_64-fedora-clang machine. Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ and announce this with a message whenever a database is opened, which broke tests that expect no messages. **cancensus** only reads local parquet files, which needs no extensions, so it now opens the database with `allow_extensions = FALSE`, which also avoids the message.
+
+It also adds support for the 2026 census boundary files, a `DGUID` column in `get_census()` results, and new helper functions for making maps in the style of CensusMapper. See NEWS.md for details.
+
+## Breaking changes
+
+None. `get_census()` results gain a `DGUID` column after `GeoUID`.
+
+## Test environments
+
+* local macOS, R release
+* GitHub Actions: ubuntu-latest (devel, release, oldrel-1), macos-latest (release), windows-latest (release)
+
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
+
+## Reverse dependencies
+
+There are four reverse dependencies on CRAN: bayesiansurpriser, cmhc, griddy and tongfen. Their use of the CensusMapper API is skipped on CRAN because it requires an API key.
+
+## Suggested packages
+
+**safeconduct** is a new suggested package, used only when installed, to download Statistics Canada boundary files that sit behind a browser verification. **ggplot2**, **RColorBrewer**, **viridisLite**, **systemfonts** and **transport** are only needed for the optional mapping helpers, and **tricolore** only in tests, to check that `cm_tricolore()` gives the same colours.
+
+## Vignettes
+
+Vignettes require API authentication, code chunks are not evaluated when the `COMPILE_VIG` environment variable is not set.
+
 # cancensus 0.6.2
 
 This release adds French labels and messages, a new `labels = "labelled"` option for `get_census()`, and retries when the CensusMapper API is busy. It moves `get_statcan_geographic_attributes()` and `get_statcan_geo_suite()` to parquet files hosted by the package maintainers, as Statistics Canada now blocks programmatic downloads of these files. It also fixes a number of bugs. See NEWS.md for details.
