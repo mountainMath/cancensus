@@ -29,6 +29,27 @@ test_that("inputs with the wrong number of regions are errors, not recycled", {
   expect_length(cm_gini(counts, rbind(c(0, 1, 2))), 3)
 })
 
+test_that("cutoffs that don't match the brackets are errors, not recycled", {
+  counts <- cbind(c(10, 5), c(20, 10))
+  expect_error(cm_gini(counts, c(0, 20000, 50000)), class = "cancensus_cm_columns_mismatch")
+  expect_error(cm_gini2(counts, c(0)), class = "cancensus_cm_columns_mismatch")
+  expect_error(cm_binned_quantile(counts, c(0, 1, 2), 0.5), "lower_cutoffs",
+               class = "cancensus_cm_columns_mismatch")
+})
+
+test_that("adding geom_cm_tricolore() doesn't open a graphics device", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  d <- sf::st_sf(a = 1:2, b = 2:1, c = c(1, 1),
+                 geometry = sf::st_sfc(sf::st_point(c(0, 0)), sf::st_point(c(1, 1)), crs = 3005))
+  devices <- grDevices::dev.list()
+  p <- ggplot2::ggplot(d) + geom_cm_tricolore(ggplot2::aes(p1 = a, p2 = b, p3 = c))
+  expect_identical(grDevices::dev.list(), devices)
+  path <- tempfile(fileext = ".png")
+  grDevices::png(path)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  expect_no_error(print(p))
+})
+
 test_that("cm_wasserstein() gives the distance for each region", {
   skip_if_not_installed("transport")
   expect_equal(cm_wasserstein(cbind(c(1, 2), c(3, 4)), c(2, 2)), c(1, 1))
@@ -117,4 +138,84 @@ test_that("errors of the helpers are available in French", {
   err <- expect_error(cm_palette("No such palette", 3), class = "cancensus_cm_unknown_palette")
   expect_equal(conditionMessage(err),
                cc_msg("cm_unknown_palette", palette = "No such palette", .language = "fr"))
+})
+
+# A base map whose features come from a mock, recording the API keys it was fetched with
+mock_context_features <- function(env) {
+  rm(list = ls(cancensus:::.cm_context_cache), envir = cancensus:::.cm_context_cache)
+  env$keys <- character(0)
+  function(v, o) {
+    env$keys <- c(env$keys, cm_context_api_key(o))
+    water <- sf::st_sf(fill = "#a0c8f0", alpha = 1, geometry = sf::st_as_sfc(v$bbox))
+    list(list(type = "fill", d = water))
+  }
+}
+
+draw_plot <- function(p) {
+  grDevices::png(tempfile(fileext = ".png"))
+  on.exit(grDevices::dev.off())
+  invisible(ggplot2::ggplotGrob(p))
+}
+
+# What another session gets: no API keys or features from this one
+forget_session <- function() {
+  rm(list = ls(cancensus:::.cm_api_keys), envir = cancensus:::.cm_api_keys)
+  rm(list = ls(cancensus:::.cm_context_cache), envir = cancensus:::.cm_context_cache)
+}
+
+contains_key <- function(p, key) length(grepRaw(key, serialize(p, NULL), fixed = TRUE)) > 0
+
+# Evaluate code with only the given API key in the environment, none in the options
+with_cm_api_key <- function(key, code) {
+  old <- Sys.getenv("CM_API_KEY", unset = NA)
+  Sys.setenv(CM_API_KEY = key)
+  on.exit(if (is.na(old)) Sys.unsetenv("CM_API_KEY") else Sys.setenv(CM_API_KEY = old))
+  rlang::local_options(cancensus.api_key = NULL)
+  force(code)
+}
+
+test_that("saved base maps keep their features, but not the API key", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  calls <- new.env()
+  local_mocked_bindings(cm_context_features = mock_context_features(calls))
+  p <- ggplot2::ggplot(squares(1:2)) +
+    geom_cm_context(api_key = "CensusMapper_not_in_saved_plots")
+  # Only the layers: ggplot() and its layers keep the environment they're called from, which in a test
+  # has the test's source code, with the key in it; the base map's layer doesn't
+  expect_false(contains_key(p$layers, "CensusMapper_not_in_saved_plots"))
+  with_cm_api_key("", draw_plot(p))
+  expect_equal(calls$keys, "CensusMapper_not_in_saved_plots")
+  expect_false(contains_key(p$layers, "CensusMapper_not_in_saved_plots"))
+
+  # drawn in another session without an API key or downloads
+  saved <- unserialize(serialize(p, NULL))
+  forget_session()
+  local_mocked_bindings(cm_context_features = function(...) stop("Unexpected download"))
+  expect_no_error(with_cm_api_key("", draw_plot(saved)))
+})
+
+test_that("saved base maps not drawn yet use the API key of the session drawing them", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  calls <- new.env()
+  local_mocked_bindings(cm_context_features = mock_context_features(calls))
+  p <- ggplot2::ggplot(squares(1:2)) +
+    geom_cm_context(api_key = "CensusMapper_first_session")
+  saved <- serialize(p, NULL)
+  forget_session()
+  expect_error(with_cm_api_key("", draw_plot(unserialize(saved))), class = "cancensus_cm_tile_api_key")
+  with_cm_api_key("CensusMapper_second_session", draw_plot(unserialize(saved)))
+  expect_equal(calls$keys, "CensusMapper_second_session")
+})
+
+test_that("keep_tiles = FALSE doesn't keep the features with the plot", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  calls <- new.env()
+  local_mocked_bindings(cm_context_features = mock_context_features(calls))
+  p <- ggplot2::ggplot(squares(1:2)) +
+    geom_cm_context(api_key = "CensusMapper_test", keep_tiles = FALSE)
+  draw_plot(p)
+  expect_length(calls$keys, 1)
+  forget_session()
+  with_cm_api_key("CensusMapper_test", draw_plot(p))
+  expect_length(calls$keys, 2)
 })

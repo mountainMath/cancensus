@@ -230,10 +230,17 @@ ggplot_add.cm_tricolore_layer <- function(object, plot, ...) {
     }
     key <- cm_tricolore_key(object$options, labels, points)
     size <- grid::unit(object$key_size, "cm")
+    # The key becomes a grob only when the legend is drawn: ggplotGrob() measures text on the current
+    # device and would otherwise open one (e.g. Rplots.pdf) just by adding the layer
     plot <- plot + ggplot2::guides(cm_tricolore = ggplot2::guide_custom(
-      ggplot2::ggplotGrob(key), title = object$name, width = size, height = size))
+      grid::gTree(key = key, cl = "cm_tricolore_key"), title = object$name, width = size, height = size))
   }
   plot
+}
+
+#' @exportS3Method grid::makeContent
+makeContent.cm_tricolore_key <- function(x) {
+  grid::setChildren(x, grid::gList(ggplot2::ggplotGrob(x$key)))
 }
 
 # The colour key: a triangle split into triangles coloured by

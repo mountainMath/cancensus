@@ -1,6 +1,6 @@
 # cancensus 0.6.3
 
-This release fixes the check failure on CRAN's r-devel-linux-x86_64-fedora-clang machine. Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ and announce this with a message whenever a database is opened, which broke tests that expect no messages. **cancensus** only reads local parquet files, which needs no extensions, so it now opens the database with `allow_extensions = FALSE`, which also avoids the message.
+This is a quick follow-up to 0.6.2, submitted 4 days ago, to fix the ERROR in the CRAN checks on r-devel-linux-x86_64-fedora-clang (10 failing tests). Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ and announce this with a message whenever a database is opened, which broke tests that expect no messages. **cancensus** only reads local parquet files, which needs no extensions, so it now opens the database with `allow_extensions = FALSE`, which also avoids the message.
 
 It also adds support for the 2026 census boundary files, a `DGUID` column in `get_census()` results, and new helper functions for making maps in the style of CensusMapper. See NEWS.md for details.
 
@@ -15,7 +15,9 @@ None. `get_census()` results gain a `DGUID` column after `GeoUID`.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
+
+* Days since last update: 4. This release fixes the ERROR on r-devel-linux-x86_64-fedora-clang that 0.6.2 shows in the CRAN checks, see above.
 
 ## Reverse dependencies
 

@@ -12,7 +12,8 @@ geom_cm_context(
   lang = c("en", "fr"),
   family = NULL,
   tile_server = "https://censusmapper.ca",
-  api_key = Sys.getenv("CM_API_KEY")
+  api_key = Sys.getenv("CM_API_KEY"),
+  keep_tiles = TRUE
 )
 }
 \arguments{
@@ -37,7 +38,14 @@ CensusMapper, if the systemfonts package finds it, otherwise "sans".}
 \item{api_key}{An API key for the CensusMapper API. Defaults to the
 \code{CM_API_KEY} environment variable, as set with
 \code{\link{set_cancensus_api_key}()}. The key is looked up when the base
-map is created and kept with it.}
+map is created and kept for the session, but not stored in the plot: a saved
+plot that is drawn in another session, before its tiles were fetched, uses
+the API key set there.}
+
+\item{keep_tiles}{Whether to keep the features of the base map with the
+plot once they are fetched, so that a saved plot can be redrawn without an
+API key. \code{FALSE} keeps saved plots smaller, which can matter for
+detailed maps of small areas.}
 }
 \value{
 An object to add to a ggplot with \code{+}.
@@ -60,7 +68,8 @@ The base map covers the area the plot shows: by default all its sf data, or
 the limits set with \code{\link{coord_cm_bbox}()} or
 \code{ggplot2::coord_sf()}. It is drawn in the plot's CRS, whatever CRS the
 data are in. The tiles are fetched when the plot is first drawn, and the
-features kept for redrawing it.
+features kept with the plot for redrawing it, also after saving it with
+\code{saveRDS()} and reading it back, without an API key or downloads.
 
 Tiles are downloaded from the tile server and cached for the session. They
 need a CensusMapper API key, the same as for the census data, though tiles

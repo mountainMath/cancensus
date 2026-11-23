@@ -40,8 +40,10 @@ reverse.}
 
 \item{units}{What the values are, for formatting the labels:
 \code{"number"} (1.2k, 3.4M), \code{"percentage"} (shares, 0.12 is 12\%),
-\code{"percentage_100"} (percentages, 12 is 12\%), \code{"ratio"} (1,234.5),
-\code{"currency"} ($1.2k) or \code{"currency_1000"} (currency in thousands).}
+\code{"percentage_100"} (percentages, 12 is 12\%), \code{"ratio"} (1,230, 0.153),
+\code{"currency"} ($1.2k) or \code{"currency_1000"} (currency in thousands).
+Labels show up to three significant digits, more only where needed to tell
+the breaks apart.}
 
 \item{lang}{Language for formatting the labels, \code{"en"} or \code{"fr"}.}
 

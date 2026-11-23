@@ -240,3 +240,4 @@ par un nouveau téléchargement depuis
 "tricolore_missing_aesthetics","geom_cm_tricolore() needs the aesthetics p1, p2 and p3, missing: {missing}.","geom_cm_tricolore() a besoin des esthétiques p1, p2 et p3, il manque : {missing}."
 "tricolore_no_data","geom_cm_tricolore() needs data, set in ggplot() or in the layer.","geom_cm_tricolore() a besoin de données, définies dans ggplot() ou dans la couche."
 "cm_regions_mismatch","The inputs have {n} regions, but {what} has {got} values, it needs one for each region or one for all.","Les entrées ont {n} régions, mais {what} a {got} valeurs, il en faut une pour chaque région ou une pour toutes."
+"cm_columns_mismatch","{x} has {n_x} values for each region, but {y} has {n_y}, they need the same number, e.g. one lower cutoff for each bracket.","{x} a {n_x} valeurs pour chaque région, mais {y} en a {n_y}, il en faut le même nombre, par exemple une borne inférieure pour chaque tranche."

@@ -19,7 +19,8 @@
 #' the limits set with \code{\link{coord_cm_bbox}()} or
 #' \code{ggplot2::coord_sf()}. It is drawn in the plot's CRS, whatever CRS the
 #' data are in. The tiles are fetched when the plot is first drawn, and the
-#' features kept for redrawing it.
+#' features kept with the plot for redrawing it, also after saving it with
+#' \code{saveRDS()} and reading it back, without an API key or downloads.
 #'
 #' Tiles are downloaded from the tile server and cached for the session. They
 #' need a CensusMapper API key, the same as for the census data, though tiles
@@ -43,7 +44,13 @@
 #' @param api_key An API key for the CensusMapper API. Defaults to the
 #' \code{CM_API_KEY} environment variable, as set with
 #' \code{\link{set_cancensus_api_key}()}. The key is looked up when the base
-#' map is created and kept with it.
+#' map is created and kept for the session, but not stored in the plot: a saved
+#' plot that is drawn in another session, before its tiles were fetched, uses
+#' the API key set there.
+#' @param keep_tiles Whether to keep the features of the base map with the
+#' plot once they are fetched, so that a saved plot can be redrawn without an
+#' API key. \code{FALSE} keeps saved plots smaller, which can matter for
+#' detailed maps of small areas.
 #'
 #' @return An object to add to a ggplot with \code{+}.
 #' @seealso \code{\link{cm_context}()} for the features of the base map as sf data.
@@ -65,26 +72,52 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
                             zoom = NULL, pixels = 800, scale = 1,
                             lang = c("en", "fr"), family = NULL,
                             tile_server = "https://censusmapper.ca",
-                            api_key = Sys.getenv("CM_API_KEY")) {
+                            api_key = Sys.getenv("CM_API_KEY"), keep_tiles = TRUE) {
   rlang::check_installed("ggplot2", reason = "for geom_cm_context().")
   layers <- match.arg(layers, several.ok = TRUE)
+  # The key stays in the session, the plot only refers to it, so that saved plots don't contain it
+  api_key <- cm_tile_api_key(api_key, "geom_cm_context()")
+  api_key_id <- digest::digest(api_key, algo = "sha256")
+  .cm_api_keys[[api_key_id]] <- api_key
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
                  lang = match.arg(lang), family = family, tile_server = tile_server,
-                 api_key = cm_tile_api_key(api_key, "geom_cm_context()")),
+                 api_key_id = api_key_id, keep_tiles = isTRUE(keep_tiles),
+                 # features fetched when drawing, shared by copies of the plot and saved with it
+                 features = new.env(parent = emptyenv())),
             class = "cm_context_layer")
+}
+
+# API keys of the base maps made in this session, by their hash
+.cm_api_keys <- new.env(parent = emptyenv())
+
+# The API key to fetch a base map's tiles with: the one it was made with in this session, otherwise
+# (e.g. for a plot saved in another session) the one set now, or an error
+cm_context_api_key <- function(o) {
+  api_key <- if (is.character(o$api_key_id)) .cm_api_keys[[o$api_key_id]]
+  # without one, cm_tile_api_key() looks for the key in CM_API_KEY and the cancensus.api_key option
+  cm_tile_api_key(if (is.null(api_key)) "" else api_key, "geom_cm_context()")
 }
 
 #' @exportS3Method ggplot2::ggplot_add
 ggplot_add.cm_context_layer <- function(object, plot, ...) {
-  # One layer that draws the whole base map when the panel is drawn, for the
-  # panel's extent, in the CRS of the plot's coord_sf()
-  plot <- plot + ggplot2::layer(
-    geom = cm_geom("context"), stat = "identity", position = "identity",
-    data = data.frame(cm_context = 1), mapping = NULL, inherit.aes = FALSE,
-    show.legend = FALSE, params = list(cm = object))
+  plot <- plot + cm_context_ggplot_layer(object)
   # Like geom_sf(), a map needs coord_sf()
   if (isTRUE(plot$coordinates$default)) plot <- plot + ggplot2::coord_sf(default = TRUE)
   plot
+}
+
+# One layer that draws the whole base map when the panel is drawn, for the panel's extent, in the CRS
+# of the plot's coord_sf(). ggplot2 keeps the environments layer() is called from (its caller and the
+# caller's caller), and saves them with the plot, so both are functions that have only the base map,
+# not ggplot_add()'s arguments, which include the call that made the base map, maybe with an API key.
+cm_context_ggplot_layer <- function(object) {
+  make <- function(cm) {
+    ggplot2::layer(
+      geom = cm_geom("context"), stat = "identity", position = "identity",
+      data = data.frame(cm_context = 1), mapping = NULL, inherit.aes = FALSE,
+      show.legend = FALSE, params = list(cm = cm))
+  }
+  make(object)
 }
 
 #' Show the area of a bounding box on a ggplot map
@@ -257,16 +290,20 @@ cm_context_grob <- function(o, panel_params, coord) {
   grid::gTree(children = do.call(grid::gList, Filter(Negate(is.null), children)))
 }
 
-# The base map's features are kept for the session, for redrawing plots
+# The base map's features are kept for the session, for redrawing plots, and with the plot itself
+# (unless keep_tiles = FALSE), so that a saved plot can be redrawn without an API key or downloads
 .cm_context_cache <- new.env(parent = emptyenv())
 
 cm_context_features_cached <- function(v, o) {
   key <- digest::digest(list(as.numeric(v$bbox), v$crs$wkt, v$z,
                              o[c("layers", "lang", "family", "tile_server")]))
+  kept <- if (isTRUE(o$keep_tiles) && is.environment(o$features)) o$features
+  if (!is.null(kept[[key]])) return(kept[[key]])
   if (is.null(.cm_context_cache[[key]])) {
     if (length(ls(.cm_context_cache)) >= 20) rm(list = ls(.cm_context_cache), envir = .cm_context_cache)
     .cm_context_cache[[key]] <- cm_context_features(v, o)
   }
+  if (!is.null(kept)) kept[[key]] <- .cm_context_cache[[key]]
   .cm_context_cache[[key]]
 }
 
@@ -284,7 +321,7 @@ cm_context_features <- function(v, o) {
             if ("buildings" %in% o$layers && z > 14.5) "buildings",
             if (labels && any(wanted & !is_road)) "places",
             if (labels && any(wanted & is_road)) "road_labels")
-  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, o$api_key,
+  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, cm_context_api_key(o),
                          road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
   has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
 
@@ -553,8 +590,10 @@ cm_interpolate <- function(z, stops, base = 1) {
 #' reverse.
 #' @param units What the values are, for formatting the labels:
 #' \code{"number"} (1.2k, 3.4M), \code{"percentage"} (shares, 0.12 is 12\%),
-#' \code{"percentage_100"} (percentages, 12 is 12\%), \code{"ratio"} (1,234.5),
+#' \code{"percentage_100"} (percentages, 12 is 12\%), \code{"ratio"} (1,230, 0.153),
 #' \code{"currency"} ($1.2k) or \code{"currency_1000"} (currency in thousands).
+#' Labels show up to three significant digits, more only where needed to tell
+#' the breaks apart.
 #' @param lang Language for formatting the labels, \code{"en"} or \code{"fr"}.
 #' @param values Colours for the bins, from the lowest to the highest,
 #' instead of the palette's.

@@ -424,6 +424,10 @@ cm_per_region <- function(x, y, value, f, names = c("counts", "lower_cutoffs", "
   check(length(value), names[3])
   x <- cm_rows(x, n)
   y <- cm_rows(y, n)
+  # one cutoff per bracket (or samples of the same size), recycling would silently give wrong values
+  if (ncol(x) != ncol(y)) {
+    cc_abort("cm_columns_mismatch", x = names[1], y = names[2], n_x = ncol(x), n_y = ncol(y))
+  }
   value <- rep_len(value, n)
   vapply(seq_len(n), function(i) {
     if (anyNA(c(x[i, ], y[i, ], value[i]))) NA_real_ else f(x[i, ], y[i, ], value[i])

@@ -50,6 +50,9 @@ test_that("geom_cm_tricolore() fills the map and adds a key", {
   fill <- as.character(built$data[[1]]$fill)
   expect_equal(fill[1:2], cm_tricolore(c(1, 2), c(1, 1), c(1, 0)))
   expect_equal(fill[3:4], c("grey50", "grey50"))
+  # a device of our own, so that measuring text doesn't leave an Rplots.pdf behind
+  grDevices::png(tempfile(fileext = ".png"))
+  on.exit(grDevices::dev.off(), add = TRUE)
   expect_s3_class(ggplot2::ggplotGrob(p), "gtable")
   expect_error(print(ggplot2::ggplot(data) + geom_cm_tricolore(ggplot2::aes(p1 = a))),
                "p2, p3", class = "cancensus_tricolore_missing_aesthetics")
