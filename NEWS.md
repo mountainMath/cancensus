@@ -18,6 +18,8 @@ A new `coord_cm_bbox()` limits a ggplot map to a bounding box in any CRS, e.g. t
 
 New `scale_fill_cm_bins()` and `scale_colour_cm_bins()` scales for choropleth maps bin numeric values at given cutoffs (or at quantiles), colour the bins from a ColorBrewer, viridis or `hcl.colors()` palette, and label them with formatted ranges for numbers, percentages, ratios or currency, in English or French. Like `scale_fill_manual()`, `values` and `labels` set the colours and labels directly. The legend shows every bin, including bins without data.
 
+A new `geom_cm_tricolore()` maps compositions of three parts, e.g. the shares of children, working age population and seniors, in the colours of CensusMapper's ternary ("rgb") maps, with a triangular colour key that shows the regions as dots. `cm_tricolore()` gives just the colours. They are the colours of the **tricolore** package, with the parameters in the units of CensusMapper's `tricolore_options`, computed without needing **tricolore** or **ggtern**.
+
 # cancensus 0.6.2
 
 ## Breaking changes
