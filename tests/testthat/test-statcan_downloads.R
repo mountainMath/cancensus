@@ -299,7 +299,7 @@ test_that("get_statcan_geography_relationships() warns once per session that it 
     on.exit(session_cache_set("geography_relationships_deprecated", TRUE), add = TRUE)
 
     expect_warning(result <- get_statcan_geography_relationships("2021"),
-                   "deprecated and will be removed in the next release.*get_statcan_geographic_attributes")
+                   "deprecated and will be removed in a future release.*get_statcan_geographic_attributes")
     expect_equal(result$DGUID, "abc")
     expect_no_warning(get_statcan_geography_relationships("2021"))
   })
@@ -429,4 +429,13 @@ test_that("the browser notes are available in French", {
                fixed = TRUE)
   expect_null(statcan_browser_note("available"))
   expect_null(statcan_browser_note("disabled"))
+})
+
+test_that("the 2026 geography relationship file is supported", {
+  with_statcan_cache({
+    mock_statcan(blocked_response())
+    expect_warning(expect_null(get_statcan_geography_relationships("2026")),
+                   "2026/geo/sip-pis/dguid-idugd/files-fichiers/2026_98260004.zip", fixed = TRUE)
+  })
+  expect_error(get_statcan_geography_relationships("2016"), class = "cancensus_relationships_invalid_year")
 })
