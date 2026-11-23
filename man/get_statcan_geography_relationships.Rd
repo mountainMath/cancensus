@@ -12,7 +12,9 @@ get_statcan_geography_relationships(census_year = "2021", refresh = FALSE)
 \item{refresh}{(logical) refresh the cache if true}
 }
 \value{
-tibble with the relationship data. If Statistics Canada blocks the download this gives a
+tibble with the relationship data. If Statistics Canada blocks the download, it goes through
+a browser with the safeconduct package where that is installed and finds Google Chrome or another
+Chromium-based browser, as for \code{\link[=get_statcan_geographies]{get_statcan_geographies()}}. Otherwise, or if that fails, this gives a
 warning explaining how to download the file manually, and returns the cached data when
 refreshing existing cached data and \code{NULL} otherwise
 }

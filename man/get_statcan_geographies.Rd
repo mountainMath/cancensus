@@ -32,8 +32,11 @@ cached in the "geographies" subdirectory of the cancensus cache path.}
 \item{quiet}{(logical) suppress messages if `TRUE`}
 }
 \value{
-a spatial dataframe with the geographic data. If Statistics Canada blocks the download
-this gives a warning explaining how to download the file manually, and returns the cached data
+a spatial dataframe with the geographic data. Statistics Canada blocks plain downloads of
+these files with a browser verification. If the safeconduct package is installed and finds Google
+Chrome or another Chromium-based browser, the download goes through that browser, set
+`options(cancensus.use_browser = FALSE)` to turn this off. Otherwise, or if that fails, this gives
+a warning explaining how to download the file manually, and returns the cached data
 when refreshing existing cached data and `NULL` otherwise
 }
 \description{

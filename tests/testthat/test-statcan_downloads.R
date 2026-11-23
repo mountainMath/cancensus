@@ -6,8 +6,9 @@ blocked_response <- function() {
   fake_response(403, list(`cf-mitigated` = "challenge", server = "cloudflare"))
 }
 
-# Mock the StatCan server, any request fails the test unless a response is given
-mock_statcan <- function(response = NULL, env = parent.frame()) {
+# Mock the StatCan server, any request fails the test unless a response is given. The browser
+# fallback with safeconduct is off unless `browser` gives the status to use.
+mock_statcan <- function(response = NULL, browser = "disabled", env = parent.frame()) {
   local_mocked_bindings(
     GET = function(url, config = list(), ...) {
       if (is.null(response)) stop("Unexpected download of ", url)
@@ -16,6 +17,7 @@ mock_statcan <- function(response = NULL, env = parent.frame()) {
     .package = "httr",
     .env = env
   )
+  local_mocked_bindings(statcan_browser_status = function() browser, .env = env)
 }
 
 # Create a zip at `zip_path` from the named list of file paths and their contents
@@ -92,7 +94,7 @@ test_that("the warning points out when the location does not persist across sess
   on.exit({
     Sys.setenv(CM_CACHE_PATH = old_env)
     options(old_option)
-  })
+  }, add = TRUE)
   mock_statcan(blocked_response())
   expect_warning(suppressMessages(get_statcan_geography_relationships("2021")),
                  "No persistent cache path is set")
@@ -102,7 +104,7 @@ test_that("get_statcan_geographies uses the cache_path argument for the target l
   with_statcan_cache({
     mock_statcan(blocked_response())
     custom <- tempfile("cancensus_custom")
-    on.exit(unlink(custom, recursive = TRUE))
+    on.exit(unlink(custom, recursive = TRUE), add = TRUE)
     expect_warning(get_statcan_geographies("2021", "PR", cache_path = custom, quiet = TRUE),
                    statcan_display_path(file.path(custom, "statcan_downloads", "lpr_000b21a_e.zip")),
                    fixed = TRUE)
@@ -127,7 +129,7 @@ test_that("manually downloaded geographic boundary files get picked up", {
     mock_statcan()
     shp_dir <- tempfile("shp")
     dir.create(shp_dir)
-    on.exit(unlink(shp_dir, recursive = TRUE))
+    on.exit(unlink(shp_dir, recursive = TRUE), add = TRUE)
     geo <- sf::st_sf(PRUID = "59", geometry = sf::st_sfc(sf::st_point(c(1, 2)), crs = 4326))
     sf::st_write(geo, file.path(shp_dir, "lpr.shp"), quiet = TRUE)
 
@@ -182,7 +184,7 @@ test_that("blocked refreshes return the cached data for the other StatCan functi
 
     shp_dir <- tempfile("shp")
     dir.create(shp_dir)
-    on.exit(unlink(shp_dir, recursive = TRUE))
+    on.exit(unlink(shp_dir, recursive = TRUE), add = TRUE)
     geo <- sf::st_sf(PRUID = "59", geometry = sf::st_sfc(sf::st_point(c(1, 2)), crs = 4326))
     sf::st_write(geo, file.path(shp_dir, "lpr.shp"), quiet = TRUE)
     utils::zip(deposit("lpr_000b21a_e.zip"), dir(shp_dir, full.names = TRUE), flags = "-q -j")
@@ -309,7 +311,7 @@ test_that("boundary files zipped inside a folder get unpacked without leaving a 
     mock_statcan()
     src <- tempfile("shp")
     dir.create(file.path(src, "lpr_000b21a_e"), recursive = TRUE)
-    on.exit(unlink(src, recursive = TRUE))
+    on.exit(unlink(src, recursive = TRUE), add = TRUE)
     geo <- sf::st_sf(PRUID = "59", geometry = sf::st_sfc(sf::st_point(c(1, 2)), crs = 4326))
     sf::st_write(geo, file.path(src, "lpr_000b21a_e", "lpr.shp"), quiet = TRUE)
 
@@ -322,4 +324,109 @@ test_that("boundary files zipped inside a folder get unpacked without leaving a 
     expect_equal(get_statcan_geographies("2021", "PR", quiet = TRUE)$PRUID, "59")
     expect_equal(dir(cancensus:::cache_path("geographies/cartographic")), "PR")
   })
+})
+
+test_that("the browser status follows the option, the installed package and the browser", {
+  rlang::local_options(cancensus.use_browser = FALSE)
+  expect_equal(statcan_browser_status(), "disabled")
+
+  rlang::local_options(cancensus.use_browser = TRUE)
+  local_mocked_bindings(safeconduct_installed = function() FALSE)
+  expect_equal(statcan_browser_status(), "not_installed")
+
+  local_mocked_bindings(safeconduct_installed = function() TRUE,
+                        safeconduct_browser_available = function() structure(TRUE, reason = NULL))
+  expect_equal(statcan_browser_status(), "available")
+
+  local_mocked_bindings(safeconduct_browser_available = function() {
+    structure(FALSE, reason = "no Chrome or Chromium was found")
+  })
+  status <- statcan_browser_status()
+  expect_equal(as.character(status), "no_browser")
+  expect_equal(attr(status, "reason"), "no Chrome or Chromium was found")
+})
+
+test_that("blocked downloads go through the browser when safeconduct can open one", {
+  skip_if_not_installed("safeconduct")
+  with_statcan_cache({
+    mock_statcan(blocked_response(), browser = "available")
+    fetched <- NULL
+    local_mocked_bindings(fetch = function(url, destfile, ...) {
+      fetched <<- url
+      make_zip(destfile, list("rel.csv" = c("DGUID", "browser")))
+      invisible(destfile)
+    }, .package = "safeconduct")
+
+    expect_no_warning(result <- get_statcan_geography_relationships("2021"))
+    expect_equal(fetched, relationships_url)
+    expect_equal(result$DGUID, "browser")
+    expect_true(file.exists(cancensus:::cache_path("geography_relationship_2021.zip")))
+  })
+})
+
+test_that("a failed browser download falls back on the manual download with the reason", {
+  skip_if_not_installed("safeconduct")
+  with_statcan_cache({
+    mock_statcan(blocked_response(), browser = "available")
+    local_mocked_bindings(fetch = function(url, destfile, ...) {
+      stop(structure(class = c("safeconduct_not_passed", "safeconduct_error", "error", "condition"),
+                     list(message = "the check was not passed in time", call = NULL)))
+    }, .package = "safeconduct")
+
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021"))
+    expect_null(result)
+    expect_length(w, 1)
+    expect_match(w, "did not work: the check was not passed in time", fixed = TRUE)
+    expect_match(w, relationships_url, fixed = TRUE)
+  })
+})
+
+test_that("a browser download that isn't a zip file falls back on the manual download", {
+  skip_if_not_installed("safeconduct")
+  with_statcan_cache({
+    mock_statcan(blocked_response(), browser = "available")
+    local_mocked_bindings(fetch = function(url, destfile, ...) {
+      writeLines("<html>Just a moment...</html>", destfile)
+      invisible(destfile)
+    }, .package = "safeconduct")
+
+    w <- capture_warnings(result <- get_statcan_geography_relationships("2021"))
+    expect_null(result)
+    expect_match(w, "did not return a zip file", fixed = TRUE)
+  })
+})
+
+test_that("errors other than those of safeconduct are not caught", {
+  skip_if_not_installed("safeconduct")
+  with_statcan_cache({
+    mock_statcan(blocked_response(), browser = "available")
+    local_mocked_bindings(fetch = function(url, destfile, ...) stop("something else"),
+                          .package = "safeconduct")
+    expect_error(get_statcan_geography_relationships("2021"), "something else")
+  })
+})
+
+test_that("the blocked warning says how to get past the verification automatically", {
+  with_statcan_cache({
+    mock_statcan(blocked_response(), browser = "not_installed")
+    w <- capture_warnings(get_statcan_geography_relationships("2021"))
+    expect_match(w, 'install.packages("safeconduct")', fixed = TRUE)
+
+    mock_statcan(blocked_response(), browser = structure("no_browser", reason = "no Chrome found"))
+    w <- capture_warnings(get_statcan_geography_relationships("2021"))
+    expect_match(w, "can't open a browser here: no Chrome found", fixed = TRUE)
+
+    mock_statcan(blocked_response(), browser = "disabled")
+    w <- capture_warnings(get_statcan_geography_relationships("2021"))
+    expect_no_match(w, "safeconduct", fixed = TRUE)
+  })
+})
+
+test_that("the browser notes are available in French", {
+  expect_match(statcan_browser_note("not_installed", language = "fr"), "installez le package safeconduct",
+               fixed = TRUE)
+  expect_match(statcan_browser_note("available", "raison", language = "fr"), "n'a pas fonctionné : raison",
+               fixed = TRUE)
+  expect_null(statcan_browser_note("available"))
+  expect_null(statcan_browser_note("disabled"))
 })

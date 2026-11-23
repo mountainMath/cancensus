@@ -8,6 +8,8 @@
 
 `get_census()` returns Statistics Canada's Dissemination Geography Unique Identifier in a new `DGUID` column after `GeoUID`, now that the CensusMapper API provides it (#238). Regions without a DGUID, like those of CA1116, get `NA`. Data cached before doesn't have the column, `use_cache = FALSE` downloads it again.
 
+`get_statcan_geographies()` gets past Statistics Canada's Cloudflare browser verification by sending a real browser through it with the new **safeconduct** package, where that is installed and finds Google Chrome or another Chromium-based browser. **safeconduct** is suggested, not required. Without it, or when the browser doesn't get through, e.g. where a verification asks for a click and no one is there to give it, the warning explaining how to download the file manually is shown as before, now with a note on how to have this done automatically. `options(cancensus.use_browser = FALSE)` turns the browser off.
+
 A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does. The base map tiles need a CensusMapper API key, taken from `set_cancensus_api_key()` or the new `api_key` argument, and count against a separate tile quota. Refused tile requests (invalid or inactive key, exceeded tile quota) now stop with an error instead of leaving the base map empty (#236).
 
 A new `cm_context()` function returns the features of the CensusMapper base map (water, landcover, landuse, airports, buildings, roads, places and road labels) for an sf object or bounding box as a list of sf data frames, for styling them differently or using them with other mapping packages.

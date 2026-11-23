@@ -184,7 +184,9 @@ message_unused_geo_suite_files <- function(language = NULL){
 #'
 #' @param census_year census year to get the data for, only 2021 is available
 #' @param refresh (logical) refresh the cache if true
-#' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
+#' @return tibble with the relationship data. If Statistics Canada blocks the download, it goes through
+#' a browser with the safeconduct package where that is installed and finds Google Chrome or another
+#' Chromium-based browser, as for [get_statcan_geographies()]. Otherwise, or if that fails, this gives a
 #' warning explaining how to download the file manually, and returns the cached data when
 #' refreshing existing cached data and `NULL` otherwise
 #'
