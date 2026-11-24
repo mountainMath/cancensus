@@ -83,7 +83,8 @@ An example of a basic map.
 ``` r
 
 library(ggplot2)
-ggplot(toronto) + geom_sf(aes(fill = median_hh_income))
+ggplot(toronto) + 
+  geom_sf(aes(fill = median_hh_income))
 ```
 
 ![Toronto CSDs with Median HH Income \> \$125,000 in
@@ -93,17 +94,40 @@ Or a similar map with all of the trimmings:
 
 ``` r
 
-ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
-  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
-  theme(panel.grid = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank()) + 
+ggplot(toronto) + 
+  geom_sf(aes(fill = median_hh_income), colour = "grey") +
+  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + 
+  theme_minimal() +
   coord_sf(datum=NA) +
-  labs(title = "Median Household Income in 2020", subtitle = "Toronto Census Subdivisions, 2021 Census")
+  labs(title = "Median Household Income in 2020", 
+       subtitle = "Toronto Census Subdivisions",
+       caption="StatCan Census 2021")
 ```
 
 ![Toronto Median Household Income in
 2020](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-5-1.png)
+
+There is also the option to add contextual layers similar to how
+CensusMapper styles maps via the
+[`geom_cm_context()`](https://mountainmath.github.io/cancensus/reference/geom_cm_context.md)
+function.
+
+``` r
+
+ggplot(toronto) +
+  geom_sf(aes(fill = median_hh_income), colour = "grey") +
+  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) +
+  geom_cm_context() +
+  theme_minimal() +
+  coord_sf(datum=NA) +
+  labs(title = "Median Household Income in 2020", 
+       subtitle = "Toronto Census Subdivisions",
+       caption="StatCan Census 2021")
+```
+
+![Toronto Median Household Income in 2020 with CensusMapper's base map
+of water, roads and place
+names](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-6-1.png)
 
 ### Maps with French labels
 
@@ -119,14 +143,16 @@ changes.
 ``` r
 
 toronto_fr <- get_census(dataset='CA21', regions=list(CMA="35535"),
-                         vectors=c("median_hh_income"="v_CA21_906"), level='CSD', quiet = TRUE,
+                         vectors=c("median_hh_income"="v_CA21_906"), 
+                         level='CSD', quiet = TRUE,
                          geo_format = 'sf', labels = 'labelled', language = 'fr')
-ggplot(toronto_fr) + geom_sf(aes(fill = median_hh_income))
+ggplot(toronto_fr) + 
+  geom_sf(aes(fill = median_hh_income))
 ```
 
 ![Revenu total médian des ménages en 2020 par subdivision de recensement
 de
-Toronto](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-6-1.png)
+Toronto](Making_maps_with_cancensus_files/figure-html/unnamed-chunk-7-1.png)
 
 The column names stay the same in both languages, so code written for
 one language runs unchanged on the other. Region names and any titles

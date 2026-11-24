@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -194,6 +194,94 @@
         </dt>
         <dd>Get attribution for datasets</dd>
       </dl></div><div class="section level2">
+      <h2 id="censusmapper-style-maps">CensusMapper-style maps<a class="anchor" aria-label="anchor" href="#censusmapper-style-maps"></a></h2>
+
+      <div class="section-desc"><p>ggplot2 helpers to reproduce CensusMapper map styling</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="geom_cm_context.html">geom_cm_context()</a></code>
+
+        </dt>
+        <dd>CensusMapper's base map for a ggplot map</dd>
+
+        <dt>
+
+          <code><a href="cm_context.html">cm_context()</a></code>
+
+        </dt>
+        <dd>The features of CensusMapper's base map as sf data</dd>
+
+        <dt>
+
+          <code><a href="coord_cm_bbox.html">coord_cm_bbox()</a></code>
+
+        </dt>
+        <dd>Show the area of a bounding box on a ggplot map</dd>
+
+        <dt>
+
+          <code><a href="scale_fill_cm_bins.html">scale_fill_cm_bins()</a></code> <code><a href="scale_fill_cm_bins.html">scale_colour_cm_bins()</a></code>
+
+        </dt>
+        <dd>Binned colour scale for choropleth maps, as on CensusMapper</dd>
+
+        <dt>
+
+          <code><a href="geom_cm_tricolore.html">geom_cm_tricolore()</a></code>
+
+        </dt>
+        <dd>A ggplot map of three-part compositions, as on CensusMapper</dd>
+
+        <dt>
+
+          <code><a href="cm_tricolore.html">cm_tricolore()</a></code>
+
+        </dt>
+        <dd>Colours for three-part compositions, as on CensusMapper</dd>
+      </dl></div><div class="section level2">
+      <h2 id="summary-statistics">Summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="cm_binned_quantile.html">cm_binned_quantile()</a></code>
+
+        </dt>
+        <dd>Quantile from brackets, as on CensusMapper</dd>
+
+        <dt>
+
+          <code><a href="cm_gini.html">cm_gini()</a></code>
+
+        </dt>
+        <dd>Gini coefficient from income brackets, as on CensusMapper</dd>
+
+        <dt>
+
+          <code><a href="cm_gini2.html">cm_gini2()</a></code>
+
+        </dt>
+        <dd>Gini coefficient from income brackets, CensusMapper's gini2()</dd>
+
+        <dt>
+
+          <code><a href="cm_wasserstein.html">cm_wasserstein()</a></code>
+
+        </dt>
+        <dd>Wasserstein distance per region, as on CensusMapper</dd>
+      </dl></div><div class="section level2">
       <h2 id="managing-cached-data">Managing cached data<a class="anchor" aria-label="anchor" href="#managing-cached-data"></a></h2>
 
 
@@ -305,7 +393,7 @@
           <code><a href="get_statcan_geographies.html">get_statcan_geographies()</a></code>
 
         </dt>
-        <dd>Read the geosuite data</dd>
+        <dd>Read geographic boundary data from StatCan</dd>
 
         <dt>
 

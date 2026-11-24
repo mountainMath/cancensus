@@ -78,6 +78,35 @@
 - [`dataset_attribution()`](https://mountainmath.github.io/cancensus/reference/dataset_attribution.md)
   : Get attribution for datasets
 
+## CensusMapper-style maps
+
+ggplot2 helpers to reproduce CensusMapper map styling
+
+- [`geom_cm_context()`](https://mountainmath.github.io/cancensus/reference/geom_cm_context.md)
+  : CensusMapper's base map for a ggplot map
+- [`cm_context()`](https://mountainmath.github.io/cancensus/reference/cm_context.md)
+  : The features of CensusMapper's base map as sf data
+- [`coord_cm_bbox()`](https://mountainmath.github.io/cancensus/reference/coord_cm_bbox.md)
+  : Show the area of a bounding box on a ggplot map
+- [`scale_fill_cm_bins()`](https://mountainmath.github.io/cancensus/reference/scale_fill_cm_bins.md)
+  [`scale_colour_cm_bins()`](https://mountainmath.github.io/cancensus/reference/scale_fill_cm_bins.md)
+  : Binned colour scale for choropleth maps, as on CensusMapper
+- [`geom_cm_tricolore()`](https://mountainmath.github.io/cancensus/reference/geom_cm_tricolore.md)
+  : A ggplot map of three-part compositions, as on CensusMapper
+- [`cm_tricolore()`](https://mountainmath.github.io/cancensus/reference/cm_tricolore.md)
+  : Colours for three-part compositions, as on CensusMapper
+
+## Summary statistics
+
+- [`cm_binned_quantile()`](https://mountainmath.github.io/cancensus/reference/cm_binned_quantile.md)
+  : Quantile from brackets, as on CensusMapper
+- [`cm_gini()`](https://mountainmath.github.io/cancensus/reference/cm_gini.md)
+  : Gini coefficient from income brackets, as on CensusMapper
+- [`cm_gini2()`](https://mountainmath.github.io/cancensus/reference/cm_gini2.md)
+  : Gini coefficient from income brackets, CensusMapper's gini2()
+- [`cm_wasserstein()`](https://mountainmath.github.io/cancensus/reference/cm_wasserstein.md)
+  : Wasserstein distance per region, as on CensusMapper
+
 ## Managing cached data
 
 - [`list_cancensus_cache()`](https://mountainmath.github.io/cancensus/reference/list_cancensus_cache.md)
@@ -110,7 +139,7 @@
 - [`get_statcan_wds_metadata()`](https://mountainmath.github.io/cancensus/reference/get_statcan_wds_metadata.md)
   : Query the StatCan WDS for metadata
 - [`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
-  : Read the geosuite data
+  : Read geographic boundary data from StatCan
 - [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
   : Read the Geographic Attributes File
 - [`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)

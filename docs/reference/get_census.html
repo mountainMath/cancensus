@@ -9,7 +9,7 @@ files through the CensusMapper API. An API key is required to retrieve data."><m
 
     <a class="navbar-brand me-2" href="../index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -139,6 +139,12 @@ then this option can be set to 'high'. By default this setting is set to <code>'
     <p>For help selecting regions and vectors, see <code><a href="list_census_regions.html">list_census_regions</a></code>
 and <code><a href="list_census_vectors.html">list_census_vectors</a></code>, or check out the interactive selection
 tool at <a href="https://censusmapper.ca/api" class="external-link">https://censusmapper.ca/api</a> by calling <code><a href="explore_census_vectors.html">explore_census_vectors()</a></code></p>
+<p>Each region is identified by its <code>GeoUID</code>, and also by its Statistics Canada Dissemination Geography
+Unique Identifier in the <code>DGUID</code> column, right after <code>GeoUID</code>. DGUIDs are character strings like
+<code>"2021S051259150004"</code> for a dissemination area, and <code>NA</code> for regions that don't have one, like those of
+the CA1116 dataset. Enumeration areas (CA1991 and CA1996) get CensusMapper codes of the same form with type
+<code>X</code>. Data downloaded before the CensusMapper API added DGUIDs doesn't have this column, use
+<code>use_cache = FALSE</code> to download it again.</p>
     </div>
 
     <div class="section level2">
