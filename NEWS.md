@@ -12,6 +12,8 @@
 
 The deprecated `get_statcan_geography_relationships()` also reads the 2026 relationship file, since the 2026 GeoSuite and geographic attributes aren't available yet. The 2026 file doesn't have census metropolitan areas and census agglomerations, census tracts, population centres and designated places yet, Statistics Canada plans to release these on February 10, 2027.
 
+`CODES_TABLE` has the census division and census subdivision types of the 2021 and 2026 censuses, and the `RG` census subdivision type of 2011, which were missing.
+
 `get_statcan_geographies()` gets past Statistics Canada's Cloudflare browser verification by sending a real browser through it with the new **safeconduct** package, where that is installed and finds Google Chrome or another Chromium-based browser. **safeconduct** is suggested, not required. Without it, or when the browser doesn't get through, e.g. where a verification asks for a click and no one is there to give it, the warning explaining how to download the file manually is shown as before, now with a note on how to have this done automatically. `options(cancensus.use_browser = FALSE)` turns the browser off.
 
 A new `geom_cm_context()` function that adds a context layer to a census map similar to what CensusMapper does. The base map tiles need a CensusMapper API key, taken from `set_cancensus_api_key()` (the `CM_API_KEY` environment variable) when the tiles are fetched, and count against a separate tile quota. Without an API key the map is drawn without the base map, with a warning. Refused tile requests (invalid or inactive key, exceeded tile quota) stop with an error instead of leaving the base map empty (#236).

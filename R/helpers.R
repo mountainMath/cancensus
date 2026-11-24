@@ -374,10 +374,14 @@ first_run_checks <- function(){
 }
 
 #' A dataset with code table summaries for census data
+#'
+#' The census division and census subdivision types (the \code{municipal_status}
+#' of regions) of the 2011 to 2026 censuses, with the most recent description
+#' of each code.
 #' @name CODES_TABLE
 #' @docType data
 #' @author derived from StatCan definitions
-#' @references \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CSDtype}, \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CDtype}
+#' @references \url{https://www12.statcan.gc.ca/census-recensement/2026/geo/ref/domain-domaine/index2026-eng.cfm?lang=e&id=CSDTYPE}, \url{https://www12.statcan.gc.ca/census-recensement/2026/geo/ref/domain-domaine/index2026-eng.cfm?lang=e&id=CDTYPE}, \url{https://www12.statcan.gc.ca/census-recensement/2021/geo/ref/domain-domaine/index2021-eng.cfm?lang=e&id=CSDTYPE}, \url{https://www150.statcan.gc.ca/n1/pub/92-151-g/2011001/tech-eng.htm}
 #' @keywords data
 NULL
 
