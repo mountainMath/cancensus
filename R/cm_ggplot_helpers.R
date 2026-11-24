@@ -25,7 +25,13 @@
 #' Tiles are downloaded from the tile server and cached for the session. They
 #' need a CensusMapper API key, the same as for the census data, though tiles
 #' count against a separate tile quota. Set it once with
-#' \code{\link{set_cancensus_api_key}()} or pass it with \code{api_key}.
+#' \code{\link{set_cancensus_api_key}()}: the key is taken from the
+#' \code{CM_API_KEY} environment variable (or the \code{cancensus.api_key}
+#' option) when the tiles are fetched, and is never stored in the plot. There
+#' is no \code{api_key} argument, so that the key can't end up in a saved plot
+#' or in the code that made it. A saved plot that is drawn in another session,
+#' before its tiles were fetched, uses the API key set there. Without an API
+#' key the plot is drawn without the base map, with a warning.
 #' Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
 #' tiles. To style the base map differently, or to use it with other mapping
 #' packages, get its features with \code{\link{cm_context}()}.
@@ -41,12 +47,6 @@
 #' @param family Font family of the labels. By default "Noto Sans", as on
 #' CensusMapper, if the systemfonts package finds it, otherwise "sans".
 #' @param tile_server Where to get the tiles from.
-#' @param api_key An API key for the CensusMapper API. Defaults to the
-#' \code{CM_API_KEY} environment variable, as set with
-#' \code{\link{set_cancensus_api_key}()}. The key is looked up when the base
-#' map is created and kept for the session, but not stored in the plot: a saved
-#' plot that is drawn in another session, before its tiles were fetched, uses
-#' the API key set there.
 #' @param keep_tiles Whether to keep the features of the base map with the
 #' plot once they are fetched, so that a saved plot can be redrawn without an
 #' API key. \code{FALSE} keeps saved plots smaller, which can matter for
@@ -72,30 +72,21 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
                             zoom = NULL, pixels = 800, scale = 1,
                             lang = c("en", "fr"), family = NULL,
                             tile_server = "https://censusmapper.ca",
-                            api_key = Sys.getenv("CM_API_KEY"), keep_tiles = TRUE) {
+                            keep_tiles = TRUE) {
   rlang::check_installed("ggplot2", reason = "for geom_cm_context().")
   layers <- match.arg(layers, several.ok = TRUE)
-  # The key stays in the session, the plot only refers to it, so that saved plots don't contain it
-  api_key <- cm_tile_api_key(api_key, "geom_cm_context()")
-  api_key_id <- digest::digest(api_key, algo = "sha256")
-  .cm_api_keys[[api_key_id]] <- api_key
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
                  lang = match.arg(lang), family = family, tile_server = tile_server,
-                 api_key_id = api_key_id, keep_tiles = isTRUE(keep_tiles),
+                 keep_tiles = isTRUE(keep_tiles),
                  # features fetched when drawing, shared by copies of the plot and saved with it
                  features = new.env(parent = emptyenv())),
             class = "cm_context_layer")
 }
 
-# API keys of the base maps made in this session, by their hash
-.cm_api_keys <- new.env(parent = emptyenv())
-
-# The API key to fetch a base map's tiles with: the one it was made with in this session, otherwise
-# (e.g. for a plot saved in another session) the one set now, or an error
-cm_context_api_key <- function(o) {
-  api_key <- if (is.character(o$api_key_id)) .cm_api_keys[[o$api_key_id]]
-  # without one, cm_tile_api_key() looks for the key in CM_API_KEY and the cancensus.api_key option
-  cm_tile_api_key(if (is.null(api_key)) "" else api_key, "geom_cm_context()")
+# The API key to fetch a base map's tiles with, the one set in the session drawing the plot, or NULL
+cm_context_api_key <- function() {
+  api_key <- robust_api_key("")
+  if (valid_api_key(api_key)) api_key
 }
 
 #' @exportS3Method ggplot2::ggplot_add
@@ -300,6 +291,11 @@ cm_context_features_cached <- function(v, o) {
   kept <- if (isTRUE(o$keep_tiles) && is.environment(o$features)) o$features
   if (!is.null(kept[[key]])) return(kept[[key]])
   if (is.null(.cm_context_cache[[key]])) {
+    # Without an API key the plot is drawn without its base map
+    if (is.null(cm_context_api_key())) {
+      cc_warn("cm_context_no_api_key", caller = "geom_cm_context()")
+      return(list())
+    }
     if (length(ls(.cm_context_cache)) >= 20) rm(list = ls(.cm_context_cache), envir = .cm_context_cache)
     .cm_context_cache[[key]] <- cm_context_features(v, o)
   }
@@ -321,7 +317,7 @@ cm_context_features <- function(v, o) {
             if ("buildings" %in% o$layers && z > 14.5) "buildings",
             if (labels && any(wanted & !is_road)) "places",
             if (labels && any(wanted & is_road)) "road_labels")
-  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, cm_context_api_key(o),
+  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, cm_context_api_key(),
                          road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
   has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
 

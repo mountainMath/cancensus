@@ -12,7 +12,6 @@ geom_cm_context(
   lang = c("en", "fr"),
   family = NULL,
   tile_server = "https://censusmapper.ca",
-  api_key = Sys.getenv("CM_API_KEY"),
   keep_tiles = TRUE
 )
 }
@@ -34,13 +33,6 @@ Larger values show more detail, with relatively smaller lines and labels.}
 CensusMapper, if the systemfonts package finds it, otherwise "sans".}
 
 \item{tile_server}{Where to get the tiles from.}
-
-\item{api_key}{An API key for the CensusMapper API. Defaults to the
-\code{CM_API_KEY} environment variable, as set with
-\code{\link{set_cancensus_api_key}()}. The key is looked up when the base
-map is created and kept for the session, but not stored in the plot: a saved
-plot that is drawn in another session, before its tiles were fetched, uses
-the API key set there.}
 
 \item{keep_tiles}{Whether to keep the features of the base map with the
 plot once they are fetched, so that a saved plot can be redrawn without an
@@ -74,7 +66,13 @@ features kept with the plot for redrawing it, also after saving it with
 Tiles are downloaded from the tile server and cached for the session. They
 need a CensusMapper API key, the same as for the census data, though tiles
 count against a separate tile quota. Set it once with
-\code{\link{set_cancensus_api_key}()} or pass it with \code{api_key}.
+\code{\link{set_cancensus_api_key}()}: the key is taken from the
+\code{CM_API_KEY} environment variable (or the \code{cancensus.api_key}
+option) when the tiles are fetched, and is never stored in the plot. There
+is no \code{api_key} argument, so that the key can't end up in a saved plot
+or in the code that made it. A saved plot that is drawn in another session,
+before its tiles were fetched, uses the API key set there. Without an API
+key the plot is drawn without the base map, with a warning.
 Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
 tiles. To style the base map differently, or to use it with other mapping
 packages, get its features with \code{\link{cm_context}()}.

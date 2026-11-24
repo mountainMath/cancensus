@@ -145,7 +145,7 @@ mock_context_features <- function(env) {
   rm(list = ls(cancensus:::.cm_context_cache), envir = cancensus:::.cm_context_cache)
   env$keys <- character(0)
   function(v, o) {
-    env$keys <- c(env$keys, cm_context_api_key(o))
+    env$keys <- c(env$keys, cm_context_api_key())
     water <- sf::st_sf(fill = "#a0c8f0", alpha = 1, geometry = sf::st_as_sfc(v$bbox))
     list(list(type = "fill", d = water))
   }
@@ -157,9 +157,8 @@ draw_plot <- function(p) {
   invisible(ggplot2::ggplotGrob(p))
 }
 
-# What another session gets: no API keys or features from this one
+# What another session gets: no features from this one
 forget_session <- function() {
-  rm(list = ls(cancensus:::.cm_api_keys), envir = cancensus:::.cm_api_keys)
   rm(list = ls(cancensus:::.cm_context_cache), envir = cancensus:::.cm_context_cache)
 }
 
@@ -174,17 +173,36 @@ with_cm_api_key <- function(key, code) {
   force(code)
 }
 
+test_that("the base map takes the API key from the session, not from an argument", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  expect_false("api_key" %in% names(formals(geom_cm_context)))
+})
+
+test_that("without an API key the map is drawn without the base map, with a warning", {
+  skip_if_not_installed("ggplot2", "3.5.0")
+  calls <- new.env()
+  local_mocked_bindings(cm_context_features = mock_context_features(calls))
+  with_cm_api_key("", {
+    expect_no_warning(p <- ggplot2::ggplot(squares(1:2)) + geom_cm_context())
+    expect_warning(draw_plot(p), "geom_cm_context()", fixed = TRUE, class = "cancensus_cm_context_no_api_key")
+  })
+  expect_length(calls$keys, 0)
+  # the base map is fetched once there is a key
+  with_cm_api_key("CensusMapper_test", expect_no_warning(draw_plot(p)))
+  expect_equal(calls$keys, "CensusMapper_test")
+})
+
 test_that("saved base maps keep their features, but not the API key", {
   skip_if_not_installed("ggplot2", "3.5.0")
   calls <- new.env()
   local_mocked_bindings(cm_context_features = mock_context_features(calls))
-  p <- ggplot2::ggplot(squares(1:2)) +
-    geom_cm_context(api_key = "CensusMapper_not_in_saved_plots")
-  # Only the layers: ggplot() and its layers keep the environment they're called from, which in a test
-  # has the test's source code, with the key in it; the base map's layer doesn't
-  expect_false(contains_key(p$layers, "CensusMapper_not_in_saved_plots"))
-  with_cm_api_key("", draw_plot(p))
+  with_cm_api_key("CensusMapper_not_in_saved_plots", {
+    p <- ggplot2::ggplot(squares(1:2)) + geom_cm_context()
+    draw_plot(p)
+  })
   expect_equal(calls$keys, "CensusMapper_not_in_saved_plots")
+  # Only the layers: ggplot() keeps the environment it's called from, which in a test has the test's
+  # source code, with the key in it
   expect_false(contains_key(p$layers, "CensusMapper_not_in_saved_plots"))
 
   # drawn in another session without an API key or downloads
@@ -198,11 +216,10 @@ test_that("saved base maps not drawn yet use the API key of the session drawing 
   skip_if_not_installed("ggplot2", "3.5.0")
   calls <- new.env()
   local_mocked_bindings(cm_context_features = mock_context_features(calls))
-  p <- ggplot2::ggplot(squares(1:2)) +
-    geom_cm_context(api_key = "CensusMapper_first_session")
+  p <- with_cm_api_key("CensusMapper_first_session", ggplot2::ggplot(squares(1:2)) + geom_cm_context())
   saved <- serialize(p, NULL)
   forget_session()
-  expect_error(with_cm_api_key("", draw_plot(unserialize(saved))), class = "cancensus_cm_tile_api_key")
+  expect_warning(with_cm_api_key("", draw_plot(unserialize(saved))), class = "cancensus_cm_context_no_api_key")
   with_cm_api_key("CensusMapper_second_session", draw_plot(unserialize(saved)))
   expect_equal(calls$keys, "CensusMapper_second_session")
 })
@@ -211,11 +228,12 @@ test_that("keep_tiles = FALSE doesn't keep the features with the plot", {
   skip_if_not_installed("ggplot2", "3.5.0")
   calls <- new.env()
   local_mocked_bindings(cm_context_features = mock_context_features(calls))
-  p <- ggplot2::ggplot(squares(1:2)) +
-    geom_cm_context(api_key = "CensusMapper_test", keep_tiles = FALSE)
-  draw_plot(p)
-  expect_length(calls$keys, 1)
-  forget_session()
-  with_cm_api_key("CensusMapper_test", draw_plot(p))
+  with_cm_api_key("CensusMapper_test", {
+    p <- ggplot2::ggplot(squares(1:2)) + geom_cm_context(keep_tiles = FALSE)
+    draw_plot(p)
+    expect_length(calls$keys, 1)
+    forget_session()
+    draw_plot(p)
+  })
   expect_length(calls$keys, 2)
 })
