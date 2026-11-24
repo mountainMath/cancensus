@@ -28,7 +28,7 @@ statcan_geography_url <- function(census_year, level, type = "cartographic", pre
          substr(census_year,3,4),"a_e.zip")
 }
 
-#' Read the geosuite data
+#' Read geographic boundary data from StatCan
 #'
 #' @description
 #' Reads the original unprocessed geographic boundary files from Statistics Canada

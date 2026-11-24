@@ -2,7 +2,7 @@
 % Please edit documentation in R/geographies.R
 \name{get_statcan_geographies}
 \alias{get_statcan_geographies}
-\title{Read the geosuite data}
+\title{Read geographic boundary data from StatCan}
 \usage{
 get_statcan_geographies(
   census_year,
