@@ -179,7 +179,7 @@ cm_ternary_mesh_centroids <- function(k) {
 geom_cm_tricolore <- function(mapping = NULL, data = NULL, ..., labels = NULL, name = NULL,
                               center = rep(1/3, 3), breaks = 3, hue = 60, chroma = 200,
                               lightness = 80, contrast = 0.4, spread = 1,
-                              na.value = "grey60", show_data = TRUE, key_size = 5,
+                              na.value = "grey60", show_data = TRUE, key_size = 3,
                               show.legend = TRUE) {
   rlang::check_installed("ggplot2", version = "3.5.0", reason = "for geom_cm_tricolore().")
   cm_check_tricolore_options(center, breaks, hue, chroma, lightness, contrast, spread)

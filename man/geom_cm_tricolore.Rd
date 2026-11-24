@@ -19,7 +19,7 @@ geom_cm_tricolore(
   spread = 1,
   na.value = "grey60",
   show_data = TRUE,
-  key_size = 5,
+  key_size = 3,
   show.legend = TRUE
 )
 }
