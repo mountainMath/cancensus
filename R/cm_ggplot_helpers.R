@@ -18,20 +18,14 @@
 #' The base map covers the area the plot shows: by default all its sf data, or
 #' the limits set with \code{\link{coord_cm_bbox}()} or
 #' \code{ggplot2::coord_sf()}. It is drawn in the plot's CRS, whatever CRS the
-#' data are in. The tiles are fetched when the plot is first drawn, and the
-#' features kept with the plot for redrawing it, also after saving it with
-#' \code{saveRDS()} and reading it back, without an API key or downloads.
+#' data are in.
 #'
-#' Tiles are downloaded from the tile server and cached for the session. They
-#' need a CensusMapper API key, the same as for the census data, though tiles
-#' count against a separate tile quota. Set it once with
-#' \code{\link{set_cancensus_api_key}()}: the key is taken from the
-#' \code{CM_API_KEY} environment variable (or the \code{cancensus.api_key}
-#' option) when the tiles are fetched, and is never stored in the plot. There
-#' is no \code{api_key} argument, so that the key can't end up in a saved plot
-#' or in the code that made it. A saved plot that is drawn in another session,
-#' before its tiles were fetched, uses the API key set there. Without an API
-#' key the plot is drawn without the base map, with a warning.
+#' The tiles are downloaded when the plot is drawn and cached for the session.
+#' They need a CensusMapper API key, the same as for the census data, though
+#' tiles count against a separate tile quota. The key is the one set with
+#' \code{\link{set_cancensus_api_key}()} in the session drawing the plot.
+#' Without an API key the plot is drawn without the base map, with a warning.
+#'
 #' Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
 #' tiles. To style the base map differently, or to use it with other mapping
 #' packages, get its features with \code{\link{cm_context}()}.
@@ -48,11 +42,6 @@
 #' @param family Font family of the labels. By default "Noto Sans", as on
 #' CensusMapper, if the systemfonts package finds it, otherwise "sans".
 #' @param tile_server Where to get the tiles from.
-#' @param keep_tiles Whether to keep the features of the base map with the
-#' plot once they are fetched, so that a saved plot can be redrawn without an
-#' API key. \code{FALSE} keeps saved plots smaller, which can matter for
-#' detailed maps of small areas.
-#'
 #' @return An object to add to a ggplot with \code{+}.
 #' @seealso \code{\link{cm_context}()} for the features of the base map as sf data.
 #' @export
@@ -72,19 +61,15 @@
 geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads", "labels"),
                             zoom = NULL, pixels = 800, scale = 1,
                             language = getOption("cancensus.language", "en"), family = NULL,
-                            tile_server = "https://censusmapper.ca",
-                            keep_tiles = TRUE) {
+                            tile_server = "https://censusmapper.ca") {
   rlang::check_installed("ggplot2", reason = "for geom_cm_context().")
   layers <- match.arg(layers, several.ok = TRUE)
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
-                 language = validate_language(language), family = family, tile_server = tile_server,
-                 keep_tiles = isTRUE(keep_tiles),
-                 # features fetched when drawing, shared by copies of the plot and saved with it
-                 features = new.env(parent = emptyenv())),
+                 language = validate_language(language), family = family, tile_server = tile_server),
             class = "cm_context_layer")
 }
 
-# The API key to fetch a base map's tiles with, the one set in the session drawing the plot, or NULL
+# The API key set in the session drawing the plot, or NULL
 cm_context_api_key <- function() {
   api_key <- robust_api_key("")
   if (valid_api_key(api_key)) api_key
@@ -92,24 +77,17 @@ cm_context_api_key <- function() {
 
 #' @exportS3Method ggplot2::ggplot_add
 ggplot_add.cm_context_layer <- function(object, plot, ...) {
-  plot <- plot + cm_context_ggplot_layer(object)
+  # One layer that draws the whole base map when the panel is drawn, for the panel's extent, in the
+  # CRS of the plot's coord_sf()
+  geom <- ggplot2::ggproto("GeomCmContext", ggplot2::Geom,
+    draw_key = ggplot2::draw_key_blank,
+    draw_panel = function(data, panel_params, coord, cm) cm_context_grob(cm, panel_params, coord))
+  plot <- plot + ggplot2::layer(geom = geom, stat = "identity", position = "identity",
+                                data = data.frame(cm_context = 1), mapping = NULL, inherit.aes = FALSE,
+                                show.legend = FALSE, params = list(cm = object))
   # Like geom_sf(), a map needs coord_sf()
   if (isTRUE(plot$coordinates$default)) plot <- plot + ggplot2::coord_sf(default = TRUE)
   plot
-}
-
-# One layer that draws the whole base map when the panel is drawn, for the panel's extent, in the CRS
-# of the plot's coord_sf(). ggplot2 keeps the environments layer() is called from (its caller and the
-# caller's caller), and saves them with the plot, so both are functions that have only the base map,
-# not ggplot_add()'s arguments, which include the call that made the base map, maybe with an API key.
-cm_context_ggplot_layer <- function(object) {
-  make <- function(cm) {
-    ggplot2::layer(
-      geom = cm_geom("context"), stat = "identity", position = "identity",
-      data = data.frame(cm_context = 1), mapping = NULL, inherit.aes = FALSE,
-      show.legend = FALSE, params = list(cm = cm))
-  }
-  make(object)
 }
 
 #' Show the area of a bounding box on a ggplot map
@@ -253,7 +231,7 @@ cm_context_grob <- function(o, panel_params, coord) {
           sf::st_as_grob(d$geometry[i], gp = grid::gpar(col = NA, fill = ggplot2::alpha(d$fill[i[1]], d$alpha[i[1]])))
         }))
       },
-      lines = grid::gTree(data = d, styles = p$styles, bbox_npc = 1, span = v$span, z = v$z,
+      lines = grid::gTree(data = d, styles = p$styles, span = v$span, z = v$z,
                           scale = o$scale, cl = "cm_lines"),
       labels = {
         xy <- sf::st_coordinates(d$geometry)
@@ -275,22 +253,19 @@ cm_context_grob <- function(o, panel_params, coord) {
           d$dy[road] <- ahead[, 2] - d$y[road]
         }
         d$geometry <- NULL
-        grid::gTree(data = d, styles = p$styles, bbox_npc = 1, span = v$span, z = v$z,
+        grid::gTree(data = d, styles = p$styles, span = v$span, z = v$z,
                     family = p$family, scale = o$scale, cl = "cm_labels")
       })
   })
   grid::gTree(children = do.call(grid::gList, Filter(Negate(is.null), children)))
 }
 
-# The base map's features are kept for the session, for redrawing plots, and with the plot itself
-# (unless keep_tiles = FALSE), so that a saved plot can be redrawn without an API key or downloads
+# The base map's features are kept for the session, for redrawing plots
 .cm_context_cache <- new.env(parent = emptyenv())
 
 cm_context_features_cached <- function(v, o) {
   key <- digest::digest(list(as.numeric(v$bbox), v$crs$wkt, v$z,
                              o[c("layers", "language", "family", "tile_server")]))
-  kept <- if (isTRUE(o$keep_tiles) && is.environment(o$features)) o$features
-  if (!is.null(kept[[key]])) return(kept[[key]])
   if (is.null(.cm_context_cache[[key]])) {
     # Without an API key the plot is drawn without its base map
     if (is.null(cm_context_api_key())) {
@@ -300,7 +275,6 @@ cm_context_features_cached <- function(v, o) {
     if (length(ls(.cm_context_cache)) >= 20) rm(list = ls(.cm_context_cache), envir = .cm_context_cache)
     .cm_context_cache[[key]] <- cm_context_features(v, o)
   }
-  if (!is.null(kept)) kept[[key]] <- .cm_context_cache[[key]]
   .cm_context_cache[[key]]
 }
 
@@ -438,27 +412,13 @@ cm_context_features <- function(v, o) {
   Filter(Negate(is.null), out)
 }
 
-# The base map's geom, made when first needed, as ggplot2 is only suggested.
-# Labels and lines are grobs that are laid out when drawn, when the panel's
-# size, and with it the size of a CensusMapper pixel, is known.
-.cm_geoms <- new.env(parent = emptyenv())
-
-cm_geom <- function(name) {
-  if (is.null(.cm_geoms[[name]])) {
-    .cm_geoms[[name]] <- switch(name,
-      context = ggplot2::ggproto("GeomCmContext", ggplot2::Geom,
-        draw_key = ggplot2::draw_key_blank,
-        draw_panel = function(data, panel_params, coord, cm) {
-          cm_context_grob(cm, panel_params, coord)
-        }))
-  }
-  .cm_geoms[[name]]
-}
+# Labels and lines are grobs that are laid out when drawn, when the panel's size, and with it the
+# size of a CensusMapper pixel, is known.
 
 # Size of a CensusMapper pixel at zoom z in the panel being drawn, in inches
 cm_inch_per_px <- function(x) {
   W <- grid::convertWidth(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
-  x$bbox_npc * W / (2^x$z * 512 * x$span / (2 * pi * 6378137)) * x$scale
+  W / (2^x$z * 512 * x$span / (2 * pi * 6378137)) * x$scale
 }
 
 # Lines, with widths set when drawn
