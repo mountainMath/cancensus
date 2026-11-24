@@ -22,8 +22,9 @@
 #'
 #' The tiles are downloaded when the plot is drawn and cached for the session.
 #' They need a CensusMapper API key, the same as for the census data, though
-#' tiles count against a separate tile quota. The key is the one set with
-#' \code{\link{set_cancensus_api_key}()} in the session drawing the plot.
+#' tiles count against a separate tile quota. The key is taken from the
+#' \code{CM_API_KEY} environment variable, set with
+#' \code{\link{set_cancensus_api_key}()}.
 #' Without an API key the plot is drawn without the base map, with a warning.
 #'
 #' Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the
@@ -67,12 +68,6 @@ geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads",
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
                  language = validate_language(language), family = family, tile_server = tile_server),
             class = "cm_context_layer")
-}
-
-# The API key set in the session drawing the plot, or NULL
-cm_context_api_key <- function() {
-  api_key <- robust_api_key("")
-  if (valid_api_key(api_key)) api_key
 }
 
 #' @exportS3Method ggplot2::ggplot_add
@@ -268,7 +263,7 @@ cm_context_features_cached <- function(v, o) {
                              o[c("layers", "language", "family", "tile_server")]))
   if (is.null(.cm_context_cache[[key]])) {
     # Without an API key the plot is drawn without its base map
-    if (is.null(cm_context_api_key())) {
+    if (!valid_api_key(robust_api_key(""))) {
       cc_warn("cm_context_no_api_key", caller = "geom_cm_context()")
       return(list())
     }
@@ -292,7 +287,7 @@ cm_context_features <- function(v, o) {
             if ("buildings" %in% o$layers && z > 14.5) "buildings",
             if (labels && any(wanted & !is_road)) "places",
             if (labels && any(wanted & is_road)) "road_labels")
-  ctx <- cm_context_data(NULL, need, v, o$language, o$tile_server, cm_context_api_key(),
+  ctx <- cm_context_data(NULL, need, v, o$language, o$tile_server, robust_api_key(""),
                          road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
   has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
 

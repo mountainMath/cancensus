@@ -58,8 +58,9 @@ data are in.
 
 The tiles are downloaded when the plot is drawn and cached for the session.
 They need a CensusMapper API key, the same as for the census data, though
-tiles count against a separate tile quota. The key is the one set with
-\code{\link{set_cancensus_api_key}()} in the session drawing the plot.
+tiles count against a separate tile quota. The key is taken from the
+\code{CM_API_KEY} environment variable, set with
+\code{\link{set_cancensus_api_key}()}.
 Without an API key the plot is drawn without the base map, with a warning.
 
 Needs the ggplot2 package, and GDAL with its MVT driver for sf to read the

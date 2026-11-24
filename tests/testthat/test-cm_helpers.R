@@ -155,7 +155,7 @@ mock_context_features <- function(env) {
   rm(list = ls(cancensus:::.cm_context_cache), envir = cancensus:::.cm_context_cache)
   env$keys <- character(0)
   function(v, o) {
-    env$keys <- c(env$keys, cm_context_api_key())
+    env$keys <- c(env$keys, robust_api_key(""))
     water <- sf::st_sf(fill = "#a0c8f0", alpha = 1, geometry = sf::st_as_sfc(v$bbox))
     list(list(type = "fill", d = water))
   }
