@@ -9,7 +9,7 @@
 ## https://www12.statcan.gc.ca/english/census01/Products/Reference/dict/geo008.htm (table 4)
 ## https://www12.statcan.gc.ca/english/census01/Products/Reference/dict/geo012.htm (table 6)
 ## https://www.statcan.gc.ca/en/subjects/standard/sgc/1996/1996-info-rens
-## 1986 Census Dictionary, catalogue CS99-101, pp. 131-132
+## https://www12.statcan.gc.ca/access_acces/push_pdf.cfm?FILE_REQUESTED=%5CEnglish%5Ccensus86%5Creference&File_Name=CS99-101-1987-eng.pdf (1986 Census Dictionary, pp. 131-132)
 
 CODES_TABLE <- dplyr::tribble(
   ~geography, ~status_code, ~status,
