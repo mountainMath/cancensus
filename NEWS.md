@@ -12,7 +12,7 @@
 
 The deprecated `get_statcan_geography_relationships()` also reads the 2026 relationship file, since the 2026 GeoSuite and geographic attributes aren't available yet. The 2026 file doesn't have census metropolitan areas and census agglomerations, census tracts, population centres and designated places yet, Statistics Canada plans to release these on February 10, 2027.
 
-`CODES_TABLE` has the census division and census subdivision types of the 2021 and 2026 censuses, and the `RG` census subdivision type of 2011, which were missing.
+`CODES_TABLE` has the census division and census subdivision types of all censuses from 1981 to 2026, adding the types that were missing.
 
 `get_statcan_geographies()` gets past Statistics Canada's Cloudflare browser verification by sending a real browser through it with the new **safeconduct** package, where that is installed and finds Google Chrome or another Chromium-based browser. **safeconduct** is suggested, not required. Without it, or when the browser doesn't get through, e.g. where a verification asks for a click and no one is there to give it, the warning explaining how to download the file manually is shown as before, now with a note on how to have this done automatically. `options(cancensus.use_browser = FALSE)` turns the browser off.
 
