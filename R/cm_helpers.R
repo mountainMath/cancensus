@@ -30,7 +30,8 @@
 #' the zoom level at which the data spans \code{pixels} pixels.
 #' @param pixels The width, in pixels, of the CensusMapper map whose zoom level
 #' to use.
-#' @param lang Language of the names, \code{"en"} or \code{"fr"}.
+#' @param language Language of the names, \code{"en"} or \code{"fr"}. Defaults to
+#' the \code{cancensus.language} option, and to \code{"en"} if that is not set.
 #' @param tile_server Where to get the tiles from.
 #' @param api_key An API key for the CensusMapper API. Defaults to the
 #' \code{CM_API_KEY} environment variable, as set with
@@ -39,7 +40,7 @@
 #' @return A named list with an sf data frame for each layer, in the CRS of
 #' \code{data} and cropped to its bounding box. A layer without features is an
 #' sf data frame without rows. Features have their \code{class}, and places and
-#' road labels their \code{name} in the language \code{lang} (or the local
+#' road labels their \code{name} in the language \code{language} (or the local
 #' name). Road labels are points along named roads, with the \code{angle} (in
 #' degrees) to turn labels by and the \code{length} of the road (in metres). The
 #' other columns come from the tiles and may change. The zoom level is in the
@@ -66,13 +67,14 @@
 cm_context <- function(data,
                        layers = c("water", "landcover", "landuse", "aeroway", "buildings",
                                   "roads", "places", "road_labels"),
-                       zoom = NULL, pixels = 800, lang = c("en", "fr"),
+                       zoom = NULL, pixels = 800,
+                       language = getOption("cancensus.language", "en"),
                        tile_server = "https://censusmapper.ca",
                        api_key = Sys.getenv("CM_API_KEY")) {
   if (!inherits(data, c("sf", "sfc", "bbox"))) cc_abort("cm_context_invalid_data")
   layers <- match.arg(layers, several.ok = TRUE)
   api_key <- cm_tile_api_key(api_key, "cm_context()")
-  cm_context_data(data, layers, cm_view(data, zoom, pixels), match.arg(lang), tile_server, api_key,
+  cm_context_data(data, layers, cm_view(data, zoom, pixels), validate_language(language), tile_server, api_key,
                   caller = "cm_context()")
 }
 

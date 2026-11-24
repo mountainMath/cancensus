@@ -9,7 +9,7 @@ geom_cm_context(
   zoom = NULL,
   pixels = 800,
   scale = 1,
-  lang = c("en", "fr"),
+  language = getOption("cancensus.language", "en"),
   family = NULL,
   tile_server = "https://censusmapper.ca",
   keep_tiles = TRUE
@@ -27,7 +27,8 @@ Larger values show more detail, with relatively smaller lines and labels.}
 
 \item{scale}{Factor to make lines and labels larger or smaller.}
 
-\item{lang}{Language of the labels, \code{"en"} or \code{"fr"}.}
+\item{language}{Language of the labels, \code{"en"} or \code{"fr"}. Defaults to
+the \code{cancensus.language} option, and to \code{"en"} if that is not set.}
 
 \item{family}{Font family of the labels. By default "Noto Sans", as on
 CensusMapper, if the systemfonts package finds it, otherwise "sans".}

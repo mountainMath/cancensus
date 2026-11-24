@@ -1,8 +1,14 @@
 # cancensus 0.6.3
 
-This is a quick follow-up to 0.6.2, submitted 4 days ago, to fix the ERROR in the CRAN checks on r-devel-linux-x86_64-fedora-clang (10 failing tests). Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ and announce this with a message whenever a database is opened, which broke tests that expect no messages. **cancensus** only reads local parquet files, which needs no extensions, so it now opens the database with `allow_extensions = FALSE`, which also avoids the message.
+This release fixes the ERROR in the CRAN checks of 0.6.2 on r-devel-linux-x86_64-fedora-clang (10 failing tests). Recent versions of **duckdb**, including 2.0.0, disable extensions on Linux builds compiled with libc++ and announce this with a message whenever a database is opened, which broke tests that expect no messages. **cancensus** only reads local parquet files, which needs no extensions, so it now opens the database with `allow_extensions = FALSE`, which also avoids the message.
 
-It also adds support for the 2026 census boundary files, a `DGUID` column in `get_census()` results, and new helper functions for making maps in the style of CensusMapper. See NEWS.md for details.
+It then continues with:
+
+* access to the newly released 2026 census geography products, the boundary files including the new generalized cartographic boundaries, and a `DGUID` column in `get_census()` results,
+* the optional **safeconduct** package to mitigate Statistics Canada's blocking of programmatic downloads of these files,
+* integration of new CensusMapper features to reproduce CensusMapper map views in R: its base map, binned colour scales, ternary colour maps and custom functions.
+
+See NEWS.md for details.
 
 ## Breaking changes
 

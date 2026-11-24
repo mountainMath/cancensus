@@ -112,6 +112,16 @@ test_that("scale_fill_cm_bins() bins values and labels all bins", {
                class = "cancensus_cm_bins_values_count")
 })
 
+test_that("the helpers' language defaults to the cancensus.language option", {
+  skip_if_not_installed("ggplot2")
+  rlang::local_options(cancensus.language = "fr")
+  scale <- scale_fill_cm_bins(breaks = c(0.1, 0.2), units = "percentage", values = c("a", "b", "c"))
+  expect_equal(scale$get_labels(factor(0:2)), c("< 10 %", "10 % – 20 %", "≥ 20 %"))
+  expect_equal(geom_cm_context()$language, "fr")
+  expect_equal(geom_cm_context(language = "en")$language, "en")
+  expect_error(geom_cm_context(language = "de"), class = "cancensus_invalid_language")
+})
+
 test_that("coord_cm_bbox() limits the map to a bounding box", {
   skip_if_not_installed("ggplot2")
   base <- ggplot2::ggplot(squares(1:4)) + ggplot2::geom_sf()

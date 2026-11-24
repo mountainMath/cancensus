@@ -10,7 +10,7 @@ cm_context(
     "road_labels"),
   zoom = NULL,
   pixels = 800,
-  lang = c("en", "fr"),
+  language = getOption("cancensus.language", "en"),
   tile_server = "https://censusmapper.ca",
   api_key = Sys.getenv("CM_API_KEY")
 )
@@ -29,7 +29,8 @@ the zoom level at which the data spans \code{pixels} pixels.}
 \item{pixels}{The width, in pixels, of the CensusMapper map whose zoom level
 to use.}
 
-\item{lang}{Language of the names, \code{"en"} or \code{"fr"}.}
+\item{language}{Language of the names, \code{"en"} or \code{"fr"}. Defaults to
+the \code{cancensus.language} option, and to \code{"en"} if that is not set.}
 
 \item{tile_server}{Where to get the tiles from.}
 
@@ -41,7 +42,7 @@ to use.}
 A named list with an sf data frame for each layer, in the CRS of
 \code{data} and cropped to its bounding box. A layer without features is an
 sf data frame without rows. Features have their \code{class}, and places and
-road labels their \code{name} in the language \code{lang} (or the local
+road labels their \code{name} in the language \code{language} (or the local
 name). Road labels are points along named roads, with the \code{angle} (in
 degrees) to turn labels by and the \code{length} of the road (in metres). The
 other columns come from the tiles and may change. The zoom level is in the

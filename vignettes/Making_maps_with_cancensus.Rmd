@@ -80,7 +80,7 @@ ggplot(toronto) +
        caption="StatCan Census 2021")
 ```
 
-There is also the option to add contextual layers similar to how CensusMapper styles map via the `geom_cm_context()` function.
+There is also the option to add contextual layers similar to how CensusMapper styles maps via the `geom_cm_context()` function.
 
 ```{r fig.alt="Toronto Median Household Income in 2020 with CensusMapper's base map of water, roads and place names"}
 ggplot(toronto) +

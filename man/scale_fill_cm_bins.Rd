@@ -12,7 +12,7 @@ scale_fill_cm_bins(
   direction = 1,
   units = c("number", "percentage", "percentage_100", "ratio", "currency",
     "currency_1000"),
-  lang = c("en", "fr"),
+  language = getOption("cancensus.language", "en"),
   values = NULL,
   labels = NULL,
   na.value = "grey60",
@@ -45,7 +45,9 @@ reverse.}
 Labels show up to three significant digits, more only where needed to tell
 the breaks apart.}
 
-\item{lang}{Language for formatting the labels, \code{"en"} or \code{"fr"}.}
+\item{language}{Language for formatting the labels, \code{"en"} or \code{"fr"}.
+Defaults to the \code{cancensus.language} option, and to \code{"en"} if that
+is not set.}
 
 \item{values}{Colours for the bins, from the lowest to the highest,
 instead of the palette's.}

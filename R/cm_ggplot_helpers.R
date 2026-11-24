@@ -43,7 +43,8 @@
 #' @param pixels The width, in pixels, of the CensusMapper map the plot mimics.
 #' Larger values show more detail, with relatively smaller lines and labels.
 #' @param scale Factor to make lines and labels larger or smaller.
-#' @param lang Language of the labels, \code{"en"} or \code{"fr"}.
+#' @param language Language of the labels, \code{"en"} or \code{"fr"}. Defaults to
+#' the \code{cancensus.language} option, and to \code{"en"} if that is not set.
 #' @param family Font family of the labels. By default "Noto Sans", as on
 #' CensusMapper, if the systemfonts package finds it, otherwise "sans".
 #' @param tile_server Where to get the tiles from.
@@ -70,13 +71,13 @@
 #' }
 geom_cm_context <- function(layers = c("landuse", "water", "buildings", "roads", "labels"),
                             zoom = NULL, pixels = 800, scale = 1,
-                            lang = c("en", "fr"), family = NULL,
+                            language = getOption("cancensus.language", "en"), family = NULL,
                             tile_server = "https://censusmapper.ca",
                             keep_tiles = TRUE) {
   rlang::check_installed("ggplot2", reason = "for geom_cm_context().")
   layers <- match.arg(layers, several.ok = TRUE)
   structure(list(layers = layers, zoom = zoom, pixels = pixels, scale = scale,
-                 lang = match.arg(lang), family = family, tile_server = tile_server,
+                 language = validate_language(language), family = family, tile_server = tile_server,
                  keep_tiles = isTRUE(keep_tiles),
                  # features fetched when drawing, shared by copies of the plot and saved with it
                  features = new.env(parent = emptyenv())),
@@ -287,7 +288,7 @@ cm_context_grob <- function(o, panel_params, coord) {
 
 cm_context_features_cached <- function(v, o) {
   key <- digest::digest(list(as.numeric(v$bbox), v$crs$wkt, v$z,
-                             o[c("layers", "lang", "family", "tile_server")]))
+                             o[c("layers", "language", "family", "tile_server")]))
   kept <- if (isTRUE(o$keep_tiles) && is.environment(o$features)) o$features
   if (!is.null(kept[[key]])) return(kept[[key]])
   if (is.null(.cm_context_cache[[key]])) {
@@ -317,7 +318,7 @@ cm_context_features <- function(v, o) {
             if ("buildings" %in% o$layers && z > 14.5) "buildings",
             if (labels && any(wanted & !is_road)) "places",
             if (labels && any(wanted & is_road)) "road_labels")
-  ctx <- cm_context_data(NULL, need, v, o$lang, o$tile_server, cm_context_api_key(),
+  ctx <- cm_context_data(NULL, need, v, o$language, o$tile_server, cm_context_api_key(),
                          road_label_classes = unlist(lapply(styles[wanted & is_road], `[[`, "classes")))
   has <- function(layer) !is.null(ctx[[layer]]) && nrow(ctx[[layer]]) > 0
 
@@ -590,7 +591,9 @@ cm_interpolate <- function(z, stops, base = 1) {
 #' \code{"currency"} ($1.2k) or \code{"currency_1000"} (currency in thousands).
 #' Labels show up to three significant digits, more only where needed to tell
 #' the breaks apart.
-#' @param lang Language for formatting the labels, \code{"en"} or \code{"fr"}.
+#' @param language Language for formatting the labels, \code{"en"} or \code{"fr"}.
+#' Defaults to the \code{cancensus.language} option, and to \code{"en"} if that
+#' is not set.
 #' @param values Colours for the bins, from the lowest to the highest,
 #' instead of the palette's.
 #' @param labels Labels for the bins instead of the ones made from
@@ -620,11 +623,11 @@ cm_interpolate <- function(z, stops, base = 1) {
 scale_fill_cm_bins <- function(palette = "Blues", breaks = NULL, n = 5, direction = 1,
                                units = c("number", "percentage", "percentage_100", "ratio",
                                          "currency", "currency_1000"),
-                               lang = c("en", "fr"), values = NULL, labels = NULL,
+                               language = getOption("cancensus.language", "en"), values = NULL, labels = NULL,
                                na.value = "grey60", ..., aesthetics = "fill") {
   rlang::check_installed("ggplot2", reason = "for scale_fill_cm_bins().")
   units <- match.arg(units)
-  lang <- match.arg(lang)
+  lang <- validate_language(language)
   if (!is.null(breaks)) {
     breaks <- sort(unique(as.numeric(breaks)))
     n <- length(breaks) + 1

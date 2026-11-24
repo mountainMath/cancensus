@@ -87,7 +87,6 @@ census_data <- get_census(dataset='CA16', regions=list(CMA="59933"),
 ```
 With `labels = "labelled"` columns get short names and the full description of each column is stored in its `"label"` attribute. This will become the default in a future version; set `labels` explicitly, or set `options(cancensus.labels = "labelled")`, to keep your code stable when that happens.
 
-
 ### French labels
 
 Census variable labels are available in French for all census datasets by setting `language = "fr"`, or for a whole session with `options(cancensus.language = "fr")`. Tax and cross-tabulation datasets don't have French labels and fall back to English with a warning.
