@@ -80,7 +80,7 @@ jobs:
             -DCMAKE_INSTALL_LIBDIR=lib \
             -DCMAKE_C_COMPILER=clang-23 \
             -DCMAKE_CXX_COMPILER=clang++-23 \
-            -DCMAKE_CXX_FLAGS="-stdlib=libc++ -include cstdlib" \
+            -DCMAKE_CXX_FLAGS="-stdlib=libc++ -include cstdlib -include cstdint -include cstring -include atomic -include algorithm -include limits" \
             -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" \
             -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++" \
             -DCMAKE_MODULE_LINKER_FLAGS="-stdlib=libc++" \
