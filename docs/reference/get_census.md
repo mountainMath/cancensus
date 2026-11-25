@@ -146,6 +146,15 @@ or check out the interactive selection tool at
 <https://censusmapper.ca/api> by calling
 [`explore_census_vectors()`](https://mountainmath.github.io/cancensus/reference/explore_census_vectors.md)
 
+Each region is identified by its `GeoUID`, and also by its Statistics
+Canada Dissemination Geography Unique Identifier in the `DGUID` column,
+right after `GeoUID`. DGUIDs are character strings like
+`"2021S051259150004"` for a dissemination area, and `NA` for regions
+that don't have one, like those of the CA1116 dataset. Enumeration areas
+(CA1991 and CA1996) get CensusMapper codes of the same form with type
+`X`. Data downloaded before the CensusMapper API added DGUIDs doesn't
+have this column, use `use_cache = FALSE` to download it again.
+
 ## Examples
 
 ``` r

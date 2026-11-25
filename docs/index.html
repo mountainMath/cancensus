@@ -17,8 +17,8 @@
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Access, retrieve, and work with Canadian Census data and geography.">
-<meta name="description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021).'>
-<meta property="og:description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021).'>
+<meta name="description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021; 2026).'>
+<meta property="og:description" content='Integrated, convenient, and uniform access to Canadian Census data and geography retrieved using the CensusMapper API. This package produces analysis-ready tidy data frames and spatial data in multiple formats, as well as convenience functions for working with Census variables, variable hierarchies, and region selection. API keys are freely available with free registration at &lt;https://censusmapper.ca/api&gt;. Census data and boundary geometries are reproduced and distributed on an "as is" basis with the permission of Statistics Canada (Statistics Canada 1996; 2001; 2006; 2011; 2016; 2021; 2026).'>
 <meta property="og:image" content="https://mountainmath.github.io/cancensus/logo.png">
 <meta property="og:image:alt" content="cancensus">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="index.html">cancensus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +125,7 @@
 <div class="section level3">
 <h3 id="currently-available-datasets">Currently available datasets<a class="anchor" aria-label="anchor" href="#currently-available-datasets"></a>
 </h3>
-<p><strong>cancensus</strong> can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API.</p>
+<p><strong>cancensus</strong> can access Statistics Canada Census data for Census years 1981, 1986, 1991, 1996, 2001, 2006, 2011, 2016, and 2021. You can run <code>list_census_datasets</code> to check what datasets are currently available for access through the CensusMapper API.</p>
 <p>Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), <strong>cancensus</strong> now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.</p>
 </div>
 <div class="section level3">
@@ -169,6 +169,11 @@
 <span><span class="fu"><a href="reference/find_census_vectors.html">find_census_vectors</a></span><span class="op">(</span><span class="st">"revenu total médian des ménages"</span>, dataset <span class="op">=</span> <span class="st">"CA21"</span>, type <span class="op">=</span> <span class="st">"total"</span>, language <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span></code></pre>
 <p>Column names stay the same in both languages, and only the labels change, so the same code runs in either language. With <code>ggplot2</code> version 4.0.0 or later the labels become the default axis and legend titles, so graphs and maps get French titles automatically. See the <a href="https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html">mapping vignette</a> for an example. Region names are not translated.</p>
 <p><strong>cancensus</strong> attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded, <strong>cancensus</strong> will instead access the locally cached equivalent.</p>
+</div>
+<div class="section level3">
+<h3 id="data-from-censusmapper-maps">Data from CensusMapper maps<a class="anchor" aria-label="anchor" href="#data-from-censusmapper-maps"></a>
+</h3>
+<p>Any CensusMapper map can easily be reproduced in R by clicking on the <em>Map actions</em> menu, the three vertical dots at the top right of a map side panel, and selecting the <strong>R code for this view</strong> option. That brings up R code that, when copy-pasted and run, reproduces the current map view. It can be easily adapted to fit the user’s needs.</p>
 </div>
 <div class="section level3">
 <h3 id="examples-of-work-using-cancensus">Examples of work using cancensus<a class="anchor" aria-label="anchor" href="#examples-of-work-using-cancensus"></a>
@@ -248,14 +253,14 @@
 <a class="anchor" aria-label="anchor" href="#cite-cancensus"></a>
 </h3>
 <p>If you wish to cite cancensus:</p>
-<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.2.</p>
+<p>von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to access, retrieve, and work with Canadian Census data and geography. v0.6.3.</p>
 <p>A BibTeX entry for LaTeX users is</p>
 <pre><code>  @Manual{cancensus,
     author = {Jens {von Bergmann} and Dmitry Shkolnik and Aaron Jacobs},
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.2},
+    note = {R package version 0.6.3},
     url = {https://mountainmath.github.io/cancensus/}
   }</code></pre>
 </div>

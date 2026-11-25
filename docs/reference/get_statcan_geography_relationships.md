@@ -1,6 +1,6 @@
 # Read the Dissemination Geographies Relationship File (deprecated)
 
-This function is deprecated and will be removed in the next release, as
+This function is deprecated and will be removed in a future release, as
 Statistics Canada blocks programmatic downloads of the file (#228). Use
 `get_statcan_geographic_attributes("2021")` instead, which has the same
 DGUIDs for each dissemination block apart from census agricultural
@@ -33,7 +33,11 @@ get_statcan_geography_relationships(census_year = "2021", refresh = FALSE)
 
 - census_year:
 
-  census year to get the data for, only 2021 is available
+  census year to get the data for, "2021" or "2026". The 2026 file
+  doesn't have the census metropolitan areas and census agglomerations,
+  census tracts, population centres and designated places yet,
+  Statistics Canada plans to release these geographies on February
+  10, 2027. Use `refresh = TRUE` to get an updated file after that.
 
 - refresh:
 
@@ -42,9 +46,13 @@ get_statcan_geography_relationships(census_year = "2021", refresh = FALSE)
 ## Value
 
 tibble with the relationship data. If Statistics Canada blocks the
-download this gives a warning explaining how to download the file
-manually, and returns the cached data when refreshing existing cached
-data and `NULL` otherwise
+download, it goes through a browser with the safeconduct package where
+that is installed and finds Google Chrome or another Chromium-based
+browser, as for
+[`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md).
+Otherwise, or if that fails, this gives a warning explaining how to
+download the file manually, and returns the cached data when refreshing
+existing cached data and `NULL` otherwise
 
 ## Examples
 

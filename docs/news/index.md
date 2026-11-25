@@ -1,5 +1,143 @@
 # Changelog
 
+## cancensus 0.6.3
+
+### Bug fixes
+
+- [`get_statcan_geographic_attributes()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographic_attributes.md)
+  and
+  [`get_statcan_geo_suite()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geo_suite.md)
+  no longer show a message from **duckdb** about disabled extensions
+  every time they read data. Recent versions of **duckdb**, including
+  2.0.0, disable extensions on Linux builds compiled with libc++ instead
+  of libstdc++, like CRAN’s fedora-clang check machine, and announce
+  this with a message. This made the package checks fail there.
+  **cancensus** only reads local parquet files, which **duckdb**
+  supports without extensions, so it now opens the database with
+  extensions disabled, which also avoids the message.
+
+### Improvements
+
+[`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md)
+returns Statistics Canada’s Dissemination Geography Unique Identifier in
+a new `DGUID` column after `GeoUID`, now that the CensusMapper API
+provides it
+([\#238](https://github.com/mountainMath/cancensus/issues/238)). Regions
+without a DGUID, like those of CA1116, get `NA`. Data cached before
+doesn’t have the column, `use_cache = FALSE` downloads it again.
+
+[`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+downloads 2026 boundary files with `census_year = "2026"`, including the
+new census agricultural region (`"CAR"`) and census consolidated
+subdivision (`"CCS"`) files. Statistics Canada hasn’t released all of
+them yet: `"CMACA"`, `"CT"`, `"POPCNTR"` and `"DPL"` are planned for
+February 10, 2027, and `"FSA"` for September 28, 2027, and asking for
+them before then gives an error with the date. A new `precision`
+argument selects between `"detailed"` (the default) and the new
+`"generalized"` cartographic boundary files, which are only available
+from 2026 on.
+
+The deprecated
+[`get_statcan_geography_relationships()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geography_relationships.md)
+also reads the 2026 relationship file, since the 2026 GeoSuite and
+geographic attributes aren’t available yet. The 2026 file doesn’t have
+census metropolitan areas and census agglomerations, census tracts,
+population centres and designated places yet, Statistics Canada plans to
+release these on February 10, 2027.
+
+`CODES_TABLE` has the census division and census subdivision types of
+all censuses from 1981 to 2026, adding the types that were missing.
+
+[`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
+gets past Statistics Canada’s Cloudflare browser verification by sending
+a real browser through it with the new **safeconduct** package, where
+that is installed and finds Google Chrome or another Chromium-based
+browser. **safeconduct** is suggested, not required. Without it, or when
+the browser doesn’t get through, e.g. where a verification asks for a
+click and no one is there to give it, the warning explaining how to
+download the file manually is shown as before, now with a note on how to
+have this done automatically. `options(cancensus.use_browser = FALSE)`
+turns the browser off.
+
+A new
+[`geom_cm_context()`](https://mountainmath.github.io/cancensus/reference/geom_cm_context.md)
+function that adds a context layer to a census map similar to what
+CensusMapper does. The base map tiles need a CensusMapper API key, taken
+from
+[`set_cancensus_api_key()`](https://mountainmath.github.io/cancensus/reference/set_cancensus_api_key.md)
+(the `CM_API_KEY` environment variable) when the tiles are fetched, and
+count against a separate tile quota. Without an API key the map is drawn
+without the base map, with a warning. Refused tile requests (invalid or
+inactive key, exceeded tile quota) stop with an error instead of leaving
+the base map empty
+([\#236](https://github.com/mountainMath/cancensus/issues/236)).
+
+A new
+[`cm_context()`](https://mountainmath.github.io/cancensus/reference/cm_context.md)
+function returns the features of the CensusMapper base map (water,
+landcover, landuse, airports, buildings, roads, places and road labels)
+for an sf object or bounding box as a list of sf data frames, for
+styling them differently or using them with other mapping packages.
+
+New functions
+[`cm_gini()`](https://mountainmath.github.io/cancensus/reference/cm_gini.md),
+[`cm_gini2()`](https://mountainmath.github.io/cancensus/reference/cm_gini2.md),
+[`cm_binned_quantile()`](https://mountainmath.github.io/cancensus/reference/cm_binned_quantile.md)
+and
+[`cm_wasserstein()`](https://mountainmath.github.io/cancensus/reference/cm_wasserstein.md)
+compute CensusMapper’s `gini()`, `gini2()`, `binned_quantile()` and
+`wasserstein()` per region, e.g. inside
+[`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html),
+for reproducing CensusMapper maps in R.
+[`cm_wasserstein()`](https://mountainmath.github.io/cancensus/reference/cm_wasserstein.md)
+needs the **transport** package. They stop with an error when the number
+of cutoffs doesn’t match the number of brackets, instead of recycling
+them.
+
+A new
+[`coord_cm_bbox()`](https://mountainmath.github.io/cancensus/reference/coord_cm_bbox.md)
+limits a ggplot map to a bounding box in any CRS, e.g. the view of a
+CensusMapper map, and shows all data with `bbox = NULL`.
+[`geom_cm_context()`](https://mountainmath.github.io/cancensus/reference/geom_cm_context.md)
+covers the area the plot shows, following
+[`coord_cm_bbox()`](https://mountainmath.github.io/cancensus/reference/coord_cm_bbox.md)
+or [`coord_sf()`](https://ggplot2.tidyverse.org/reference/ggsf.html)
+limits, and is drawn in the plot’s CRS whatever CRS the data are in.
+
+New
+[`scale_fill_cm_bins()`](https://mountainmath.github.io/cancensus/reference/scale_fill_cm_bins.md)
+and
+[`scale_colour_cm_bins()`](https://mountainmath.github.io/cancensus/reference/scale_fill_cm_bins.md)
+scales for choropleth maps bin numeric values at given cutoffs (or at
+quantiles), colour the bins from a ColorBrewer, viridis or
+[`hcl.colors()`](https://rdrr.io/r/grDevices/palettes.html) palette, and
+label them with formatted ranges for numbers, percentages, ratios or
+currency, in English or French. Like
+[`scale_fill_manual()`](https://ggplot2.tidyverse.org/reference/scale_manual.html),
+`values` and `labels` set the colours and labels directly. The legend
+shows every bin, including bins without data.
+
+A new
+[`geom_cm_tricolore()`](https://mountainmath.github.io/cancensus/reference/geom_cm_tricolore.md)
+maps compositions of three parts, e.g. the shares of children, working
+age population and seniors, in the colours of CensusMapper’s ternary
+(“rgb”) maps, with a triangular colour key that shows the regions as
+dots.
+[`cm_tricolore()`](https://mountainmath.github.io/cancensus/reference/cm_tricolore.md)
+gives just the colours. They are the colours of the **tricolore**
+package, with the parameters in the units of CensusMapper’s
+`tricolore_options`, computed without needing **tricolore** or
+**ggtern**.
+
+Like
+[`get_census()`](https://mountainmath.github.io/cancensus/reference/get_census.md),
+[`geom_cm_context()`](https://mountainmath.github.io/cancensus/reference/geom_cm_context.md),
+[`cm_context()`](https://mountainmath.github.io/cancensus/reference/cm_context.md)
+and
+[`scale_fill_cm_bins()`](https://mountainmath.github.io/cancensus/reference/scale_fill_cm_bins.md)
+take a `language` argument for their labels that defaults to the
+`cancensus.language` option.
+
 ## cancensus 0.6.2
 
 CRAN release: 2026-11-19

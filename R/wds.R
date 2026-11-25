@@ -28,6 +28,8 @@ get_statcan_wds_metadata <- function(census_year,level,version=NULL,refresh=FALS
   if (!(level %in% valid_levels)) {
     cc_abort("invalid_level_choice", choices = valid_levels)
   }
+  # without xml2, is_wds_metadata_file() would report the metadata as unavailable
+  rlang::check_installed("xml2", reason = "to read the WDS metadata.")
   meta_url <- paste0("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest/dataflow/STC_CP/DF_",level,
                      ifelse(is.null(version),"",paste0("/",version)),
                      "?references=all")

@@ -114,11 +114,13 @@ plot_data |> slice_max(Share,n=20) |>
 ![Ukrainian ethnic
 origin](statcan_wds_files/figure-html/unnamed-chunk-7-1.png)
 
-To map the data we have to get the geographies. Statistics Canada may
-block this download, in which case
+To map the data we have to get the geographies. Statistics Canada blocks
+plain downloads of this file with a browser verification. With the
+**safeconduct** package installed, and Google Chrome or another
+Chromium-based browser on the machine,
 [`get_statcan_geographies()`](https://mountainmath.github.io/cancensus/reference/get_statcan_geographies.md)
-returns `NULL` with a warning that explains how to download the file
-manually.
+gets the file through the browser. Otherwise it returns `NULL` with a
+warning that explains how to download the file manually.
 
 ``` r
 

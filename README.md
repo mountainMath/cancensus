@@ -52,7 +52,7 @@ Starting with version 0.5.2 **cancensus** will automatically check if for data t
 
 ### Currently available datasets
 
-**cancensus** can access Statistics Canada Census data for Census years 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API.
+**cancensus** can access Statistics Canada Census data for Census years 1981, 1986, 1991, 1996, 2001, 2006, 2011, 2016, and 2021. You can run `list_census_datasets` to check what datasets are currently available for access through the CensusMapper API.
 
 Thanks to contributions by the Canada Mortgage and Housing Corporation (CMHC), **cancensus** now includes additional Census-linked datasets as open-data releases. These include annual taxfiler data at the census tract level for tax years 2000 through 2018, which includes data on incomes and demographics, as well as specialized crosstabs for Structural type of dwelling by Document type, which details occupancy status for residences. These crosstabs are available for the 2001, 2006, 2011, 2016, and 2021 Census years at all levels starting with census tract.
 
@@ -103,6 +103,10 @@ find_census_vectors("revenu total médian des ménages", dataset = "CA21", type 
 Column names stay the same in both languages, and only the labels change, so the same code runs in either language. With `ggplot2` version 4.0.0 or later the labels become the default axis and legend titles, so graphs and maps get French titles automatically. See the [mapping vignette](https://mountainmath.github.io/cancensus/articles/Making_maps_with_cancensus.html) for an example. Region names are not translated.
 
 **cancensus** attempts to minimize bandwidth usage and download time by caching downloads. When attempting to download data that has previously been downloaded,  **cancensus** will instead access the locally cached equivalent. 
+
+### Data from CensusMapper maps
+
+Any CensusMapper map can easily be reproduced in R by clicking on the *Map actions* menu, the three vertical dots at the top right of a map side panel, and selecting the **R code for this view** option. That brings up R code that, when copy-pasted and run, reproduces the current map view. It can be easily adapted to fit the user's needs.
 
 ### Examples of work using cancensus
 
@@ -162,7 +166,7 @@ There are several other jurisdiction where census data is available via R packag
 If you wish to cite cancensus:
 
   von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R package to
-  access, retrieve, and work with Canadian Census data and geography. v0.6.2.
+  access, retrieve, and work with Canadian Census data and geography. v0.6.3.
 
 
 A BibTeX entry for LaTeX users is
@@ -172,7 +176,7 @@ A BibTeX entry for LaTeX users is
     title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
     year = {2026},
     doi = {10.32614/CRAN.package.cancensus},
-    note = {R package version 0.6.2},
+    note = {R package version 0.6.3},
     url = {https://mountainmath.github.io/cancensus/}
   }
 ```

@@ -101,7 +101,7 @@ latest and issues a warning if recalled data is loaded.
 ### Currently available datasets
 
 **cancensus** can access Statistics Canada Census data for Census years
-1996, 2001, 2006, 2011, 2016, and 2021. You can run
+1981, 1986, 1991, 1996, 2001, 2006, 2011, 2016, and 2021. You can run
 `list_census_datasets` to check what datasets are currently available
 for access through the CensusMapper API.
 
@@ -189,6 +189,14 @@ for an example. Region names are not translated.
 caching downloads. When attempting to download data that has previously
 been downloaded, **cancensus** will instead access the locally cached
 equivalent.
+
+### Data from CensusMapper maps
+
+Any CensusMapper map can easily be reproduced in R by clicking on the
+*Map actions* menu, the three vertical dots at the top right of a map
+side panel, and selecting the **R code for this view** option. That
+brings up R code that, when copy-pasted and run, reproduces the current
+map view. It can be easily adapted to fit the user’s needs.
 
 ### Examples of work using cancensus
 
@@ -285,7 +293,7 @@ If you wish to cite cancensus:
 
 von Bergmann, J., Aaron Jacobs, Dmitry Shkolnik (2026). cancensus: R
 package to access, retrieve, and work with Canadian Census data and
-geography. v0.6.2.
+geography. v0.6.3.
 
 A BibTeX entry for LaTeX users is
 
@@ -294,7 +302,7 @@ A BibTeX entry for LaTeX users is
         title = {cancensus: R package to access, retrieve, and work with Canadian Census data and geography},
         year = {2026},
         doi = {10.32614/CRAN.package.cancensus},
-        note = {R package version 0.6.2},
+        note = {R package version 0.6.3},
         url = {https://mountainmath.github.io/cancensus/}
       }
 

@@ -63,20 +63,37 @@ An example of a basic map.
 
 ```{r fig.alt="Toronto CSDs with Median HH Income > $125,000 in 2020"}
 library(ggplot2)
-ggplot(toronto) + geom_sf(aes(fill = median_hh_income))
+ggplot(toronto) + 
+  geom_sf(aes(fill = median_hh_income))
 ```
 
 Or a similar map with all of the trimmings: 
 
 ```{r fig.alt="Toronto Median Household Income in 2020"}
-ggplot(toronto) + geom_sf(aes(fill = median_hh_income), colour = "grey") +
-  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + theme_minimal() +
-  theme(panel.grid = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank()) + 
+ggplot(toronto) + 
+  geom_sf(aes(fill = median_hh_income), colour = "grey") +
+  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) + 
+  theme_minimal() +
   coord_sf(datum=NA) +
-  labs(title = "Median Household Income in 2020", subtitle = "Toronto Census Subdivisions, 2021 Census")
+  labs(title = "Median Household Income in 2020", 
+       subtitle = "Toronto Census Subdivisions",
+       caption="StatCan Census 2021")
 ```
+
+There is also the option to add contextual layers similar to how CensusMapper styles maps via the `geom_cm_context()` function.
+
+```{r fig.alt="Toronto Median Household Income in 2020 with CensusMapper's base map of water, roads and place names"}
+ggplot(toronto) +
+  geom_sf(aes(fill = median_hh_income), colour = "grey") +
+  scale_fill_viridis_c("Median HH Income", labels = scales::dollar) +
+  geom_cm_context() +
+  theme_minimal() +
+  coord_sf(datum=NA) +
+  labs(title = "Median Household Income in 2020", 
+       subtitle = "Toronto Census Subdivisions",
+       caption="StatCan Census 2021")
+```
+
 
 ## Maps with French labels
 
@@ -84,9 +101,11 @@ With `labels = "labelled"` the description of each column is stored in its `"lab
 
 ```{r fig.alt="Revenu total médian des ménages en 2020 par subdivision de recensement de Toronto"}
 toronto_fr <- get_census(dataset='CA21', regions=list(CMA="35535"),
-                         vectors=c("median_hh_income"="v_CA21_906"), level='CSD', quiet = TRUE,
+                         vectors=c("median_hh_income"="v_CA21_906"), 
+                         level='CSD', quiet = TRUE,
                          geo_format = 'sf', labels = 'labelled', language = 'fr')
-ggplot(toronto_fr) + geom_sf(aes(fill = median_hh_income))
+ggplot(toronto_fr) + 
+  geom_sf(aes(fill = median_hh_income))
 ```
 
 The column names stay the same in both languages, so code written for one language runs unchanged on the other. Region names and any titles you set yourself, for example with `labs()`, are not translated. To use French labels for a whole session, set `options(cancensus.language = "fr")`.

@@ -7,17 +7,22 @@
 get_statcan_geography_relationships(census_year = "2021", refresh = FALSE)
 }
 \arguments{
-\item{census_year}{census year to get the data for, only 2021 is available}
+\item{census_year}{census year to get the data for, "2021" or "2026". The 2026 file doesn't have the
+census metropolitan areas and census agglomerations, census tracts, population centres and designated
+places yet, Statistics Canada plans to release these geographies on February 10, 2027. Use
+\code{refresh = TRUE} to get an updated file after that.}
 
 \item{refresh}{(logical) refresh the cache if true}
 }
 \value{
-tibble with the relationship data. If Statistics Canada blocks the download this gives a
+tibble with the relationship data. If Statistics Canada blocks the download, it goes through
+a browser with the safeconduct package where that is installed and finds Google Chrome or another
+Chromium-based browser, as for \code{\link[=get_statcan_geographies]{get_statcan_geographies()}}. Otherwise, or if that fails, this gives a
 warning explaining how to download the file manually, and returns the cached data when
 refreshing existing cached data and \code{NULL} otherwise
 }
 \description{
-This function is deprecated and will be removed in the next release, as Statistics Canada blocks
+This function is deprecated and will be removed in a future release, as Statistics Canada blocks
 programmatic downloads of the file (#228). Use \code{get_statcan_geographic_attributes("2021")} instead, which
 has the same DGUIDs for each dissemination block apart from census agricultural regions, along with the
 IDs, names and counts, and covers the censuses back to 1981.

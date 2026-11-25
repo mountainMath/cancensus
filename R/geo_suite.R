@@ -166,7 +166,7 @@ message_unused_geo_suite_files <- function(language = NULL){
 #' Read the Dissemination Geographies Relationship File (deprecated)
 #'
 #' @description
-#' This function is deprecated and will be removed in the next release, as Statistics Canada blocks
+#' This function is deprecated and will be removed in a future release, as Statistics Canada blocks
 #' programmatic downloads of the file (#228). Use `get_statcan_geographic_attributes("2021")` instead, which
 #' has the same DGUIDs for each dissemination block apart from census agricultural regions, along with the
 #' IDs, names and counts, and covers the censuses back to 1981.
@@ -182,9 +182,14 @@ message_unused_geo_suite_files <- function(language = NULL){
 #' cancensus cache path has been set. A reference guide is available
 #' at https://www150.statcan.gc.ca/n1/en/catalogue/982600032021001
 #'
-#' @param census_year census year to get the data for, only 2021 is available
+#' @param census_year census year to get the data for, "2021" or "2026". The 2026 file doesn't have the
+#' census metropolitan areas and census agglomerations, census tracts, population centres and designated
+#' places yet, Statistics Canada plans to release these geographies on February 10, 2027. Use
+#' `refresh = TRUE` to get an updated file after that.
 #' @param refresh (logical) refresh the cache if true
-#' @return tibble with the relationship data. If Statistics Canada blocks the download this gives a
+#' @return tibble with the relationship data. If Statistics Canada blocks the download, it goes through
+#' a browser with the safeconduct package where that is installed and finds Google Chrome or another
+#' Chromium-based browser, as for [get_statcan_geographies()]. Otherwise, or if that fails, this gives a
 #' warning explaining how to download the file manually, and returns the cached data when
 #' refreshing existing cached data and `NULL` otherwise
 #'
@@ -198,7 +203,7 @@ message_unused_geo_suite_files <- function(language = NULL){
 #' @md
 #' @export
 get_statcan_geography_relationships <- function(census_year="2021", refresh=FALSE){
-  valid_years <- c("2021")
+  valid_years <- c("2021","2026")
   if (!(as.character(census_year) %in% valid_years)) {
     cc_abort("relationships_invalid_year",years = valid_years)
   }
@@ -399,8 +404,9 @@ download_hosted_file <- function(url,path,has_cache = FALSE,quiet = FALSE,
 # `r2parquet::collect_parquet()`, which can replace this and the two functions above once it is on CRAN.
 # The file gets read locally since remote access needs the httpfs extension, a separate download.
 read_parquet_file <- function(path,language = "en"){
-  # keeps duckdb from storing extensions and secrets in the user's home directory
-  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE))
+  # keeps duckdb from storing extensions and secrets in the user's home directory, parquet support is built in
+  # so no extensions are needed, which also avoids the startup message on libc++ Linux builds
+  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE,allow_extensions = FALSE))
   on.exit(DBI::dbDisconnect(con,shutdown = TRUE))
   source <- DBI::dbQuoteString(con,normalizePath(path,winslash = "/"))
   data <- DBI::dbGetQuery(con,paste0("SELECT * FROM read_parquet(",source,")")) %>%
