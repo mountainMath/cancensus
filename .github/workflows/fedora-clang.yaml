@@ -18,6 +18,14 @@ run-name: >-
 
 on:
   workflow_dispatch:
+    inputs:
+      compile_vignettes:
+        description: >-
+          Evaluate the vignette code (sets COMPILE_VIG and passes the
+          CensusMapper API key). CRAN does not do this, so leave it off to
+          mimic CRAN.
+        type: boolean
+        default: false
 
 env:
   GDAL_VERSION: '3.12.4'
@@ -45,6 +53,15 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.containers) }}
     container:
       image: ${{ matrix.config.container }}
+
+    env:
+      # The clang23 image sets CHECK_ARGS="--no-manual --no-build-vignettes".
+      # Without re-building, R CMD check runs the purled inst/doc/*.R files,
+      # which ignore the vignettes' `eval = nzchar(Sys.getenv("COMPILE_VIG"))`
+      # setup chunk. CRAN re-builds the vignettes instead, so do the same.
+      CHECK_ARGS: --no-manual
+      COMPILE_VIG: ${{ inputs.compile_vignettes && 'true' || '' }}
+      CM_API_KEY: ${{ inputs.compile_vignettes && secrets.CM_API_KEY || '' }}
 
     steps:
       - uses: r-hub/actions/checkout@v1
