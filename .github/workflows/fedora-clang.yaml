@@ -1,0 +1,144 @@
+# Approximates CRAN's r-devel-linux-x86_64-fedora-clang check flavor:
+# https://www.stats.ox.ac.uk/pub/bdr/Rconfig/r-devel-linux-x86_64-fedora-clang
+#
+# CRAN builds R and all packages with clang and libc++, and compiles the C++
+# libraries R packages link to (including GDAL) with libc++ as well, installing
+# them under /usr/local/clang. R-hub's clang23 container follows the same setup
+# but does not ship a libc++ GDAL, so sf and terra end up linked against the
+# system (libstdc++) GDAL and fail to load. This workflow builds GDAL with
+# clang/libc++ into /usr/local/clang first (cached between runs), and then
+# runs the regular R-hub dependency installation and R CMD check.
+#
+# Run it on a branch with:
+#   gh workflow run fedora-clang.yaml --ref <branch>
+
+name: fedora-clang (libc++)
+run-name: >-
+  fedora-clang (libc++) on ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+
+env:
+  GDAL_VERSION: '3.12.4'
+  GDAL_STAGE: /opt/gdal-libcxx
+
+jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      containers: ${{ steps.rhub-setup.outputs.containers }}
+    steps:
+    - uses: r-hub/actions/setup@v1
+      with:
+        config: clang23
+      id: rhub-setup
+
+  clang23-libcxx-gdal:
+    needs: setup
+    runs-on: ubuntu-latest
+    name: ${{ matrix.config.label }} with libc++ GDAL
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.setup.outputs.containers) }}
+    container:
+      image: ${{ matrix.config.container }}
+
+    steps:
+      - uses: r-hub/actions/checkout@v1
+
+      - name: Install GDAL build dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -y
+          # Only C libraries from the system, as on CRAN: these do not depend
+          # on the C++ standard library, so the gcc builds are fine.
+          apt-get install -y cmake make curl ca-certificates \
+            libproj-dev proj-data libgeos-dev libsqlite3-dev sqlite3 \
+            libcurl4-openssl-dev zlib1g-dev libexpat1-dev
+
+      - name: Restore libc++ GDAL from cache
+        id: gdal-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GDAL_STAGE }}
+          key: gdal-${{ env.GDAL_VERSION }}-${{ matrix.config.label }}-libcxx-v1
+
+      - name: Build GDAL with clang and libc++
+        if: steps.gdal-cache.outputs.cache-hit != 'true'
+        run: |
+          set -ex
+          cd /tmp
+          curl -fsSL --retry 5 -o gdal.tar.gz \
+            "https://github.com/OSGeo/gdal/releases/download/v${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz"
+          tar xzf gdal.tar.gz
+          cmake -S "gdal-${GDAL_VERSION}" -B gdal-build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local/clang \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            -DCMAKE_C_COMPILER=clang-23 \
+            -DCMAKE_CXX_COMPILER=clang++-23 \
+            -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+            -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++" \
+            -DCMAKE_MODULE_LINKER_FLAGS="-stdlib=libc++" \
+            -DBUILD_TESTING=OFF \
+            -DBUILD_PYTHON_BINDINGS=OFF \
+            -DBUILD_JAVA_BINDINGS=OFF \
+            -DBUILD_CSHARP_BINDINGS=OFF \
+            -DGDAL_USE_EXTERNAL_LIBS=OFF \
+            -DGDAL_USE_PROJ=ON \
+            -DGDAL_USE_GEOS=ON \
+            -DGDAL_USE_SQLITE3=ON \
+            -DGDAL_USE_CURL=ON \
+            -DGDAL_USE_EXPAT=ON \
+            -DGDAL_USE_ZLIB=ON \
+            -DGDAL_USE_TIFF_INTERNAL=ON \
+            -DGDAL_USE_GEOTIFF_INTERNAL=ON \
+            -DGDAL_USE_JSONC_INTERNAL=ON \
+            -DGDAL_USE_PNG_INTERNAL=ON \
+            -DGDAL_USE_JPEG_INTERNAL=ON \
+            -DGDAL_USE_GIF_INTERNAL=ON \
+            -DGDAL_USE_LERC_INTERNAL=ON \
+            -DGDAL_USE_QHULL_INTERNAL=ON
+          cmake --build gdal-build -j "$(nproc)"
+          DESTDIR="${GDAL_STAGE}" cmake --install gdal-build
+
+      - name: Install libc++ GDAL into /usr/local/clang
+        run: |
+          set -ex
+          cp -a "${GDAL_STAGE}/." /
+          echo /usr/local/clang/lib > /etc/ld.so.conf.d/usr-local-clang.conf
+          ldconfig
+          # Make sure the libc++ gdal-config is found before any system one
+          # that R-hub's dependency installation may pull in.
+          echo /usr/local/clang/bin >> "$GITHUB_PATH"
+          /usr/local/clang/bin/gdal-config --version
+          ldd /usr/local/clang/lib/libgdal.so | grep -E 'c\+\+|stdc\+\+'
+
+      - uses: r-hub/actions/platform-info@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+
+      - uses: r-hub/actions/setup-deps@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+
+      - name: Confirm sf, terra and duckdb use libc++ builds
+        run: |
+          which gdal-config
+          for p in sf terra duckdb; do
+            so=$(Rscript -e "cat(system.file('libs', '$p.so', package = '$p'))")
+            echo "== $p: $so"
+            [ -n "$so" ] && ldd "$so" | grep -E 'gdal|c\+\+|stdc\+\+' || true
+          done
+          Rscript -e 'print(sf::sf_extSoftVersion())'
+
+      - uses: r-hub/actions/run-check@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
