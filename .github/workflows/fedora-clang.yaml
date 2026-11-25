@@ -61,7 +61,7 @@ jobs:
 
       - name: Restore libc++ GDAL from cache
         id: gdal-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ env.GDAL_STAGE }}
           key: gdal-${{ env.GDAL_VERSION }}-${{ matrix.config.label }}-libcxx-v1
@@ -106,6 +106,14 @@ jobs:
           # keep going past the first error, so one run shows all of them
           cmake --build gdal-build -j "$(nproc)" -- -k
           DESTDIR="${GDAL_STAGE}" cmake --install gdal-build
+
+      # Save right away, so the cache is kept even when the check fails.
+      - name: Save libc++ GDAL to cache
+        if: steps.gdal-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.GDAL_STAGE }}
+          key: ${{ steps.gdal-cache.outputs.cache-primary-key }}
 
       - name: Install libc++ GDAL into /usr/local/clang
         run: |
